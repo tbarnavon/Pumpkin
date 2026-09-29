@@ -165,6 +165,12 @@ interface modded {
     /// Removes an item component from the stack's changes.
     remove-item-component: func(stack: borrow<item-stack>, component: string);
 
+    /// The stack in vanilla's saved form (`ItemStack.CODEC`): `{id, count, components}`.
+    item-to-nbt: func(stack: borrow<item-stack>) -> nbt-tree;
+
+    /// A stack from vanilla's saved form. `none` if the item is unknown.
+    item-from-nbt: func(nbt: nbt-tree) -> option<item-stack>;
+
     /// Schedules a `scheduled-tick` hook call for the block at `pos` after `delay` ticks, like
     /// `Level.scheduleTick`.
     schedule-block-tick: func(%world: borrow<%world>, pos: block-pos, delay: u32);

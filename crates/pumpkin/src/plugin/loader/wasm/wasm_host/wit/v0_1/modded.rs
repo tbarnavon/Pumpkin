@@ -822,6 +822,25 @@ impl wit::Host for PluginHostState {
         Ok(())
     }
 
+    async fn item_to_nbt(&mut self, stack: Resource<WitItemStack>) -> wasmtime::Result<NbtTree> {
+        let stack = self.get(&stack)?.clone();
+        let mut compound = NbtCompound::new();
+        stack.lock().await.write_item_stack(&mut compound);
+        Ok(to_wit_nbt_tree(NbtTag::Compound(compound)))
+    }
+
+    async fn item_from_nbt(
+        &mut self,
+        nbt: NbtTree,
+    ) -> wasmtime::Result<Option<Resource<WitItemStack>>> {
+        let Ok(NbtTag::Compound(compound)) = from_wit_nbt_tree(&nbt) else {
+            return Ok(None);
+        };
+        pumpkin_data::item_stack::ItemStack::read_item_stack(&compound)
+            .map(|stack| self.add::<WitItemStack>(Arc::new(Mutex::new(stack))))
+            .transpose()
+    }
+
     async fn schedule_block_tick(
         &mut self,
         world: Resource<WitWorld>,
