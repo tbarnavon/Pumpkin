@@ -171,6 +171,13 @@ interface modded {
     /// A stack from vanilla's saved form. `none` if the item is unknown.
     item-from-nbt: func(nbt: nbt-tree) -> option<item-stack>;
 
+    /// Adds `stack` to the player's inventory like vanilla `Inventory.add`: merging into matching
+    /// stacks first, then empty slots. `stack` keeps what did not fit; returns `true` if all fit.
+    give-item: func(player: borrow<player>, stack: borrow<item-stack>) -> bool;
+
+    /// Drops `stack` as an item entity at `pos`, like `Block.popResource`.
+    drop-item: func(%world: borrow<%world>, pos: block-pos, stack: borrow<item-stack>);
+
     /// Schedules a `scheduled-tick` hook call for the block at `pos` after `delay` ticks, like
     /// `Level.scheduleTick`.
     schedule-block-tick: func(%world: borrow<%world>, pos: block-pos, delay: u32);

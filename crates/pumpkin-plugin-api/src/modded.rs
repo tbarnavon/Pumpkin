@@ -18,9 +18,9 @@ use std::sync::{Arc, Mutex};
 
 pub use crate::wit::pumpkin::plugin::modded::{
     BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, Interaction, InteractionResult,
-    Placement, Removal, Tick, get_block_entity_data, get_item_component, item_from_nbt,
-    item_to_nbt, remove_block_entity_data, remove_item_component, schedule_block_tick,
-    set_block_entity_data, set_item_component,
+    Placement, Removal, Tick, drop_item, get_block_entity_data, get_item_component, give_item,
+    item_from_nbt, item_to_nbt, remove_block_entity_data, remove_item_component,
+    schedule_block_tick, set_block_entity_data, set_item_component,
 };
 use crate::wit::pumpkin::plugin::server::Server;
 

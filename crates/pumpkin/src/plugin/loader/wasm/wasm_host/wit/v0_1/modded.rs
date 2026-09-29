@@ -841,6 +841,31 @@ impl wit::Host for PluginHostState {
             .transpose()
     }
 
+    async fn give_item(
+        &mut self,
+        player: Resource<WitPlayer>,
+        stack: Resource<WitItemStack>,
+    ) -> wasmtime::Result<bool> {
+        let player = self.get(&player)?.clone();
+        let stack = self.get(&stack)?.clone();
+        let mut stack = stack.lock().await;
+        player.inventory().insert_stack_anywhere(&mut stack);
+        Ok(stack.is_empty())
+    }
+
+    async fn drop_item(
+        &mut self,
+        world: Resource<WitWorld>,
+        pos: WitBlockPos,
+        stack: Resource<WitItemStack>,
+    ) -> wasmtime::Result<()> {
+        let world = self.get(&world)?.clone();
+        let stack = self.get(&stack)?.clone();
+        let stack = stack.lock().await.clone();
+        world.drop_stack(&from_wit_pos(pos), stack);
+        Ok(())
+    }
+
     async fn schedule_block_tick(
         &mut self,
         world: Resource<WitWorld>,
