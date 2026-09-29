@@ -259,6 +259,11 @@ impl<V: Hash + Eq + Copy + Default, const DIM: usize> PalettedContainer<V, DIM> 
         }
     }
 
+    /// Palette and packed indices in the vanilla on-disk block layout, for any value type.
+    pub(crate) fn to_block_disk_palette_and_packed_data(&self) -> (Box<[V]>, Box<[i64]>) {
+        self.to_palette_and_packed_data(self.bits_per_entry().max(BLOCK_DISK_MIN_BITS))
+    }
+
     pub fn to_palette_and_packed_data(&self, bits_per_entry: u8) -> (Box<[V]>, Box<[i64]>) {
         match self {
             Self::Homogeneous(registry_id) => (Box::new([*registry_id]), Box::new([])),
@@ -991,7 +996,7 @@ pub struct BeNetworkSerialization<V> {
 
 // TODO: Do our own testing; do we really need to handle network and disk serialization differently?
 pub type BlockPalette = PalettedContainer<BlockStateId, 16>;
-const BLOCK_DISK_MIN_BITS: u8 = 4;
+pub(crate) const BLOCK_DISK_MIN_BITS: u8 = 4;
 const BLOCK_NETWORK_MIN_MAP_BITS: u8 = 4;
 const BLOCK_NETWORK_MAX_MAP_BITS: u8 = 8;
 pub(crate) const BLOCK_NETWORK_MAX_BITS: u8 = 16;

@@ -336,12 +336,14 @@ The goal is that rebasing onto upstream stays feasible.
   `c:version`, `c:register`, `fabric:registry/sync`, sync-complete and `open_screen`. All the
   version-sensitive byte layouts live in one module, `pumpkin-fabric/src/wire/`, one file per
   Fabric payload, each citing its Java source.
-- Cargo feature `modded` on `pumpkin`, `pumpkin-data` and `pumpkin-world`. It is on by default in
-  this fork, and the vanilla build compiles without it.
+- No Cargo feature for the registry overlay (changed during Phase 1). An empty overlay behaves
+  exactly like vanilla, and a feature would have doubled every lookup path with `cfg`s. The cost
+  with no mods loaded is one predictable branch per lookup. Fabric-specific code still lives in
+  its own crate.
 - At runtime, with no mods loaded, the server behaves byte-for-byte like upstream. It sends no
   register or ping and runs no extra configuration steps.
 
-### 6.2 Decision needed: how IDs become dynamic
+### 6.2 How IDs become dynamic (decided: option B)
 
 Everything in section 4 comes back to one question: `'static` + `const fn` lookups versus
 registries that are only known at runtime.
@@ -382,9 +384,12 @@ Per the rules I need your approval before starting it.
   `Properties`, which is already Anvil's format once item 17 is fixed.
 - Block entities with an unknown ID keep their raw NBT and write it back unchanged. We don't
   drop them.
-- Unknown palette names don't become air. They load as a placeholder state that remembers the
-  original name and properties, so a restart without the mod doesn't destroy blocks. This is a
-  new behaviour and needs your OK.
+- Unknown palette names don't become air (approved). They load as `minecraft:bedrock`, which is
+  visible and can't be broken in survival. The original palette compound is kept per position in
+  `ChunkData::unknown_blocks` and written back on save while the stand-in is still there
+  (`pumpkin-world/src/chunk/format/unknown_blocks.rs`). No unknown state ID ever reaches the
+  network. This also applies to vanilla worlds that contain unknown names, for example a world
+  from a newer Minecraft version. Upstream turned those into air.
 
 ### 6.4 Handshake flow in the fork (only when mods are loaded)
 
@@ -417,3 +422,26 @@ Tooling, all inside the project:
 - a portable JDK 25 and Vineflower under `tools/`;
 - reference repos and the jar under `refs/`;
 - a real Fabric server and client for packet captures, set up under `tools/`, in Phase 3.
+
+## 8. Phase 1 implementation notes
+
+- Generated lookups became vanilla-only (`from_vanilla_id`, `vanilla_properties`, ...). The public
+  `Block::from_id`, `BlockState::from_id`, `BlockId::from_state_id`, `Item::from_id`, the name
+  lookups and `properties()` are now hand-written in `pumpkin-data`. Each one checks the static
+  vanilla table first, then `pumpkin_data::dynamic`. They are no longer `const fn`.
+- `BlockId::new` / `BlockStateId::new` check against the runtime total. Generated constants use
+  the `const fn from_vanilla`, which fails to compile for a non-vanilla ID.
+- `Tag` gained a third field, the tag's own name. That lets `has_tag` consult the overlay: the
+  compiler merges identical static slices, so pointer identity can't be used.
+- Modded collision/outline shapes are interned against the vanilla shape table and appended past
+  its end.
+- Chunk direct palettes stay at 16 bits. Vanilla already has 35,723 states, which is more than
+  2^15, and modded IDs are capped below `u16::MAX`. The client computes the same
+  `ceillog2(total)`.
+- Windows: `rustfmt` overflows its 1 MiB main-thread stack on `generated/block.rs`, and codegen
+  then silently writes the file unformatted. That happens upstream too, not only with our
+  changes. Run codegen through `tools/codegen.sh` at the project root. It uses a copy of rustfmt
+  with a 256 MiB stack.
+- Known gap for Phase 3: the chunk packet resolves block-entity type IDs by the last path segment
+  of the NBT `id` (`net/java/chunk_data/v1_18.rs`), so modded block entities get ID 0.
+

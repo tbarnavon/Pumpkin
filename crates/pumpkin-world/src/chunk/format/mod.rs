@@ -33,6 +33,7 @@ use super::{
 pub mod anvil;
 pub mod linear;
 pub mod pump;
+pub mod unknown_blocks;
 
 impl SingleChunkDataSerializer for ChunkData {
     #[inline]
@@ -258,6 +259,7 @@ impl ChunkData {
         let mut sky_lights = vec![LightContainer::Empty(0); section_count];
         let mut block_palettes = vec![BlockPalette::default(); section_count];
         let mut biome_palettes = vec![BiomePalette::default(); section_count];
+        let mut unknown_blocks = unknown_blocks::UnknownBlocks::default();
 
         if let Some(sections_list) = root_tag.get_list("sections") {
             for section_tag in sections_list {
@@ -303,10 +305,23 @@ impl ChunkData {
                         let data = bs_compound
                             .get_long_array("data")
                             .map(|arr| arr.to_vec().into_boxed_slice());
-                        let palette = bs_compound
+                        let (palette, unknown) = bs_compound
                             .get("palette")
-                            .and_then(extract_u16_array)
-                            .unwrap_or_else(|| vec![BlockStateId::AIR].into_boxed_slice());
+                            .and_then(unknown_blocks::decode_block_palette)
+                            .unwrap_or_else(|| {
+                                (vec![BlockStateId::AIR].into_boxed_slice(), Vec::new())
+                            });
+                        if !unknown.is_empty() {
+                            unknown_blocks::record_positions(
+                                &mut unknown_blocks,
+                                position.x,
+                                position.y,
+                                y,
+                                palette.len(),
+                                data.as_deref(),
+                                &unknown,
+                            );
+                        }
 
                         block_palettes[index] =
                             BlockPalette::from_disk_nbt(ChunkSectionBlockStates { data, palette });
@@ -438,6 +453,7 @@ impl ChunkData {
             block_ticks: ChunkTickScheduler::from_iter(block_ticks),
             fluid_ticks: ChunkTickScheduler::from_iter(fluid_ticks),
             pending_block_entities: std::sync::Mutex::new(block_entities),
+            unknown_blocks: std::sync::Mutex::new(unknown_blocks),
             light_engine: std::sync::Mutex::new(light_engine),
             light_populated: AtomicBool::new(light_correct),
             status,
@@ -491,6 +507,25 @@ impl ChunkData {
 
         let min_section_y = (self.section.min_y >> 4) as i8;
 
+        // Forget unknown blocks that were replaced since they were loaded.
+        let mut unknown_lock = self
+            .unknown_blocks
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        unknown_lock.retain(|pos, _| {
+            let section = (pos.0.y >> 4) - i32::from(min_section_y);
+            usize::try_from(section)
+                .ok()
+                .and_then(|section| block_lock.get(section))
+                .is_some_and(|blocks| {
+                    blocks.get(
+                        (pos.0.x & 15) as usize,
+                        (pos.0.y & 15) as usize,
+                        (pos.0.z & 15) as usize,
+                    ) == unknown_blocks::STAND_IN
+                })
+        });
+
         let mut root_compound = NbtCompound::new();
         root_compound.put_int("DataVersion", WORLD_DATA_VERSION);
         root_compound.put_int("xPos", self.x);
@@ -530,37 +565,39 @@ impl ChunkData {
             section_comp.put_byte("Y", y_val);
 
             // block_states
-            let block_states_nbt = block_lock[i].to_disk_nbt();
             let mut bs_comp = NbtCompound::new();
-            if let Some(ref data_arr) = block_states_nbt.data {
-                bs_comp.put("data", NbtTag::LongArray(data_arr.to_vec()));
-            }
-            let palette_tags: Vec<NbtTag> = block_states_nbt
-                .palette
+            let section_base_y = i32::from(y_val) * 16;
+            let section_unknown: Vec<((usize, usize, usize), &NbtCompound)> = unknown_lock
                 .iter()
-                .map(|&id| {
-                    let block = Block::from_state_id(id);
-                    let mut comp = NbtCompound::new();
-                    let name = if block.name.starts_with("minecraft:") {
-                        block.name.to_string()
-                    } else {
-                        format!("minecraft:{}", block.name)
-                    };
-                    comp.put_string("Name", name);
-                    if let Some(props) = block.properties(id) {
-                        let prop_vec = props.to_props();
-                        if !prop_vec.is_empty() {
-                            let mut props_comp = NbtCompound::new();
-                            for (k, v) in prop_vec {
-                                props_comp.put_string(k, v.to_string());
-                            }
-                            comp.put_compound("Properties", props_comp);
-                        }
-                    }
-                    NbtTag::Compound(comp)
+                .filter(|(pos, _)| pos.0.y >> 4 == i32::from(y_val))
+                .map(|(pos, compound)| {
+                    let local = (
+                        (pos.0.x & 15) as usize,
+                        (pos.0.y - section_base_y) as usize,
+                        (pos.0.z & 15) as usize,
+                    );
+                    (local, compound)
                 })
                 .collect();
-            bs_comp.put_list("palette", palette_tags);
+            if section_unknown.is_empty() {
+                let block_states_nbt = block_lock[i].to_disk_nbt();
+                if let Some(ref data_arr) = block_states_nbt.data {
+                    bs_comp.put("data", NbtTag::LongArray(data_arr.to_vec()));
+                }
+                let palette_tags: Vec<NbtTag> = block_states_nbt
+                    .palette
+                    .iter()
+                    .map(|&id| NbtTag::Compound(unknown_blocks::state_palette_entry(id)))
+                    .collect();
+                bs_comp.put_list("palette", palette_tags);
+            } else {
+                let (palette_tags, data) =
+                    unknown_blocks::encode_section(&block_lock[i], &section_unknown);
+                if let Some(data_arr) = data {
+                    bs_comp.put("data", NbtTag::LongArray(data_arr));
+                }
+                bs_comp.put_list("palette", palette_tags);
+            }
             section_comp.put_compound("block_states", bs_comp);
 
             // biomes

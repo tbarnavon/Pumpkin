@@ -75,6 +75,9 @@ pub struct ChunkData {
     pub block_ticks: ChunkTickScheduler<&'static Block>,
     pub fluid_ticks: ChunkTickScheduler<&'static Fluid>,
     pub pending_block_entities: std::sync::Mutex<FxHashMap<BlockPos, NbtCompound>>,
+    /// Palette entries of blocks that are not registered (their mod is missing), kept so they can
+    /// be written back on save. See [`format::unknown_blocks`].
+    pub unknown_blocks: std::sync::Mutex<format::unknown_blocks::UnknownBlocks>,
     pub light_engine: std::sync::Mutex<ChunkLight>,
     pub light_populated: AtomicBool,
     pub status: ChunkStatus,
@@ -634,6 +637,7 @@ impl ChunkData {
             z,
             block_ticks: ChunkTickScheduler::default(),
             fluid_ticks: ChunkTickScheduler::default(),
+            unknown_blocks: std::sync::Mutex::default(),
             pending_block_entities: std::sync::Mutex::new(FxHashMap::default()),
             light_engine: std::sync::Mutex::new(ChunkLight::default()),
             light_populated: std::sync::atomic::AtomicBool::new(false),
