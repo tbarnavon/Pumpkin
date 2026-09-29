@@ -19,19 +19,21 @@ API, where the feature belongs:
 
 **SD** marks what Storage Drawers 26.3.0.1 needs.
 
-## What `modded.wit` has today
+## What `modded.wit` has
 
-Only the hooks are modded. The rest works on vanilla blocks and items too, and belongs in core:
+Only what needs mod content stays in `modded.wit`: the block and item hooks, and the storage for
+block entities whose type Pumpkin has no native implementation of (the data lives in the chunk
+as raw NBT; vanilla block entities use `world.get/set-block-entity-nbt`). The rest moved to core:
 
-| `modded.wit` function | API | Belongs in |
-|:--|:--|:--|
-| `register-block-hooks`, `register-item-hooks`, block and item calls | modded | `modded` |
-| `get/set/remove-block-entity-data` (full block entity NBT) | core | `block-entity` or `world` |
-| `get/set/remove-item-component` (by component id) | core | `item-stack` |
-| `item-to-nbt`, `item-from-nbt` | core | `item-stack` |
-| `give-item` (insert into inventory, drop the rest) | core | `player` |
-| `drop-item` (item entity at a block) | core | `world` |
-| `schedule-block-tick` | core | `world` |
+| Function | Now in |
+|:--|:--|
+| `register-block-hooks`, `register-item-hooks`, block and item calls | `modded` |
+| `get/set/remove-block-entity-data` | `modded` |
+| `get/set/remove-component-by-id` | `item-stack` |
+| `to-nbt`, `from-nbt` | `item-stack` |
+| `give-item` | `player` |
+| `drop-item` | `world` |
+| `schedule-block-tick` | `world` |
 
 ## Fabric API modules
 
@@ -100,7 +102,7 @@ Only the hooks are modded. The rest works on vanilla blocks and items too, and b
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
 | Item `useOn` / `use` for modded items | ✅ | modded | modded item hooks | ✅ |
-| Read / write item components by id | ✅ | core | `modded.get/set/remove-item-component` | ✅ |
+| Read / write item components by id | ✅ | core | `item-stack.get/set/remove-component-by-id` | ✅ |
 | Keep unknown modded components (e.g. `storagedrawers:drawer_count`) | ❌ | host | `ItemStack` drops them; needs a raw-NBT fallback | ✅ GUI, drops |
 | `DefaultItemComponentEvents` | ➖ | - | default components come from the dump | |
 | `FabricItem` (recipe remainder, attribute modifiers, reequip animation) | ❌ | modded | | |
@@ -121,7 +123,7 @@ Only the hooks are modded. The rest works on vanilla blocks and items too, and b
 ### fabric-object-builder-api-v1
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
-| `FabricBlockEntityTypeBuilder` | ✅ | host | types from the dump; `modded.set-block-entity-data` | ✅ |
+| `FabricBlockEntityTypeBuilder` | ✅ | host + modded | types from the dump; data through `modded.set-block-entity-data` | ✅ |
 | `WoodTypeBuilder`, `BlockSetTypeBuilder` | ➖ | - | resolved in the dump | |
 | `FabricEntityType`, modded entities | ❌ | modded | | detached drawers? |
 | `FabricDefaultAttributeRegistry` | ❌ | modded | | |
@@ -239,7 +241,7 @@ keep their native behaviour.
 | `Block.attack` | ✅ | modded | `attack` | ✅ |
 | `Block.getDrops` | ✅ | modded | `drops` | ✅ |
 | `Block.affectNeighborsAfterRemoval` / `onRemove` | ✅ | modded | `removed` | ✅ |
-| `Block.tick` (scheduled) | ✅ | modded | `scheduled-tick`, `schedule-block-tick` | ✅ |
+| `Block.tick` (scheduled) | ✅ | modded | `scheduled-tick` hook; scheduled with `world.schedule-block-tick` | ✅ |
 | `Block.getSignal` / `getDirectSignal` / `isSignalSource` | ❌ | modded | | ✅ redstone upgrade |
 | `Block.getAnalogOutputSignal` (comparator) | ❌ | modded | | ✅ |
 | `Block.neighborChanged`, `updateShape` | ❌ | modded | | |

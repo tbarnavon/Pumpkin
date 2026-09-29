@@ -1072,6 +1072,10 @@ interface player {
 
         /// Returns the player's inventory handle for managing main storage, armor, and equipment.
         get-inventory: func () -> player-inventory;
+        /// Adds `stack` to the player's inventory like vanilla `Inventory.add`: merging into
+        /// matching stacks first, then empty slots. `stack` keeps what did not fit; returns `true`
+        /// if all of it fit.
+        give-item: func(stack: borrow<item-stack>) -> bool;
         /// Returns the player's ender chest inventory handle.
         get-ender-chest: func () -> inventory;
 

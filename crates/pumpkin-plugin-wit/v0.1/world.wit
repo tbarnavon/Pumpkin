@@ -928,6 +928,12 @@ interface %world {
         /// The NBT must contain a valid "id" field (e.g. "minecraft:chest").
         set-block-entity-nbt: func(pos: block-pos, nbt-data: list<u8>) -> result<_, string>;
 
+        /// Drops `stack` as an item entity at `pos`, like `Block.popResource`.
+        drop-item: func(pos: block-pos, stack: borrow<item-stack>);
+
+        /// Schedules a tick for the block at `pos` after `delay` ticks, like `Level.scheduleTick`.
+        schedule-block-tick: func(pos: block-pos, delay: u32);
+
         /// Returns the name of this world (e.g. "world", "world_nether", "arena_1").
         get-name: func() -> string;
 

@@ -100,5 +100,19 @@ interface item-stack {
         set-component: func(component: data-component, value: list<u8>);
         /// Removes a data component from this item stack.
         remove-component: func(component: data-component);
+
+        /// A data component in its saved (NBT) form, looked up by id (for example
+        /// `minecraft:block_entity_data`), from the stack's changes or the item's defaults.
+        get-component-by-id: func(component: string) -> option<nbt-tree>;
+        /// Sets a data component from its saved (NBT) form. Fails for component types the server
+        /// does not know or values it cannot read.
+        set-component-by-id: func(component: string, value: nbt-tree) -> result<_, string>;
+        /// Removes a data component, by id, from the stack's changes.
+        remove-component-by-id: func(component: string);
+
+        /// The stack in vanilla's saved form (`ItemStack.CODEC`): `{id, count, components}`.
+        to-nbt: func() -> nbt-tree;
+        /// A stack from vanilla's saved form. `none` if the item is unknown.
+        from-nbt: static func(nbt: nbt-tree) -> option<item-stack>;
     }
 }

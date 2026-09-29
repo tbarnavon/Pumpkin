@@ -683,6 +683,86 @@ impl HostItemStack for PluginHostState {
         Ok(())
     }
 
+    async fn get_component_by_id(
+        &mut self,
+        res: Resource<ItemStackHandle>,
+        component: String,
+    ) -> wasmtime::Result<Option<WitNbtTree>> {
+        let Some(id) = DataComponent::try_from_name(&component) else {
+            return Ok(None);
+        };
+        let stack = self.get(&res)?;
+        let stack = stack.lock().await;
+        let value = match stack.patch.iter().find(|(pid, _)| *pid == id) {
+            Some((_, value)) => value.as_ref().map(|v| v.write_data()),
+            None => stack
+                .item
+                .components
+                .iter()
+                .find(|(pid, _)| *pid == id)
+                .map(|(_, v)| v.write_data()),
+        };
+        Ok(value.map(to_wit_nbt_tree))
+    }
+
+    async fn set_component_by_id(
+        &mut self,
+        res: Resource<ItemStackHandle>,
+        component: String,
+        value: WitNbtTree,
+    ) -> wasmtime::Result<Result<(), String>> {
+        let Some(id) = DataComponent::try_from_name(&component) else {
+            return Ok(Err(format!("unknown item component {component}")));
+        };
+        let tag = match from_wit_nbt_tree(&value) {
+            Ok(tag) => tag,
+            Err(error) => return Ok(Err(error)),
+        };
+        let Some(data) = pumpkin_data::data_component_impl::read_data(id, &tag) else {
+            return Ok(Err(format!(
+                "cannot read a value for item component {component}"
+            )));
+        };
+        let stack = self.get(&res)?;
+        let mut stack = stack.lock().await;
+        match stack.patch.iter_mut().find(|(pid, _)| *pid == id) {
+            Some((_, slot)) => *slot = Some(data),
+            None => stack.patch.push((id, Some(data))),
+        }
+        Ok(Ok(()))
+    }
+
+    async fn remove_component_by_id(
+        &mut self,
+        res: Resource<ItemStackHandle>,
+        component: String,
+    ) -> wasmtime::Result<()> {
+        if let Some(id) = DataComponent::try_from_name(&component) {
+            let stack = self.get(&res)?;
+            stack.lock().await.patch.retain(|(pid, _)| *pid != id);
+        }
+        Ok(())
+    }
+
+    async fn to_nbt(&mut self, res: Resource<ItemStackHandle>) -> wasmtime::Result<WitNbtTree> {
+        let stack = self.get(&res)?;
+        let mut compound = pumpkin_nbt::compound::NbtCompound::new();
+        stack.lock().await.write_item_stack(&mut compound);
+        Ok(to_wit_nbt_tree(NbtTag::Compound(compound)))
+    }
+
+    async fn from_nbt(
+        &mut self,
+        nbt: WitNbtTree,
+    ) -> wasmtime::Result<Option<Resource<ItemStackHandle>>> {
+        let Ok(NbtTag::Compound(compound)) = from_wit_nbt_tree(&nbt) else {
+            return Ok(None);
+        };
+        pumpkin_data::item_stack::ItemStack::read_item_stack(&compound)
+            .map(|stack| self.add::<ItemStackHandle>(Arc::new(Mutex::new(stack))))
+            .transpose()
+    }
+
     async fn drop(&mut self, rep: Resource<ItemStackHandle>) -> wasmtime::Result<()> {
         self.drop(rep)
     }

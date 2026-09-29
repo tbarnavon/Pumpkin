@@ -587,6 +587,37 @@ impl pumpkin::plugin::particles::Host for PluginHostState {}
 impl pumpkin::plugin::sounds::Host for PluginHostState {}
 
 impl pumpkin::plugin::world::HostWorld for PluginHostState {
+    async fn drop_item(
+        &mut self,
+        world: Resource<World>,
+        pos: WitBlockPos,
+        stack: Resource<pumpkin::plugin::item_stack::ItemStack>,
+    ) -> wasmtime::Result<()> {
+        let world = self.get(&world)?.clone();
+        let stack = self.get(&stack)?.clone();
+        let stack = stack.lock().await.clone();
+        world.drop_stack(&BlockPos::new(pos.x, pos.y, pos.z), stack);
+        Ok(())
+    }
+
+    async fn schedule_block_tick(
+        &mut self,
+        world: Resource<World>,
+        pos: WitBlockPos,
+        delay: u32,
+    ) -> wasmtime::Result<()> {
+        let world = self.get(&world)?.clone();
+        let pos = BlockPos::new(pos.x, pos.y, pos.z);
+        let block = world.get_block(&pos);
+        world.schedule_block_tick(
+            block,
+            pos,
+            u8::try_from(delay).unwrap_or(u8::MAX),
+            pumpkin_world::tick::TickPriority::Normal,
+        );
+        Ok(())
+    }
+
     async fn get_id(&mut self, world: Resource<World>) -> wasmtime::Result<String> {
         Ok(self.get(&world)?.get_world_name().to_string())
     }

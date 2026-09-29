@@ -25,7 +25,7 @@ interface modded {
         drops,
         /// `BlockEntity.preRemoveSideEffects`: the block is about to be removed or replaced.
         removed,
-        /// `Block.tick`: a tick scheduled with `schedule-block-tick` fired.
+        /// `Block.tick`: a tick scheduled with `world.schedule-block-tick` fired.
         scheduled-tick,
     }
 
@@ -153,32 +153,4 @@ interface modded {
 
     /// Removes the block-entity data at `pos`.
     remove-block-entity-data: func(%world: borrow<%world>, pos: block-pos);
-
-    /// An item component in its saved (NBT) form, from the stack's changes or the item's
-    /// defaults, for example `minecraft:block_entity_data`.
-    get-item-component: func(stack: borrow<item-stack>, component: string) -> option<nbt-tree>;
-
-    /// Sets an item component from its saved (NBT) form. Fails for component types the server
-    /// does not know or values it cannot read.
-    set-item-component: func(stack: borrow<item-stack>, component: string, value: nbt-tree) -> result<_, string>;
-
-    /// Removes an item component from the stack's changes.
-    remove-item-component: func(stack: borrow<item-stack>, component: string);
-
-    /// The stack in vanilla's saved form (`ItemStack.CODEC`): `{id, count, components}`.
-    item-to-nbt: func(stack: borrow<item-stack>) -> nbt-tree;
-
-    /// A stack from vanilla's saved form. `none` if the item is unknown.
-    item-from-nbt: func(nbt: nbt-tree) -> option<item-stack>;
-
-    /// Adds `stack` to the player's inventory like vanilla `Inventory.add`: merging into matching
-    /// stacks first, then empty slots. `stack` keeps what did not fit; returns `true` if all fit.
-    give-item: func(player: borrow<player>, stack: borrow<item-stack>) -> bool;
-
-    /// Drops `stack` as an item entity at `pos`, like `Block.popResource`.
-    drop-item: func(%world: borrow<%world>, pos: block-pos, stack: borrow<item-stack>);
-
-    /// Schedules a `scheduled-tick` hook call for the block at `pos` after `delay` ticks, like
-    /// `Level.scheduleTick`.
-    schedule-block-tick: func(%world: borrow<%world>, pos: block-pos, delay: u32);
 }

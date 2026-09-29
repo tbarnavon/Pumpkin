@@ -1085,6 +1085,19 @@ use pumpkin_protocol::java::client::play::CSetContainerSlot;
 use crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::item_stack::ItemStack as WitHostItemStack;
 
 impl pumpkin::plugin::player::HostPlayer for PluginHostState {
+    async fn give_item(
+        &mut self,
+        player: Resource<Player>,
+        stack: Resource<WitHostItemStack>,
+    ) -> wasmtime::Result<bool> {
+        let player = self.get(&player)?.clone();
+        let stack = self.get(&stack)?.clone();
+        let mut stack = stack.lock().await;
+        player.inventory().insert_stack_anywhere(&mut stack);
+        player.sync_inventory_to_client();
+        Ok(stack.is_empty())
+    }
+
     async fn set_item_in_hand(
         &mut self,
         player: Resource<Player>,
