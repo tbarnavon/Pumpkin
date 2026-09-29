@@ -802,7 +802,7 @@ impl ItemStack {
 
     pub fn write_item_stack(&self, compound: &mut NbtCompound) {
         // Minecraft 1.21.4 uses "id" as string with namespaced ID (minecraft:diamond_sword)
-        compound.put_string("id", format!("minecraft:{}", self.item.registry_key));
+        compound.put_string("id", self.item.namespaced_name().into_owned());
         compound.put_int("count", self.item_count as i32);
 
         // Create a tag compound for additional data
@@ -832,21 +832,25 @@ impl ItemStack {
         // Try to get item by registry key
         let item = Item::from_registry_key(registry_key)?;
 
-        let count = compound.get_int("count")? as u8;
+        // ItemStack.CODEC: "count" defaults to 1 when absent.
+        let count = compound.get_int("count").unwrap_or(1) as u8;
 
         // Create the item stack
         let mut item_stack = Self::new(count, item);
 
         // Process any additional data in the components compound
+        // Components Pumpkin cannot represent (for example modded component types) are skipped
+        // instead of losing the whole stack.
         if let Some(tag) = compound.get_compound("components") {
             for (name, data) in &tag.child_tags {
                 if let Some(name) = name.strip_prefix("!") {
-                    item_stack
-                        .patch
-                        .push((DataComponent::try_from_name(name)?, None));
-                } else {
-                    let id = DataComponent::try_from_name(name)?;
-                    item_stack.patch.push((id, Some(read_data(id, data)?)));
+                    if let Some(id) = DataComponent::try_from_name(name) {
+                        item_stack.patch.push((id, None));
+                    }
+                } else if let Some(id) = DataComponent::try_from_name(name)
+                    && let Some(data) = read_data(id, data)
+                {
+                    item_stack.patch.push((id, Some(data)));
                 }
             }
         }
