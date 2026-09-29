@@ -68,3 +68,32 @@ Open:
 - World generation is slow. That's partly the debug build. A fast path now avoids hashing tag names
   in `has_tag` when mods are loaded (clippy and tests pass).
 
+
+## Phase 4, stage 1: standard drawers (plugin built, awaiting client test)
+
+The Storage Drawers server logic lives in `../storagedrawers-plugin` (WASM, `wasm32-wasip2`),
+ported from the decompiled 26.3.0.1 jar. The plugin loads on the release build and registers all
+78 standard drawer blocks (13 woods including framed, full or half, 1/2/4 slots).
+
+Implemented (awaiting a real-client test):
+- Facing on placement (`getStateForPlacement`), and offhand keys on placement (`setPlacedBy`).
+- Right-click to insert, and a double right-click within 10 ticks to insert the whole inventory.
+- Left-click to take one item, or a stack with shift. In creative, hitting a face slot doesn't
+  break the drawer.
+- Upgrades added by right-click, with SD's group, multiple and one-stack rules. The storage
+  multipliers, void, creative storage and vending, and balance fill all work.
+- Drawer, quantify, shroud, suspend and priority keys (sneak-use cycles priority), keyrings, and
+  personal key ownership.
+- `dropMode` KEEP, where the drop carries `block_entity_data` and `max_stack_size` 1, and DROP.
+- Block-entity NBT in the mod's exact layout. The `Upgrades` list is always written, as vanilla's
+  `TagValueOutput.list` does.
+- Config `plugins/data/storagedrawers/storagedrawers-common.toml` with SD's defaults.
+
+Host API added for this: `give-item`, `drop-item`, and item <-> NBT conversion. The plugin
+inventory setters sent `ContainerSetSlot` with inventory indexes, which desynced the hotbar. That
+bug is also upstream, and it's fixed.
+
+Not yet: the drawer GUI, compacting drawers, controller and I/O, hopper/magnet/redstone, framing
+table, detached drawers, and remote upgrades. The GUI needs two host features first:
+plugin-defined menus (opened with `fabric-menu-api-v1:open_screen`), and modded item components
+such as `storagedrawers:drawer_count`, which Pumpkin currently drops.
