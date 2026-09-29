@@ -459,7 +459,11 @@ pub fn drop_loot(
     experience: bool,
     params: &LootContextParameters,
 ) {
-    let key = format!("minecraft:blocks/{}", block.name);
+    // Block.getLootTable: <namespace>:blocks/<path>.
+    let key = match block.name.split_once(':') {
+        Some((namespace, path)) => format!("{namespace}:blocks/{path}"),
+        None => format!("minecraft:blocks/{}", block.name),
+    };
     if let Some(loot_table) = world.get_loot_table(&key) {
         let seed: i64 = rand::random();
         let items = crate::world::loot::generate_loot_from_handle(&loot_table, seed, params);

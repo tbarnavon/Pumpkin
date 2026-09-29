@@ -167,6 +167,7 @@ impl DatapackManager {
             trade_registry: &mut all_trade_registry,
         };
 
+        load_mod_content(&mut acc);
         scan_datapacks_dir(
             &datapacks_dir,
             enabled_packs,
@@ -1221,6 +1222,34 @@ fn build_damage_type_registry(
     );
 
     damage_type_registry
+}
+
+/// Adds the recipes and loot tables of installed mods (see `pumpkin_registry_ext`). Runs before
+/// world datapacks so those can still override mod content, like datapacks over mod jars.
+fn load_mod_content(acc: &mut PackContentAccumulators<'_>) {
+    let Some(mods) = pumpkin_registry_ext::installed() else {
+        return;
+    };
+    let mut recipes = 0usize;
+    let mut loot_tables = 0usize;
+    for (id, json) in &mods.recipes {
+        let (namespace, name) = id.split_once(':').unwrap_or(("minecraft", id));
+        if let Some(recipe) = recipe_loader::parse_recipe(namespace, name, &json.to_string()) {
+            acc.recipes.push(recipe);
+            recipes += 1;
+        }
+    }
+    for (id, json) in &mods.loot_tables {
+        if let Some(table) = loot_table_loader::parse_loot_table(&json.to_string()) {
+            acc.loot_tables.insert(id.clone(), Arc::new(table));
+            loot_tables += 1;
+        }
+    }
+    info!("Loaded {recipes} recipe(s) and {loot_tables} loot table(s) from mod data");
+    let skipped = mods.recipes.len() - recipes + mods.loot_tables.len() - loot_tables;
+    if skipped > 0 {
+        warn!("Skipped {skipped} mod recipe(s) or loot table(s) of types Pumpkin does not support");
+    }
 }
 
 struct PackContentAccumulators<'a> {

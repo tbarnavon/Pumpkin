@@ -73,6 +73,24 @@ async fn main() {
 
     pumpkin::init_logger(&config.advanced);
 
+    // Modded registry entries must be installed before anything looks up blocks or items.
+    match pumpkin_registry_ext::read_dumps(&exec_dir.join("mod-data"))
+        .and_then(pumpkin_registry_ext::install)
+    {
+        Ok(Some(mods)) => info!(
+            "Loaded mod data for {} ({} blocks, {} block states, {} items)",
+            mods.namespaces.join(", "),
+            pumpkin_data::BlockId::count() - pumpkin_data::BlockId::VANILLA_COUNT,
+            pumpkin_data::BlockStateId::count() - pumpkin_data::BlockStateId::VANILLA_COUNT,
+            pumpkin_data::item::Item::count() - pumpkin_data::item::Item::VANILLA_COUNT,
+        ),
+        Ok(None) => {}
+        Err(error) => {
+            tracing::error!("Failed to load mod data: {error}");
+            exit(1);
+        }
+    }
+
     info!(
         "{}",
         TextComponent::text(format!(

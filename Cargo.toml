@@ -17,6 +17,7 @@ members = [
     "crates/pumpkin-plugin-runtime",
     "crates/pumpkin-plugin-utils",
     "crates/pumpkin-protocol",
+    "crates/pumpkin-registry-ext",
     "crates/pumpkin-util",
     "crates/pumpkin-host-bindings",
     "crates/pumpkin-world",
@@ -188,6 +189,7 @@ pumpkin-data = { path = "crates/pumpkin-data", default-features = false }
 pumpkin-inventory = { path = "crates/pumpkin-inventory", default-features = false }
 pumpkin-macros = { path = "crates/pumpkin-macros", default-features = false }
 pumpkin-nbt = { path = "crates/pumpkin-nbt", default-features = false }
+pumpkin-registry-ext = { path = "crates/pumpkin-registry-ext", default-features = false }
 pumpkin-plugin-api = { path = "crates/pumpkin-plugin-api", default-features = false }
 pumpkin-plugin-runtime = { path = "crates/pumpkin-plugin-runtime", default-features = false }
 pumpkin-plugin-utils = { path = "crates/pumpkin-plugin-utils", default-features = false }
