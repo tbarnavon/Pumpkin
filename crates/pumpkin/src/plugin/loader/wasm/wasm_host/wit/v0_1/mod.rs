@@ -47,6 +47,7 @@ pub mod java_dialogs;
 pub mod living_entity;
 #[allow(clippy::unused_async_trait_impl)]
 pub mod logging;
+pub mod menu;
 #[allow(clippy::unused_async_trait_impl)]
 pub mod mob;
 #[allow(clippy::unused_async_trait_impl)]

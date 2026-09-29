@@ -95,6 +95,8 @@ pub(crate) mod generated;
 pub mod inventory;
 /// Typed item definitions and `ItemStack` construction helpers.
 pub mod item;
+/// Menus whose slots the plugin defines.
+pub mod menu;
 /// Specialized mob entity wrappers and helpers.
 pub mod mobs;
 /// Behaviour and storage for modded blocks.
@@ -409,6 +411,15 @@ impl wit::Guest for Component {
         call: wit::pumpkin::plugin::modded::ItemCall,
     ) -> wit::pumpkin::plugin::modded::BlockReply {
         crate::modded::dispatch_item(handler_id, server, call)
+    }
+
+    fn handle_menu_call(
+        handler_id: u32,
+        menu_id: u32,
+        player: wit::pumpkin::plugin::player::Player,
+        call: wit::pumpkin::plugin::menu::MenuCall,
+    ) -> wit::pumpkin::plugin::menu::MenuReply {
+        crate::menu::dispatch(handler_id, menu_id, player, call)
     }
 
     fn handle_ipc_message(

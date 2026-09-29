@@ -11,6 +11,8 @@ world plugin {
     use %world.{entity, chunk-buffer, generation-phase};
     use ipc.{plugin-id, ipc-message};
     use modded.{block-call, block-reply, item-call};
+    use menu.{menu-call, menu-reply};
+    use player.{player as player-instance};
 
     // --- Host-provided imports ---
 
@@ -80,6 +82,8 @@ world plugin {
     import entity-statuses;
     /// Provides behaviour hooks and block-entity storage for modded content.
     import modded;
+    /// Provides menus whose slots the plugin defines.
+    import menu;
 
     // --- Plugin-provided exports ---
 
@@ -116,6 +120,9 @@ world plugin {
     /// Dispatches an item hook registered with `context.register-item-hooks`. Only the
     /// `interaction` and `none` replies are meaningful.
     export handle-item-hook: func(handler-id: u32, server: server-instance, call: item-call) -> block-reply;
+
+    /// Answers a call about a menu opened with `menu.open` or `modded.open-menu`.
+    export handle-menu-call: func(handler-id: u32, menu-id: u32, player: player-instance, call: menu-call) -> menu-reply;
 
     /// Processes an incoming message from another plugin if possible, and returns (a possibly empty) response.
     export handle-ipc-message: func(sender: plugin-id, message: ipc-message) -> result<ipc-message, string>;

@@ -299,6 +299,7 @@ use crate::command::{CommandSender, client_suggestions};
 use crate::data::SaveJSONConfiguration;
 use crate::net::{ClientPlatform, GameProfile};
 use crate::net::{DisconnectReason, PlayerConfig};
+use crate::plugin::loader::wasm::wasm_host::wit::v0_1::menu::PluginMenuHandler;
 use crate::plugin::player::exp_change::PlayerExpChangeEvent;
 use crate::plugin::player::inventory_interact::InventoryClickEvent;
 use crate::plugin::player::player_change_world::PlayerChangeWorldEvent;
@@ -2751,7 +2752,8 @@ impl Player {
             let is_invalid = current_screen_handler
                 .try_lock()
                 .is_ok_and(|screen_handler| {
-                    screen_handler.as_any().is::<MerchantScreenHandler>()
+                    (screen_handler.as_any().is::<MerchantScreenHandler>()
+                        || screen_handler.as_any().is::<PluginMenuHandler>())
                         && !screen_handler.can_use(self)
                 });
 
@@ -5902,6 +5904,38 @@ impl Player {
         self.try_enqueue_packet_editioned(&java_packet, &bedrock_packet);
 
         drop(screen_handler_temp);
+        self.on_screen_handler_opened(&screen_handler);
+        *self
+            .current_screen_handler
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = screen_handler;
+        self.open_container_pos.store(None);
+    }
+
+    /// Opens a screen whose open packet `send_open` sends, for menu types the client learns about
+    /// from another packet than `COpenScreen` (Fabric's `fabric-menu-api-v1:open_screen`).
+    /// `create` builds the screen handler for the new sync id.
+    pub fn open_custom_screen(
+        &self,
+        create: impl FnOnce(u8) -> Arc<std::sync::Mutex<dyn ScreenHandler>>,
+        send_open: impl FnOnce(u8),
+    ) {
+        if !self
+            .current_screen_handler
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .as_any()
+            .is::<PlayerScreenHandler>()
+        {
+            self.close_handled_screen();
+        }
+
+        self.increment_screen_handler_sync_id();
+        let sync_id = self.screen_handler_sync_id.load(Ordering::Relaxed);
+        let screen_handler = create(sync_id);
+        send_open(sync_id);
         self.on_screen_handler_opened(&screen_handler);
         *self
             .current_screen_handler

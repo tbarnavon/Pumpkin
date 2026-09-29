@@ -9,6 +9,7 @@ interface modded {
     use %world.{%world, block-direction};
     use player.{player};
     use item-stack.{item-stack};
+    use menu.{menu-definition};
 
     /// The hooks a plugin implements for a set of blocks.
     flags block-hooks {
@@ -153,4 +154,9 @@ interface modded {
 
     /// Removes the block-entity data at `pos`.
     remove-block-entity-data: func(%world: borrow<%world>, pos: block-pos);
+
+    /// Opens a menu of a modded menu type, like Fabric's `ExtendedMenuProvider`: the client gets
+    /// `fabric-menu-api-v1:open_screen` with the type, the title and `data`, the bytes the menu
+    /// type's stream codec reads.
+    open-menu: func(player: borrow<player>, handler-id: u32, menu-type: string, data: list<u8>, menu: menu-definition) -> result<_, string>;
 }

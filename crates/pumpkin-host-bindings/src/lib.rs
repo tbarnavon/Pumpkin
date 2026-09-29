@@ -10,6 +10,8 @@ bindgen!({
         "pumpkin:plugin/datapack@0.1.0.[method]datapack-manager.execute-function": async | store | trappable,
         "pumpkin:plugin/datapack@0.1.0.[method]datapack-manager.reload": async | store | trappable,
         "pumpkin:plugin/ipc@0.1.0.send-ipc-message": async | store | trappable,
+        "pumpkin:plugin/menu@0.1.0.open": async | store | trappable,
+        "pumpkin:plugin/modded@0.1.0.open-menu": async | store | trappable,
         "pumpkin:plugin/player@0.1.0.[method]player.add-effect": async | store | trappable,
         "pumpkin:plugin/player@0.1.0.[method]player.add-experience-levels": async | store | trappable,
         "pumpkin:plugin/player@0.1.0.[method]player.add-experience-points": async | store | trappable,

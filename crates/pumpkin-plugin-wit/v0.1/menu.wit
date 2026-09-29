@@ -1,0 +1,89 @@
+package pumpkin:plugin@0.1.0;
+
+/// Menus whose slots a plugin defines, like a mod's `AbstractContainerMenu`.
+///
+/// The host runs vanilla's click, drag and sync logic over the slots. Slots of the viewer's
+/// inventory behave as usual; for the slots the plugin owns, the host calls the plugin's
+/// `handle-menu-call` export with the `handler-id` and `menu-id` the menu was opened with, and the
+/// player viewing it.
+///
+/// The plugin must not change the viewer's inventory from inside a `handle-menu-call`.
+interface menu {
+    use item-stack.{item-stack};
+    use player.{player};
+    use screens.{screen};
+    use text.{text-component};
+
+    /// A slot of a plugin menu, in the order the client lays them out.
+    variant menu-slot {
+        /// A slot of the viewer's inventory, by inventory index: 0-8 hotbar, 9-35 main.
+        player(u32),
+        /// A slot the plugin owns, by the plugin's own index, starting at 0.
+        plugin(u32),
+    }
+
+    record menu-definition {
+        /// The plugin's key for this menu, passed back in every call.
+        menu-id: u32,
+        title: text-component,
+        slots: list<menu-slot>,
+    }
+
+    /// One step of a shift-click, like vanilla's `moveItemStackTo`: merge the stack into the menu
+    /// slots `start..end`, from the end when `reverse`. With `single`, only one item moves, and the
+    /// shift-click ends when it does.
+    record quick-move-step {
+        start: u32,
+        end: u32,
+        reverse: bool,
+        single: bool,
+    }
+
+    record slot-item {
+        slot: u32,
+        item: item-stack,
+    }
+
+    record set-slot {
+        slot: u32,
+        item: option<item-stack>,
+    }
+
+    /// What the host asks about the plugin's slots. `slot` is the plugin's slot index, except in
+    /// `quick-move`, where it is the menu slot index.
+    variant menu-call {
+        /// The item in every plugin slot and whether the menu is still usable
+        /// (`AbstractContainerMenu.stillValid`). Asked once per tick while the menu is open, and
+        /// after each change.
+        contents,
+        /// `Slot.set`.
+        set-item(set-slot),
+        /// `Slot.mayPlace`.
+        may-place(slot-item),
+        /// `Slot.mayPickup`.
+        may-pickup(u32),
+        /// `Slot.getMaxStackSize(ItemStack)`.
+        max-count(slot-item),
+        /// `AbstractContainerMenu.quickMoveStack`: where the stack in a slot goes.
+        quick-move(slot-item),
+        /// The menu was closed.
+        closed,
+    }
+
+    record menu-contents {
+        items: list<option<item-stack>>,
+        valid: bool,
+    }
+
+    variant menu-reply {
+        none,
+        contents(menu-contents),
+        allowed(bool),
+        count(u32),
+        quick-move(list<quick-move-step>),
+    }
+
+    /// Opens a menu with a vanilla screen type for `player`. The slots must match the layout the
+    /// client uses for that screen type.
+    open: func(player: borrow<player>, handler-id: u32, %type: screen, menu: menu-definition) -> result<_, string>;
+}

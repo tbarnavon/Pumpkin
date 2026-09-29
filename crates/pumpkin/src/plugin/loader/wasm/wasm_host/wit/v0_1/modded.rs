@@ -6,11 +6,12 @@ use pumpkin_data::{Block, BlockDirection, BlockStateId, HorizontalFacingExt};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_nbt::tag::NbtTag;
 use pumpkin_protocol::codec::var_int::VarInt;
-use pumpkin_protocol::java::client::play::CBlockEntityData;
+use pumpkin_protocol::java::client::play::{CBlockEntityData, CCustomPayload};
+use pumpkin_protocol::ser::NetworkWriteExt;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::math::vector3::Vector3;
 use tokio::sync::Mutex;
-use wasmtime::component::Resource;
+use wasmtime::component::{Access, HasSelf, Resource};
 
 use crate::block::registry::BlockActionResult;
 use crate::block::{
@@ -27,6 +28,7 @@ use super::common::{from_wit_nbt_tree, to_wit_nbt_tree};
 use super::mob::to_wit_block_direction;
 use super::pumpkin::plugin::common::{BlockPos as WitBlockPos, Hand as WitHand, NbtTree};
 use super::pumpkin::plugin::item_stack::ItemStack as WitItemStack;
+use super::pumpkin::plugin::menu::MenuDefinition;
 use super::pumpkin::plugin::modded::{
     self as wit, BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, Interaction,
     InteractionResult, ItemCall, ItemHooks, ItemUse, ItemUseOnBlock, Placement, Removal, Tick,
@@ -780,5 +782,63 @@ impl wit::Host for PluginHostState {
         let world = self.get(&world)?.clone();
         world.remove_pending_block_entity_nbt(&from_wit_pos(pos));
         Ok(())
+    }
+}
+
+impl wit::HostWithStore<PluginHostState> for HasSelf<PluginHostState> {
+    async fn open_menu(
+        mut host: Access<'_, PluginHostState, Self>,
+        player: Resource<WitPlayer>,
+        handler_id: u32,
+        menu_type: String,
+        data: Vec<u8>,
+        menu: MenuDefinition,
+    ) -> wasmtime::Result<Result<(), String>> {
+        if pumpkin_data::dynamic::names::modded_id(
+            pumpkin_data::dynamic::names::SyncedRegistry::Menu,
+            &menu_type,
+        )
+        .is_none()
+        {
+            return Ok(Err(format!("unknown modded menu type {menu_type}")));
+        }
+        let open = match super::menu::resolve(host.get(), &player, handler_id, menu)? {
+            Ok(open) => open,
+            Err(error) => return Ok(Err(error)),
+        };
+        let plugin = open.menu.clone_plugin();
+        plugin
+            .current()
+            .store
+            .pump_blocking(&mut host, move || {
+                let player = open.player.clone();
+                player.open_custom_screen(
+                    |sync_id| open.handler(sync_id),
+                    |sync_id| {
+                        // fabric-menu-api-v1 `Networking.OpenScreenPayload.write`.
+                        let mut payload = Vec::new();
+                        let written = payload
+                            .write_string(&menu_type)
+                            .and_then(|()| payload.write_u8(sync_id))
+                            .and_then(|()| {
+                                payload.write_component(
+                                    &open.title,
+                                    &pumpkin_util::version::JavaMinecraftVersion::V_26_3,
+                                )
+                            });
+                        if let Err(error) = written {
+                            tracing::error!(%error, "Failed to write a modded menu open packet");
+                            return;
+                        }
+                        payload.extend_from_slice(&data);
+                        player.try_send_client_packet(&CCustomPayload::new(
+                            "fabric-menu-api-v1:open_screen",
+                            &payload,
+                        ));
+                    },
+                );
+            })
+            .await
+            .map(Ok)
     }
 }
