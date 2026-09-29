@@ -27,7 +27,7 @@ pub fn build() -> TokenStream {
                 #(#match_arms)*
                 _ => 0,
             };
-            BlockId::new_or_air(raw_id)
+            BlockId::from_vanilla(raw_id)
         }
     }
 }

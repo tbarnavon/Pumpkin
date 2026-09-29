@@ -497,7 +497,8 @@ impl BlockActionResult {
 const NO_BEHAVIOUR: u16 = u16::MAX;
 
 pub struct BlockRegistry {
-    block_indices: [u16; pumpkin_data::BlockId::COUNT as usize],
+    /// Indexed by raw block id; sized for vanilla plus any modded blocks registered so far.
+    block_indices: Vec<u16>,
     behaviours: Vec<Arc<dyn BlockBehaviour>>,
     fluids: FxHashMap<u16, Arc<dyn FluidBehaviour>>,
 }
@@ -505,7 +506,7 @@ pub struct BlockRegistry {
 impl Default for BlockRegistry {
     fn default() -> Self {
         Self {
-            block_indices: [NO_BEHAVIOUR; pumpkin_data::BlockId::COUNT as usize],
+            block_indices: vec![NO_BEHAVIOUR; usize::from(pumpkin_data::BlockId::count())],
             behaviours: Vec::new(),
             fluids: FxHashMap::default(),
         }
@@ -832,7 +833,11 @@ impl BlockRegistry {
             .expect("Too many block behaviours for the index table");
         self.behaviours.push(Arc::new(block));
         for i in ids {
-            self.block_indices[i.as_u16() as usize] = idx;
+            let i = usize::from(i.as_u16());
+            if i >= self.block_indices.len() {
+                self.block_indices.resize(i + 1, NO_BEHAVIOUR);
+            }
+            self.block_indices[i] = idx;
         }
     }
 
@@ -1366,7 +1371,11 @@ impl BlockRegistry {
     #[inline]
     #[must_use]
     pub fn get_pumpkin_block(&self, block: BlockId) -> Option<&Arc<dyn BlockBehaviour>> {
-        let idx = self.block_indices[block.as_u16() as usize];
+        let idx = self
+            .block_indices
+            .get(usize::from(block.as_u16()))
+            .copied()
+            .unwrap_or(NO_BEHAVIOUR);
         if idx == NO_BEHAVIOUR {
             None
         } else {

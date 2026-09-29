@@ -1,5 +1,6 @@
 use crate::{
     BlockState, BlockStateId,
+    block_properties::BlockProperties,
     tag::{RegistryKey, Tag, Taggable},
 };
 use pumpkin_util::{
@@ -116,21 +117,96 @@ impl Taggable for Block {
 
 impl ToResourceLocation for &'static Block {
     fn to_resource_location(&self) -> ResourceLocation {
-        format!("minecraft:{}", self.name)
+        self.namespaced_name().into_owned()
     }
 }
 
 impl FromResourceLocation for &'static Block {
     fn from_resource_location(resource_location: &ResourceLocation) -> Option<Self> {
-        Block::from_registry_key(
-            resource_location
-                .strip_prefix("minecraft:")
-                .unwrap_or(resource_location),
-        )
+        Block::from_name(resource_location)
     }
 }
 
 impl Block {
+    /// Get a [`Block`] from a [`BlockId`].
+    #[inline]
+    #[must_use]
+    pub fn from_id(id: BlockId) -> &'static Self {
+        match Self::from_vanilla_id(id.as_u16()) {
+            Some(block) => block,
+            None => crate::dynamic::blocks::block(id.as_u16()),
+        }
+    }
+
+    /// Get the [`Block`] a state belongs to.
+    #[inline]
+    #[must_use]
+    pub fn from_state_id(id: BlockStateId) -> &'static Self {
+        Self::from_id(BlockId::from_state_id(id))
+    }
+
+    /// Look up a block by the key Pumpkin stores for it: the bare path for vanilla blocks
+    /// (`"stone"`), the namespaced name for modded blocks (`"storagedrawers:oak_trim"`).
+    #[inline]
+    #[must_use]
+    pub fn from_registry_key(name: &str) -> Option<&'static Self> {
+        Self::from_vanilla_key(name).or_else(|| crate::dynamic::blocks::block_by_name(name))
+    }
+
+    /// Look up a block by resource location. `minecraft:` is optional for vanilla blocks.
+    #[must_use]
+    pub fn from_name(name: &str) -> Option<&'static Self> {
+        match name.split_once(':') {
+            None => Self::from_vanilla_key(name),
+            Some(("minecraft", path)) => Self::from_vanilla_key(path),
+            Some(_) => crate::dynamic::blocks::block_by_name(name),
+        }
+    }
+
+    /// The namespaced name, for example `minecraft:stone` or `storagedrawers:oak_trim`.
+    #[must_use]
+    pub fn namespaced_name(&self) -> std::borrow::Cow<'static, str> {
+        if self.name.contains(':') {
+            std::borrow::Cow::Borrowed(self.name)
+        } else {
+            std::borrow::Cow::Owned(format!("minecraft:{}", self.name))
+        }
+    }
+
+    /// Whether this is a vanilla block.
+    #[inline]
+    #[must_use]
+    pub const fn is_vanilla(&self) -> bool {
+        self.id.is_vanilla()
+    }
+
+    /// Get the properties of a state of this block, or `None` if the block has none.
+    #[track_caller]
+    #[must_use]
+    pub fn properties(&self, state_id: BlockStateId) -> Option<Box<dyn BlockProperties>> {
+        if self.is_vanilla() {
+            return self.vanilla_properties(state_id);
+        }
+        crate::dynamic::blocks::DynamicProperties::of_state(self, state_id)
+            .map(|p| Box::new(p) as Box<dyn BlockProperties>)
+    }
+
+    /// Build properties of this block from key/value pairs.
+    ///
+    /// # Panics
+    /// If the block has no properties, like the generated code always did.
+    #[track_caller]
+    #[must_use]
+    pub fn from_properties(&self, props: &[(&str, &str)]) -> Box<dyn BlockProperties> {
+        let built = if self.is_vanilla() {
+            self.vanilla_from_properties(props)
+        } else {
+            crate::dynamic::blocks::DynamicProperties::from_pairs(self, props)
+                .map(|p| Box::new(p) as Box<dyn BlockProperties>)
+        };
+        built.unwrap_or_else(|| panic!("Invalid props"))
+    }
+
     #[must_use]
     pub const fn get_speed_factor(&self) -> f32 {
         self.velocity_multiplier
@@ -320,34 +396,64 @@ impl ShapeOffsetType {
 
 impl BlockId {
     // depends on generated impl:
-    // pub(crate) const BLOCK_COUNT: u16;
+    // pub const VANILLA_COUNT: u16;
 
-    /// The total count of all registered blocks.
-    pub const COUNT: u16 = Self::BLOCK_COUNT;
+    // SAFETY-free invariant: a BlockId always refers to a registered block, vanilla or modded.
+    // Modded blocks can only be added before any modded id is handed out (see `crate::dynamic`).
 
-    // SAFETY: There must never be a BlockId where self.0 >= BlockId::BLOCK_COUNT
-
+    /// Total number of blocks, vanilla plus modded.
     #[inline]
     #[must_use]
-    pub const fn new(inner: u16) -> Option<Self> {
-        if inner < Self::BLOCK_COUNT {
-            return Some(Self(inner));
-        }
-        None
+    pub fn count() -> u16 {
+        Self::VANILLA_COUNT + crate::dynamic::blocks::block_count()
+    }
+
+    /// A vanilla block id known at compile time. Panics (at compile time in const contexts) if
+    /// `inner` is not a vanilla id.
+    #[inline]
+    #[must_use]
+    pub const fn from_vanilla(inner: u16) -> Self {
+        assert!(inner < Self::VANILLA_COUNT, "not a vanilla block id");
+        Self(inner)
+    }
+
+    #[inline]
+    pub(crate) const fn from_raw_unchecked(inner: u16) -> Self {
+        Self(inner)
     }
 
     #[inline]
     #[must_use]
-    pub const fn new_or_air(inner: u16) -> Self {
-        if inner < Self::BLOCK_COUNT {
-            return Self(inner);
-        }
-        Self::AIR
+    pub fn new(inner: u16) -> Option<Self> {
+        (inner < Self::count()).then_some(Self(inner))
     }
 
     #[inline]
     #[must_use]
-    pub const fn to_block(self) -> &'static Block {
+    pub fn new_or_air(inner: u16) -> Self {
+        Self::new(inner).unwrap_or(Self::AIR)
+    }
+
+    /// Get the [`BlockId`] of a [`BlockStateId`].
+    #[inline]
+    #[must_use]
+    pub fn from_state_id(id: BlockStateId) -> Self {
+        match Self::from_vanilla_state_id(id.as_u16()) {
+            Some(block) => block,
+            None => crate::dynamic::blocks::block_id_of_state(id.as_u16()),
+        }
+    }
+
+    /// Whether this is a vanilla block.
+    #[inline]
+    #[must_use]
+    pub const fn is_vanilla(self) -> bool {
+        self.0 < Self::VANILLA_COUNT
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn to_block(self) -> &'static Block {
         Block::from_id(self)
     }
 
@@ -361,6 +467,7 @@ impl BlockId {
     #[must_use]
     pub fn has_tag(self, tag: Tag) -> bool {
         tag.1.contains(&self.0)
+            || crate::dynamic::tags::has_extra(RegistryKey::Block, tag.2, self.0)
     }
 }
 
@@ -423,7 +530,7 @@ mod tests {
         let mut xz = 0;
         let mut xyz = 0;
 
-        for raw_id in 0..BlockId::BLOCK_COUNT {
+        for raw_id in 0..BlockId::VANILLA_COUNT {
             match Block::from_id(BlockId::new(raw_id).unwrap())
                 .shape_offset()
                 .map(|offset| offset.offset_type)

@@ -446,11 +446,12 @@ pub(crate) fn build() -> TokenStream {
 
                 if is_latest {
                     tag_entries.push(quote! {
-                        pub const #tag_const_name: Tag = (&[#(#values),*], &[#(#ids),*]);
+                        pub const #tag_const_name: Tag = (&[#(#values),*], &[#(#ids),*], #tag_name);
                     });
                     tag_map_entries.push(quote! { #tag_name => &#key_pascal::#tag_const_name });
                 } else {
-                    tag_map_entries.push(quote! { #tag_name => &(&[#(#values),*], &[#(#ids),*]) });
+                    tag_map_entries
+                        .push(quote! { #tag_name => &(&[#(#values),*], &[#(#ids),*], #tag_name) });
                 }
             }
 
@@ -513,7 +514,8 @@ pub(crate) fn build() -> TokenStream {
     quote! {
         use pumpkin_util::version::JavaMinecraftVersion;
 
-        pub type Tag = (&'static [&'static str], &'static [u16]);
+        /// A tag: its entry names, their raw ids, and the tag's own name (for example `"minecraft:mineable/axe"`).
+        pub type Tag = (&'static [&'static str], &'static [u16], &'static str);
 
         #registry_key_enum
 
@@ -530,12 +532,14 @@ pub(crate) fn build() -> TokenStream {
 
         #[must_use]
         pub fn get_tag_values(tag_category: RegistryKey, tag: &str) -> Option<&'static [&'static str]> {
-            get_latest_map(tag_category).get(tag).map(|t| t.0)
+            crate::dynamic::tags::values(tag_category, tag)
+                .or_else(|| get_latest_map(tag_category).get(tag).map(|t| t.0))
         }
 
         #[must_use]
         pub fn get_tag_ids(tag_category: RegistryKey, tag: &str) -> Option<&'static [u16]> {
-            get_latest_map(tag_category).get(tag).map(|t| t.1)
+            crate::dynamic::tags::ids(tag_category, tag)
+                .or_else(|| get_latest_map(tag_category).get(tag).map(|t| t.1))
         }
 
         #[must_use]
@@ -572,7 +576,8 @@ pub(crate) fn build() -> TokenStream {
 
             #[must_use]
             fn has_tag(&self, tag: &'static Tag) -> bool {
-                tag.1.contains(&self.registry_id())
+                let id = self.registry_id();
+                tag.1.contains(&id) || crate::dynamic::tags::has_extra(Self::tag_key(), tag.2, id)
             }
 
             #[must_use]

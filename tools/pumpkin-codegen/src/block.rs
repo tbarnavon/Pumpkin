@@ -567,7 +567,7 @@ pub struct BlockStateId(pub u16);
 impl ToTokens for BlockStateId {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let inner = self.0;
-        tokens.extend(quote! { BlockStateId::new(#inner).unwrap() });
+        tokens.extend(quote! { BlockStateId::from_vanilla(#inner) });
     }
 }
 
@@ -748,7 +748,7 @@ pub struct BlockId(pub u16);
 impl ToTokens for BlockId {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let inner = self.0;
-        tokens.extend(quote! { BlockId::new(#inner).unwrap() });
+        tokens.extend(quote! { BlockId::from_vanilla(#inner) });
     }
 }
 
@@ -1337,7 +1337,11 @@ pub fn build() -> TokenStream {
         #[inline(always)]
         #[must_use]
         pub fn has_random_ticks(id: BlockStateId) -> bool {
-            #mod_ident::#contains_ident(id.as_u16())
+            if id.is_vanilla() {
+                #mod_ident::#contains_ident(id.as_u16())
+            } else {
+                crate::dynamic::blocks::has_random_ticks(id.as_u16())
+            }
         }
 
         #[must_use]
@@ -1350,51 +1354,33 @@ pub fn build() -> TokenStream {
                 #block_state_to_bedrock_t
             ];
 
-            /// Get a [`BlockState`] from a [`BlockStateId`].
-            /// If you need access to the block use `BlockState::from_id_with_block` instead.
-            #[inline]
+            /// Get a vanilla [`BlockState`] by raw state id, or `None` for ids past the vanilla range.
+            #[inline(always)]
             #[must_use]
-            pub const fn from_id(id: BlockStateId) -> &'static Self {
-                // Safety: We always check this condition when creating a BlockStateId.
-                // the u16 field is private and immutable. BlockStateId::STATE_COUNT is a const u16.
-                // If the condition held once, it will always hold.
-                unsafe { std::hint::assert_unchecked(id.as_u16() < BlockStateId::STATE_COUNT) }
-                // This hint guarantees that bound checks can be optimized away in release builds.
-                // Due to debug_assertions forcing -Zub_checks=yes (rust-lang/rust#123499)
-                // bound checks-panics are replaced with ub-checks on profile.dev
-                // https://doc.rust-lang.org/nightly/unstable-book/compiler-flags/ub-checks.html
-
-                mappings::STATE_FROM_STATE_ID[id.as_u16() as usize]
+            pub(crate) const fn from_vanilla_id(raw: u16) -> Option<&'static Self> {
+                if raw < BlockStateId::VANILLA_COUNT {
+                    Some(mappings::STATE_FROM_STATE_ID[raw as usize])
+                } else {
+                    None
+                }
             }
 
-            #[doc = r" Get a block state from a state id and the corresponding block."]
-            #[inline]
+            /// Bedrock runtime id of a vanilla state, or `None` for ids past the vanilla range.
             #[must_use]
-            pub const fn from_id_with_block(id: BlockStateId) -> (&'static Block, &'static Self) {
-                let block = Block::from_state_id(id);
-                let state = Self::from_id(id);
-                (block, state)
-            }
-
-            #[must_use]
-            pub const fn to_be_network_id(id: BlockStateId) -> u32 {
-                // Safety: We always check this condition when creating a BlockStateId.
-                // the u16 field is private and immutable. BlockStateId::STATE_COUNT is a const u16.
-                // If the condition held once, it will always hold.
-                unsafe { std::hint::assert_unchecked(id.as_u16() < BlockStateId::STATE_COUNT) }
-                // This hint guarantees that bound checks can be optimized away in release builds.
-                // Due to debug_assertions forcing -Zub_checks=yes (rust-lang/rust#123499)
-                // bound checks-panics are replaced with ub-checks on profile.dev
-                // https://doc.rust-lang.org/nightly/unstable-book/compiler-flags/ub-checks.html
-
-                Self::STATE_ID_TO_BEDROCK[id.as_u16() as usize]
+            pub(crate) const fn vanilla_be_network_id(raw: u16) -> Option<u32> {
+                if raw < BlockStateId::VANILLA_COUNT {
+                    Some(Self::STATE_ID_TO_BEDROCK[raw as usize])
+                } else {
+                    None
+                }
             }
         }
 
         impl BlockStateId {
             pub const AIR: Self = Block::AIR.default_state.id;
 
-            pub(crate) const STATE_COUNT: u16 = mappings::STATE_FROM_STATE_ID.len() as u16;
+            /// Number of vanilla block states. Modded states are numbered from here on.
+            pub const VANILLA_COUNT: u16 = mappings::STATE_FROM_STATE_ID.len() as u16;
         }
 
         mod mappings {
@@ -1437,41 +1423,22 @@ pub fn build() -> TokenStream {
                 }
             }
 
-            #[doc = r" Try to parse a block from a resource location string."]
+            /// Look up a vanilla block by its bare path (`"stone"`).
             #[inline]
             #[must_use]
-            pub fn from_registry_key(name: &str) -> Option<&'static Self> {
-                mappings::BLOCK_FROM_NAME_MAP.get(name)
+            pub(crate) fn from_vanilla_key(path: &str) -> Option<&'static Self> {
+                mappings::BLOCK_FROM_NAME_MAP.get(path)
             }
 
-            #[doc = r" Try to get a block from a namespace prefixed name."]
+            /// Get a vanilla [`Block`] by raw id, or `None` for ids past the vanilla range.
+            #[inline(always)]
             #[must_use]
-            pub fn from_name(name: &str) -> Option<&'static Self> {
-                let key = name.strip_prefix("minecraft:").unwrap_or(name);
-                mappings::BLOCK_FROM_NAME_MAP.get(key)
-            }
-
-            /// Get a [`Block`] from a [`BlockId`]
-            #[inline]
-            #[must_use]
-            pub const fn from_id(id: BlockId) -> &'static Self {
-                // Safety: We always check this condition when creating a BlockId.
-                // the u16 field is private and immutable. BlockId::BLOCK_COUNT is a const u16.
-                // If the condition held once, it will always hold.
-                unsafe { std::hint::assert_unchecked(id.as_u16() < BlockId::BLOCK_COUNT) }
-                // This hint guarantees that bound checks can be optimized away in release builds.
-                // Due to debug_assertions forcing -Zub_checks=yes (rust-lang/rust#123499)
-                // bound checks-panics are replaced with ub-checks on profile.dev
-                // https://doc.rust-lang.org/nightly/unstable-book/compiler-flags/ub-checks.html
-
-                mappings::TYPE_FROM_RAW_ID[id.as_u16() as usize]
-            }
-
-            /// Get a [`Block`] from a state id
-            #[inline]
-            #[must_use]
-            pub const fn from_state_id(id: BlockStateId) -> &'static Self {
-                Self::from_id(BlockId::from_state_id(id))
+            pub(crate) const fn from_vanilla_id(raw: u16) -> Option<&'static Self> {
+                if raw < BlockId::VANILLA_COUNT {
+                    Some(mappings::TYPE_FROM_RAW_ID[raw as usize])
+                } else {
+                    None
+                }
             }
 
             #[doc = r" Try to parse a block from an item id."]
@@ -1484,44 +1451,40 @@ pub fn build() -> TokenStream {
                 }
             }
 
+            /// Properties of a vanilla block, or `None` if it has none or is not vanilla.
             #[track_caller]
-            #[doc = r" Get the properties of the block."]
-            pub fn properties(&self, state_id: BlockStateId) -> Option<Box<dyn BlockProperties>> {
+            pub(crate) fn vanilla_properties(&self, state_id: BlockStateId) -> Option<Box<dyn BlockProperties>> {
                 Some(match self.id {
                     #(#block_properties_from_state_and_block_id_arms)*
                     _ => return None,
                 })
             }
 
+            /// Properties of a vanilla block built from key/value pairs, or `None` if it is not vanilla.
             #[track_caller]
-            #[doc = r" Get the properties of the block."]
-            pub fn from_properties(&self, props: &[(&str, &str)]) -> Box<dyn BlockProperties> {
-                match self.id {
+            pub(crate) fn vanilla_from_properties(&self, props: &[(&str, &str)]) -> Option<Box<dyn BlockProperties>> {
+                Some(match self.id {
                     #(#block_properties_from_props_and_name_arms)*
-                    _ => panic!("Invalid props")
-                }
+                    _ => return None,
+                })
             }
         }
 
         impl BlockId {
             #(#block_id_constants)*
 
-            pub(crate) const BLOCK_COUNT: u16 = mappings::TYPE_FROM_RAW_ID.len() as u16;
+            /// Number of vanilla blocks. Modded blocks are numbered from here on.
+            pub const VANILLA_COUNT: u16 = mappings::TYPE_FROM_RAW_ID.len() as u16;
 
-            /// Get a [`BlockId`] from a [`BlockStateId`]
-            #[inline]
+            /// Get the [`BlockId`] of a vanilla state, or `None` for ids past the vanilla range.
+            #[inline(always)]
             #[must_use]
-            pub const fn from_state_id(id: BlockStateId) -> BlockId {
-                // Safety: We always check this condition when creating a BlockStateId.
-                // the u16 field is private and immutable. BlockStateId::STATE_COUNT is a const u16.
-                // If the condition held once, it will always hold.
-                unsafe { std::hint::assert_unchecked(id.as_u16() < BlockStateId::STATE_COUNT) }
-                // This hint guarantees that bound checks can be optimized away in release builds.
-                // Due to debug_assertions forcing -Zub_checks=yes (rust-lang/rust#123499)
-                // bound checks-panics are replaced with ub-checks on profile.dev
-                // https://doc.rust-lang.org/nightly/unstable-book/compiler-flags/ub-checks.html
-
-                mappings::BLOCK_ID_FROM_STATE_ID[id.as_u16() as usize]
+            pub(crate) const fn from_vanilla_state_id(raw: u16) -> Option<BlockId> {
+                if raw < BlockStateId::VANILLA_COUNT {
+                    Some(mappings::BLOCK_ID_FROM_STATE_ID[raw as usize])
+                } else {
+                    None
+                }
             }
         }
 

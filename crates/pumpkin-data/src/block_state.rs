@@ -1,6 +1,6 @@
 use pumpkin_util::math::{boundingbox::BoundingBox, position::BlockPos, vector3::Vector3};
 
-use crate::block_properties::{COLLISION_SHAPES, NoteblockInstrument};
+use crate::block_properties::NoteblockInstrument;
 use crate::{Block, BlockDirection, BlockId};
 
 /// Represents a specific state of a block, including its properties and physical behaviors.
@@ -72,6 +72,33 @@ impl PartialEq for BlockState {
 impl Eq for BlockState {}
 
 impl BlockState {
+    /// Get a [`BlockState`] from a [`BlockStateId`].
+    /// If you need access to the block use `BlockState::from_id_with_block` instead.
+    #[inline]
+    #[must_use]
+    pub fn from_id(id: BlockStateId) -> &'static Self {
+        match Self::from_vanilla_id(id.as_u16()) {
+            Some(state) => state,
+            None => crate::dynamic::blocks::state(id.as_u16()),
+        }
+    }
+
+    /// Get a block state from a state id and the corresponding block.
+    #[inline]
+    #[must_use]
+    pub fn from_id_with_block(id: BlockStateId) -> (&'static Block, &'static Self) {
+        (Block::from_state_id(id), Self::from_id(id))
+    }
+
+    /// Bedrock runtime id of a state. Modded states have no Bedrock equivalent and map to air.
+    #[must_use]
+    pub fn to_be_network_id(id: BlockStateId) -> u32 {
+        match Self::vanilla_be_network_id(id.as_u16()) {
+            Some(be_id) => be_id,
+            None => Self::vanilla_be_network_id(BlockStateId::AIR.as_u16()).unwrap_or(0),
+        }
+    }
+
     #[must_use]
     pub const fn is_air(&self) -> bool {
         self.state_flags & IS_AIR != 0
@@ -187,7 +214,7 @@ impl BlockState {
     pub fn get_block_collision_shapes(&self) -> impl Iterator<Item = BoundingBox> + '_ {
         self.collision_shapes
             .iter()
-            .map(|&id| COLLISION_SHAPES[id as usize])
+            .map(|&id| crate::dynamic::blocks::shape(id))
     }
 
     /// Returns block-local collision shapes with vanilla's coordinate-derived offset applied.
@@ -204,7 +231,7 @@ impl BlockState {
         let base_shapes = self
             .outline_shapes
             .iter()
-            .map(|&id| COLLISION_SHAPES[id as usize]);
+            .map(|&id| crate::dynamic::blocks::shape(id));
 
         let water_shape = self
             .is_waterlogged()
@@ -222,7 +249,7 @@ impl BlockState {
         let base_shapes = self
             .outline_shapes
             .iter()
-            .map(move |&id| COLLISION_SHAPES[id as usize].shift(offset));
+            .map(move |&id| crate::dynamic::blocks::shape(id).shift(offset));
 
         let water_shape = self
             .is_waterlogged()
@@ -244,29 +271,48 @@ impl BlockState {
 
 impl BlockStateId {
     // depends on generated impl:
-    // pub(crate) const STATE_COUNT: u16;
+    // pub const VANILLA_COUNT: u16;
 
-    /// The total count of all registered block states.
-    pub const COUNT: u16 = Self::STATE_COUNT;
+    // Invariant: a BlockStateId always refers to a registered state, vanilla or modded.
 
-    // SAFETY: There must never be a BlockStateId where self.0 >= BlockStateId::STATE_COUNT
-
+    /// Total number of block states, vanilla plus modded.
     #[inline]
     #[must_use]
-    pub const fn new(inner: u16) -> Option<Self> {
-        if inner < Self::STATE_COUNT {
-            return Some(Self(inner));
-        }
-        None
+    pub fn count() -> u16 {
+        Self::VANILLA_COUNT + crate::dynamic::blocks::state_count()
+    }
+
+    /// A vanilla state id known at compile time. Panics (at compile time in const contexts) if
+    /// `inner` is not a vanilla id.
+    #[inline]
+    #[must_use]
+    pub const fn from_vanilla(inner: u16) -> Self {
+        assert!(inner < Self::VANILLA_COUNT, "not a vanilla block state id");
+        Self(inner)
+    }
+
+    #[inline]
+    pub(crate) const fn from_raw_unchecked(inner: u16) -> Self {
+        Self(inner)
     }
 
     #[inline]
     #[must_use]
-    pub const fn new_or_air(inner: u16) -> Self {
-        if inner < Self::STATE_COUNT {
-            return Self(inner);
-        }
-        Self::AIR
+    pub fn new(inner: u16) -> Option<Self> {
+        (inner < Self::count()).then_some(Self(inner))
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn new_or_air(inner: u16) -> Self {
+        Self::new(inner).unwrap_or(Self::AIR)
+    }
+
+    /// Whether this is a vanilla state.
+    #[inline]
+    #[must_use]
+    pub const fn is_vanilla(self) -> bool {
+        self.0 < Self::VANILLA_COUNT
     }
 
     #[inline(always)]
@@ -277,37 +323,37 @@ impl BlockStateId {
 
     #[inline]
     #[must_use]
-    pub const fn to_state(self) -> &'static BlockState {
+    pub fn to_state(self) -> &'static BlockState {
         BlockState::from_id(self)
     }
 
     #[inline]
     #[must_use]
-    pub const fn to_block_id(self) -> BlockId {
+    pub fn to_block_id(self) -> BlockId {
         BlockId::from_state_id(self)
     }
 
     #[inline]
     #[must_use]
-    pub const fn to_block(self) -> &'static Block {
+    pub fn to_block(self) -> &'static Block {
         Block::from_state_id(self)
     }
 
     #[inline]
     #[must_use]
-    pub const fn is_solid_render(self) -> bool {
+    pub fn is_solid_render(self) -> bool {
         self.to_state().is_solid_render()
     }
 
     #[inline]
     #[must_use]
-    pub const fn can_occlude(self) -> bool {
+    pub fn can_occlude(self) -> bool {
         self.to_state().can_occlude()
     }
 
     #[inline]
     #[must_use]
-    pub const fn has_analog_output_signal(self) -> bool {
+    pub fn has_analog_output_signal(self) -> bool {
         self.to_state().has_analog_output_signal()
     }
 

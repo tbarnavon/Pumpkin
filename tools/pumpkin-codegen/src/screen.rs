@@ -17,5 +17,10 @@ pub fn build() -> TokenStream {
         pub enum WindowType {
             #variants
         }
+
+        impl WindowType {
+            /// Vanilla `minecraft:menu` registry paths, indexed by raw id.
+            pub const VANILLA_NAMES: &[&str] = &[#(#screens),*];
+        }
     }
 }
