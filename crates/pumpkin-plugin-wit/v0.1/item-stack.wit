@@ -104,8 +104,8 @@ interface item-stack {
         /// A data component in its saved (NBT) form, looked up by id (for example
         /// `minecraft:block_entity_data`), from the stack's changes or the item's defaults.
         get-component-by-id: func(component: string) -> option<nbt-tree>;
-        /// Sets a data component from its saved (NBT) form. Fails for component types the server
-        /// does not know or values it cannot read.
+        /// Sets a data component from its saved (NBT) form. Modded component types are stored as
+        /// given. Fails for unregistered component types or values the server cannot read.
         set-component-by-id: func(component: string, value: nbt-tree) -> result<_, string>;
         /// Removes a data component, by id, from the stack's changes.
         remove-component-by-id: func(component: string);

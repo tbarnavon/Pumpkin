@@ -7,6 +7,7 @@ use pumpkin_data::data_component_impl::{
 };
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
+use pumpkin_nbt::serializer::NbtWriteHelperJava;
 use pumpkin_nbt::tag::NbtTag;
 use pumpkin_util::text::TextComponent;
 use pumpkin_util::version::JavaMinecraftVersion;
@@ -27,8 +28,75 @@ fn item_component_counts(stack: &ItemStack) -> (u8, u8) {
             to_add += 1;
         }
     }
+    for (_, data) in &stack.unknown_patch {
+        if data.is_none() {
+            to_remove += 1;
+        } else {
+            to_add += 1;
+        }
+    }
 
     (to_add, to_remove)
+}
+
+/// Writes the added unknown (modded) components: raw id, then the value as a network NBT tag,
+/// which is vanilla's default stream codec for a component (`ByteBufCodecs.fromCodecWithRegistries`).
+fn write_unknown_added(
+    stack: &ItemStack,
+    length_prefixed: bool,
+    write: &mut impl NetworkWriteExt,
+) -> Result<(), WritingError> {
+    for (id, data) in &stack.unknown_patch {
+        if let Some(data) = data {
+            write.put_var_int(&VarInt(i32::from(*id)))?;
+            let mut bytes = Vec::new();
+            data.clone()
+                .serialize(&mut NbtWriteHelperJava::new(&mut bytes))
+                .map_err(|e| WritingError::Message(e.to_string()))?;
+            if length_prefixed {
+                write.put_var_int(&VarInt::from(bytes.len() as i32))?;
+            }
+            write.write_slice(&bytes)?;
+        }
+    }
+    Ok(())
+}
+
+fn write_unknown_removed(
+    stack: &ItemStack,
+    write: &mut impl NetworkWriteExt,
+) -> Result<(), WritingError> {
+    for (id, data) in &stack.unknown_patch {
+        if data.is_none() {
+            write.put_var_int(&VarInt(i32::from(*id)))?;
+        }
+    }
+    Ok(())
+}
+
+/// A component type id read from the network: one Pumpkin implements, or a modded one.
+enum ComponentId {
+    Known(DataComponent),
+    Unknown(u16),
+}
+
+fn read_any_component_id(read: &mut impl NetworkReadExt) -> Result<ComponentId, ReadingError> {
+    let id_val = read.get_var_int()?.0;
+    let raw = u16::try_from(id_val)
+        .map_err(|_| ReadingError::Message(format!("Invalid component ID: {id_val}")))?;
+    if pumpkin_data::item_stack::unknown_component_name(raw).is_some() {
+        return Ok(ComponentId::Unknown(raw));
+    }
+    u8::try_from(raw)
+        .ok()
+        .and_then(DataComponent::try_from_id)
+        .map(ComponentId::Known)
+        .ok_or_else(|| ReadingError::Message(format!("Unknown component ID: {id_val}")))
+}
+
+fn read_unknown_value(read: &mut impl NetworkReadExt) -> Result<NbtTag, ReadingError> {
+    read.get_nbt_with_version(&JavaMinecraftVersion::V_26_3)?
+        .ok_or_else(|| ReadingError::Message("Missing component value".into()))
 }
 
 fn serialize_item_stack_with_id(
@@ -53,12 +121,14 @@ fn serialize_item_stack_with_id(
                     serialize(*id, data.as_ref(), write)?;
                 }
             }
+            write_unknown_added(stack, false, write)?;
 
             for (id, data) in &stack.patch {
                 if data.is_none() {
                     write.put_var_int(&VarInt(i32::from(id.to_id())))?;
                 }
             }
+            write_unknown_removed(stack, write)?;
 
             Ok(())
         }
@@ -121,12 +191,14 @@ fn serialize_length_prefixed_item_stack_with_id(
                     write.write_slice(&comp_buf)?;
                 }
             }
+            write_unknown_added(stack, true, write)?;
 
             for (id, data) in &stack.patch {
                 if data.is_none() {
                     write.put_var_int(&VarInt(i32::from(id.to_id())))?;
                 }
             }
+            write_unknown_removed(stack, write)?;
 
             Ok(())
         }
@@ -159,15 +231,6 @@ fn serialize_item_cost_with_id(
         }
     }
     Ok(())
-}
-
-fn read_component_id(read: &mut impl NetworkReadExt) -> Result<DataComponent, ReadingError> {
-    let id_val = read.get_var_int()?.0;
-    let id_u8 = id_val
-        .try_into()
-        .map_err(|_| ReadingError::Message(format!("Invalid component ID: {id_val}")))?;
-    DataComponent::try_from_id(id_u8)
-        .ok_or_else(|| ReadingError::Message(format!("Unknown component ID: {id_val}")))
 }
 
 fn decode_custom_name(component_data: &[u8]) -> Result<Box<dyn DataComponentImpl>, ReadingError> {
@@ -226,10 +289,36 @@ fn decode_component(
     }
 }
 
+enum LengthPrefixedComponent {
+    Known(DataComponent, Box<dyn DataComponentImpl>),
+    Unknown(u16, NbtTag),
+}
+
 fn read_length_prefixed_component(
     read: &mut impl NetworkReadExt,
-) -> Result<(DataComponent, Box<dyn DataComponentImpl>), ReadingError> {
-    let id = read_component_id(read)?;
+) -> Result<LengthPrefixedComponent, ReadingError> {
+    let id = match read_any_component_id(read)? {
+        ComponentId::Known(id) => id,
+        ComponentId::Unknown(id) => {
+            let byte_len = read.get_var_int()?.0;
+            let byte_len: usize = byte_len
+                .try_into()
+                .map_err(|_| ReadingError::Message("Negative component data length".into()))?;
+            if byte_len > crate::MAX_PACKET_DATA_SIZE {
+                return Err(ReadingError::TooLarge("Component data too large".into()));
+            }
+            let mut data = vec![0u8; byte_len];
+            read.read_bytes_to_buf(&mut data)?;
+            let mut cursor = Cursor::new(data.as_slice());
+            let tag = NbtTag::deserialize(&mut pumpkin_nbt::deserializer::NbtReadHelperJava::new(
+                &mut cursor,
+            ))
+            .map_err(|err| {
+                ReadingError::Message(format!("Failed to decode component NBT: {err}"))
+            })?;
+            return Ok(LengthPrefixedComponent::Unknown(id, tag));
+        }
+    };
     let byte_len = read.get_var_int()?.0;
     let byte_len: usize = byte_len
         .try_into()
@@ -249,7 +338,7 @@ fn read_length_prefixed_component(
         decode_component(id, &component_data)?
     };
 
-    Ok((id, component_impl))
+    Ok(LengthPrefixedComponent::Known(id, component_impl))
 }
 
 impl ItemStackSerializer<'_> {
@@ -283,10 +372,16 @@ impl ItemStackSerializer<'_> {
 
         let mut patch = Vec::with_capacity((num_to_add + num_to_remove) as usize);
 
+        let mut unknown_patch = Vec::new();
+
         for _ in 0..num_to_add {
-            let id_val = read.get_var_int()?.0;
-            let id = DataComponent::try_from_id(id_val as u8)
-                .ok_or_else(|| ReadingError::Message(format!("Unknown component ID: {id_val}")))?;
+            let id = match read_any_component_id(read)? {
+                ComponentId::Known(id) => id,
+                ComponentId::Unknown(id) => {
+                    unknown_patch.push((id, Some(read_unknown_value(read)?)));
+                    continue;
+                }
+            };
 
             let component_impl = if id == DataComponent::CustomData {
                 CustomDataImpl::deserialize(read)?.to_dyn()
@@ -297,10 +392,10 @@ impl ItemStackSerializer<'_> {
         }
 
         for _ in 0..num_to_remove {
-            let id_val = read.get_var_int()?.0;
-            let id = DataComponent::try_from_id(id_val as u8)
-                .ok_or_else(|| ReadingError::Message("Unknown component ID".into()))?;
-            patch.push((id, None));
+            match read_any_component_id(read)? {
+                ComponentId::Known(id) => patch.push((id, None)),
+                ComponentId::Unknown(id) => unknown_patch.push((id, None)),
+            }
         }
 
         let item_id_u16: u16 = item_id
@@ -308,13 +403,13 @@ impl ItemStackSerializer<'_> {
             .try_into()
             .map_err(|_| ReadingError::Message("Invalid item id!".into()))?;
 
-        Ok(ItemStackSerializer(Cow::Owned(
-            ItemStack::new_with_component(
-                item_count.0 as u8,
-                Item::from_id(item_id_u16).unwrap_or(&Item::AIR),
-                patch,
-            ),
-        )))
+        let mut stack = ItemStack::new_with_component(
+            item_count.0 as u8,
+            Item::from_id(item_id_u16).unwrap_or(&Item::AIR),
+            patch,
+        );
+        stack.unknown_patch = unknown_patch;
+        Ok(ItemStackSerializer(Cow::Owned(stack)))
     }
 
     pub fn read_with_version(
@@ -440,10 +535,16 @@ impl ItemStackSerializer<'_> {
 
         let mut patch = Vec::with_capacity(total_components as usize);
 
+        let mut unknown_patch = Vec::new();
+
         for _ in 0..num_to_add {
-            let id_val = read.get_var_int()?.0;
-            let id = DataComponent::try_from_id(id_val as u8)
-                .ok_or_else(|| ReadingError::Message(format!("Unknown component ID: {id_val}")))?;
+            let id = match read_any_component_id(read)? {
+                ComponentId::Known(id) => id,
+                ComponentId::Unknown(id) => {
+                    unknown_patch.push((id, Some(read_unknown_value(read)?)));
+                    continue;
+                }
+            };
 
             let component_impl = if id == DataComponent::CustomData {
                 CustomDataImpl::deserialize(read)?.to_dyn()
@@ -454,10 +555,10 @@ impl ItemStackSerializer<'_> {
         }
 
         for _ in 0..num_to_remove {
-            let id_val = read.get_var_int()?.0;
-            let id = DataComponent::try_from_id(id_val as u8)
-                .ok_or_else(|| ReadingError::Message("Unknown component ID".into()))?;
-            patch.push((id, None));
+            match read_any_component_id(read)? {
+                ComponentId::Known(id) => patch.push((id, None)),
+                ComponentId::Unknown(id) => unknown_patch.push((id, None)),
+            }
         }
 
         let item_count_u8: u8 = item_count
@@ -465,7 +566,8 @@ impl ItemStackSerializer<'_> {
             .try_into()
             .map_err(|_| ReadingError::Message("Invalid item count!".into()))?;
 
-        let stack = ItemStack::new_with_component(item_count_u8, item, patch);
+        let mut stack = ItemStack::new_with_component(item_count_u8, item, patch);
+        stack.unknown_patch = unknown_patch;
         if stack.is_empty() {
             return Err(ReadingError::Message(
                 "Can't read empty item stack template".into(),
@@ -513,13 +615,24 @@ impl ItemStackSerializer<'_> {
 
         let mut patch = Vec::with_capacity(total_components as usize);
 
+        let mut unknown_patch = Vec::new();
+
         for _ in 0..num_to_add {
-            let (id, component_impl) = read_length_prefixed_component(read)?;
-            patch.push((id, Some(component_impl)));
+            match read_length_prefixed_component(read)? {
+                LengthPrefixedComponent::Known(id, component_impl) => {
+                    patch.push((id, Some(component_impl)));
+                }
+                LengthPrefixedComponent::Unknown(id, value) => {
+                    unknown_patch.push((id, Some(value)));
+                }
+            }
         }
 
         for _ in 0..num_to_remove {
-            patch.push((read_component_id(read)?, None));
+            match read_any_component_id(read)? {
+                ComponentId::Known(id) => patch.push((id, None)),
+                ComponentId::Unknown(id) => unknown_patch.push((id, None)),
+            }
         }
 
         let item_id_u16 = item_id
@@ -527,13 +640,13 @@ impl ItemStackSerializer<'_> {
             .try_into()
             .map_err(|_| ReadingError::Message("Invalid item id!".into()))?;
 
-        Ok(ItemStackSerializer(Cow::Owned(
-            ItemStack::new_with_component(
-                item_count_u8,
-                Item::from_id(item_id_u16).unwrap_or(&Item::AIR),
-                patch,
-            ),
-        )))
+        let mut stack = ItemStack::new_with_component(
+            item_count_u8,
+            Item::from_id(item_id_u16).unwrap_or(&Item::AIR),
+            patch,
+        );
+        stack.unknown_patch = unknown_patch;
+        Ok(ItemStackSerializer(Cow::Owned(stack)))
     }
 
     pub fn write_with_version(
@@ -626,12 +739,14 @@ impl ItemStackSerializer<'_> {
                 serialize(*id, data.as_ref(), write)?;
             }
         }
+        write_unknown_added(self.0.as_ref(), false, write)?;
 
         for (id, data) in &self.0.patch {
             if data.is_none() {
                 write.put_var_int(&VarInt(i32::from(id.to_id())))?;
             }
         }
+        write_unknown_removed(self.0.as_ref(), write)?;
 
         Ok(())
     }

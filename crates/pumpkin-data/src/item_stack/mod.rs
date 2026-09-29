@@ -40,6 +40,9 @@ pub struct ItemStack {
     pub item_count: u8,
     pub item: &'static Item,
     pub patch: Vec<(DataComponent, Option<Box<dyn DataComponentImpl>>)>,
+    /// Changes to component types Pumpkin has no implementation of (modded ones), by raw id in
+    /// `minecraft:data_component_type`, kept as their saved NBT. `None` removes the component.
+    pub unknown_patch: Vec<(u16, Option<NbtTag>)>,
 
     // unique ID for Bedrock network; don't serialize
     // Should always be a positive value for non-empty stacks
@@ -104,6 +107,7 @@ impl ItemStack {
             item_count,
             item,
             patch: Vec::new(),
+            unknown_patch: Vec::new(),
 
             uid: ITEM_STACK_ID_GEN.next_id(),
         }
@@ -119,6 +123,7 @@ impl ItemStack {
             item_count,
             item,
             patch: component,
+            unknown_patch: Vec::new(),
 
             uid: ITEM_STACK_ID_GEN.next_id(),
         }
@@ -133,6 +138,7 @@ impl ItemStack {
             item_count,
             item,
             patch: Vec::new(),
+            unknown_patch: Vec::new(),
 
             uid: match NonZero::new(1) {
                 Some(v) => v,
@@ -265,6 +271,7 @@ impl ItemStack {
         item_count: 0,
         item: &Item::AIR,
         patch: Vec::new(),
+        unknown_patch: Vec::new(),
 
         uid: NonZero::<i32>::MIN, // white lie - Bedrock `uid` is never sent if the stack is empty
     };
@@ -708,7 +715,13 @@ impl ItemStack {
             return false;
         }
 
-        if self.patch.len() != other.patch.len() {
+        if self.patch.len() != other.patch.len()
+            || self.unknown_patch.len() != other.unknown_patch.len()
+            || !self
+                .unknown_patch
+                .iter()
+                .all(|entry| other.unknown_patch.contains(entry))
+        {
             return false;
         }
 
@@ -816,6 +829,15 @@ impl ItemStack {
                 tag.put(name.as_str(), NbtCompound::new());
             }
         }
+        for (id, data) in &self.unknown_patch {
+            let Some(name) = unknown_component_name(*id) else {
+                continue;
+            };
+            match data {
+                Some(data) => tag.put(name, data.clone()),
+                None => tag.put(&format!("!{name}"), NbtCompound::new()),
+            }
+        }
 
         // Store custom data like enchantments, display name, etc. would go here
         compound.put_compound("components", tag);
@@ -846,17 +868,39 @@ impl ItemStack {
                 if let Some(name) = name.strip_prefix("!") {
                     if let Some(id) = DataComponent::try_from_name(name) {
                         item_stack.patch.push((id, None));
+                    } else if let Some(id) = unknown_component_id(name) {
+                        item_stack.unknown_patch.push((id, None));
                     }
-                } else if let Some(id) = DataComponent::try_from_name(name)
-                    && let Some(data) = read_data(id, data)
-                {
-                    item_stack.patch.push((id, Some(data)));
+                } else if let Some(id) = DataComponent::try_from_name(name) {
+                    if let Some(data) = read_data(id, data) {
+                        item_stack.patch.push((id, Some(data)));
+                    }
+                } else if let Some(id) = unknown_component_id(name) {
+                    item_stack.unknown_patch.push((id, Some(data.clone())));
                 }
             }
         }
 
         Some(item_stack)
     }
+}
+
+/// Raw id of a modded data component type, by name.
+#[must_use]
+pub fn unknown_component_id(name: &str) -> Option<u16> {
+    crate::dynamic::names::modded_id(
+        crate::dynamic::names::SyncedRegistry::DataComponentType,
+        name,
+    )
+}
+
+/// Name of a modded data component type, by raw id.
+#[must_use]
+pub fn unknown_component_name(raw_id: u16) -> Option<&'static str> {
+    crate::dynamic::names::modded_name(
+        crate::dynamic::names::SyncedRegistry::DataComponentType,
+        raw_id,
+    )
 }
 
 impl From<&RecipeResultStruct> for ItemStack {

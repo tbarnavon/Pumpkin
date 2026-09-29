@@ -689,7 +689,17 @@ impl HostItemStack for PluginHostState {
         component: String,
     ) -> wasmtime::Result<Option<WitNbtTree>> {
         let Some(id) = DataComponent::try_from_name(&component) else {
-            return Ok(None);
+            let Some(id) = pumpkin_data::item_stack::unknown_component_id(&component) else {
+                return Ok(None);
+            };
+            let stack = self.get(&res)?;
+            let stack = stack.lock().await;
+            return Ok(stack
+                .unknown_patch
+                .iter()
+                .find(|(pid, _)| *pid == id)
+                .and_then(|(_, value)| value.clone())
+                .map(to_wit_nbt_tree));
         };
         let stack = self.get(&res)?;
         let stack = stack.lock().await;
@@ -711,12 +721,22 @@ impl HostItemStack for PluginHostState {
         component: String,
         value: WitNbtTree,
     ) -> wasmtime::Result<Result<(), String>> {
-        let Some(id) = DataComponent::try_from_name(&component) else {
-            return Ok(Err(format!("unknown item component {component}")));
-        };
         let tag = match from_wit_nbt_tree(&value) {
             Ok(tag) => tag,
             Err(error) => return Ok(Err(error)),
+        };
+        let Some(id) = DataComponent::try_from_name(&component) else {
+            // Modded component types are kept as their saved NBT.
+            let Some(id) = pumpkin_data::item_stack::unknown_component_id(&component) else {
+                return Ok(Err(format!("unknown item component {component}")));
+            };
+            let stack = self.get(&res)?;
+            let mut stack = stack.lock().await;
+            match stack.unknown_patch.iter_mut().find(|(pid, _)| *pid == id) {
+                Some((_, slot)) => *slot = Some(tag),
+                None => stack.unknown_patch.push((id, Some(tag))),
+            }
+            return Ok(Ok(()));
         };
         let Some(data) = pumpkin_data::data_component_impl::read_data(id, &tag) else {
             return Ok(Err(format!(
@@ -740,6 +760,13 @@ impl HostItemStack for PluginHostState {
         if let Some(id) = DataComponent::try_from_name(&component) {
             let stack = self.get(&res)?;
             stack.lock().await.patch.retain(|(pid, _)| *pid != id);
+        } else if let Some(id) = pumpkin_data::item_stack::unknown_component_id(&component) {
+            let stack = self.get(&res)?;
+            stack
+                .lock()
+                .await
+                .unknown_patch
+                .retain(|(pid, _)| *pid != id);
         }
         Ok(())
     }
