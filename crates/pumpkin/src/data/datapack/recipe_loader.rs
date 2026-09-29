@@ -37,7 +37,11 @@ fn normalize_id(id: &str) -> String {
 
 fn parse_ingredient(value: &Value) -> Option<OwnedRecipeIngredient> {
     match value {
-        Value::String(s) => Some(OwnedRecipeIngredient::Simple(normalize_id(s))),
+        // Since 1.21.2 a tag ingredient is written as a "#namespace:path" string.
+        Value::String(s) => Some(match s.strip_prefix('#') {
+            Some(tag) => OwnedRecipeIngredient::Tagged(normalize_id(tag)),
+            None => OwnedRecipeIngredient::Simple(normalize_id(s)),
+        }),
         Value::Object(map) => map
             .get("tag")
             .and_then(Value::as_str)
@@ -263,6 +267,26 @@ mod tests {
         } else {
             panic!("Expected shaped recipe");
         }
+    }
+
+    #[test]
+    fn parse_tag_ingredient_string() {
+        let json = r##"{
+            "type": "minecraft:crafting_shaped",
+            "pattern": ["X"],
+            "key": { "X": "#minecraft:planks" },
+            "result": { "id": "minecraft:stick" }
+        }"##;
+
+        let Some(DynamicRecipe::Crafting(OwnedCraftingRecipe::Shaped { key, .. })) =
+            parse_recipe("test", "stick", json)
+        else {
+            panic!("Expected shaped recipe");
+        };
+        assert!(matches!(
+            &key[0].1,
+            OwnedRecipeIngredient::Tagged(tag) if tag == "minecraft:planks"
+        ));
     }
 
     #[test]
