@@ -403,6 +403,14 @@ impl wit::Guest for Component {
         crate::modded::dispatch(handler_id, server, call)
     }
 
+    fn handle_item_hook(
+        handler_id: u32,
+        server: Server,
+        call: wit::pumpkin::plugin::modded::ItemCall,
+    ) -> wit::pumpkin::plugin::modded::BlockReply {
+        crate::modded::dispatch_item(handler_id, server, call)
+    }
+
     fn handle_ipc_message(
         sender: wit::PluginId,
         message: wit::IpcMessage,

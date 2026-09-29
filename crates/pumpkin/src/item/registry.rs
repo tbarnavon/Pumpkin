@@ -18,9 +18,22 @@ pub(crate) const fn should_try_block_placement(result: &BlockActionResult) -> bo
     matches!(result, BlockActionResult::Pass)
 }
 
-#[derive(Default)]
 pub struct ItemRegistry {
     items: FxHashMap<u16, Arc<dyn ItemBehaviour>>,
+    /// Behaviour plugins install at runtime for modded items, indexed by raw item id. Set once
+    /// per item, which is what lets `get_pumpkin_item` hand out plain references.
+    plugin_items: Box<[std::sync::OnceLock<Arc<dyn ItemBehaviour>>]>,
+}
+
+impl Default for ItemRegistry {
+    fn default() -> Self {
+        Self {
+            items: FxHashMap::default(),
+            plugin_items: (0..Item::count())
+                .map(|_| std::sync::OnceLock::new())
+                .collect(),
+        }
+    }
 }
 
 impl ItemRegistry {
@@ -161,7 +174,28 @@ impl ItemRegistry {
 
     #[must_use]
     pub fn get_pumpkin_item(&self, item: u16) -> Option<&Arc<dyn ItemBehaviour>> {
-        self.items.get(&item)
+        self.items.get(&item).or_else(|| {
+            self.plugin_items
+                .get(usize::from(item))
+                .and_then(std::sync::OnceLock::get)
+        })
+    }
+
+    /// Installs a plugin's behaviour for a modded item. Each item can get one behaviour, and
+    /// only items without a native one.
+    pub fn register_plugin_item(
+        &self,
+        item: &'static Item,
+        behaviour: Arc<dyn ItemBehaviour>,
+    ) -> Result<(), String> {
+        if item.is_vanilla() {
+            return Err(format!("{} is a vanilla item", item.namespaced_name()));
+        }
+        self.plugin_items
+            .get(usize::from(item.id))
+            .ok_or_else(|| format!("{} is not registered", item.namespaced_name()))?
+            .set(behaviour)
+            .map_err(|_| format!("{} already has plugin hooks", item.namespaced_name()))
     }
 }
 

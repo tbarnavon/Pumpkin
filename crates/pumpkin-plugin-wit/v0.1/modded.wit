@@ -110,6 +110,39 @@ interface modded {
         drops(list<item-stack>),
     }
 
+    /// The hooks a plugin implements for a set of items.
+    flags item-hooks {
+        /// `Item.useOn`: right click on a block, after the block's own `use` passed.
+        use-on-block,
+        /// `Item.use`: right click in the air.
+        %use,
+    }
+
+    record item-use-on-block {
+        %world: %world,
+        pos: block-pos,
+        /// State of the clicked block.
+        state: u16,
+        player: player,
+        hand: hand,
+        hit: block-hit,
+        /// A copy of the used stack. Change the player's hand through the player API.
+        stack: item-stack,
+    }
+
+    record item-use {
+        %world: %world,
+        player: player,
+        hand: hand,
+        /// A copy of the used stack. Change the player's hand through the player API.
+        stack: item-stack,
+    }
+
+    variant item-call {
+        use-on-block(item-use-on-block),
+        %use(item-use),
+    }
+
     /// The block-entity data stored at `pos`, without the `id`, `x`, `y`, `z` keys.
     get-block-entity-data: func(%world: borrow<%world>, pos: block-pos) -> option<nbt-tree>;
 

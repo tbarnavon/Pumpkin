@@ -1756,6 +1756,38 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
         Ok(Ok(()))
     }
 
+    async fn register_item_hooks(
+        &mut self,
+        _context: Resource<WitContext>,
+        handler_id: u32,
+        items: Vec<String>,
+        hooks: pumpkin::plugin::modded::ItemHooks,
+    ) -> wasmtime::Result<Result<(), String>> {
+        let Some(plugin) = self.plugin.as_ref().and_then(std::sync::Weak::upgrade) else {
+            return Ok(Err("plugin is not available".to_string()));
+        };
+        let Some(server) = self.server.clone() else {
+            return Ok(Err("server is not available".to_string()));
+        };
+        let behaviour: Arc<dyn crate::item::ItemBehaviour> = Arc::new(super::modded::PluginItem {
+            plugin,
+            handler_id,
+            hooks,
+        });
+        for name in items {
+            let Some(item) = pumpkin_data::item::Item::from_registry_key(&name) else {
+                return Ok(Err(format!("unknown item {name}")));
+            };
+            if let Err(error) = server
+                .item_registry
+                .register_plugin_item(item, behaviour.clone())
+            {
+                return Ok(Err(error));
+            }
+        }
+        Ok(Ok(()))
+    }
+
     async fn get_data_folder(
         &mut self,
         _context: Resource<WitContext>,

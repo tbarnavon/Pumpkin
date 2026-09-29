@@ -29,7 +29,7 @@ use super::pumpkin::plugin::common::{BlockPos as WitBlockPos, Hand as WitHand, N
 use super::pumpkin::plugin::item_stack::ItemStack as WitItemStack;
 use super::pumpkin::plugin::modded::{
     self as wit, BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, Interaction,
-    InteractionResult, Placement, Removal, Tick,
+    InteractionResult, ItemCall, ItemHooks, ItemUse, ItemUseOnBlock, Placement, Removal, Tick,
 };
 use super::pumpkin::plugin::player::Player as WitPlayer;
 use super::pumpkin::plugin::world::World as WitWorld;
@@ -490,6 +490,194 @@ impl BlockBehaviour for PluginBlock {
                 state: args.world.get_block_state_id(args.position),
             },
         );
+    }
+}
+
+/// An item's hooks as implemented by a Wasm plugin.
+pub struct PluginItem {
+    pub plugin: Arc<WasmPlugin>,
+    pub handler_id: u32,
+    pub hooks: ItemHooks,
+}
+
+enum ItemCallData {
+    UseOnBlock {
+        world: Arc<World>,
+        pos: BlockPos,
+        state: BlockStateId,
+        player: Arc<Player>,
+        hand: WitHand,
+        face: BlockDirection,
+        location: Vector3<f64>,
+        stack: pumpkin_data::item_stack::ItemStack,
+    },
+    Use {
+        world: Arc<World>,
+        player: Arc<Player>,
+        hand: WitHand,
+        stack: pumpkin_data::item_stack::ItemStack,
+    },
+}
+
+fn build_item_call(state: &mut PluginHostState, data: ItemCallData) -> wasmtime::Result<ItemCall> {
+    Ok(match data {
+        ItemCallData::UseOnBlock {
+            world,
+            pos,
+            state: block_state,
+            player,
+            hand,
+            face,
+            location,
+            stack,
+        } => ItemCall::UseOnBlock(ItemUseOnBlock {
+            world: state.add::<WitWorld>(world)?,
+            pos: to_wit_pos(pos),
+            state: block_state.as_u16(),
+            player: state.add::<WitPlayer>(player)?,
+            hand,
+            hit: hit(pos, face, location),
+            stack: state.add::<WitItemStack>(Arc::new(Mutex::new(stack)))?,
+        }),
+        ItemCallData::Use {
+            world,
+            player,
+            hand,
+            stack,
+        } => ItemCall::Use(ItemUse {
+            world: state.add::<WitWorld>(world)?,
+            player: state.add::<WitPlayer>(player)?,
+            hand,
+            stack: state.add::<WitItemStack>(Arc::new(Mutex::new(stack)))?,
+        }),
+    })
+}
+
+impl PluginItem {
+    fn invoke(&self, server: &Server, data: ItemCallData) -> Option<InteractionResult> {
+        let plugin = self.plugin.clone();
+        let handler_id = self.handler_id;
+        let run = async move {
+            let PluginInstance::V0_1(instance) = plugin.plugin_instance.as_ref();
+            let function = instance.func_handle_item_hook();
+            plugin
+                .store
+                .call_guest(move |mut guest| {
+                    Box::pin(async move {
+                        let (server_resource, call) = guest.with(|mut store| {
+                            let state = store.data_mut();
+                            let server = state.server.clone().ok_or_else(|| {
+                                wasmtime::Error::msg("Wasm plugin server is not available")
+                            })?;
+                            let server_resource: Resource<super::pumpkin::plugin::server::Server> =
+                                state.add(server)?;
+                            let call = build_item_call(state, data)?;
+                            Ok::<_, wasmtime::Error>((server_resource, call))
+                        })?;
+                        let reply = guest
+                            .call(function, (handler_id, server_resource, call))
+                            .await?
+                            .0;
+                        Ok(match reply {
+                            BlockReply::Interaction(result) => Some(result),
+                            _ => None,
+                        })
+                    })
+                })
+                .await
+        };
+        let result = if tokio::runtime::Handle::try_current().is_ok() {
+            tokio::task::block_in_place(|| server.runtime.block_on(run))
+        } else {
+            server.runtime.block_on(run)
+        };
+        result.unwrap_or_else(|error| {
+            tracing::error!(handler_id, %error, "Wasm item hook failed");
+            None
+        })
+    }
+}
+
+const fn to_wit_hand(hand: pumpkin_util::Hand) -> WitHand {
+    match hand {
+        pumpkin_util::Hand::Left => WitHand::Left,
+        pumpkin_util::Hand::Right => WitHand::Right,
+    }
+}
+
+impl crate::item::ItemBehaviour for PluginItem {
+    fn normal_use_with_hand(
+        &self,
+        _item: &pumpkin_data::item::Item,
+        player: &Player,
+        _yaw: f32,
+        _pitch: f32,
+        hand: pumpkin_util::Hand,
+    ) {
+        if !self.hooks.contains(ItemHooks::USE) {
+            return;
+        }
+        let world = player.world();
+        let Some(server) = world.server.upgrade() else {
+            return;
+        };
+        let Some(player) = world.get_player_by_id(player.entity_id()) else {
+            return;
+        };
+        let stack = player.inventory().get_stack_in_hand(hand);
+        self.invoke(
+            &server,
+            ItemCallData::Use {
+                world,
+                player,
+                hand: to_wit_hand(hand),
+                stack,
+            },
+        );
+    }
+
+    fn use_on_block(
+        &self,
+        item: &mut pumpkin_data::item_stack::ItemStack,
+        player: &Player,
+        location: BlockPos,
+        face: BlockDirection,
+        cursor_pos: Vector3<f32>,
+        _block: &Block,
+        server: &Server,
+    ) -> BlockActionResult {
+        if !self.hooks.contains(ItemHooks::USE_ON_BLOCK) {
+            return BlockActionResult::Pass;
+        }
+        let world = player.world();
+        let Some(player) = world.get_player_by_id(player.entity_id()) else {
+            return BlockActionResult::Pass;
+        };
+        // The main hand is the one in use unless it holds a different item.
+        let hand = if player.inventory().held_item().item.id == item.item.id {
+            pumpkin_util::Hand::Right
+        } else {
+            pumpkin_util::Hand::Left
+        };
+        let state = world.get_block_state_id(&location);
+        let reply = self.invoke(
+            server,
+            ItemCallData::UseOnBlock {
+                world,
+                pos: location,
+                state,
+                player,
+                hand: to_wit_hand(hand),
+                face,
+                location: hit_location(&location, &cursor_pos),
+                stack: item.clone(),
+            },
+        );
+        reply.map_or(BlockActionResult::Pass, PluginBlock::interaction)
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
     }
 }
 
