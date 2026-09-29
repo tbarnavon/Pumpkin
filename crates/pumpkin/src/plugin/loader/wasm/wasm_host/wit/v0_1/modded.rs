@@ -850,6 +850,7 @@ impl wit::Host for PluginHostState {
         let stack = self.get(&stack)?.clone();
         let mut stack = stack.lock().await;
         player.inventory().insert_stack_anywhere(&mut stack);
+        player.sync_inventory_to_client();
         Ok(stack.is_empty())
     }
 

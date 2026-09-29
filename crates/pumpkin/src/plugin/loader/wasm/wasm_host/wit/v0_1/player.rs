@@ -1105,11 +1105,9 @@ impl pumpkin::plugin::player::HostPlayer for PluginHostState {
         };
 
         player.inventory().set_stack(slot, stack.clone());
-
-        // Sync to client
-        let stack_serializer = ItemStackSerializer::from(stack);
-        let packet = CSetContainerSlot::new(0, 0, slot as i16, &stack_serializer);
-        player.send_client_packet(&packet).await;
+        // `ClientboundSetPlayerInventoryPacket` takes the inventory index; container 0 would
+        // need the menu slot (hotbar 0 is menu slot 36).
+        player.sync_hand_slot(slot, stack);
 
         Ok(())
     }
@@ -1128,11 +1126,7 @@ impl pumpkin::plugin::player::HostPlayer for PluginHostState {
         let player = self.get(&player)?;
 
         player.inventory().set_stack(slot as usize, stack.clone());
-
-        // Sync to client
-        let stack_serializer = ItemStackSerializer::from(stack);
-        let packet = CSetContainerSlot::new(0, 0, slot as i16, &stack_serializer);
-        player.send_client_packet(&packet).await;
+        player.sync_hand_slot(slot as usize, stack);
 
         Ok(())
     }
