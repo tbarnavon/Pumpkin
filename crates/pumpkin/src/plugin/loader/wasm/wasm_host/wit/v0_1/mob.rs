@@ -219,14 +219,15 @@ impl CustomWasmGoal {
         let plugin = self.plugin.clone();
         let goal_id = self.goal_id;
         let run = async move {
-            let function = match plugin.plugin_instance.as_ref() {
+            let generation = plugin.current();
+            let function = match &generation.plugin_instance {
                 PluginInstance::V0_1(instance) => match call {
                     GoalCall::Start => instance.func_handle_ai_goal_start(),
                     GoalCall::Tick => instance.func_handle_ai_goal_tick(),
                     GoalCall::Stop => instance.func_handle_ai_goal_stop(),
                 },
             };
-            if let Err(error) = plugin
+            if let Err(error) = generation
                 .store
                 .call_guest(move |mut guest| {
                     Box::pin(async move {
@@ -889,6 +890,7 @@ impl
             (entity, plugin)
         };
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 if let Some(mob) = entity.get_mob() {

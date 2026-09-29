@@ -36,6 +36,10 @@ impl pumpkin::plugin::ipc::HostWithStore<PluginHostState> for HasSelf<PluginHost
         let outbound = server
             .plugin_manager
             .send_message(&name, &recipient, &message);
-        plugin.store.pump_reentry(&mut host, outbound).await
+        plugin
+            .current()
+            .store
+            .pump_reentry(&mut host, outbound)
+            .await
     }
 }

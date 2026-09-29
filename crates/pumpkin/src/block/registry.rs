@@ -840,7 +840,8 @@ impl BlockRegistry {
         Ok(Some((final_block_pos, new_state)))
     }
     /// Installs a plugin's behaviour for a modded block. Each block can get one behaviour, and
-    /// only blocks without a native one.
+    /// only blocks without a native one. A restarted plugin registering the same handler again
+    /// keeps the existing one.
     pub fn register_plugin_block(
         &self,
         block: BlockId,
@@ -854,6 +855,13 @@ impl BlockRegistry {
             .plugin_blocks
             .get(usize::from(block.as_u16()))
             .ok_or_else(|| format!("{} is not registered", name()))?;
+        if let Some(existing) = slot.get() {
+            return if existing.plugin.is_same_handler(&plugin) {
+                Ok(())
+            } else {
+                Err(format!("{} already has plugin hooks", name()))
+            };
+        }
         let behaviour: Arc<dyn BlockBehaviour> = plugin.clone();
         slot.set(PluginBlockSlot { plugin, behaviour })
             .map_err(|_| format!("{} already has plugin hooks", name()))

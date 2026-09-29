@@ -135,6 +135,10 @@ impl TaskScheduler {
             disabled_plugins.push(Arc::downgrade(plugin));
         }
 
+        self.cancel_plugin_tasks(plugin);
+    }
+
+    pub fn cancel_plugin_tasks(&self, plugin: &Arc<WasmPlugin>) {
         self.tasks
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
@@ -198,12 +202,13 @@ impl TaskScheduler {
             let server_clone = server.clone();
 
             server.spawn_task(async move {
-                let function = match plugin.plugin_instance.as_ref() {
+                let generation = plugin.current();
+                let function = match &generation.plugin_instance {
                     crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_1(instance) => {
                         instance.func_handle_task()
                     }
                 };
-                if let Err(error) = plugin
+                if let Err(error) = generation
                     .store
                     .call_guest(move |mut guest| {
                         Box::pin(async move {

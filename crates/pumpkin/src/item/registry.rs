@@ -1,6 +1,7 @@
 use crate::block::registry::BlockActionResult;
 use crate::entity::EntityBase;
 use crate::entity::player::Player;
+use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginItem;
 use crate::server::Server;
 use pumpkin_data::Block;
 use pumpkin_data::BlockDirection;
@@ -191,10 +192,22 @@ impl ItemRegistry {
         if item.is_vanilla() {
             return Err(format!("{} is a vanilla item", item.namespaced_name()));
         }
-        self.plugin_items
+        let slot = self
+            .plugin_items
             .get(usize::from(item.id))
-            .ok_or_else(|| format!("{} is not registered", item.namespaced_name()))?
-            .set(behaviour)
+            .ok_or_else(|| format!("{} is not registered", item.namespaced_name()))?;
+        if let Some(existing) = slot.get() {
+            // A restarted plugin registering the same handler again keeps the existing one.
+            return if PluginItem::same_handler(existing.as_ref(), behaviour.as_ref()) {
+                Ok(())
+            } else {
+                Err(format!(
+                    "{} already has plugin hooks",
+                    item.namespaced_name()
+                ))
+            };
+        }
+        slot.set(behaviour)
             .map_err(|_| format!("{} already has plugin hooks", item.namespaced_name()))
     }
 }

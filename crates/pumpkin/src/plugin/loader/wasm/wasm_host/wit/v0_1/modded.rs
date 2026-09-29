@@ -112,14 +112,21 @@ const fn hit(pos: BlockPos, face: BlockDirection, location: Vector3<f64>) -> Blo
 }
 
 impl PluginBlock {
+    /// Whether `other` is the same plugin's handler, as registered again after a restart.
+    #[must_use]
+    pub fn is_same_handler(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.plugin, &other.plugin) && self.handler_id == other.handler_id
+    }
+
     /// Calls the plugin synchronously, the way custom AI goals do (see `mob.rs`).
     fn invoke(&self, server: &Server, data: CallData) -> HookReply {
         let plugin = self.plugin.clone();
         let handler_id = self.handler_id;
         let run = async move {
-            let PluginInstance::V0_1(instance) = plugin.plugin_instance.as_ref();
+            let generation = plugin.current();
+            let PluginInstance::V0_1(instance) = &generation.plugin_instance;
             let function = instance.func_handle_block_hook();
-            plugin
+            generation
                 .store
                 .call_guest(move |mut guest| {
                     Box::pin(async move {
@@ -554,13 +561,29 @@ fn build_item_call(state: &mut PluginHostState, data: ItemCallData) -> wasmtime:
 }
 
 impl PluginItem {
+    /// Whether both behaviours are the same plugin's handler, as registered again after a restart.
+    #[must_use]
+    pub fn same_handler(
+        a: &dyn crate::item::ItemBehaviour,
+        b: &dyn crate::item::ItemBehaviour,
+    ) -> bool {
+        match (
+            a.as_any().downcast_ref::<Self>(),
+            b.as_any().downcast_ref::<Self>(),
+        ) {
+            (Some(a), Some(b)) => Arc::ptr_eq(&a.plugin, &b.plugin) && a.handler_id == b.handler_id,
+            _ => false,
+        }
+    }
+
     fn invoke(&self, server: &Server, data: ItemCallData) -> Option<InteractionResult> {
         let plugin = self.plugin.clone();
         let handler_id = self.handler_id;
         let run = async move {
-            let PluginInstance::V0_1(instance) = plugin.plugin_instance.as_ref();
+            let generation = plugin.current();
+            let PluginInstance::V0_1(instance) = &generation.plugin_instance;
             let function = instance.func_handle_item_hook();
-            plugin
+            generation
                 .store
                 .call_guest(move |mut guest| {
                     Box::pin(async move {

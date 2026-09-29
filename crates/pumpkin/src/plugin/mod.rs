@@ -1121,7 +1121,7 @@ impl PluginManager {
         Ok(())
     }
 
-    fn unregister_handlers(&self, source: &str) {
+    pub(crate) fn unregister_handlers(&self, source: &str) {
         self.handlers.rcu(|handlers| {
             let mut new_handlers = (**handlers).clone();
             new_handlers.retain(|_, handlers| {

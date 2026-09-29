@@ -496,7 +496,7 @@ impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::world::
         };
         let damage_type = from_wit_damage_type(damage_type);
         plugin
-            .store
+            .current().store
             .pump_blocking(&mut host, move || {
                 entity.damage(&*entity, amount, damage_type);
             })

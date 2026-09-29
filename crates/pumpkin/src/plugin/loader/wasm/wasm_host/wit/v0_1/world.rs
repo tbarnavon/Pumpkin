@@ -161,6 +161,7 @@ async fn set_block_state_with_store(
     let (world, plugin) = world_and_plugin(host.get(), &world)?;
 
     plugin
+        .current()
         .store
         .pump_blocking(&mut host, move || {
             world.set_block_state(&internal_pos, state_id, internal_flags);
@@ -1187,6 +1188,7 @@ impl pumpkin::plugin::world::HostWorldWithStore<PluginHostState> for HasSelf<Plu
     ) -> wasmtime::Result<()> {
         let (world, plugin) = world_and_plugin(host.get(), &world)?;
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || world.set_raining(raining))
             .await
@@ -1199,6 +1201,7 @@ impl pumpkin::plugin::world::HostWorldWithStore<PluginHostState> for HasSelf<Plu
     ) -> wasmtime::Result<()> {
         let (world, plugin) = world_and_plugin(host.get(), &world)?;
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || world.set_thundering(thundering))
             .await
@@ -1222,6 +1225,7 @@ impl pumpkin::plugin::world::HostWorldWithStore<PluginHostState> for HasSelf<Plu
         };
         let pos = pumpkin_util::math::vector3::Vector3::new(pos.0, pos.1, pos.2);
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || world.explode(pos, power, interaction))
             .await
@@ -1241,6 +1245,7 @@ impl pumpkin::plugin::world::HostWorldWithStore<PluginHostState> for HasSelf<Plu
             crate::entity::r#type::from_type(internal_type, pos, &world, uuid::Uuid::new_v4());
         let spawned_entity = Arc::clone(&entity);
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || world.spawn_entity(spawned_entity))
             .await?;
@@ -1256,6 +1261,7 @@ impl pumpkin::plugin::world::HostWorldWithStore<PluginHostState> for HasSelf<Plu
         let (world, plugin) = world_and_plugin(host.get(), &world)?;
         let pos = super::events::from_wasm_position(pos);
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || world.strike_lightning(pos, effect_only))
             .await
@@ -1267,6 +1273,7 @@ impl pumpkin::plugin::world::HostWorldWithStore<PluginHostState> for HasSelf<Plu
     ) -> wasmtime::Result<Result<(), String>> {
         let (world, plugin) = world_and_plugin(host.get(), &world)?;
         plugin
+            .current()
             .store
             .pump_reentry(&mut host, async move { world.save().await })
             .await?;
@@ -2191,15 +2198,15 @@ impl WasmChunkGenerator {
             proto_chunk: Arc::clone(&shared_proto_chunk),
         };
 
-        let function = match self.plugin.plugin_instance.as_ref() {
+        let generation = self.plugin.current();
+        let function = match &generation.plugin_instance {
             crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_1(plugin) => {
                 plugin.func_handle_generate_phase()
             }
         };
         let generator_id = self.generator_id;
         let run = async {
-            let result = self
-                .plugin
+            let result = generation
                 .store
                 .call_guest(move |mut guest| {
                     Box::pin(async move {
@@ -2300,6 +2307,7 @@ pub fn from_wit_sound(sound: pumpkin::plugin::sounds::Sound) -> Option<pumpkin_d
     by_key.get(&key(variant)).copied()
 }
 
+#[must_use]
 pub const fn from_wit_sound_category(
     category: pumpkin::plugin::sounds::SoundCategory,
 ) -> pumpkin_data::sound::SoundCategory {
@@ -2307,7 +2315,6 @@ pub const fn from_wit_sound_category(
         pumpkin::plugin::sounds::SoundCategory::Master => {
             pumpkin_data::sound::SoundCategory::Master
         }
-#[must_use]
         pumpkin::plugin::sounds::SoundCategory::Music => pumpkin_data::sound::SoundCategory::Music,
         pumpkin::plugin::sounds::SoundCategory::Records => {
             pumpkin_data::sound::SoundCategory::Records

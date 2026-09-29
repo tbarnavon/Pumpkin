@@ -816,6 +816,7 @@ impl
         };
         let pos = Vector3::new(pos.0, pos.1, pos.2);
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || entity.teleport(pos, None, None, world))
             .await
@@ -831,6 +832,7 @@ impl
             (state.get(&entity)?.clone(), active_plugin(state)?)
         };
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 entity.get_entity().set_swimming(swimming);
@@ -850,6 +852,7 @@ impl
             (entity, vehicle, active_plugin(state)?)
         };
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 let current_vehicle = entity
@@ -886,6 +889,7 @@ impl
             )
         };
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 entity
@@ -911,6 +915,7 @@ impl
             )
         };
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 entity.get_entity().remove_passenger(passenger_id);
@@ -927,6 +932,7 @@ impl
             (state.get(&entity)?.clone(), active_plugin(state)?)
         };
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 let passenger_ids: Vec<i32> = entity

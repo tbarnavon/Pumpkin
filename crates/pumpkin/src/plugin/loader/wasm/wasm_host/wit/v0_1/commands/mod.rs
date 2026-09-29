@@ -472,6 +472,7 @@ impl pumpkin::plugin::command::HostCommandSenderWithStore<PluginHostState>
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || sender.has_permission(&server, &node))
             .await

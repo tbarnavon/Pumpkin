@@ -2931,6 +2931,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 player.open_ender_chest();
@@ -2950,6 +2951,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         let mode = from_wasm_game_mode(mode);
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || player.set_gamemode(mode))
             .await
@@ -2971,6 +2973,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         let level = from_wit_permission_level(level);
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 let command_dispatcher = server.command_dispatcher.load();
@@ -2994,6 +2997,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || player.has_permission(&server, &node))
             .await
@@ -3025,6 +3029,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || player.add_effect(effect))
             .await
@@ -3041,6 +3046,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || player.heal(amount))
             .await
@@ -3059,6 +3065,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         let damage_type = from_wit_damage_type(damage_type);
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 player.damage(&*player, amount, damage_type);
@@ -3076,6 +3083,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || player.kill())
             .await
@@ -3100,6 +3108,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         let position = from_wasm_position(position);
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 player.teleport(position, yaw, pitch, world);
@@ -3127,6 +3136,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         let runtime = tokio::runtime::Handle::current();
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 runtime.block_on(player.teleport_world(world, position, yaw, pitch));
@@ -3145,6 +3155,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         let runtime = tokio::runtime::Handle::current();
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || runtime.block_on(player.respawn()))
             .await
@@ -3162,6 +3173,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         let (window_type, inventory, allow_grab_items, allow_put_items, title) = plugin
+            .current()
             .store
             .pump_reentry(&mut host, async move {
                 let gui = gui.lock().await;
@@ -3176,6 +3188,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
             .await?;
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 player.increment_screen_handler_sync_id();
@@ -3219,6 +3232,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         let expires = parse_ban_expiry(expires_at_utc, duration_seconds);
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 player.ban_explicit(
@@ -3258,6 +3272,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         let expires = parse_ban_expiry(expires_at_utc, duration_seconds);
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 player.ban_ip_explicit(
@@ -3283,6 +3298,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || player.set_food_level(level))
             .await
@@ -3299,6 +3315,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || player.set_experience_level(level, true))
             .await
@@ -3315,6 +3332,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 player.set_experience(
@@ -3337,6 +3355,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 player.set_experience(
@@ -3359,6 +3378,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || player.add_experience_levels(levels))
             .await
@@ -3375,6 +3395,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || player.add_experience_points(points))
             .await
@@ -3399,6 +3420,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 let result = {
@@ -3440,6 +3462,7 @@ impl pumpkin::plugin::player::HostPlayerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 let result = {
@@ -3777,7 +3800,11 @@ impl pumpkin::plugin::player::HostJavaPlayerWithStore<PluginHostState>
             Ok(())
         };
 
-        plugin.store.pump_reentry(&mut host, operation).await?
+        plugin
+            .current()
+            .store
+            .pump_reentry(&mut host, operation)
+            .await?
     }
 
     async fn clear_dialog(
@@ -3830,7 +3857,11 @@ impl pumpkin::plugin::player::HostJavaPlayerWithStore<PluginHostState>
             Ok(())
         };
 
-        plugin.store.pump_reentry(&mut host, operation).await?
+        plugin
+            .current()
+            .store
+            .pump_reentry(&mut host, operation)
+            .await?
     }
 
     async fn kick(
@@ -3883,7 +3914,11 @@ impl pumpkin::plugin::player::HostJavaPlayerWithStore<PluginHostState>
             Ok(())
         };
 
-        plugin.store.pump_reentry(&mut host, operation).await?
+        plugin
+            .current()
+            .store
+            .pump_reentry(&mut host, operation)
+            .await?
     }
 }
 
@@ -4304,6 +4339,10 @@ impl pumpkin::plugin::player::HostBedrockPlayerWithStore<PluginHostState>
             Ok(())
         };
 
-        plugin.store.pump_reentry(&mut host, operation).await?
+        plugin
+            .current()
+            .store
+            .pump_reentry(&mut host, operation)
+            .await?
     }
 }

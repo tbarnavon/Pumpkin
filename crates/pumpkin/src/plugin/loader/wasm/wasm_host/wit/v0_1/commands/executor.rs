@@ -59,13 +59,14 @@ impl CommandExecutor for WasmCommandExecutor {
         let server = self.server.clone();
         let consumed_args = build_consumed_args_from_context(context);
         let handler_id = self.handler_id;
-        let function = match self.plugin.plugin_instance.as_ref() {
+        let generation = self.plugin.current();
+        let function = match &generation.plugin_instance {
             PluginInstance::V0_1(plugin) => plugin.func_handle_command(),
         };
 
         tokio::task::block_in_place(|| {
             tokio::runtime::Handle::current().block_on(async {
-                self.plugin
+                generation
                     .store
                     .call_guest(move |mut guest| {
                         Box::pin(async move {
@@ -138,14 +139,14 @@ impl SuggestionProvider for WasmCommandSuggestionProvider {
             remaining: builder.remaining().to_string(),
         };
         let handler_id = self.handler_id;
-        let function = match self.plugin.plugin_instance.as_ref() {
+        let generation = self.plugin.current();
+        let function = match &generation.plugin_instance {
             PluginInstance::V0_1(plugin) => plugin.func_handle_command_suggestion(),
         };
 
         tokio::task::block_in_place(|| {
             tokio::runtime::Handle::current().block_on(async {
-                match self
-                    .plugin
+                match generation
                     .store
                     .call_guest(move |mut guest| {
                         Box::pin(async move {

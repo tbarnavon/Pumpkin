@@ -99,6 +99,7 @@ impl HostDatapackManagerWithStore<PluginHostState> for HasSelf<PluginHostState> 
         let position = to_data_enable_position(position);
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 DatapackManager::enable_pack(&server, &name, position)
@@ -126,6 +127,7 @@ impl HostDatapackManagerWithStore<PluginHostState> for HasSelf<PluginHostState> 
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 DatapackManager::disable_pack(&server, &name)
@@ -152,6 +154,7 @@ impl HostDatapackManagerWithStore<PluginHostState> for HasSelf<PluginHostState> 
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || DatapackManager::reload(&server))
             .await
@@ -177,6 +180,7 @@ impl HostDatapackManagerWithStore<PluginHostState> for HasSelf<PluginHostState> 
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 DatapackManager::execute_function_from_console(&server, &name)

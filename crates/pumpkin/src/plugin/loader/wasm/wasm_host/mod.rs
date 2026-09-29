@@ -1,5 +1,6 @@
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
+use arc_swap::ArcSwap;
 use std::{fs, net::SocketAddr, path::Path, sync::Arc};
 use thiserror::Error;
 use wasmtime::{Cache, CacheConfig, Engine, component::Component, component::Linker};
@@ -14,6 +15,7 @@ use pumpkin_plugin_runtime::RuntimeSpawner;
 pub mod args;
 pub mod concurrent_store;
 pub mod logging;
+mod restart;
 pub mod signature;
 pub mod state;
 pub mod wit;
@@ -121,14 +123,29 @@ pub enum PluginInstance {
     V0_1(wit::v0_1::Plugin),
 }
 
-pub struct WasmPlugin {
-    pub plugin_instance: Arc<PluginInstance>,
+/// One instantiation of a plugin. Exported functions only work with the store they came from,
+/// so callers take both from the same generation.
+pub struct PluginGeneration {
+    pub plugin_instance: PluginInstance,
     pub store: concurrent_store::LegacyStore,
 }
 
-impl Drop for WasmPlugin {
+impl Drop for PluginGeneration {
     fn drop(&mut self) {
         self.store.discard();
+    }
+}
+
+pub struct WasmPlugin {
+    generation: ArcSwap<PluginGeneration>,
+    restarter: restart::Restarter,
+}
+
+impl WasmPlugin {
+    /// The live instance and store. A trap replaces them (see `restart`).
+    #[must_use]
+    pub fn current(&self) -> Arc<PluginGeneration> {
+        self.generation.load_full()
     }
 }
 
@@ -212,36 +229,23 @@ impl PluginRuntime {
             .instantiate_pre(&component)
             .map_err(PluginInitError::ApiVersionMismatch)?;
 
-        let (plugin_instance, store, metadata) = {
-            let plugin_pre = wit::v0_1::prepare_plugin(&instance_pre)
-                .map_err(PluginInitError::ApiVersionMismatch)?;
-
-            wit::v0_1::init_plugin(&self.engine, plugin_pre, &self.legacy_sync_reentry).await?
-        };
-
-        let store = concurrent_store::start_legacy_store(
-            store,
+        let plugin_pre = wit::v0_1::prepare_plugin(&instance_pre)
+            .map_err(PluginInitError::ApiVersionMismatch)?;
+        let restarter = restart::Restarter::new(
+            self.engine.clone(),
+            plugin_pre,
             self.legacy_sync_reentry.clone(),
             Arc::clone(&self.store_spawner),
-        )
-        .await
-        .map_err(PluginInitError::InstantiationFailed)?;
+            marketplace_metadata,
+        );
+        let (generation, metadata) = restarter.instantiate().await?;
         let wasm_plugin = Arc::new(WasmPlugin {
-            plugin_instance: Arc::new(plugin_instance),
-            store,
+            generation: ArcSwap::from(generation),
+            restarter,
         });
-        let weak_plugin = Arc::downgrade(&wasm_plugin);
         wasm_plugin
-            .store
-            .call(move |accessor| {
-                Box::pin(async move {
-                    accessor.with(|mut store| {
-                        store.data_mut().plugin = Some(weak_plugin);
-                        store.data_mut().marketplace_metadata = marketplace_metadata;
-                    });
-                    Ok(())
-                })
-            })
+            .restarter
+            .attach(&wasm_plugin, &wasm_plugin.current())
             .await
             .map_err(PluginInitError::InstantiationFailed)?;
 
@@ -399,11 +403,14 @@ impl WasmPlugin {
         let wasi_ctx = builder.build();
         let server = context.server.clone();
         let name = metadata.name.clone();
-        let function = match self.plugin_instance.as_ref() {
+        let generation = self.current();
+        let function = match &generation.plugin_instance {
             PluginInstance::V0_1(plugin) => plugin.func_on_load(),
         };
+        self.restarter.watch(&context, &generation);
 
-        self.store
+        generation
+            .store
             .call_guest(move |mut guest| {
                 Box::pin(async move {
                     let context_res = guest.with(|mut store| {
@@ -435,7 +442,9 @@ impl WasmPlugin {
         &self,
         context: Arc<Context>,
     ) -> Result<Result<(), String>, wasmtime::Error> {
-        let loaded_plugin = self
+        self.restarter.stop();
+        let generation = self.current();
+        let loaded_plugin = generation
             .store
             .call(|accessor| {
                 Box::pin(async move {
@@ -454,10 +463,11 @@ impl WasmPlugin {
             context.server.task_scheduler.disable_plugin(&plugin);
         }
 
-        let function = match self.plugin_instance.as_ref() {
+        let function = match &generation.plugin_instance {
             PluginInstance::V0_1(plugin) => plugin.func_on_unload(),
         };
-        self.store
+        generation
+            .store
             .shutdown(move |accessor| {
                 Box::pin(async move {
                     let (context_res, context_rep) = accessor.with(|mut store| {
@@ -487,11 +497,13 @@ impl WasmPlugin {
     ) -> Result<Result<Vec<u8>, String>, wasmtime::Error> {
         let sender = sender.to_owned();
         let message = message.to_owned();
-        let function = match self.plugin_instance.as_ref() {
+        let generation = self.current();
+        let function = match &generation.plugin_instance {
             PluginInstance::V0_1(plugin) => plugin.func_handle_ipc_message(),
         };
 
-        self.store
+        generation
+            .store
             .call_guest(move |mut context| {
                 Box::pin(async move {
                     context

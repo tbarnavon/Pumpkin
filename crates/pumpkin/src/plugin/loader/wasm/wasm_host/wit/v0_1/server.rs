@@ -596,6 +596,7 @@ impl pumpkin::plugin::server::HostServerWithStore<PluginHostState> for HasSelf<P
             Dimension::End => pumpkin_data::dimension::Dimension::THE_END,
         };
         let world = plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || server.create_world(name, internal_dim))
             .await?;
@@ -625,6 +626,7 @@ impl pumpkin::plugin::server::HostServerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_reentry(&mut host, server.unload_world(&name))
             .await
@@ -649,6 +651,7 @@ impl pumpkin::plugin::server::HostServerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_reentry(&mut host, server.save_all())
             .await
@@ -676,6 +679,7 @@ impl pumpkin::plugin::server::HostServerWithStore<PluginHostState> for HasSelf<P
         let sender = TextComponent::text("Server");
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 server.broadcast_message(&message, &sender, 0, None);
@@ -711,6 +715,7 @@ impl pumpkin::plugin::server::HostServerWithStore<PluginHostState> for HasSelf<P
         };
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 let dispatcher = server.command_dispatcher.load();
@@ -832,6 +837,7 @@ impl pumpkin::plugin::server::HostOpManagerWithStore<PluginHostState> for HasSel
         let internal_level = from_wit_permission_level(level);
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 let mut config = server
@@ -884,6 +890,7 @@ impl pumpkin::plugin::server::HostOpManagerWithStore<PluginHostState> for HasSel
         let uuid = WitUuid::from_wit(&id);
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 let removed = {
@@ -1182,6 +1189,7 @@ impl pumpkin::plugin::server::HostBanManagerWithStore<PluginHostState>
         let log_to_console = options.log_to_console;
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 let mut list = server.data.banned_player_list.write().unwrap();
@@ -1257,6 +1265,7 @@ impl pumpkin::plugin::server::HostBanManagerWithStore<PluginHostState>
         let log_to_console = options.log_to_console;
 
         plugin
+            .current()
             .store
             .pump_blocking(&mut host, move || {
                 let mut list = server.data.banned_ip_list.write().unwrap();
@@ -1411,7 +1420,7 @@ impl pumpkin::plugin::server::HostWhitelistManagerWithStore<PluginHostState>
         };
 
         plugin
-            .store
+            .current().store
             .pump_blocking(&mut host, move || {
                 server
                     .white_list

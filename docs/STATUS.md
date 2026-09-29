@@ -104,3 +104,18 @@ Not yet: the drawer GUI, compacting drawers, controller and I/O, hopper/magnet/r
 table, detached drawers, and remote upgrades. The GUI needs two host features first:
 plugin-defined menus (opened with `fabric-menu-api-v1:open_screen`), and modded item components
 such as `storagedrawers:drawer_count`, which Pumpkin currently drops.
+
+## Phase 4: plugin restart after a trap
+
+A trap used to leave a plugin's store failed until the server restarted. Now a supervisor waits
+on each store driver and, when one fails, cancels the plugin's tasks, drops its event handlers and
+commands, instantiates it again from the cached component, and runs `on_load` on the new
+instance. Block and item hooks stay registered, because they point at the plugin rather than at
+an instance. In-memory plugin state is lost. After 3 restarts within 60 s the plugin stays down.
+
+Real client (2026-09-29): a test build of the Storage Drawers plugin panicked when a drawer was
+used with a stick. The log showed the trap, `Wasm plugin trapped, restarting it` and
+`Restarted Wasm plugin` in the same second, and drawers kept working right after.
+
+Not handled: permissions a plugin registers in `on_load` can't be removed, so registering them
+again fails after a restart. Upstream hot reload has the same problem.

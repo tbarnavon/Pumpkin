@@ -233,11 +233,11 @@ impl<E: Payload + ToFromWasmEvent + Clone + 'static> EventHandler<E> for WasmPlu
             let event = event.clone();
             let server = server.clone();
             let handler_id = self.handler_id;
-            let function = match self.plugin.plugin_instance.as_ref() {
+            let generation = self.plugin.current();
+            let function = match &generation.plugin_instance {
                 PluginInstance::V0_1(plugin) => plugin.func_handle_event(),
             };
-            if let Err(error) = self
-                .plugin
+            if let Err(error) = generation
                 .store
                 .call_guest(move |mut guest| {
                     Box::pin(async move {
@@ -281,11 +281,11 @@ impl<E: Payload + ToFromWasmEvent + Clone + 'static> EventHandler<E> for WasmPlu
             let owned_event = event.clone();
             let server = server.clone();
             let handler_id = self.handler_id;
-            let function = match self.plugin.plugin_instance.as_ref() {
+            let generation = self.plugin.current();
+            let function = match &generation.plugin_instance {
                 PluginInstance::V0_1(plugin) => plugin.func_handle_event(),
             };
-            let result = self
-                .plugin
+            let result = generation
                 .store
                 .call_guest(move |mut guest| {
                     Box::pin(async move {
