@@ -280,10 +280,11 @@ impl JavaClient {
 
                     if !self.packet_limiter.check_packet() {
                         warn!(
-                            "Client {} ({}) exceeded packet rate limit (rate: {}/s)",
+                            "Client {} ({}) exceeded packet rate limit (rate: {}/s, last packet id 0x{:02X})",
                             self.id,
                             self.gameprofile.name,
-                            self.packet_limiter.max_rate()
+                            self.packet_limiter.max_rate(),
+                            packet.id
                         );
                         self.kick(TextComponent::text(
                             server

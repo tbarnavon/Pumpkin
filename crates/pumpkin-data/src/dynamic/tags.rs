@@ -31,6 +31,10 @@ struct MergedTag {
 
 pub(crate) struct TagTables {
     tags: HashMap<RegistryKey, HashMap<&'static str, MergedTag>>,
+    /// Per registry, a bitset over the u16 id space of every id some mod added to some tag.
+    /// `has_tag` runs in hot loops (world generation, collision); this answers the common
+    /// "not added by a mod" case without hashing the tag name.
+    extra_ids: HashMap<RegistryKey, Box<[u64]>>,
 }
 
 static TAGS: OnceLock<TagTables> = OnceLock::new();
@@ -90,15 +94,22 @@ impl TagTables {
         }
 
         let mut tags: HashMap<RegistryKey, HashMap<&'static str, MergedTag>> = HashMap::new();
+        let mut extra_ids: HashMap<RegistryKey, Box<[u64]>> = HashMap::new();
         for ((registry, name), (values, ids)) in working {
             let vanilla: &[u16] = get_latest_map(registry)
                 .get(name.as_str())
                 .map_or(&[], |t| t.1);
-            let extra = ids
+            let extra: HashSet<u16> = ids
                 .iter()
                 .copied()
                 .filter(|id| !vanilla.contains(id))
                 .collect();
+            let bits = extra_ids
+                .entry(registry)
+                .or_insert_with(|| vec![0u64; 1 << 10].into_boxed_slice());
+            for id in &extra {
+                bits[usize::from(*id) >> 6] |= 1 << (id & 63);
+            }
             let merged = MergedTag {
                 values: Box::leak(values.into_boxed_slice()),
                 ids: Box::leak(ids.into_boxed_slice()),
@@ -108,7 +119,7 @@ impl TagTables {
                 .or_default()
                 .insert(leak_str(name), merged);
         }
-        Ok(Self { tags })
+        Ok(Self { tags, extra_ids })
     }
 }
 
@@ -136,14 +147,19 @@ pub fn ids(registry: RegistryKey, tag: &str) -> Option<&'static [u16]> {
 #[inline]
 #[must_use]
 pub fn has_extra(registry: RegistryKey, tag: &str, id: u16) -> bool {
-    match TAGS.get() {
-        None => false,
-        Some(tables) => tables
+    let Some(tables) = TAGS.get() else {
+        return false;
+    };
+    let added_somewhere = tables
+        .extra_ids
+        .get(&registry)
+        .is_some_and(|bits| bits[usize::from(id) >> 6] & (1 << (id & 63)) != 0);
+    added_somewhere
+        && tables
             .tags
             .get(&registry)
             .and_then(|tags| tags.get(tag))
-            .is_some_and(|t| t.extra.contains(&id)),
-    }
+            .is_some_and(|t| t.extra.contains(&id))
 }
 
 /// Every tag mods added to or created, with merged contents, for sending to clients.
