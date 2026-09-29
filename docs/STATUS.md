@@ -66,5 +66,5 @@ Open:
 - One rejoin was kicked for exceeding 500 packets/s; the user suspects JEI. The kick log line now
   includes the packet ID so the next occurrence can be identified.
 - World generation is slow. That's partly the debug build. A fast path now avoids hashing tag names
-  in `has_tag` when mods are loaded (the change is written, but its clippy/tests have not run yet).
+  in `has_tag` when mods are loaded (clippy and tests pass).
 
