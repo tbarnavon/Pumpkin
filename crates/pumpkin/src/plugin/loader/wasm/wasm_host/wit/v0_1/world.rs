@@ -768,9 +768,10 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
         pitch: f32,
     ) -> wasmtime::Result<()> {
         let world_ref = self.get(&world)?;
-        let sound_name = format!("{sound:?}").to_lowercase().replace('_', ".");
-        let sound_data = pumpkin_data::sound::Sound::from_name(&sound_name)
-            .ok_or_else(|| wasmtime::Error::msg(format!("Unknown sound: {sound_name}")))?;
+        let Some(sound_data) = super::world::from_wit_sound(sound) else {
+            tracing::warn!("plugin played a sound this server does not know: {sound:?}");
+            return Ok(());
+        };
 
         let internal_category = from_wit_sound_category(category);
 
@@ -2276,6 +2277,29 @@ impl pumpkin_world::generation::generator::CustomChunkGenerator for WasmChunkGen
 }
 
 #[must_use]
+/// Maps a WIT sound to vanilla's. WIT names are the vanilla names with `.` and `_` turned into
+/// `-`, so both sides are compared with separators removed.
+pub fn from_wit_sound(sound: pumpkin::plugin::sounds::Sound) -> Option<pumpkin_data::sound::Sound> {
+    use std::collections::HashMap;
+    use std::sync::OnceLock;
+    fn key(name: &str) -> String {
+        name.chars()
+            .filter(char::is_ascii_alphanumeric)
+            .map(|c| c.to_ascii_lowercase())
+            .collect()
+    }
+    static BY_KEY: OnceLock<HashMap<String, pumpkin_data::sound::Sound>> = OnceLock::new();
+    let by_key = BY_KEY.get_or_init(|| {
+        pumpkin_data::sound::Sound::slice()
+            .iter()
+            .map(|sound| (key(sound.to_name()), *sound))
+            .collect()
+    });
+    let debug = format!("{sound:?}");
+    let variant = debug.rsplit("::").next().unwrap_or(&debug);
+    by_key.get(&key(variant)).copied()
+}
+
 pub const fn from_wit_sound_category(
     category: pumpkin::plugin::sounds::SoundCategory,
 ) -> pumpkin_data::sound::SoundCategory {

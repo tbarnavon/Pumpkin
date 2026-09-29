@@ -174,7 +174,7 @@ impl PluginBlock {
         match result {
             Ok(reply) => reply,
             Err(error) => {
-                tracing::error!(handler_id, %error, "Wasm block hook failed");
+                tracing::error!(handler_id, error = ?error, "Wasm block hook failed");
                 HookReply::None
             }
         }
@@ -592,7 +592,7 @@ impl PluginItem {
             server.runtime.block_on(run)
         };
         result.unwrap_or_else(|error| {
-            tracing::error!(handler_id, %error, "Wasm item hook failed");
+            tracing::error!(handler_id, error = ?error, "Wasm item hook failed");
             None
         })
     }

@@ -1095,7 +1095,7 @@ async fn run_driver<T>(
     match result {
         Ok(Ok(())) => lifecycle.transition(DriverState::Stopped),
         Ok(Err(error)) | Err(error) => {
-            let error = Arc::new(DriverError::new(error.to_string()));
+            let error = Arc::new(DriverError::new(format!("{error:?}")));
             tracing::error!(
                 %error,
                 wasm_plugin_policy = policy_name,
