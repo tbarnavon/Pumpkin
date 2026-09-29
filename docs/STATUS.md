@@ -69,13 +69,13 @@ Open:
   in `has_tag` when mods are loaded (clippy and tests pass).
 
 
-## Phase 4, stage 1: standard drawers (plugin built, awaiting client test)
+## Phase 4, stage 1: standard drawers
 
 The Storage Drawers server logic lives in `../storagedrawers-plugin` (WASM, `wasm32-wasip2`),
 ported from the decompiled 26.3.0.1 jar. The plugin loads on the release build and registers all
 78 standard drawer blocks (13 woods including framed, full or half, 1/2/4 slots).
 
-Implemented (awaiting a real-client test):
+Implemented:
 - Facing on placement (`getStateForPlacement`), and offhand keys on placement (`setPlacedBy`).
 - Right-click to insert, and a double right-click within 10 ticks to insert the whole inventory.
 - Left-click to take one item, or a stack with shift. In creative, hitting a face slot doesn't
@@ -88,6 +88,13 @@ Implemented (awaiting a real-client test):
 - Block-entity NBT in the mod's exact layout. The `Upgrades` list is always written, as vanilla's
   `TagValueOutput.list` does.
 - Config `plugins/data/storagedrawers/storagedrawers-common.toml` with SD's defaults.
+
+Real client (2026-09-29, `fast` build, fresh world):
+- Taking one item with left-click, and a stack with shift + left-click, works.
+- Breaking a filled drawer in survival drops it with its contents, and placing it back restores
+  them.
+- The earlier "no drops" report was a plugin trap: every plugin sound lookup trapped, which left
+  the plugin failed until restart. Fixed by mapping WIT sounds to vanilla sounds by name.
 
 Host API added for this: `give-item`, `drop-item`, and item <-> NBT conversion. The plugin
 inventory setters sent `ContainerSetSlot` with inventory indexes, which desynced the hotbar. That
