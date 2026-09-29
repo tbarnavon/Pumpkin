@@ -2384,20 +2384,36 @@ impl DataComponentCodec<Self> for BucketEntityDataImpl {
     }
 }
 
+// TypedEntityData.streamCodec: the block-entity type as a registry id, then the tag without "id".
+// Pumpkin keeps the disk form, where the type is the tag's "id".
 impl DataComponentCodec<Self> for BlockEntityDataImpl {
     fn serialize(&self, seq: &mut impl NetworkWriteExt) -> Result<(), WritingError> {
-        seq.write_var_int(&VarInt(0))?;
-        seq.write_nbt(NbtTag::Compound(self.nbt.clone()))
+        let type_id = self
+            .nbt
+            .get_string("id")
+            .and_then(pumpkin_data::dynamic::names::block_entity_type_id)
+            .ok_or_else(|| WritingError::Message("block_entity_data without a known id".into()))?;
+        let mut tag = self.nbt.clone();
+        tag.child_tags.remove("id");
+        seq.write_var_int(&VarInt(i32::from(type_id)))?;
+        seq.write_nbt(NbtTag::Compound(tag))
     }
 
     fn deserialize(seq: &mut impl NetworkReadExt) -> Result<Self, ReadingError> {
-        let _type_id = seq.get_var_int()?;
+        let type_id = seq.get_var_int()?;
         let tag = seq.get_nbt_with_version(&JavaMinecraftVersion::V_26_2)?;
-        let nbt = if let Some(NbtTag::Compound(c)) = tag {
+        let mut nbt = if let Some(NbtTag::Compound(c)) = tag {
             c
         } else {
             pumpkin_nbt::compound::NbtCompound::new()
         };
+        let name = u16::try_from(type_id.0)
+            .ok()
+            .and_then(pumpkin_data::dynamic::names::block_entity_type_name)
+            .ok_or_else(|| {
+                ReadingError::Message(format!("unknown block-entity type {}", type_id.0))
+            })?;
+        nbt.put_string("id", name.into_owned());
         Ok(Self { nbt })
     }
 }

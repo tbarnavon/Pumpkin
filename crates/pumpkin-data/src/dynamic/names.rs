@@ -187,3 +187,15 @@ pub fn block_entity_type_id(name: &str) -> Option<u16> {
         Some(_) => modded_id(SyncedRegistry::BlockEntityType, name),
     }
 }
+
+/// Namespaced name of a block-entity type by raw id, vanilla or modded.
+#[cfg(feature = "block")]
+#[must_use]
+pub fn block_entity_type_name(raw_id: u16) -> Option<std::borrow::Cow<'static, str>> {
+    match crate::block_properties::BLOCK_ENTITY_TYPES.get(usize::from(raw_id)) {
+        Some(path) => Some(std::borrow::Cow::Owned(format!("minecraft:{path}"))),
+        None => {
+            modded_name(SyncedRegistry::BlockEntityType, raw_id).map(std::borrow::Cow::Borrowed)
+        }
+    }
+}
