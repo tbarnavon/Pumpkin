@@ -2307,6 +2307,7 @@ pub const fn from_wit_sound_category(
         pumpkin::plugin::sounds::SoundCategory::Master => {
             pumpkin_data::sound::SoundCategory::Master
         }
+#[must_use]
         pumpkin::plugin::sounds::SoundCategory::Music => pumpkin_data::sound::SoundCategory::Music,
         pumpkin::plugin::sounds::SoundCategory::Records => {
             pumpkin_data::sound::SoundCategory::Records
