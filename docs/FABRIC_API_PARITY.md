@@ -28,7 +28,7 @@ as raw NBT; vanilla block entities use `world.get/set-block-entity-nbt`). The re
 | Function | Now in |
 |:--|:--|
 | `register-block-hooks`, `register-item-hooks`, block and item calls | `modded` |
-| `get/set/remove-block-entity-data` | `modded` |
+| `get/set/remove-block-entity-data` | `modded` (see open items) |
 | `get/set/remove-component-by-id` | `item-stack` |
 | `to-nbt`, `from-nbt` | `item-stack` |
 | `give-item` | `player` |
@@ -103,7 +103,7 @@ as raw NBT; vanilla block entities use `world.get/set-block-entity-nbt`). The re
 |:--|:--|:--|:--|:--|
 | Item `useOn` / `use` for modded items | ✅ | modded | modded item hooks | ✅ |
 | Read / write item components by id | ✅ | core | `item-stack.get/set/remove-component-by-id` | ✅ |
-| Keep unknown modded components (e.g. `storagedrawers:drawer_count`) | ❌ | host | `ItemStack` drops them; needs a raw-NBT fallback | ✅ GUI, drops |
+| Keep unknown modded components (e.g. `storagedrawers:drawer_count`) | ✅ | host | `ItemStack.unknown_patch`: raw NBT on disk and on the network | ✅ GUI, drops |
 | `DefaultItemComponentEvents` | ➖ | - | default components come from the dump | |
 | `FabricItem` (recipe remainder, attribute modifiers, reequip animation) | ❌ | modded | | |
 | `CustomDamageHandler` | ❌ | modded | | |
@@ -117,8 +117,8 @@ as raw NBT; vanilla block entities use `world.get/set-block-entity-nbt`). The re
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
 | Vanilla menu types | ✅ | core | `gui` resource, `player.open-gui` | |
-| `ExtendedMenuType` / `ExtendedMenuProvider` (modded menu, `fabric-menu-api-v1:open_screen` with extra data) | ❌ | modded | | ✅ drawer GUI |
-| Modded menu slot layout and quick-move rules | ❌ | core | | ✅ drawer GUI |
+| `ExtendedMenuType` / `ExtendedMenuProvider` (modded menu, `fabric-menu-api-v1:open_screen` with extra data) | ✅ | modded | `modded.open-menu` | ✅ drawer GUI |
+| Plugin-defined slot layout and quick-move rules | ✅ | core | `menu` interface, `handle-menu-call` export | ✅ drawer GUI |
 
 ### fabric-object-builder-api-v1
 | Feature | Status | API | Pumpkin | SD |
@@ -251,3 +251,17 @@ keep their native behaviour.
 | `Item.useOn` / `use` | ✅ | modded | item hooks | ✅ |
 | `Item.inventoryTick` | ❌ | modded | | |
 | Find entities in an area | 🟡 | core | `entity.get-nearby-entities` (around an entity); no box query on a world | ✅ magnet |
+
+## Open items before an upstream PR
+
+- **Block-entity data belongs in core.** `modded.get/set/remove-block-entity-data` duplicate core's
+  `world.get/set-block-entity-nbt`: they only see the chunk's `pending_block_entities` (block
+  entities with no native implementation), use `nbt-tree` instead of bytes, and broadcast the
+  update. Fold them into core: make `get-block-entity-nbt` fall back to pending NBT, add
+  `world.remove-block-entity` and a `world.send-block-entity-update`, then delete the modded ones.
+- **Menus should be data first.** While a plugin menu is open, the host calls the plugin's
+  `contents` every tick (slot items and validity). A reviewer asked for a data-first design that
+  does not call WASM on every tick: the host keeps the slot contents, which the plugin pushes when
+  they change (`menu.set-contents`), and checks validity itself from an anchor position and a
+  distance; WASM is only called on player actions.
+

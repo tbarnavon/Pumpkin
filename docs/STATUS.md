@@ -119,3 +119,25 @@ used with a stick. The log showed the trap, `Wasm plugin trapped, restarting it`
 
 Not handled: permissions a plugin registers in `on_load` can't be removed, so registering them
 again fails after a restart. Upstream hot reload has the same problem.
+
+## Phase 4: drawer GUI
+
+Host:
+- `ItemStack` keeps component types Pumpkin has no implementation of (modded ones) as raw NBT, by
+  raw id in `minecraft:data_component_type`: saved under their name, and sent as a network NBT
+  tag, which is vanilla's default component stream codec. Tested in
+  `pumpkin-protocol/tests/modded_item_components.rs` against the expected bytes.
+- Core `menu` interface: the plugin lists the slots (the viewer's inventory, or its own), and the
+  host runs the vanilla click logic, asking the plugin through `handle-menu-call` for its slots'
+  contents, `set`, `mayPlace`, `mayPickup`, max count and the shift-click ranges.
+- `modded.open-menu`: opens a modded menu type with `fabric-menu-api-v1:open_screen`
+  (`Networking.OpenScreenPayload`: type id, container id byte, title, the type's data).
+
+Plugin: `ContainerDrawers1/2/4`, `SlotDrawer` (counts of 0 or 128+ in `drawer_count`),
+`SlotUpgrade` with `DrawerUpgradeData`'s add/remove/swap rules, `quickMoveStack`.
+
+Real client (2026-09-30): sneak + empty hand opens the drawer UI; it works.
+
+Not verified: the menu closing by distance (cannot move with a menu open), and a packet
+comparison of `open_screen` against a real Fabric server.
+
