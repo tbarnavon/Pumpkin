@@ -1,5 +1,5 @@
 use crate::block::entities::{BlockEntity, block_entity_from_nbt};
-use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginTickQueue;
+use crate::plugin::loader::wasm::wasm_host::modded::PluginTickQueue;
 use dashmap::DashMap;
 use pumpkin_data::chunk::Biome;
 use pumpkin_data::item::{BedrockItem, BedrockItemVersion};
@@ -6496,7 +6496,7 @@ impl World {
     /// Queues the `ticker` hook of plugin blocks that asked for it, for their block entities in
     /// ticking chunks. Does nothing unless a plugin registered one.
     fn tick_plugin_block_entities(&self, active_chunks: &FxHashSet<Vector2<i32>>) {
-        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::ANY_TICKER;
+        use crate::plugin::loader::wasm::wasm_host::modded::ANY_TICKER;
         if !ANY_TICKER.load(std::sync::atomic::Ordering::Relaxed) {
             return;
         }

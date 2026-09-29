@@ -34,9 +34,14 @@ impl crate::server::recipe::SpecialCraftingHandler for PluginCraftingHandler {
         let grid = grid.to_vec();
         let run = async move {
             let generation = plugin.current();
-            let crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_1(instance) =
-                &generation.plugin_instance;
-            let function = instance.func_handle_crafting();
+            let function = match &generation.plugin_instance {
+                crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_1(instance) => {
+                    instance.func_handle_crafting()
+                }
+                crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_2(_) => {
+                    panic!("Unexpected plugin version in v0.1 path.")
+                }
+            };
             generation
                 .store
                 .call_guest(move |mut guest| {

@@ -1,6 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
 use wasmtime::component::Resource;
 
+use crate::plugin::loader::wasm::wasm_host::modded as shared_modded;
 use crate::plugin::{
     Context,
     loader::wasm::wasm_host::{
@@ -1841,12 +1842,13 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
             return Ok(Err("server is not available".to_string()));
         };
         if !server.advanced_config.modded.enabled {
-            return Ok(Err(super::modded::DISABLED.to_string()));
+            return Ok(Err(shared_modded::DISABLED.to_string()));
         }
-        if hooks.contains(pumpkin::plugin::modded::BlockHooks::TICKER) {
-            super::modded::ANY_TICKER.store(true, std::sync::atomic::Ordering::Relaxed);
+        let hooks = super::modded::from_wit_block_hooks(hooks);
+        if hooks.contains(shared_modded::BlockHooks::TICKER) {
+            shared_modded::ANY_TICKER.store(true, std::sync::atomic::Ordering::Relaxed);
         }
-        let behaviour = Arc::new(super::modded::PluginBlock {
+        let behaviour = Arc::new(shared_modded::PluginBlock {
             plugin,
             handler_id,
             hooks,
@@ -1879,9 +1881,10 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
             return Ok(Err("server is not available".to_string()));
         };
         if !server.advanced_config.modded.enabled {
-            return Ok(Err(super::modded::DISABLED.to_string()));
+            return Ok(Err(shared_modded::DISABLED.to_string()));
         }
-        let behaviour: Arc<dyn crate::item::ItemBehaviour> = Arc::new(super::modded::PluginItem {
+        let hooks = super::modded::from_wit_item_hooks(hooks);
+        let behaviour: Arc<dyn crate::item::ItemBehaviour> = Arc::new(shared_modded::PluginItem {
             plugin,
             handler_id,
             hooks,
@@ -1896,7 +1899,7 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
             {
                 return Ok(Err(error));
             }
-            if hooks.contains(pumpkin::plugin::modded::ItemHooks::NOT_IN_CONTAINERS) {
+            if hooks.contains(shared_modded::ItemHooks::NOT_IN_CONTAINERS) {
                 pumpkin_data::item_stack::set_fits_inside_container_items(item.id, false);
             }
         }

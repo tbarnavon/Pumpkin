@@ -1,0 +1,47 @@
+package pumpkin:plugin@0.2.0;
+
+interface attributes {
+  enum attribute {
+    armor,
+    armor-toughness,
+    attack-damage,
+    attack-knockback,
+    attack-speed,
+    block-break-speed,
+    block-interaction-range,
+    burning-time,
+    explosion-knockback-resistance,
+    entity-interaction-range,
+    fall-damage-multiplier,
+    flying-speed,
+    follow-range,
+    gravity,
+    jump-strength,
+    knockback-resistance,
+    luck,
+    max-absorption,
+    max-health,
+    mining-efficiency,
+    movement-efficiency,
+    movement-speed,
+    oxygen-bonus,
+    safe-fall-distance,
+    scale,
+    sneaking-speed,
+    spawn-reinforcements,
+    step-height,
+    submerged-mining-speed,
+    sweeping-damage-ratio,
+    water-movement-efficiency,
+  }
+  enum modifier-operation {
+    add,
+    multiply-base,
+    multiply-total,
+  }
+  record attribute-modifier {
+    id: string,
+    amount: f64,
+    operation: modifier-operation,
+  }
+}

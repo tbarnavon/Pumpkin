@@ -1,7 +1,7 @@
 use crate::block::registry::BlockActionResult;
 use crate::entity::EntityBase;
 use crate::entity::player::Player;
-use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginItem;
+use crate::plugin::loader::wasm::wasm_host::modded::PluginItem;
 use crate::server::Server;
 use pumpkin_data::Block;
 use pumpkin_data::BlockDirection;

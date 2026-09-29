@@ -1,0 +1,105 @@
+package pumpkin:plugin@0.2.0;
+
+/// Menus whose slots a plugin defines, like a mod's `AbstractContainerMenu`.
+///
+/// The host runs vanilla's click, drag and sync logic over the slots. Slots of the viewer's
+/// inventory behave as usual. The host keeps the items of the slots the plugin owns: the plugin
+/// gives them when it opens the menu and pushes changes with `update-slot`. Menus opened with the same
+/// `handler-id` and `menu-id` share these items, so every viewer of the same container sees the
+/// same thing. The host only calls the plugin's `handle-menu-call` export (with the `handler-id`,
+/// `menu-id` and the viewer) when a player acts on a plugin slot, and when the menu closes; never
+/// per tick.
+///
+/// The plugin must not change the viewer's inventory from inside a `handle-menu-call`.
+interface menu {
+    use item-stack.{item-stack};
+    use common.{block-pos};
+    use player.{player};
+    use screens.{screen};
+    use text.{text-component};
+
+    /// A slot of a plugin menu, in the order the client lays them out.
+    variant menu-slot {
+        /// A slot of the viewer's inventory, by inventory index: 0-8 hotbar, 9-35 main.
+        player(u32),
+        /// A slot the plugin owns, by the plugin's own index, starting at 0.
+        plugin(u32),
+    }
+
+    /// Keeps a menu open only while the block it was opened for is there, like vanilla's
+    /// `Container.stillValidBlockEntity`: the host closes the menu when the block at `pos` (in the
+    /// world the viewer opened it in) is replaced, the viewer changes world, or the viewer's
+    /// position is farther than `max-distance` from the block's centre.
+    record menu-anchor {
+        pos: block-pos,
+        max-distance: f64,
+    }
+
+    record menu-definition {
+        /// The plugin's key for this menu, passed back in every call. Menus with the same
+        /// handler and menu id share their plugin slots.
+        menu-id: u32,
+        title: text-component,
+        slots: list<menu-slot>,
+        /// The item in each plugin slot, by plugin slot index. Missing entries are empty.
+        contents: list<option<item-stack>>,
+        /// Without an anchor, the menu stays open until the viewer or `close` closes it.
+        anchor: option<menu-anchor>,
+    }
+
+    /// One step of a shift-click, like vanilla's `moveItemStackTo`: merge the stack into the menu
+    /// slots `start..end`, from the end when `reverse`. With `single`, only one item moves, and the
+    /// shift-click ends when it does.
+    record quick-move-step {
+        start: u32,
+        end: u32,
+        reverse: bool,
+        single: bool,
+    }
+
+    record slot-item {
+        slot: u32,
+        item: item-stack,
+    }
+
+    record set-slot {
+        slot: u32,
+        item: option<item-stack>,
+    }
+
+    /// What the host asks about the plugin's slots. `slot` is the plugin's slot index, except in
+    /// `quick-move`, where it is the menu slot index.
+    variant menu-call {
+        /// `Slot.set`. The host has already stored `item`; the plugin pushes any other change,
+        /// or a correction, with `update-slot`.
+        set-item(set-slot),
+        /// `Slot.mayPlace`.
+        may-place(slot-item),
+        /// `Slot.mayPickup`.
+        may-pickup(u32),
+        /// `Slot.getMaxStackSize(ItemStack)`.
+        max-count(slot-item),
+        /// `AbstractContainerMenu.quickMoveStack`: where the stack in a slot goes.
+        quick-move(slot-item),
+        /// The menu was closed.
+        closed,
+    }
+
+    variant menu-reply {
+        none,
+        allowed(bool),
+        count(u32),
+        quick-move(list<quick-move-step>),
+    }
+
+    /// Opens a menu with a vanilla screen type for `player`. The slots must match the layout the
+    /// client uses for that screen type.
+    open: func(player: borrow<player>, handler-id: u32, %type: screen, menu: menu-definition) -> result<_, string>;
+
+    /// Sets the item in a plugin slot of every open menu with this handler and menu id. Does
+    /// nothing when none is open.
+    update-slot: func(handler-id: u32, menu-id: u32, slot: u32, item: option<item-stack>);
+
+    /// Closes every open menu with this handler and menu id.
+    close: func(handler-id: u32, menu-id: u32);
+}

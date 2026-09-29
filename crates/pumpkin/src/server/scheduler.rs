@@ -193,20 +193,37 @@ impl TaskScheduler {
             let server_clone = server.clone();
             server.spawn_task(async move {
                 let generation = plugin.current();
-                let function = match &generation.plugin_instance {
-                    crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_1(instance) => {
-                        instance.func_handle_job_result()
-                    }
-                };
+                let instance = Arc::clone(&generation);
                 if let Err(error) = generation
                     .store
                     .call_guest(move |mut guest| {
                         Box::pin(async move {
-                            let server_resource =
-                                guest.with(|mut store| store.data_mut().add(server_clone))?;
-                            guest
-                                .call(function, (job_id, server_resource, output))
-                                .await
+                            match &instance.plugin_instance {
+                                crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_1(
+                                    instance,
+                                ) => {
+                                    let server_resource = guest
+                                        .with(|mut store| store.data_mut().add(server_clone))?;
+                                    guest
+                                        .call(
+                                            instance.func_handle_job_result(),
+                                            (job_id, server_resource, output),
+                                        )
+                                        .await
+                                }
+                                crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_2(
+                                    instance,
+                                ) => {
+                                    let server_resource = guest
+                                        .with(|mut store| store.data_mut().add(server_clone))?;
+                                    guest
+                                        .call(
+                                            instance.func_handle_job_result(),
+                                            (job_id, server_resource, output),
+                                        )
+                                        .await
+                                }
+                            }
                         })
                     })
                     .await
@@ -217,6 +234,7 @@ impl TaskScheduler {
         }
     }
 
+    #[expect(clippy::too_many_lines)]
     pub fn tick(&self, server: &Arc<Server>) {
         self.deliver_job_results(server);
         let current_tick = server.tick_count.load(AtomicOrdering::Relaxed) as u64;
@@ -265,27 +283,59 @@ impl TaskScheduler {
 
             server.spawn_task(async move {
                 let generation = plugin.current();
-                let function = match &generation.plugin_instance {
-                    crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_1(instance) => {
-                        instance.func_handle_task()
-                    }
-                };
+                let instance = Arc::clone(&generation);
                 if let Err(error) = generation
                     .store
                     .call_guest(move |mut guest| {
                         Box::pin(async move {
-                            let (server_resource, server_rep) = guest.with(|mut store| {
-                                let resource = store.data_mut().add(server_clone)?;
-                                let rep = resource.rep();
-                                Ok::<_, wasmtime::Error>((resource, rep))
-                            })?;
-                            let result = guest.call(function, (handler_id, server_resource)).await;
-                            guest.with(|mut store| {
-                                let _ = store.data_mut().resource_table.delete::<Arc<Server>>(
-                                    wasmtime::component::Resource::new_own(server_rep),
-                                );
-                            });
-                            result
+                            match &instance.plugin_instance {
+                                crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_1(
+                                    instance,
+                                ) => {
+                                    let (server_resource, server_rep) =
+                                        guest.with(|mut store| {
+                                            let resource = store.data_mut().add(server_clone)?;
+                                            let rep = resource.rep();
+                                            Ok::<_, wasmtime::Error>((resource, rep))
+                                        })?;
+                                    let result = guest
+                                        .call(
+                                            instance.func_handle_task(),
+                                            (handler_id, server_resource),
+                                        )
+                                        .await;
+                                    guest.with(|mut store| {
+                                        let _ =
+                                            store.data_mut().resource_table.delete::<Arc<Server>>(
+                                                wasmtime::component::Resource::new_own(server_rep),
+                                            );
+                                    });
+                                    result
+                                }
+                                crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_2(
+                                    instance,
+                                ) => {
+                                    let (server_resource, server_rep) =
+                                        guest.with(|mut store| {
+                                            let resource = store.data_mut().add(server_clone)?;
+                                            let rep = resource.rep();
+                                            Ok::<_, wasmtime::Error>((resource, rep))
+                                        })?;
+                                    let result = guest
+                                        .call(
+                                            instance.func_handle_task(),
+                                            (handler_id, server_resource),
+                                        )
+                                        .await;
+                                    guest.with(|mut store| {
+                                        let _ =
+                                            store.data_mut().resource_table.delete::<Arc<Server>>(
+                                                wasmtime::component::Resource::new_own(server_rep),
+                                            );
+                                    });
+                                    result
+                                }
+                            }
                         })
                     })
                     .await

@@ -12,6 +12,14 @@ When you commit to `latest`, add the commit to its area here (or add an area). H
 functions also get a row in `HOOKS.md`. Paths below drop the `crates/` prefix; `WH` is
 `pumpkin/src/plugin/loader/wasm/wasm_host/wit/v0_1`.
 
+Upstream branched a `pumpkin:plugin@0.2.0` API from v0.1 (`361c34c4d`). Every fork addition to
+the v0.1 WIT and host is mirrored in `pumpkin-plugin-wit/v0.2` and `WH/../v0_2`: the v0.2 host is
+v0.1's with upstream's renames (`v0_1` to `v0_2`, `_v0_2` on `PluginHostState` methods), so add
+to v0.1 and mirror. Block, item and menu behaviour that the server holds (`PluginBlock`,
+`PluginItem`, `PluginTickQueue`, `PluginMenuHandler`) is shared by both versions in
+`pumpkin/src/plugin/loader/wasm/wasm_host/modded/`; `WH/{modded,menu}.rs` only build each
+version's calls.
+
 ## 1. Modded registries at runtime
 
 **Why:** mod blocks, block states, items, block-entity types and tags come from the mod data
@@ -133,9 +141,9 @@ functions it needs. Each one is listed in `HOOKS.md`.
 - Reorganisation (general functions out of `modded.wit` into core interfaces): `25b0b7b63`,
   `fb5343e2e`
 
-**Files:** `pumpkin-plugin-wit/v0.1/*.wit` (`modded.wit` and `menu.wit` new),
-`pumpkin-plugin-api/src/{modded,menu,crafting,lib}.rs` and `src/events/*`, `WH/*`,
-`pumpkin-host-bindings/src/lib.rs`, `pumpkin/src/plugin/api/events/*`,
+**Files:** `pumpkin-plugin-wit/v0.{1,2}/*.wit` (`modded.wit` and `menu.wit` new),
+`pumpkin-plugin-api/src/{modded,menu,crafting,lib}.rs` and `src/events/*`, `WH/*` and its v0_2
+mirror, `wasm_host/modded/*`, `pumpkin-host-bindings/src/{v0_1,v0_2}.rs`, `pumpkin/src/plugin/api/events/*`,
 `pumpkin/src/plugin/login_queries.rs` (new), and the call sites the hooks and events fire from:
 `pumpkin/src/block/{mod,registry}.rs`, `pumpkin/src/item/registry.rs`,
 `pumpkin/src/entity/{player,item}.rs`, `pumpkin/src/net/java/play/{player_action,pick_item}.rs`,
@@ -213,5 +221,5 @@ Files that both upstream and the fork edit often. Check these first after a sync
 - `pumpkin/src/entity/player.rs`: inventory tick, menus.
 - `pumpkin/src/net/java/login/*`, `pending.rs`: the Fabric handshake.
 - `pumpkin-data/src/generated/*`: regenerate, don't merge.
-- `pumpkin-plugin-wit/v0.1/*.wit`: upstream mirrors the WIT to its own repo; keep fork additions
-  additive.
+- `pumpkin-plugin-wit/v0.{1,2}/*.wit`: upstream mirrors the WIT to its own repo; keep fork
+  additions additive, and in both versions.

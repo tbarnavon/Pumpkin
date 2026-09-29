@@ -157,7 +157,7 @@ impl ItemEntity {
 
     /// `Item.onDestroyed`, for items a plugin gives behaviour to.
     fn on_destroyed(&self) {
-        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginItem;
+        use crate::plugin::loader::wasm::wasm_host::modded::PluginItem;
         let stack = self
             .item_stack
             .lock()
