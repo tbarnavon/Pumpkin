@@ -4,6 +4,7 @@ interface context {
     use event.{event-type, event-priority};
     use command.{command};
     use permission.{permission};
+    use modded.{block-hooks};
 
     /// Verified marketplace metadata for signed plugins.
     record marketplace-metadata {
@@ -47,6 +48,10 @@ interface context {
 
         /// Registers a permission node with the server.
         register-permission: func(permission: permission) -> result<_, string>;
+
+        /// Registers block hooks for the given namespaced block names. The host calls
+        /// `handle-block-hook` with `handler-id` for each hook in `hooks`.
+        register-block-hooks: func(handler-id: u32, blocks: list<string>, hooks: block-hooks) -> result<_, string>;
 
         /// Returns the path to the plugin's private data folder.
         get-data-folder: func() -> string;

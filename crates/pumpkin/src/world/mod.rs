@@ -5124,6 +5124,18 @@ impl World {
             self.remove_block_entity(position);
         }
 
+        if is_new_block
+            && !old_block.is_vanilla()
+            && old_block.default_state.block_entity_type != u16::MAX
+        {
+            if let Some(plugin) = self.block_registry.plugin_block(old_block.id)
+                && let Some(server) = self.server.upgrade()
+            {
+                plugin.removed(&server, self, *position, replaced_block_state_id);
+            }
+            self.remove_pending_block_entity_nbt(position);
+        }
+
         if is_new_block && (flags.contains(BlockFlags::NOTIFY_NEIGHBORS) || block_moved) {
             self.block_registry.on_state_replaced(
                 self,
@@ -6301,6 +6313,23 @@ impl World {
             self.pending_block_entity_migrations
                 .push(block_pos.chunk_position());
         }
+    }
+
+    /// Removes the stored block-entity NBT at `block_pos`. Modded block entities exist only as this
+    /// NBT (their plugin owns the data), so nothing else removes it when the block goes away.
+    pub fn remove_pending_block_entity_nbt(&self, block_pos: &BlockPos) {
+        self.level
+            .read_chunk_sync(&block_pos.chunk_position(), |chunk| {
+                let removed = chunk
+                    .pending_block_entities
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner)
+                    .remove(block_pos)
+                    .is_some();
+                if removed {
+                    chunk.mark_dirty(true);
+                }
+            });
     }
 
     pub fn remove_block_entity(&self, block_pos: &BlockPos) {

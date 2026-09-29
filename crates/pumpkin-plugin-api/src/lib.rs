@@ -97,6 +97,8 @@ pub mod inventory;
 pub mod item;
 /// Specialized mob entity wrappers and helpers.
 pub mod mobs;
+/// Behaviour and storage for modded blocks.
+pub mod modded;
 /// Constants for plugin permissions.
 ///
 /// Use these in your `PluginMetadata` to request access to specific host features.
@@ -391,6 +393,14 @@ impl wit::Guest for Component {
         if let Some(goal) = goal {
             goal.stop(server, entity);
         }
+    }
+
+    fn handle_block_hook(
+        handler_id: u32,
+        server: Server,
+        call: wit::pumpkin::plugin::modded::BlockCall,
+    ) -> wit::pumpkin::plugin::modded::BlockReply {
+        crate::modded::dispatch(handler_id, server, call)
     }
 
     fn handle_ipc_message(

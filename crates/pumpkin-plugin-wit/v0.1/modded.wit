@@ -1,0 +1,138 @@
+/// Behaviour and storage for content that mods add: blocks with custom interaction, custom drops,
+/// and block entities whose data the plugin owns.
+///
+/// A plugin registers hooks for a set of block names with `context.register-block-hooks`; the host
+/// then calls the plugin's `handle-block-hook` export at the matching points of the block's life,
+/// the same points where vanilla calls the corresponding `Block` methods.
+interface modded {
+    use common.{block-pos, position, nbt-tree, hand};
+    use %world.{%world, block-direction};
+    use player.{player};
+    use item-stack.{item-stack};
+
+    /// The hooks a plugin implements for a set of blocks.
+    flags block-hooks {
+        /// `Block.getStateForPlacement`: choose the state to place.
+        placement-state,
+        /// `Block.setPlacedBy`: called once the block is in the world.
+        placed,
+        /// `Block.useItemOn` / `useWithoutItem`: right click.
+        %use,
+        /// `Block.attack`: left click start. A non-`pass` result stops a creative player from
+        /// breaking the block (Fabric's `AttackBlockCallback` semantics).
+        attack,
+        /// `Block.getDrops`: the items dropped when broken, replacing the loot table.
+        drops,
+        /// `BlockEntity.preRemoveSideEffects`: the block is about to be removed or replaced.
+        removed,
+        /// `Block.tick`: a tick scheduled with `schedule-block-tick` fired.
+        scheduled-tick,
+    }
+
+    /// Where a player's crosshair hit the block.
+    record block-hit {
+        pos: block-pos,
+        face: block-direction,
+        /// Exact hit point in world coordinates.
+        location: position,
+    }
+
+    record placement {
+        %world: %world,
+        pos: block-pos,
+        /// The state the host would place (the block's default state).
+        state: u16,
+        player: option<player>,
+        hit: block-hit,
+        /// `BlockPlaceContext.getHorizontalDirection()`: the direction the player faces.
+        horizontal-facing: block-direction,
+        /// The stack the block is placed from.
+        item: option<item-stack>,
+    }
+
+    record interaction {
+        %world: %world,
+        pos: block-pos,
+        state: u16,
+        player: player,
+        hand: hand,
+        hit: block-hit,
+    }
+
+    record breaking {
+        %world: %world,
+        pos: block-pos,
+        state: u16,
+        player: option<player>,
+        /// The item used to break the block.
+        tool: option<item-stack>,
+    }
+
+    record removal {
+        %world: %world,
+        pos: block-pos,
+        /// The state being removed.
+        state: u16,
+    }
+
+    record tick {
+        %world: %world,
+        pos: block-pos,
+        state: u16,
+    }
+
+    variant block-call {
+        placement-state(placement),
+        placed(placement),
+        %use(interaction),
+        attack(interaction),
+        drops(breaking),
+        removed(removal),
+        scheduled-tick(tick),
+    }
+
+    /// `InteractionResult`.
+    enum interaction-result {
+        pass,
+        success,
+        consume,
+        fail,
+    }
+
+    variant block-reply {
+        /// For calls without a result, or to keep the host's default.
+        none,
+        /// Reply to `placement-state`: the state to place.
+        state(u16),
+        /// Reply to `use` and `attack`.
+        interaction(interaction-result),
+        /// Reply to `drops`.
+        drops(list<item-stack>),
+    }
+
+    /// The block-entity data stored at `pos`, without the `id`, `x`, `y`, `z` keys.
+    get-block-entity-data: func(%world: borrow<%world>, pos: block-pos) -> option<nbt-tree>;
+
+    /// Stores block-entity data at `pos` (saved with the chunk) and sends it to every player who
+    /// has the chunk loaded, as vanilla's `ClientboundBlockEntityDataPacket` does.
+    /// `block-entity-type` is the namespaced type, for example `storagedrawers:standard_drawers_1`.
+    set-block-entity-data: func(%world: borrow<%world>, pos: block-pos, block-entity-type: string, data: nbt-tree);
+
+    /// Removes the block-entity data at `pos`.
+    remove-block-entity-data: func(%world: borrow<%world>, pos: block-pos);
+
+    /// An item component in its saved (NBT) form, from the stack's changes or the item's
+    /// defaults, for example `minecraft:block_entity_data`.
+    get-item-component: func(stack: borrow<item-stack>, component: string) -> option<nbt-tree>;
+
+    /// Sets an item component from its saved (NBT) form. Fails for component types the server
+    /// does not know or values it cannot read.
+    set-item-component: func(stack: borrow<item-stack>, component: string, value: nbt-tree) -> result<_, string>;
+
+    /// Removes an item component from the stack's changes.
+    remove-item-component: func(stack: borrow<item-stack>, component: string);
+
+    /// Schedules a `scheduled-tick` hook call for the block at `pos` after `delay` ticks, like
+    /// `Level.scheduleTick`.
+    schedule-block-tick: func(%world: borrow<%world>, pos: block-pos, delay: u32);
+}

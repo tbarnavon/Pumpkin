@@ -496,9 +496,21 @@ impl BlockActionResult {
 /// Marks a block with no registered behaviour. Never handed out as a real index.
 const NO_BEHAVIOUR: u16 = u16::MAX;
 
+use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginBlock;
+
+/// A plugin's behaviour for one modded block, kept both as its concrete type (for hooks with no
+/// `BlockBehaviour` method, such as attack and drops) and as a `BlockBehaviour`.
+struct PluginBlockSlot {
+    plugin: Arc<PluginBlock>,
+    behaviour: Arc<dyn BlockBehaviour>,
+}
+
 pub struct BlockRegistry {
     /// Indexed by raw block id; sized for vanilla plus any modded blocks registered so far.
     block_indices: Vec<u16>,
+    /// Behaviour plugins install at runtime for modded blocks, indexed by raw block id. Set once
+    /// per block, which is what lets `get_pumpkin_block` hand out plain references.
+    plugin_blocks: Box<[std::sync::OnceLock<PluginBlockSlot>]>,
     behaviours: Vec<Arc<dyn BlockBehaviour>>,
     fluids: FxHashMap<u16, Arc<dyn FluidBehaviour>>,
 }
@@ -507,6 +519,9 @@ impl Default for BlockRegistry {
     fn default() -> Self {
         Self {
             block_indices: vec![NO_BEHAVIOUR; usize::from(pumpkin_data::BlockId::count())],
+            plugin_blocks: (0..pumpkin_data::BlockId::count())
+                .map(|_| std::sync::OnceLock::new())
+                .collect(),
             behaviours: Vec::new(),
             fluids: FxHashMap::default(),
         }
@@ -824,6 +839,35 @@ impl BlockRegistry {
 
         Ok(Some((final_block_pos, new_state)))
     }
+    /// Installs a plugin's behaviour for a modded block. Each block can get one behaviour, and
+    /// only blocks without a native one.
+    pub fn register_plugin_block(
+        &self,
+        block: BlockId,
+        plugin: Arc<PluginBlock>,
+    ) -> Result<(), String> {
+        let name = || block.to_block().namespaced_name();
+        if block.is_vanilla() {
+            return Err(format!("{} is a vanilla block", name()));
+        }
+        let slot = self
+            .plugin_blocks
+            .get(usize::from(block.as_u16()))
+            .ok_or_else(|| format!("{} is not registered", name()))?;
+        let behaviour: Arc<dyn BlockBehaviour> = plugin.clone();
+        slot.set(PluginBlockSlot { plugin, behaviour })
+            .map_err(|_| format!("{} already has plugin hooks", name()))
+    }
+
+    /// The plugin behaviour of a modded block, if a plugin registered hooks for it.
+    #[must_use]
+    pub fn plugin_block(&self, block: BlockId) -> Option<&PluginBlock> {
+        self.plugin_blocks
+            .get(usize::from(block.as_u16()))?
+            .get()
+            .map(|slot| slot.plugin.as_ref())
+    }
+
     #[allow(clippy::expect_used)]
     pub fn register<T: BlockBehaviour + BlockMetadata + 'static>(&mut self, block: T) {
         let ids = T::ids();
@@ -1377,7 +1421,10 @@ impl BlockRegistry {
             .copied()
             .unwrap_or(NO_BEHAVIOUR);
         if idx == NO_BEHAVIOUR {
-            None
+            self.plugin_blocks
+                .get(usize::from(block.as_u16()))
+                .and_then(std::sync::OnceLock::get)
+                .map(|slot| &slot.behaviour)
         } else {
             self.behaviours.get(idx as usize)
         }

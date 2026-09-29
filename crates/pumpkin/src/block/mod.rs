@@ -464,30 +464,51 @@ pub fn drop_loot(
         Some((namespace, path)) => format!("{namespace}:blocks/{path}"),
         None => format!("minecraft:blocks/{}", block.name),
     };
-    if let Some(loot_table) = world.get_loot_table(&key) {
-        let seed: i64 = rand::random();
-        let items = crate::world::loot::generate_loot_from_handle(&loot_table, seed, params);
-        if !items.is_empty() {
-            let mut event = crate::plugin::block::block_drop_item::BlockDropItemEvent {
-                block_pos: *pos,
-                world: world.clone(),
-                player: None,
-                items,
-                cancelled: false,
-            };
-            if let Some(server) = world.server.upgrade() {
-                server.plugin_manager.fire_blocking(&server, &mut event);
-            }
-            if !event.cancelled {
-                let block_entity = world.get_block_entity(pos);
-                for mut stack in event.items {
-                    if let Some(block_entity) = &block_entity
-                        && Block::from_item_id(stack.item.id) == Some(block)
-                    {
-                        block_entity.collect_item_components(&mut stack);
-                    }
-                    world.drop_stack(pos, stack);
+    // A plugin's `drops` hook replaces the loot table, like an overridden `Block.getDrops`.
+    let plugin_drops = world
+        .block_registry
+        .plugin_block(block.id)
+        .zip(world.server.upgrade())
+        .and_then(|(plugin, server)| {
+            plugin.drops(
+                &server,
+                world,
+                *pos,
+                params
+                    .block_state
+                    .map_or(block.default_state.id, |state| state.id),
+                None,
+                params.tool.clone(),
+            )
+        });
+    let items = plugin_drops.or_else(|| {
+        world.get_loot_table(&key).map(|loot_table| {
+            let seed: i64 = rand::random();
+            crate::world::loot::generate_loot_from_handle(&loot_table, seed, params)
+        })
+    });
+    if let Some(items) = items
+        && !items.is_empty()
+    {
+        let mut event = crate::plugin::block::block_drop_item::BlockDropItemEvent {
+            block_pos: *pos,
+            world: world.clone(),
+            player: None,
+            items,
+            cancelled: false,
+        };
+        if let Some(server) = world.server.upgrade() {
+            server.plugin_manager.fire_blocking(&server, &mut event);
+        }
+        if !event.cancelled {
+            let block_entity = world.get_block_entity(pos);
+            for mut stack in event.items {
+                if let Some(block_entity) = &block_entity
+                    && Block::from_item_id(stack.item.id) == Some(block)
+                {
+                    block_entity.collect_item_components(&mut stack);
                 }
+                world.drop_stack(pos, stack);
             }
         }
     }

@@ -38,10 +38,10 @@ fn normalize_id(id: &str) -> String {
 fn parse_ingredient(value: &Value) -> Option<OwnedRecipeIngredient> {
     match value {
         // Since 1.21.2 a tag ingredient is written as a "#namespace:path" string.
-        Value::String(s) => Some(match s.strip_prefix('#') {
-            Some(tag) => OwnedRecipeIngredient::Tagged(normalize_id(tag)),
-            None => OwnedRecipeIngredient::Simple(normalize_id(s)),
-        }),
+        Value::String(s) => Some(s.strip_prefix('#').map_or_else(
+            || OwnedRecipeIngredient::Simple(normalize_id(s)),
+            |tag| OwnedRecipeIngredient::Tagged(normalize_id(tag)),
+        )),
         Value::Object(map) => map
             .get("tag")
             .and_then(Value::as_str)

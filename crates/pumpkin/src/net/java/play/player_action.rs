@@ -59,6 +59,28 @@ impl JavaClient {
                         );
                     }
 
+                    // Block.attack for plugin blocks. A handled click stops a creative player from
+                    // breaking the block, as Fabric's AttackBlockCallback does.
+                    if let Some(plugin) = server.block_registry.plugin_block(block.id)
+                        && let Ok(face) = BlockDirection::try_from(i32::from(player_action.face))
+                        && plugin.attack(
+                            server,
+                            &world,
+                            position,
+                            player,
+                            face,
+                            position.to_centered_f64(),
+                        )
+                        && player.gamemode.load() == GameMode::Creative
+                    {
+                        player.try_send_client_packet(&CBlockUpdate::new(
+                            position,
+                            VarInt(i32::from(state.id.as_u16())),
+                        ));
+                        self.update_sequence(player_action.sequence.0);
+                        return;
+                    }
+
                     let inventory = player.inventory();
                     let held = inventory.held_item();
                     if !server.item_registry.can_mine(held.item, player) {

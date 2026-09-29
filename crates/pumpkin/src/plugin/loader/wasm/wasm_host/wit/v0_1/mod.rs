@@ -49,6 +49,8 @@ pub mod living_entity;
 pub mod logging;
 #[allow(clippy::unused_async_trait_impl)]
 pub mod mob;
+#[allow(clippy::unused_async_trait_impl)]
+pub mod modded;
 pub mod permission;
 #[allow(clippy::unused_async_trait_impl)]
 pub mod player;
