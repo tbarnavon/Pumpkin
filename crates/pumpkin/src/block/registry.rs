@@ -496,7 +496,7 @@ impl BlockActionResult {
 /// Marks a block with no registered behaviour. Never handed out as a real index.
 const NO_BEHAVIOUR: u16 = u16::MAX;
 
-use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginBlock;
+use crate::plugin::loader::wasm::wasm_host::modded::PluginBlock;
 
 /// A plugin's behaviour for one modded block, kept both as its concrete type (for hooks with no
 /// `BlockBehaviour` method, such as attack and drops) and as a `BlockBehaviour`.

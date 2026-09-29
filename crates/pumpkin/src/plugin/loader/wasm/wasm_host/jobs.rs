@@ -9,10 +9,12 @@ use std::sync::{
     atomic::{AtomicU64, Ordering},
 };
 
-use pumpkin_host_bindings::PluginPre;
 use wasmtime::{Engine, Store};
 
-use super::{WasmPlugin, concurrent_store::LegacySyncReentry, state::PluginHostState};
+use super::{
+    AnyPluginPre, PluginInstance, WasmPlugin, concurrent_store::LegacySyncReentry,
+    state::PluginHostState,
+};
 use crate::server::Server;
 
 /// Idle workers one plugin keeps; jobs beyond that make more, dropped when they finish.
@@ -22,7 +24,7 @@ static NEXT_JOB_ID: AtomicU64 = AtomicU64::new(0);
 
 struct Worker {
     store: Store<PluginHostState>,
-    plugin: pumpkin_host_bindings::Plugin,
+    plugin: PluginInstance,
 }
 
 /// A finished job, waiting for the main instance's `handle-job-result`.
@@ -34,7 +36,7 @@ pub struct JobResult {
 
 pub struct JobWorkers {
     engine: Engine,
-    plugin_pre: PluginPre<PluginHostState>,
+    plugin_pre: AnyPluginPre,
     legacy_sync_reentry: LegacySyncReentry,
     idle: Mutex<Vec<Worker>>,
 }
@@ -57,7 +59,7 @@ fn pool() -> Option<&'static rayon::ThreadPool> {
 impl JobWorkers {
     pub(super) const fn new(
         engine: Engine,
-        plugin_pre: PluginPre<PluginHostState>,
+        plugin_pre: AnyPluginPre,
         legacy_sync_reentry: LegacySyncReentry,
     ) -> Self {
         Self {
@@ -71,16 +73,31 @@ impl JobWorkers {
     async fn instantiate(&self) -> wasmtime::Result<Worker> {
         let mut store = Store::new(&self.engine, PluginHostState::new());
         store.limiter(|state| &mut state.limits);
-        let plugin = self
-            .legacy_sync_reentry
-            .scope_bootstrap(self.plugin_pre.instantiate_async(&mut store))
-            .await?;
         let reentry = &self.legacy_sync_reentry;
-        store
-            .run_concurrent(async |accessor| {
+        let plugin = match &self.plugin_pre {
+            AnyPluginPre::V0_1(plugin_pre) => PluginInstance::V0_1(
                 reentry
-                    .scope_bootstrap(plugin.call_init_plugin(accessor))
-                    .await
+                    .scope_bootstrap(plugin_pre.instantiate_async(&mut store))
+                    .await?,
+            ),
+            AnyPluginPre::V0_2(plugin_pre) => PluginInstance::V0_2(
+                reentry
+                    .scope_bootstrap(plugin_pre.instantiate_async(&mut store))
+                    .await?,
+            ),
+        };
+        store
+            .run_concurrent(async |accessor| match &plugin {
+                PluginInstance::V0_1(plugin) => {
+                    reentry
+                        .scope_bootstrap(plugin.call_init_plugin(accessor))
+                        .await
+                }
+                PluginInstance::V0_2(plugin) => {
+                    reentry
+                        .scope_bootstrap(plugin.call_init_plugin(accessor))
+                        .await
+                }
             })
             .await??;
         Ok(Worker { store, plugin })
@@ -101,10 +118,17 @@ impl JobWorkers {
         // A trap drops the worker with the `?`; the next job gets a fresh one.
         let output = worker
             .store
-            .run_concurrent(async |accessor| {
-                reentry
-                    .scope_bootstrap(plugin.call_run_job(accessor, kind, input))
-                    .await
+            .run_concurrent(async |accessor| match plugin {
+                PluginInstance::V0_1(plugin) => {
+                    reentry
+                        .scope_bootstrap(plugin.call_run_job(accessor, kind, input))
+                        .await
+                }
+                PluginInstance::V0_2(plugin) => {
+                    reentry
+                        .scope_bootstrap(plugin.call_run_job(accessor, kind, input))
+                        .await
+                }
             })
             .await??;
         let mut idle = self

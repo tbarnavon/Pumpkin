@@ -300,7 +300,7 @@ use crate::command::{CommandSender, client_suggestions};
 use crate::data::SaveJSONConfiguration;
 use crate::net::{ClientPlatform, GameProfile};
 use crate::net::{DisconnectReason, PlayerConfig};
-use crate::plugin::loader::wasm::wasm_host::wit::v0_1::menu::PluginMenuHandler;
+use crate::plugin::loader::wasm::wasm_host::modded::menu::PluginMenuHandler;
 use crate::plugin::player::exp_change::PlayerExpChangeEvent;
 use crate::plugin::player::inventory_interact::InventoryClickEvent;
 use crate::plugin::player::player_change_world::PlayerChangeWorldEvent;
@@ -4471,7 +4471,7 @@ impl Player {
 
     /// Queues `Item.inventoryTick` for the plugin items that opted in; nothing else is looked at.
     fn tick_plugin_items(&self, server: &Server) {
-        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginItem;
+        use crate::plugin::loader::wasm::wasm_host::modded::PluginItem;
         let inventory = self.inventory();
         let selected = usize::from(inventory.get_selected_slot());
         let mut ticks: Vec<(&Arc<_>, Vec<_>)> = Vec::new();
@@ -7757,7 +7757,7 @@ impl InventoryPlayer for Player {
         secondary: bool,
         slot_modifiable: bool,
     ) -> Option<(ItemStack, ItemStack)> {
-        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginItem;
+        use crate::plugin::loader::wasm::wasm_host::modded::PluginItem;
         let world = self.world();
         let server = world.server.upgrade()?;
         let plugin_item = |stack: &ItemStack| {

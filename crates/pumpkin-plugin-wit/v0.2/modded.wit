@@ -1,0 +1,437 @@
+/// Behaviour and storage for content that mods add: blocks with custom interaction, custom drops,
+/// and block entities whose data the plugin owns.
+///
+/// A plugin registers hooks for a set of block names with `context.register-block-hooks`; the host
+/// then calls the plugin's `handle-block-hook` export at the matching points of the block's life,
+/// the same points where vanilla calls the corresponding `Block` methods.
+interface modded {
+    use common.{block-pos, position, nbt-tree, hand};
+    use %world.{%world, block-direction, entity};
+    use player.{player};
+    use item-stack.{item-stack};
+    use menu.{menu-definition};
+
+    /// The hooks a plugin implements for a set of blocks.
+    flags block-hooks {
+        /// `Block.getStateForPlacement`: choose the state to place.
+        placement-state,
+        /// `Block.setPlacedBy`: called once the block is in the world.
+        placed,
+        /// `Block.useItemOn` / `useWithoutItem`: right click.
+        %use,
+        /// `Block.attack`: left click start. A non-`pass` result stops a creative player from
+        /// breaking the block (Fabric's `AttackBlockCallback` semantics).
+        attack,
+        /// `Block.getDrops`: the items dropped when broken, replacing the loot table.
+        drops,
+        /// `BlockEntity.preRemoveSideEffects`: the block is about to be removed or replaced.
+        removed,
+        /// `Block.tick`: a tick scheduled with `world.schedule-block-tick` fired.
+        scheduled-tick,
+        /// `Block.neighborChanged`: a block next to this one changed.
+        neighbor-changed,
+        /// `Block.randomTick`: only for states the mod marks as randomly ticking.
+        random-tick,
+        /// `Block.updateShape`: a neighbour's state changed; reply with the state this block
+        /// should take, or `none` to keep it.
+        update-shape,
+        /// `Block.isSignalSource`: the block gives the redstone power set with
+        /// `world.set-redstone-output`. No call is made.
+        signal-source,
+        /// `Block.hasAnalogOutputSignal`: comparators read the value set with
+        /// `world.set-comparator-output`. No call is made.
+        analog-output,
+        /// `Block.entityInside`: every tick an entity's box is inside the block. Delivered in
+        /// `tick-batch.entity-contacts`. Opt in only for blocks that need it.
+        entity-inside,
+        /// `Block.stepOn`: every tick an entity walks on top of the block. Delivered in
+        /// `tick-batch.entity-contacts`. Opt in only for blocks that need it.
+        step-on,
+        /// A block entity ticker (`EntityBlock.getTicker`): every tick for each block of this
+        /// kind that has block-entity data, in chunks that tick. Delivered in
+        /// `tick-batch.block-entities`. Opt in only for blocks that need it.
+        ticker,
+    }
+
+    /// Where a player's crosshair hit the block.
+    record block-hit {
+        pos: block-pos,
+        face: block-direction,
+        /// Exact hit point in world coordinates.
+        location: position,
+    }
+
+    record placement {
+        %world: %world,
+        pos: block-pos,
+        /// The state the host would place (the block's default state).
+        state: u16,
+        player: option<player>,
+        hit: block-hit,
+        /// `BlockPlaceContext.getHorizontalDirection()`: the direction the player faces.
+        horizontal-facing: block-direction,
+        /// The stack the block is placed from.
+        item: option<item-stack>,
+    }
+
+    record interaction {
+        %world: %world,
+        pos: block-pos,
+        state: u16,
+        player: player,
+        hand: hand,
+        hit: block-hit,
+    }
+
+    record breaking {
+        %world: %world,
+        pos: block-pos,
+        state: u16,
+        player: option<player>,
+        /// The item used to break the block.
+        tool: option<item-stack>,
+    }
+
+    record removal {
+        %world: %world,
+        pos: block-pos,
+        /// The state being removed.
+        state: u16,
+    }
+
+    record tick {
+        %world: %world,
+        pos: block-pos,
+        state: u16,
+    }
+
+    /// An entity inside (`entity-inside`) or on top of (`step-on`) a block this tick.
+    record entity-contact {
+        handler-id: u32,
+        /// `step-on` rather than `entity-inside`.
+        step: bool,
+        pos: block-pos,
+        state: u16,
+        entity-id: s32,
+        /// Like `minecraft:zombie`.
+        entity-type: string,
+        /// The entity itself, for example to read an item entity's stack.
+        entity: entity,
+    }
+
+    record shape-update {
+        %world: %world,
+        pos: block-pos,
+        state: u16,
+        /// The side the changed neighbour is on.
+        direction: block-direction,
+        neighbor-pos: block-pos,
+        neighbor-state: u16,
+    }
+
+    record neighbor-change {
+        %world: %world,
+        pos: block-pos,
+        state: u16,
+        /// The block that changed next to this one, like `minecraft:redstone_wire`.
+        source-block: string,
+    }
+
+    variant block-call {
+        placement-state(placement),
+        placed(placement),
+        %use(interaction),
+        attack(interaction),
+        drops(breaking),
+        removed(removal),
+        scheduled-tick(tick),
+        neighbor-changed(neighbor-change),
+        random-tick(tick),
+        update-shape(shape-update),
+    }
+
+    /// `InteractionResult`.
+    enum interaction-result {
+        pass,
+        success,
+        consume,
+        fail,
+    }
+
+    variant block-reply {
+        /// For calls without a result, or to keep the host's default.
+        none,
+        /// Reply to `placement-state`: the state to place.
+        state(u16),
+        /// Reply to `use` and `attack`.
+        interaction(interaction-result),
+        /// Reply to `drops`.
+        drops(list<item-stack>),
+        /// Reply to `stacked-on-me` and `stacked-on-other`.
+        stacked(stacked-result),
+        /// Reply to `finish-using`: the stack the hand holds afterwards (none for empty).
+        stack(option<item-stack>),
+    }
+
+    /// The hooks a plugin implements for a set of items.
+    flags item-hooks {
+        /// `Item.useOn`: right click on a block, after the block's own `use` passed.
+        use-on-block,
+        /// `Item.use`: right click in the air.
+        %use,
+        /// `Item.inventoryTick`: every tick for each stack of the item in a player's
+        /// inventory. Delivered in `tick-batch.inventories`. Opt in only for items that need it.
+        inventory-tick,
+        /// `Item.overrideOtherStackedOnMe`: a stack is clicked onto this item in a menu slot
+        /// (pickup click). Reply `stacked` to take the click over.
+        stacked-on-me,
+        /// `Item.overrideStackedOnOther`: this item, carried, is clicked onto a menu slot
+        /// (pickup click). Reply `stacked` to take the click over.
+        stacked-on-other,
+        /// `Item.onDestroyed`: an item entity of this item was destroyed (burnt, blown up...).
+        destroyed,
+        /// `Item.canFitInsideContainerItems` returns false: the item can't go into bundles or
+        /// shulker boxes. No call is made.
+        not-in-containers,
+        /// `Item.finishUsingItem`: the use time started with `player.start-using-item` (or by
+        /// the `consumable` component) ran out. Runs after the host applied the `consumable`
+        /// component, if any; reply `stack` to replace what the hand holds.
+        finish-using,
+        /// `Item.releaseUsing`: the player let go of the use button before the use time ran out
+        /// (bows, tridents).
+        release-using,
+        /// `Item.onUseTick`: every tick while the item is in use. Delivered in
+        /// `tick-batch.item-uses`. Opt in only for items that need it.
+        use-tick,
+        /// NeoForge's `IItemExtension.onStopUsing`: the use ended for any reason (finished,
+        /// released, switched away, died, `player.stop-using-item`), after `finish-using` or
+        /// `release-using`.
+        stop-using,
+        /// `Item.useOnRelease` returns true: the use doesn't finish when its time runs out, only
+        /// when released (crossbows); then `release-using` runs, then `finish-using`. No call is
+        /// made.
+        use-on-release,
+    }
+
+    record item-use-on-block {
+        %world: %world,
+        pos: block-pos,
+        /// State of the clicked block.
+        state: u16,
+        player: player,
+        hand: hand,
+        hit: block-hit,
+        /// A copy of the used stack. Change the player's hand through the player API.
+        stack: item-stack,
+    }
+
+    record item-use {
+        %world: %world,
+        player: player,
+        hand: hand,
+        /// A copy of the used stack. Change the player's hand through the player API.
+        stack: item-stack,
+    }
+
+    /// One stack of an item with the `inventory-tick` hook.
+    record inventory-tick {
+        handler-id: u32,
+        /// Inventory slot: 0-8 hotbar, 9-35 main, 36-39 armor, 40 offhand.
+        slot: u32,
+        /// Whether the slot is the selected hotbar slot.
+        selected: bool,
+        /// A copy of the stack. Change it through the player's inventory.
+        stack: item-stack,
+    }
+
+    /// A pickup click in a menu, for `stacked-on-me` and `stacked-on-other`
+    /// (`AbstractContainerMenu.tryItemClickBehaviourOverride`). Don't change the player's
+    /// inventory or cursor from this call; reply with the new stacks instead.
+    record item-stacked-click {
+        player: player,
+        /// The stack in the clicked slot. None when the slot is empty.
+        slot-stack: option<item-stack>,
+        /// The stack on the cursor (`carried`). None when the cursor is empty.
+        carried: option<item-stack>,
+        /// `ClickAction.SECONDARY`: a right click.
+        secondary: bool,
+        /// `Slot.allowModification(player)`: the slot allows both taking and placing.
+        slot-modifiable: bool,
+    }
+
+    /// Reply to `stacked-on-me` and `stacked-on-other`: the click is taken over, and the slot and
+    /// the cursor now hold these stacks (none for empty).
+    record stacked-result {
+        slot-stack: option<item-stack>,
+        carried: option<item-stack>,
+    }
+
+    record item-destroyed {
+        %world: %world,
+        /// The item entity, about to be removed.
+        entity: entity,
+        /// A copy of its stack.
+        stack: item-stack,
+    }
+
+    /// An item in use over time, for `finish-using`, `release-using` and `stop-using`.
+    record item-using {
+        %world: %world,
+        player: player,
+        hand: hand,
+        /// A copy of the stack in use. Change the player's hand through the player API, or
+        /// reply `stack` to `finish-using`.
+        stack: item-stack,
+        /// Ticks left of the use time (`getUseItemRemainingTicks`); 0 for `finish-using`.
+        remaining-ticks: s32,
+    }
+
+    variant item-call {
+        use-on-block(item-use-on-block),
+        %use(item-use),
+        stacked-on-me(item-stacked-click),
+        stacked-on-other(item-stacked-click),
+        destroyed(item-destroyed),
+        finish-using(item-using),
+        release-using(item-using),
+        stop-using(item-using),
+    }
+
+    /// One block entity of a block with the `ticker` hook.
+    record block-entity-tick {
+        handler-id: u32,
+        pos: block-pos,
+        state: u16,
+    }
+
+    /// A player's item in use with the `use-tick` hook (`Item.onUseTick`).
+    record item-use-tick {
+        handler-id: u32,
+        player: player,
+        hand: hand,
+        /// A copy of the stack in use.
+        stack: item-stack,
+        /// Ticks left of the use time, before this tick counts down.
+        remaining-ticks: s32,
+    }
+
+    /// A player's stacks of items with the `inventory-tick` hook.
+    record player-inventory-ticks {
+        player: player,
+        ticks: list<inventory-tick>,
+    }
+
+    /// A plugin's per-tick hooks (`ticker`, `entity-inside`, `step-on`, `inventory-tick`,
+    /// `use-tick`) for one world and one tick, sent to the `handle-tick-batch` export in a
+    /// single call after the world's block entities ticked. Each list is in the order the host
+    /// met them; handle them in vanilla's tick order: inventories and item uses (players), then
+    /// entity contacts (entities), then block entities.
+    record tick-batch {
+        %world: %world,
+        inventories: list<player-inventory-ticks>,
+        item-uses: list<item-use-tick>,
+        entity-contacts: list<entity-contact>,
+        block-entities: list<block-entity-tick>,
+    }
+
+    /// Opens a menu of a modded menu type, like Fabric's `ExtendedMenuProvider`: the client gets
+    /// `fabric-menu-api-v1:open_screen` with the type, the title and `data`, the bytes the menu
+    /// type's stream codec reads.
+    open-menu: func(player: borrow<player>, handler-id: u32, menu-type: string, data: list<u8>, menu: menu-definition) -> result<_, string>;
+
+    /// One node of a modded component type's stream codec. Nodes refer to their children by index
+    /// in the list given to `register-component-stream-codec`; the root is node 0. Each node says
+    /// how a part of the stored value (the NBT the type's persistent codec writes) goes on the
+    /// network.
+    variant stream-codec-node {
+        /// `ByteBufCodecs.BOOL`; NBT byte 0 or 1.
+        %bool,
+        /// `ByteBufCodecs.BYTE`.
+        byte,
+        /// `ByteBufCodecs.SHORT`.
+        short,
+        /// `ByteBufCodecs.INT`.
+        int,
+        /// `ByteBufCodecs.LONG`.
+        long,
+        /// `ByteBufCodecs.FLOAT`.
+        float,
+        /// `ByteBufCodecs.DOUBLE`.
+        double,
+        /// `ByteBufCodecs.VAR_INT`; NBT int.
+        var-int,
+        /// `ByteBufCodecs.VAR_LONG`; NBT long.
+        var-long,
+        /// `ByteBufCodecs.STRING_UTF8`.
+        %string,
+        /// `ByteBufCodecs.TAG`: any NBT value as a network NBT tag.
+        nbt,
+        /// `ItemStack.STREAM_CODEC`; NBT as `ItemStack.CODEC`.
+        item-stack,
+        /// `ItemStack.OPTIONAL_STREAM_CODEC`; NBT as `ItemStack.OPTIONAL_CODEC` (`{}` when empty).
+        optional-item-stack,
+        /// `UUIDUtil.STREAM_CODEC`; NBT int array of 4.
+        uuid,
+        /// `BlockPos.STREAM_CODEC`; NBT int array of 3.
+        block-pos,
+        /// `StreamCodec.composite`: an NBT compound, written field by field in this order, each
+        /// as (NBT key, node index).
+        composite(list<tuple<string, u32>>),
+        /// `ByteBufCodecs.list()`: an NBT list of the node.
+        %list(u32),
+        /// `ByteBufCodecs.optional()`: a bool, then the node when present. As a composite field,
+        /// an absent key is empty.
+        optional(u32),
+    }
+
+    /// A box of a block's shape, relative to the block (0 to 1 on each axis).
+    record shape-box {
+        min: position,
+        max: position,
+    }
+
+    /// Sets the collision shape of the plugin block at `pos` for entity movement, for a mod whose
+    /// `getShape` depends on the block entity (like a drawer with a hopper upgrade, which has a
+    /// hole in its top). None goes back to the block state's shape. The host keeps it with the
+    /// block entity (saved with the chunk) and drops it when the block entity is removed.
+    set-block-collision-shape: func(%world: borrow<%world>, pos: block-pos, boxes: option<list<shape-box>>);
+
+    /// Gives a modded component type (like `storagedrawers:frame_data`) its stream codec, for types
+    /// registered with `networkSynchronized(...)`. Without one, the host sends the value as a
+    /// network NBT tag, vanilla's default stream codec. Replaces an earlier codec for the type.
+    register-component-stream-codec: func(component: string, nodes: list<stream-codec-node>) -> result<_, string>;
+
+    /// A mod loader whose clients the server talks to.
+    enum loader {
+        fabric,
+        neoforge,
+        forge,
+    }
+
+    /// Which way a mod's channel carries packets.
+    enum channel-flow {
+        to-client,
+        to-server,
+        both,
+    }
+
+    /// One of a mod's play network channels, as the mod registers it on a loader.
+    record loader-channel {
+        /// NeoForge and Fabric: the payload id, like `storagedrawers:count_update`. Forge: the
+        /// channel name, like `storagedrawers:main`.
+        id: string,
+        /// NeoForge: the payload registrar's version string. Forge: the channel's network protocol
+        /// version, a number. Fabric: unused.
+        version: string,
+        flow: channel-flow,
+        /// Whether a client without the channel may still join (`optional()` in NeoForge and
+        /// Forge).
+        optional: bool,
+    }
+
+    /// Declares a mod's play network channels on one loader, so that loader's handshake lists
+    /// them: NeoForge's channel negotiation (a client's required channels must be on the
+    /// server, with the same version), Forge's `ChannelVersions`, and the channels the server
+    /// receives in Fabric's `c:register`. A channel declared again replaces the earlier one.
+    register-loader-channels: func(loader: loader, channels: list<loader-channel>) -> result<_, string>;
+}

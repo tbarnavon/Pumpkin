@@ -1,7 +1,8 @@
 # Hooks and APIs added by the fork
 
 Every hook, event and host function the `latest` branch adds to the plugin API (WIT in
-`crates/pumpkin-plugin-wit/v0.1`), with the Java it stands for and the commit that added it.
+`crates/pumpkin-plugin-wit/v0.1`, mirrored in `v0.2`), with the Java it stands for and the commit
+that added it.
 Upstream Pumpkin's own API is not listed.
 
 When you add or change a hook, add or update its row in the same commit. `FORK_CHANGES.md`

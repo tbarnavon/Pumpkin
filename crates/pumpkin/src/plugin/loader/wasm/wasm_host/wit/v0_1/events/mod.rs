@@ -236,6 +236,7 @@ impl<E: Payload + ToFromWasmEvent + Clone + 'static> EventHandler<E> for WasmPlu
             let generation = self.plugin.current();
             let function = match &generation.plugin_instance {
                 PluginInstance::V0_1(plugin) => plugin.func_handle_event(),
+                PluginInstance::V0_2(_) => panic!("Unexpected plugin version in v0.1 path."),
             };
             if let Err(error) = generation
                 .store
@@ -284,6 +285,7 @@ impl<E: Payload + ToFromWasmEvent + Clone + 'static> EventHandler<E> for WasmPlu
             let generation = self.plugin.current();
             let function = match &generation.plugin_instance {
                 PluginInstance::V0_1(plugin) => plugin.func_handle_event(),
+                PluginInstance::V0_2(_) => panic!("Unexpected plugin version in v0.1 path."),
             };
             let result = generation
                 .store

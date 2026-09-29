@@ -29,10 +29,10 @@ these pinned revisions:
 Storage Drawers' GitHub repository has no `26.3` branch (the newest is `26.2`), so the decompiled
 release jar is the source of truth for the mod's formats.
 
-Plugin ABI: PR #3713 (`pumpkin:plugin@0.2.0`, async ABI) is still open. It only defines WIT; its
-own description says binding generation and runtime wiring come in later PRs. We build on
-`pumpkin:plugin@0.1.0` (`crates/pumpkin-plugin-wit/v0.1/`) and keep new WIT additive so it can
-move to 0.2 later.
+Plugin ABI: upstream branched `pumpkin:plugin@0.2.0` from 0.1.0 (`361c34c4d`); the host loads
+either, picked by the version of the plugin's `pumpkin:plugin/metadata` export. We build on
+`pumpkin:plugin@0.1.0` (`crates/pumpkin-plugin-wit/v0.1/`), keep new WIT additive, and mirror
+every addition into 0.2.0 (`crates/pumpkin-plugin-wit/v0.2/`) so a mod can target either.
 
 ## 2. Pumpkin internals
 
@@ -111,8 +111,9 @@ Pumpkin has no concept of configuration "tasks". Finish-config is sent unconditi
 ### 2.5 Plugin runtime
 
 - WASM components (`wasm32-wasip2`), world `pumpkin:plugin@0.1.0`
-  (`crates/pumpkin-plugin-wit/v0.1/plugin.wit`). The host lives in
-  `crates/pumpkin/src/plugin/loader/wasm/wasm_host/wit/v0_1/`, the guest SDK in
+  (`crates/pumpkin-plugin-wit/v0.1/plugin.wit`), or its 0.2.0 mirror. The host lives in
+  `crates/pumpkin/src/plugin/loader/wasm/wasm_host/wit/v0_1/` and `v0_2/`, with the block, item
+  and menu behaviour both share in `wasm_host/modded/`; the guest SDK in
   `crates/pumpkin-plugin-api`.
 - Plugin exports: `init-plugin`, `on-load`, `on-unload`, `handle-event`, `handle-command`,
   `handle-task`, `handle-ipc-message`, AI goal hooks and `handle-generate-phase`.

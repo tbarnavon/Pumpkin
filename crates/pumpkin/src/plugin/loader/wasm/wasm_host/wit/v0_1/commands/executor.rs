@@ -62,6 +62,7 @@ impl CommandExecutor for WasmCommandExecutor {
         let generation = self.plugin.current();
         let function = match &generation.plugin_instance {
             PluginInstance::V0_1(plugin) => plugin.func_handle_command(),
+            PluginInstance::V0_2(_) => panic!("Unexpected plugin version in v0.1 path."),
         };
 
         tokio::task::block_in_place(|| {
@@ -142,6 +143,7 @@ impl SuggestionProvider for WasmCommandSuggestionProvider {
         let generation = self.plugin.current();
         let function = match &generation.plugin_instance {
             PluginInstance::V0_1(plugin) => plugin.func_handle_command_suggestion(),
+            PluginInstance::V0_2(_) => panic!("Unexpected plugin version in v0.1 path."),
         };
 
         tokio::task::block_in_place(|| {

@@ -19,8 +19,7 @@ use pumpkin_plugin_runtime::RuntimeSpawner;
 use wasmtime::Engine;
 
 use super::{
-    PluginGeneration, PluginInitError, WasmPlugin, concurrent_store,
-    state::PluginHostState,
+    AnyPluginPre, PluginGeneration, PluginInitError, WasmPlugin, concurrent_store,
     wit::{self, v0_1::pumpkin::plugin::context::MarketplaceMetadata},
 };
 use crate::plugin::{Context, PluginMetadata};
@@ -31,7 +30,7 @@ const RESTART_WINDOW: Duration = Duration::from_secs(60);
 
 pub(super) struct Restarter {
     engine: Engine,
-    plugin_pre: pumpkin_host_bindings::PluginPre<PluginHostState>,
+    plugin_pre: AnyPluginPre,
     legacy_sync_reentry: concurrent_store::LegacySyncReentry,
     spawner: Arc<dyn RuntimeSpawner>,
     marketplace_metadata: Option<MarketplaceMetadata>,
@@ -44,7 +43,7 @@ pub(super) struct Restarter {
 impl Restarter {
     pub(super) fn new(
         engine: Engine,
-        plugin_pre: pumpkin_host_bindings::PluginPre<PluginHostState>,
+        plugin_pre: AnyPluginPre,
         legacy_sync_reentry: concurrent_store::LegacySyncReentry,
         spawner: Arc<dyn RuntimeSpawner>,
         marketplace_metadata: Option<MarketplaceMetadata>,
@@ -66,12 +65,16 @@ impl Restarter {
     pub(super) async fn instantiate(
         &self,
     ) -> Result<(Arc<PluginGeneration>, PluginMetadata), PluginInitError> {
-        let (plugin_instance, store, metadata) = wit::v0_1::init_plugin(
-            &self.engine,
-            self.plugin_pre.clone(),
-            &self.legacy_sync_reentry,
-        )
-        .await?;
+        let (plugin_instance, store, metadata) = match &self.plugin_pre {
+            AnyPluginPre::V0_1(plugin_pre) => {
+                wit::v0_1::init_plugin(&self.engine, plugin_pre.clone(), &self.legacy_sync_reentry)
+                    .await?
+            }
+            AnyPluginPre::V0_2(plugin_pre) => {
+                wit::v0_2::init_plugin(&self.engine, plugin_pre.clone(), &self.legacy_sync_reentry)
+                    .await?
+            }
+        };
         let store = concurrent_store::start_legacy_store(
             store,
             self.legacy_sync_reentry.clone(),
