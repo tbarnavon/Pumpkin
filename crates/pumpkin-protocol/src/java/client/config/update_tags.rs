@@ -38,20 +38,22 @@ impl ClientPacket for CUpdateTags<'_> {
         write.write_list(&valid_keys, |p, &registry_key| {
             p.write_string(&format!("minecraft:{}", registry_key.identifier_string()))?;
 
-            let Some(values) = get_registry_key_tags(*version, registry_key) else {
+            if get_registry_key_tags(*version, registry_key).is_none() {
                 // no tags defined for that registry key in this version
                 // write an empty list and continue
                 p.write_var_int(&VarInt::from(0))?;
                 return Ok(());
-            };
+            }
+            // Vanilla tags plus whatever installed mods added to them.
+            let values = pumpkin_data::dynamic::tags::merged(registry_key);
             p.write_var_int(&values.len().try_into().map_err(|_| {
                 WritingError::Message(format!("{} isn't representable as a VarInt", values.len()))
             })?)?;
 
-            for (key, values) in values.entries() {
+            for (key, ids) in values {
                 // This is technically a `ResourceLocation` but same thing
                 p.write_string_bounded(key, u16::MAX as usize)?;
-                p.write_list(values.1, |p, &id| p.write_var_int(&VarInt::from(id)))?;
+                p.write_list(ids, |p, &id| p.write_var_int(&VarInt::from(id)))?;
             }
 
             Ok(())

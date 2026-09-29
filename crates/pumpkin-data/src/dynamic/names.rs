@@ -170,3 +170,20 @@ pub fn modded_name(registry: SyncedRegistry, raw_id: u16) -> Option<&'static str
 pub fn modded_id(registry: SyncedRegistry, name: &str) -> Option<u16> {
     NAMES.get()?.id(registry, name)
 }
+
+/// Raw id of a block-entity type by resource location: vanilla (`minecraft:chest` or `chest`) or
+/// modded (`storagedrawers:standard_drawers_1`).
+#[cfg(feature = "block")]
+#[must_use]
+pub fn block_entity_type_id(name: &str) -> Option<u16> {
+    match name.split_once(':') {
+        None | Some(("minecraft", _)) => {
+            let path = name.strip_prefix("minecraft:").unwrap_or(name);
+            crate::block_properties::BLOCK_ENTITY_TYPES
+                .iter()
+                .position(|t| *t == path)
+                .map(|index| index as u16)
+        }
+        Some(_) => modded_id(SyncedRegistry::BlockEntityType, name),
+    }
+}

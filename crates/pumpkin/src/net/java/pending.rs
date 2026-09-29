@@ -75,6 +75,8 @@ pub struct PendingConnection {
     pub packet_limiter: PacketRateLimiter,
     pub verify_token: Option<[u8; 4]>,
     pub vine_challenge: Option<[u8; 16]>,
+    /// Fabric configuration handshake, only when mods are installed.
+    pub fabric: Option<pumpkin_fabric::handshake::FabricHandshake>,
     /// For the connection packet events.
     server: Weak<Server>,
 }
@@ -104,6 +106,7 @@ impl PendingConnection {
             packet_limiter,
             verify_token: None,
             vine_challenge: None,
+            fabric: None,
             server,
         }
     }
@@ -499,8 +502,16 @@ impl PendingConnection {
                 Ok(None)
             }
             id if id == SPluginMessage::to_id(version) => {
-                self.handle_plugin_message(SPluginMessage::read(&mut payload, &version)?)
-                    .await;
+                let message = SPluginMessage::read(&mut payload, &version)?;
+                if let Some(step) = self
+                    .fabric
+                    .as_mut()
+                    .map(|handshake| handshake.on_payload(message.channel, message.data))
+                    && self.handle_fabric_step(server, step).await
+                {
+                    return Ok(None);
+                }
+                self.handle_plugin_message(message).await;
                 Ok(None)
             }
             id if id == SAcknowledgeFinishConfig::to_id(version) => {
@@ -536,7 +547,14 @@ impl PendingConnection {
                 Ok(None)
             }
             id if id == SConfigPong::to_id(version) => {
-                let _pong = SConfigPong::read(&mut payload, &version)?;
+                let pong = SConfigPong::read(&mut payload, &version)?;
+                if let Some(step) = self
+                    .fabric
+                    .as_mut()
+                    .map(|handshake| handshake.on_pong(pong.id))
+                {
+                    self.handle_fabric_step(server, step).await;
+                }
                 Ok(None)
             }
             id if id == SAcceptCodeOfConduct::to_id(version) => {

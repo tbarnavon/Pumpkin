@@ -36,6 +36,8 @@ fn storage_drawers_dump_installs_with_reference_ids() {
     assert_eq!(drawer.states.len(), 4);
     let item = Item::from_registry_key("storagedrawers:oak_full_drawers_1").expect("item");
     assert_eq!(drawer.item_id, item.id);
+    // Placing the item places the block.
+    assert_eq!(Block::from_item_id(item.id).map(|b| b.id), Some(drawer.id));
     assert_eq!(
         drawer.default_state.block_entity_type,
         modded_id(

@@ -1,5 +1,7 @@
 #[allow(clippy::wildcard_imports)]
 use super::*;
+use pumpkin_fabric::handshake::{FabricHandshake, Outgoing, Step};
+use pumpkin_protocol::java::client::config::{CConfigPing, CPluginMessage};
 
 impl PendingConnection {
     pub async fn handle_login_acknowledged(
@@ -8,6 +10,22 @@ impl PendingConnection {
     ) -> Option<PacketHandlerResult> {
         debug!("Handling login acknowledgement");
         self.connection_state.store(ConnectionState::Config);
+
+        // With mods installed, Fabric's handshake runs first; `continue_configuration` follows
+        // once it is done (see `handle_fabric_step`).
+        if let Some(mods) = pumpkin_registry_ext::installed() {
+            let handshake = FabricHandshake::new(mods.namespaces.clone(), Vec::new());
+            let start = handshake.start();
+            self.fabric = Some(handshake);
+            self.send_fabric_packets(start).await;
+            return None;
+        }
+        self.continue_configuration(server).await;
+        None
+    }
+
+    /// The vanilla configuration: brand, server links, resource pack or known packs.
+    pub async fn continue_configuration(&mut self, server: &Server) {
         self.send_packet_now(&server.get_branding()).await;
 
         if server.advanced_config.server_links.enabled {
@@ -91,7 +109,33 @@ impl PendingConnection {
             self.send_known_packs(server).await;
         }
         debug!("login acknowledged");
-        None
+    }
+
+    pub async fn send_fabric_packets(&mut self, packets: Vec<Outgoing>) {
+        for packet in packets {
+            match packet {
+                Outgoing::Payload { channel, data } => {
+                    self.send_packet_now(&CPluginMessage::new(channel, &data))
+                        .await;
+                }
+                Outgoing::Ping(id) => self.send_packet_now(&CConfigPing::new(id)).await,
+            }
+        }
+    }
+
+    /// Acts on a handshake step. Returns `false` if the packet was not part of the handshake.
+    pub async fn handle_fabric_step(&mut self, server: &Server, step: Step) -> bool {
+        match step {
+            Step::NotHandled => return false,
+            Step::Wait => {}
+            Step::Send(packets) => self.send_fabric_packets(packets).await,
+            Step::Done(packets) => {
+                self.send_fabric_packets(packets).await;
+                self.continue_configuration(server).await;
+            }
+            Step::Disconnect(message) => self.kick(TextComponent::text(message)).await,
+        }
+        true
     }
 
     pub async fn send_known_packs(&mut self, server: &Server) {

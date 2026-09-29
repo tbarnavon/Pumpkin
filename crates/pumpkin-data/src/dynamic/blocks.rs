@@ -63,6 +63,8 @@ pub struct StateDef {
 pub(crate) struct BlockTables {
     blocks: Box<[&'static Block]>,
     by_name: HashMap<&'static str, &'static Block>,
+    /// Modded item id to the first modded block that has it as its item.
+    by_item: HashMap<u16, &'static Block>,
     /// Indexed by `state id - BlockStateId::VANILLA_COUNT`.
     states: Box<[ModdedState]>,
     /// Shapes past the end of [`COLLISION_SHAPES`].
@@ -139,6 +141,7 @@ impl BlockTables {
     pub(crate) fn build(defs: Vec<BlockDef>, names: &NameTables) -> Result<Self, FreezeError> {
         let mut blocks = Vec::with_capacity(defs.len());
         let mut by_name = HashMap::with_capacity(defs.len());
+        let mut by_item = HashMap::new();
         let mut states = Vec::new();
         let mut shapes = ShapeInterner::new();
         let mut next_state = u32::from(BlockStateId::VANILLA_COUNT);
@@ -229,6 +232,9 @@ impl BlockTables {
                 });
             }
             next_state = last_state;
+            if block.item_id != 0 {
+                by_item.entry(block.item_id).or_insert(block);
+            }
             by_name.insert(name, block);
             blocks.push(block);
         }
@@ -236,6 +242,7 @@ impl BlockTables {
         Ok(Self {
             blocks: blocks.into_boxed_slice(),
             by_name,
+            by_item,
             states: states.into_boxed_slice(),
             shapes: shapes.extra.into_boxed_slice(),
         })
@@ -315,6 +322,12 @@ pub fn state_count() -> u16 {
 #[must_use]
 pub fn blocks() -> &'static [&'static Block] {
     BLOCKS.get().map_or(&[], |t| &t.blocks)
+}
+
+/// The first modded block whose item is `item_id`.
+#[must_use]
+pub fn block_for_item(item_id: u16) -> Option<&'static Block> {
+    BLOCKS.get()?.by_item.get(&item_id).copied()
 }
 
 /// A modded block by namespaced name.

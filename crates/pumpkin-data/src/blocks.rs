@@ -145,6 +145,13 @@ impl Block {
         Self::from_id(BlockId::from_state_id(id))
     }
 
+    /// The block an item places, if any. For modded items this is the first modded block whose
+    /// item it is, like vanilla's `Item.BY_BLOCK` registration order.
+    #[must_use]
+    pub fn from_item_id(id: u16) -> Option<&'static Self> {
+        Self::from_vanilla_item_id(id).or_else(|| crate::dynamic::blocks::block_for_item(id))
+    }
+
     /// Look up a block by the key Pumpkin stores for it: the bare path for vanilla blocks
     /// (`"stone"`), the namespaced name for modded blocks (`"storagedrawers:oak_trim"`).
     #[inline]

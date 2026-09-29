@@ -154,3 +154,16 @@ pub fn modded_tags(registry: RegistryKey) -> impl Iterator<Item = (&'static str,
         .flat_map(|tags| tags.iter())
         .map(|(name, tag)| (*name, tag.ids))
 }
+
+/// Every tag of `registry` as clients should see it: vanilla tags with mod additions applied,
+/// followed by tags only mods define. Same as the vanilla tags when no mod touched `registry`.
+#[must_use]
+pub fn merged(registry: RegistryKey) -> Vec<(&'static str, &'static [u16])> {
+    let vanilla = get_latest_map(registry);
+    let mut tags: Vec<(&'static str, &'static [u16])> = vanilla
+        .entries()
+        .map(|(name, tag)| (*name, ids(registry, name).unwrap_or(tag.1)))
+        .collect();
+    tags.extend(modded_tags(registry).filter(|(name, _)| !vanilla.contains_key(name)));
+    tags
+}

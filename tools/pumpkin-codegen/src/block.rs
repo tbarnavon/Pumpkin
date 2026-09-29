@@ -1441,9 +1441,9 @@ pub fn build() -> TokenStream {
                 }
             }
 
-            #[doc = r" Try to parse a block from an item id."]
+            /// The vanilla block a vanilla item places, if any.
             #[must_use]
-            pub const fn from_item_id(id: u16) -> Option<&'static Self> {
+            pub(crate) const fn from_vanilla_item_id(id: u16) -> Option<&'static Self> {
                 #[allow(unreachable_patterns)]
                 match id {
                     #(#block_from_item_id_arms)*

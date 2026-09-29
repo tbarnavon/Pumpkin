@@ -1,0 +1,19 @@
+[package]
+name = "pumpkin-fabric"
+description = "Fabric client support for Pumpkin: channel registration and registry sync"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+pumpkin-data = { workspace = true, features = ["default"] }
+thiserror.workspace = true
+
+[dev-dependencies]
+pumpkin-registry-ext.workspace = true
+serde_json.workspace = true
+base64.workspace = true
+
+[lints]
+workspace = true
