@@ -42,6 +42,9 @@ const fn to_wit_pos(pos: BlockPos) -> WitBlockPos {
     }
 }
 
+/// What the `modded` API answers while `[modded] enabled` is off in the server config.
+pub const DISABLED: &str = "modded content is disabled ([modded] enabled = false)";
+
 /// A block's hooks as implemented by a Wasm plugin.
 pub struct PluginBlock {
     pub plugin: Arc<WasmPlugin>,
@@ -799,6 +802,14 @@ impl wit::HostWithStore<PluginHostState> for HasSelf<PluginHostState> {
         data: Vec<u8>,
         menu: MenuDefinition,
     ) -> wasmtime::Result<Result<(), String>> {
+        if !host
+            .get()
+            .server
+            .as_ref()
+            .is_some_and(|server| server.advanced_config.modded.enabled)
+        {
+            return Ok(Err(DISABLED.to_string()));
+        }
         if pumpkin_data::dynamic::names::modded_id(
             pumpkin_data::dynamic::names::SyncedRegistry::Menu,
             &menu_type,

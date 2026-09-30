@@ -13,7 +13,9 @@ impl PendingConnection {
 
         // With mods installed, Fabric's handshake runs first; `continue_configuration` follows
         // once it is done (see `handle_fabric_step`).
-        if let Some(mods) = pumpkin_registry_ext::installed() {
+        if let Some(mods) = pumpkin_registry_ext::installed()
+            && server.advanced_config.modded.fabric_handshake
+        {
             let handshake = FabricHandshake::new(mods.namespaces.clone(), Vec::new());
             let start = handshake.start();
             self.fabric = Some(handshake);

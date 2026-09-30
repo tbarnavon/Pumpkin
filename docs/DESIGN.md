@@ -408,6 +408,21 @@ client  → KnownPacks → RegistryData…, UpdateTags (with modded tag entries)
   mods, as Fabric does. Otherwise it would see unknown state IDs.
 - A Fabric client **without** the mod gets the same kick, from its own `checkRemoteRemap`.
 
+### Configuration
+
+Everything modded is off unless `pumpkin.toml` turns it on, so a vanilla server behaves as
+upstream:
+
+```toml
+[modded]
+enabled = false          # read mod-data/ and allow the modded plugin API
+fabric_handshake = false # Fabric's login handshake and fabric:registry/sync
+```
+
+With `enabled = false`, no mod data is read, and `register-block-hooks`, `register-item-hooks`
+and `modded.open-menu` return an error. Each mod loader's handshake gets its own switch
+(`forge_handshake` and `neoforge_handshake` are planned next to `fabric_handshake`).
+
 ## 7. Plan and verification
 
 | Phase | Deliverable | Test |

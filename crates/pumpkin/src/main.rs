@@ -74,9 +74,13 @@ async fn main() {
     pumpkin::init_logger(&config.advanced);
 
     // Modded registry entries must be installed before anything looks up blocks or items.
-    match pumpkin_registry_ext::read_dumps(&exec_dir.join("mod-data"))
-        .and_then(pumpkin_registry_ext::install)
-    {
+    let mod_data = if config.advanced.modded.enabled {
+        pumpkin_registry_ext::read_dumps(&exec_dir.join("mod-data"))
+            .and_then(pumpkin_registry_ext::install)
+    } else {
+        Ok(None)
+    };
+    match mod_data {
         Ok(Some(mods)) => info!(
             "Loaded mod data for {} ({} blocks, {} block states, {} items)",
             mods.namespaces.join(", "),

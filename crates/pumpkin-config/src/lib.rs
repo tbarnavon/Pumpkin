@@ -19,6 +19,8 @@ use tracing::{debug, error, warn};
 pub mod fun;
 /// Server logging configuration options.
 pub mod logging;
+/// Fabric mod content configuration options.
+pub mod modded;
 /// Networking and protocol configuration options.
 pub mod networking;
 /// Plugin management configuration options.
@@ -176,6 +178,8 @@ pub struct AdvancedConfiguration {
     pub plugins: PluginsConfig,
     /// Advancement configuration
     pub advancement: AdvancementConfig,
+    /// Fabric mod content: mod data, the `modded` plugin API and Fabric's handshake.
+    pub modded: modded::ModdedConfig,
 }
 
 /// Basic configuration for core server settings.

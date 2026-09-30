@@ -1773,6 +1773,9 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
         let Some(server) = self.server.clone() else {
             return Ok(Err("server is not available".to_string()));
         };
+        if !server.advanced_config.modded.enabled {
+            return Ok(Err(super::modded::DISABLED.to_string()));
+        }
         let behaviour = Arc::new(super::modded::PluginBlock {
             plugin,
             handler_id,
@@ -1805,6 +1808,9 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
         let Some(server) = self.server.clone() else {
             return Ok(Err("server is not available".to_string()));
         };
+        if !server.advanced_config.modded.enabled {
+            return Ok(Err(super::modded::DISABLED.to_string()));
+        }
         let behaviour: Arc<dyn crate::item::ItemBehaviour> = Arc::new(super::modded::PluginItem {
             plugin,
             handler_id,
