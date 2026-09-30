@@ -161,7 +161,7 @@ as a full slot while any is stored, so hoppers only take it out.
 |:--|:--|:--|:--|:--|
 | Mod loot tables | ✅ | host | imported from the dump | ✅ |
 | Custom drops from code (`getDrops`) | ✅ | modded | modded block `drops` hook | ✅ |
-| `LootTableEvents` REPLACE / MODIFY / MODIFY_DROPS | 🟡 | core | `loot-generate-event`; can't change tables | |
+| `LootTableEvents` REPLACE / MODIFY / MODIFY_DROPS | 🟡 | core | `loot-generate-event`; block drops can be replaced in `block-drop-item-event`; tables themselves can't be changed | |
 
 ### fabric-recipe-api-v1
 | Feature | Status | API | Pumpkin | SD |
