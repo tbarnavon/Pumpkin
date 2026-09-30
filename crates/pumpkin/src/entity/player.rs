@@ -7736,6 +7736,55 @@ impl InventoryPlayer for Player {
         self.gamemode.load() == GameMode::Spectator
     }
 
+    fn override_stacked_click(
+        &self,
+        clicked: &ItemStack,
+        carried: &ItemStack,
+        secondary: bool,
+        slot_modifiable: bool,
+    ) -> Option<(ItemStack, ItemStack)> {
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginItem;
+        let world = self.world();
+        let server = world.server.upgrade()?;
+        let plugin_item = |stack: &ItemStack| {
+            if stack.is_empty() {
+                return None;
+            }
+            server
+                .item_registry
+                .get_pumpkin_item(stack.item.id)
+                .and_then(|behaviour| behaviour.as_any().downcast_ref::<PluginItem>())
+        };
+        let (carried_item, clicked_item) = (plugin_item(carried), plugin_item(clicked));
+        if carried_item.is_none() && clicked_item.is_none() {
+            return None;
+        }
+        let player = world.get_player_by_id(self.entity_id())?;
+        // tryItemClickBehaviourOverride: the carried item first, then the clicked one.
+        if let Some(item) = carried_item
+            && let Some(result) = item.stacked_click(
+                &server,
+                player.clone(),
+                false,
+                clicked,
+                carried,
+                secondary,
+                slot_modifiable,
+            )
+        {
+            return Some(result);
+        }
+        clicked_item?.stacked_click(
+            &server,
+            player,
+            true,
+            clicked,
+            carried,
+            secondary,
+            slot_modifiable,
+        )
+    }
+
     fn experience_level(&self) -> i32 {
         self.experience_level
             .load(std::sync::atomic::Ordering::Relaxed)

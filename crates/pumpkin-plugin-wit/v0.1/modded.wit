@@ -167,6 +167,8 @@ interface modded {
         interaction(interaction-result),
         /// Reply to `drops`.
         drops(list<item-stack>),
+        /// Reply to `stacked-on-me` and `stacked-on-other`.
+        stacked(stacked-result),
     }
 
     /// The hooks a plugin implements for a set of items.
@@ -178,6 +180,17 @@ interface modded {
         /// `Item.inventoryTick`: every tick for each stack of the item in a player's
         /// inventory. Opt in only for items that need it; it is called every tick.
         inventory-tick,
+        /// `Item.overrideOtherStackedOnMe`: a stack is clicked onto this item in a menu slot
+        /// (pickup click). Reply `stacked` to take the click over.
+        stacked-on-me,
+        /// `Item.overrideStackedOnOther`: this item, carried, is clicked onto a menu slot
+        /// (pickup click). Reply `stacked` to take the click over.
+        stacked-on-other,
+        /// `Item.onDestroyed`: an item entity of this item was destroyed (burnt, blown up...).
+        destroyed,
+        /// `Item.canFitInsideContainerItems` returns false: the item can't go into bundles or
+        /// shulker boxes. No call is made.
+        not-in-containers,
     }
 
     record item-use-on-block {
@@ -211,10 +224,43 @@ interface modded {
         stack: item-stack,
     }
 
+    /// A pickup click in a menu, for `stacked-on-me` and `stacked-on-other`
+    /// (`AbstractContainerMenu.tryItemClickBehaviourOverride`). Don't change the player's
+    /// inventory or cursor from this call; reply with the new stacks instead.
+    record item-stacked-click {
+        player: player,
+        /// The stack in the clicked slot. None when the slot is empty.
+        slot-stack: option<item-stack>,
+        /// The stack on the cursor (`carried`). None when the cursor is empty.
+        carried: option<item-stack>,
+        /// `ClickAction.SECONDARY`: a right click.
+        secondary: bool,
+        /// `Slot.allowModification(player)`: the slot allows both taking and placing.
+        slot-modifiable: bool,
+    }
+
+    /// Reply to `stacked-on-me` and `stacked-on-other`: the click is taken over, and the slot and
+    /// the cursor now hold these stacks (none for empty).
+    record stacked-result {
+        slot-stack: option<item-stack>,
+        carried: option<item-stack>,
+    }
+
+    record item-destroyed {
+        %world: %world,
+        /// The item entity, about to be removed.
+        entity: entity,
+        /// A copy of its stack.
+        stack: item-stack,
+    }
+
     variant item-call {
         use-on-block(item-use-on-block),
         %use(item-use),
         inventory-tick(item-inventory-tick),
+        stacked-on-me(item-stacked-click),
+        stacked-on-other(item-stacked-click),
+        destroyed(item-destroyed),
     }
 
     /// Opens a menu of a modded menu type, like Fabric's `ExtendedMenuProvider`: the client gets

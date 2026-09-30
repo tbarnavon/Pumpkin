@@ -885,6 +885,35 @@ impl ItemStack {
     }
 }
 
+/// Items a plugin marked as not fitting inside container items, by id.
+static NOT_IN_CONTAINERS: std::sync::RwLock<Vec<u16>> = std::sync::RwLock::new(Vec::new());
+
+/// `Item.canFitInsideContainerItems`: whether the item can go into a bundle or a shulker box.
+/// False for shulker boxes (`BlockItem`) and for items a plugin marked with
+/// [`set_fits_inside_container_items`].
+#[must_use]
+pub fn can_fit_inside_container_items(item: &Item) -> bool {
+    use crate::tag::Taggable;
+    if item.is_tagged_with("minecraft:shulker_boxes") == Some(true) {
+        return false;
+    }
+    !NOT_IN_CONTAINERS
+        .read()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .contains(&item.id)
+}
+
+/// Overrides `Item.canFitInsideContainerItems` for an item (a mod's item behaviour).
+pub fn set_fits_inside_container_items(item_id: u16, fits: bool) {
+    let mut items = NOT_IN_CONTAINERS
+        .write()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    items.retain(|id| *id != item_id);
+    if !fits {
+        items.push(item_id);
+    }
+}
+
 /// Raw id of a modded data component type, by name.
 #[must_use]
 pub fn unknown_component_id(name: &str) -> Option<u16> {

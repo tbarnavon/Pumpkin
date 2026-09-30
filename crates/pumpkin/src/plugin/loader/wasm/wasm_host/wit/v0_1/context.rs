@@ -1886,6 +1886,9 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
             {
                 return Ok(Err(error));
             }
+            if hooks.contains(pumpkin::plugin::modded::ItemHooks::NOT_IN_CONTAINERS) {
+                pumpkin_data::item_stack::set_fits_inside_container_items(item.id, false);
+            }
         }
         Ok(Ok(()))
     }

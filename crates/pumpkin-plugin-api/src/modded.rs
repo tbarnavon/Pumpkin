@@ -72,7 +72,9 @@ impl crate::Context {
     }
 }
 
-pub use crate::wit::pumpkin::plugin::modded::{ItemCall, ItemHooks, ItemUse, ItemUseOnBlock};
+pub use crate::wit::pumpkin::plugin::modded::{
+    ItemCall, ItemDestroyed, ItemHooks, ItemStackedClick, ItemUse, ItemUseOnBlock, StackedResult,
+};
 
 /// Handles the hooks of the items it was registered for.
 pub trait ItemHookHandler: Send + Sync + 'static {

@@ -141,6 +141,19 @@ pub trait InventoryPlayer: Send + Sync {
         false
     }
 
+    /// `AbstractContainerMenu.tryItemClickBehaviourOverride`: `carried.overrideStackedOnOther`,
+    /// then `clicked.overrideOtherStackedOnMe`, for items whose behaviour is not built in. Returns
+    /// the new slot and cursor stacks when an item took the pickup click over.
+    fn override_stacked_click(
+        &self,
+        _clicked: &ItemStack,
+        _carried: &ItemStack,
+        _secondary: bool,
+        _slot_modifiable: bool,
+    ) -> Option<(ItemStack, ItemStack)> {
+        None
+    }
+
     /// Gets the player's experience level.
     fn experience_level(&self) -> i32;
 
@@ -1002,6 +1015,28 @@ pub trait ScreenHandler: Send + Sync {
                 }
 
                 let slot_stack = slot.get_cloned_stack();
+
+                let carried = self
+                    .get_behaviour()
+                    .cursor_stack
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner)
+                    .clone();
+                if let Some((new_slot, new_carried)) = player.override_stacked_click(
+                    &slot_stack,
+                    &carried,
+                    click_type == MouseClick::Right,
+                    slot.allow_modification(player),
+                ) {
+                    slot.set_stack(new_slot);
+                    *self
+                        .get_behaviour()
+                        .cursor_stack
+                        .lock()
+                        .unwrap_or_else(std::sync::PoisonError::into_inner) = new_carried;
+                    slot.mark_dirty();
+                    return;
+                }
                 let mut cursor_stack = self
                     .get_behaviour()
                     .cursor_stack

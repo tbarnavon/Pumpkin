@@ -442,7 +442,10 @@ impl BundleContentsImpl {
             .sum()
     }
     pub fn try_insert(&mut self, stack: &mut crate::item_stack::ItemStack) -> bool {
-        if stack.is_empty() || stack.get_data_component::<BundleContentsImpl>().is_some() {
+        if stack.is_empty()
+            || stack.get_data_component::<BundleContentsImpl>().is_some()
+            || !crate::item_stack::can_fit_inside_container_items(stack.item)
+        {
             return false;
         }
         let weight_per_item = (64 / stack.get_max_stack_size() as u32).max(1);

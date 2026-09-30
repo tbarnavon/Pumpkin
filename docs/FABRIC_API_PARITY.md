@@ -15,7 +15,7 @@ Summary (109 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 65 (60 %) | 17 (16 %) | 27 (25 %) |
+| 68 (62 %) | 17 (16 %) | 24 (22 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -116,9 +116,9 @@ for a mod's, whose data only lives in the chunk as NBT:
 | `CustomDamageHandler` | ❌ | modded | | |
 | `EquipmentSlotProvider` | ❌ | modded | | |
 | `EnchantmentEvents` ALLOW_ENCHANTING / MODIFY | 🟡 | core | `prepare-item-enchant-event`, `enchant-item-event`; no per-item allow | |
-| `ItemClickBehaviorCallback` / `Item.overrideOtherStackedOnMe` (click one stack onto another in a menu) | ❌ | core | `inventory-click-event` can cancel but cannot set the cursor (carried) item | ❌ keyring: add or take out keys in the inventory |
-| `Item.onDestroyed` (the item entity of a stack is destroyed) | ❌ | modded | | ❌ keyring: keys spill out when a keyring burns |
-| `Item.canFitInsideContainerItems` (bundles, shulker boxes) | ❌ | modded | | ❌ `canStoreInContainers` for filled and detached drawers |
+| `ItemClickBehaviorCallback` / `Item.overrideOtherStackedOnMe` / `overrideStackedOnOther` (click one stack onto another in a menu) | ✅ | modded | `stacked-on-me` and `stacked-on-other` item hooks, called on pickup clicks in any menu (`tryItemClickBehaviourOverride`, carried item first); the reply sets the slot and cursor stacks | ✅ keyring: add or take out keys in the inventory |
+| `Item.onDestroyed` (the item entity of a stack is destroyed) | ✅ | modded | `destroyed` item hook, with the item entity, when its health drops to 0 (fire, lava, explosions, cactus) | ✅ keyring: keys spill out when a keyring burns |
+| `Item.canFitInsideContainerItems` (bundles, shulker boxes) | ✅ | modded | `not-in-containers` item hook flag, held by the host (no call); bundles and shulker box menus (now `ShulkerBoxSlot`, as vanilla) refuse such items and shulker boxes | ✅ `canStoreInContainers` for filled and detached drawers |
 | Item tags of a stack (`ItemStack.is(TagKey)`, tag members) | ❌ | core | | ❌ conversion upgrade tag allow list (equivalence groups work) |
 | `BlockTransformerEvents` (strip, till, flatten...) | ❌ | core | | |
 | `ItemComponentTooltipProviderRegistry` | ➖ | - | tooltips are drawn by the client | |

@@ -17,7 +17,7 @@ use pumpkin_data::{item_stack::ItemStack, screen::WindowType};
 use crate::{
     player::player_inventory::PlayerInventory,
     screen_handler::{InventoryPlayer, ScreenHandler, ScreenHandlerBehaviour},
-    slot::NormalSlot,
+    slot::{NormalSlot, Slot},
 };
 
 /// Creates a generic 9x3 container (single chest).
@@ -38,6 +38,60 @@ pub fn create_generic_9x3(
         9,
         player.is_spectator(),
     )
+}
+
+/// Creates a shulker box's 9x3 container: its slots take only items that fit inside container
+/// items (`ShulkerBoxMenu`, `ShulkerBoxSlot`).
+pub fn create_shulker_box(
+    sync_id: u8,
+    player_inventory: &Arc<PlayerInventory>,
+    inventory: Arc<dyn Inventory>,
+    player: &dyn InventoryPlayer,
+) -> GenericContainerScreenHandler {
+    let mut handler = GenericContainerScreenHandler {
+        inventory,
+        rows: 3,
+        columns: 9,
+        is_spectator: player.is_spectator(),
+        behaviour: ScreenHandlerBehaviour::new(sync_id, Some(WindowType::ShulkerBox)),
+    };
+    if !handler.is_spectator {
+        handler.inventory.on_open();
+    }
+    for i in 0..27 {
+        handler.add_slot(Arc::new(ShulkerBoxSlot(NormalSlot::new(
+            handler.inventory.clone(),
+            i,
+        ))));
+    }
+    let player_inventory: Arc<dyn Inventory> = player_inventory.clone();
+    handler.add_player_slots(&player_inventory);
+    handler
+}
+
+/// `ShulkerBoxSlot`: a container slot that refuses items that don't fit inside container items.
+struct ShulkerBoxSlot(NormalSlot);
+
+impl Slot for ShulkerBoxSlot {
+    fn get_inventory(&self) -> Arc<dyn Inventory> {
+        self.0.get_inventory()
+    }
+
+    fn get_index(&self) -> usize {
+        self.0.get_index()
+    }
+
+    fn set_id(&self, id: usize) {
+        self.0.set_id(id);
+    }
+
+    fn mark_dirty(&self) {
+        self.0.mark_dirty();
+    }
+
+    fn can_insert(&self, stack: &ItemStack) -> bool {
+        pumpkin_data::item_stack::can_fit_inside_container_items(stack.item)
+    }
 }
 
 /// Creates a generic 9x6 container (double chest).

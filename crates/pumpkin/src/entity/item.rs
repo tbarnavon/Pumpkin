@@ -155,6 +155,31 @@ impl ItemEntity {
         &self.item_stack
     }
 
+    /// `Item.onDestroyed`, for items a plugin gives behaviour to.
+    fn on_destroyed(&self) {
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginItem;
+        let stack = self
+            .item_stack
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone();
+        let world = self.entity.world.load_full();
+        let Some(server) = world.server.upgrade() else {
+            return;
+        };
+        let Some(item) = server
+            .item_registry
+            .get_pumpkin_item(stack.item.id)
+            .and_then(|behaviour| behaviour.as_any().downcast_ref::<PluginItem>())
+        else {
+            return;
+        };
+        let Some(entity) = world.get_entity_by_id(self.entity.entity_id) else {
+            return;
+        };
+        item.destroyed(&server, world, entity, stack);
+    }
+
     /// `ItemEntity.setItem`. An empty stack removes the entity, as its next tick would.
     pub fn set_item_stack(&self, stack: ItemStack) {
         let empty = stack.is_empty();
@@ -598,6 +623,9 @@ impl EntityBase for ItemEntity {
                 .is_ok()
             {
                 if new <= 0.0 {
+                    if current > 0.0 {
+                        self.on_destroyed();
+                    }
                     self.entity.remove();
                 }
                 return true;

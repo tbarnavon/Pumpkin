@@ -29,8 +29,8 @@ use super::pumpkin::plugin::item_stack::ItemStack as WitItemStack;
 use super::pumpkin::plugin::menu::MenuDefinition;
 use super::pumpkin::plugin::modded::{
     self as wit, BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, EntityContact, Interaction,
-    InteractionResult, ItemCall, ItemHooks, ItemInventoryTick, ItemUse, ItemUseOnBlock,
-    NeighborChange, Placement, Removal, ShapeUpdate, Tick,
+    InteractionResult, ItemCall, ItemDestroyed, ItemHooks, ItemInventoryTick, ItemStackedClick,
+    ItemUse, ItemUseOnBlock, NeighborChange, Placement, Removal, ShapeUpdate, Tick,
 };
 use super::pumpkin::plugin::player::Player as WitPlayer;
 use super::pumpkin::plugin::world::World as WitWorld;
@@ -198,7 +198,7 @@ impl PluginBlock {
                                 }
                                 return Ok(HookReply::Drops(drops));
                             }
-                            BlockReply::None => HookReply::None,
+                            BlockReply::None | BlockReply::Stacked(_) => HookReply::None,
                             BlockReply::State(state) => HookReply::State(state),
                             BlockReply::Interaction(result) => HookReply::Interaction(result),
                         };
@@ -793,6 +793,42 @@ enum ItemCallData {
         selected: bool,
         stack: pumpkin_data::item_stack::ItemStack,
     },
+    Stacked {
+        player: Arc<Player>,
+        on_me: bool,
+        clicked: pumpkin_data::item_stack::ItemStack,
+        carried: pumpkin_data::item_stack::ItemStack,
+        secondary: bool,
+        slot_modifiable: bool,
+    },
+    Destroyed {
+        world: Arc<World>,
+        entity: Arc<dyn EntityBase>,
+        stack: pumpkin_data::item_stack::ItemStack,
+    },
+}
+
+/// What an item hook call returned, with item-stack resources already resolved.
+enum ItemReply {
+    None,
+    Interaction(InteractionResult),
+    Stacked(
+        pumpkin_data::item_stack::ItemStack,
+        pumpkin_data::item_stack::ItemStack,
+    ),
+}
+
+fn add_optional_stack(
+    state: &mut PluginHostState,
+    stack: pumpkin_data::item_stack::ItemStack,
+) -> wasmtime::Result<Option<Resource<WitItemStack>>> {
+    if stack.is_empty() {
+        Ok(None)
+    } else {
+        Ok(Some(
+            state.add::<WitItemStack>(Arc::new(Mutex::new(stack)))?,
+        ))
+    }
 }
 
 fn build_item_call(state: &mut PluginHostState, data: ItemCallData) -> wasmtime::Result<ItemCall> {
@@ -837,6 +873,36 @@ fn build_item_call(state: &mut PluginHostState, data: ItemCallData) -> wasmtime:
             player: state.add::<WitPlayer>(player)?,
             slot,
             selected,
+            stack: state.add::<WitItemStack>(Arc::new(Mutex::new(stack)))?,
+        }),
+        ItemCallData::Stacked {
+            player,
+            on_me,
+            clicked,
+            carried,
+            secondary,
+            slot_modifiable,
+        } => {
+            let click = ItemStackedClick {
+                player: state.add::<WitPlayer>(player)?,
+                slot_stack: add_optional_stack(state, clicked)?,
+                carried: add_optional_stack(state, carried)?,
+                secondary,
+                slot_modifiable,
+            };
+            if on_me {
+                ItemCall::StackedOnMe(click)
+            } else {
+                ItemCall::StackedOnOther(click)
+            }
+        }
+        ItemCallData::Destroyed {
+            world,
+            entity,
+            stack,
+        } => ItemCall::Destroyed(ItemDestroyed {
+            world: state.add::<WitWorld>(world)?,
+            entity: state.add::<super::pumpkin::plugin::world::Entity>(entity)?,
             stack: state.add::<WitItemStack>(Arc::new(Mutex::new(stack)))?,
         }),
     })
@@ -888,7 +954,82 @@ impl PluginItem {
         self.hooks.contains(ItemHooks::INVENTORY_TICK)
     }
 
+    /// `Item.canFitInsideContainerItems`.
+    #[must_use]
+    pub fn fits_in_containers(&self) -> bool {
+        !self.hooks.contains(ItemHooks::NOT_IN_CONTAINERS)
+    }
+
+    /// `Item.overrideOtherStackedOnMe` (`on_me`, this item is in the slot) or
+    /// `Item.overrideStackedOnOther` (this item is carried). The new slot and cursor stacks when
+    /// the plugin took the click over.
+    #[expect(clippy::too_many_arguments)]
+    pub fn stacked_click(
+        &self,
+        server: &Server,
+        player: Arc<Player>,
+        on_me: bool,
+        clicked: &pumpkin_data::item_stack::ItemStack,
+        carried: &pumpkin_data::item_stack::ItemStack,
+        secondary: bool,
+        slot_modifiable: bool,
+    ) -> Option<(
+        pumpkin_data::item_stack::ItemStack,
+        pumpkin_data::item_stack::ItemStack,
+    )> {
+        let hook = if on_me {
+            ItemHooks::STACKED_ON_ME
+        } else {
+            ItemHooks::STACKED_ON_OTHER
+        };
+        if !self.hooks.contains(hook) {
+            return None;
+        }
+        match self.invoke_reply(
+            server,
+            ItemCallData::Stacked {
+                player,
+                on_me,
+                clicked: clicked.clone(),
+                carried: carried.clone(),
+                secondary,
+                slot_modifiable,
+            },
+        ) {
+            ItemReply::Stacked(slot, carried) => Some((slot, carried)),
+            _ => None,
+        }
+    }
+
+    /// `Item.onDestroyed`: an item entity of this item is about to be removed after damage.
+    pub fn destroyed(
+        &self,
+        server: &Server,
+        world: Arc<World>,
+        entity: Arc<dyn EntityBase>,
+        stack: pumpkin_data::item_stack::ItemStack,
+    ) {
+        if !self.hooks.contains(ItemHooks::DESTROYED) {
+            return;
+        }
+        self.invoke_reply(
+            server,
+            ItemCallData::Destroyed {
+                world,
+                entity,
+                stack,
+            },
+        );
+    }
+
     fn invoke(&self, server: &Server, data: ItemCallData) -> Option<InteractionResult> {
+        match self.invoke_reply(server, data) {
+            ItemReply::Interaction(result) => Some(result),
+            _ => None,
+        }
+    }
+
+    fn invoke_reply(&self, server: &Server, data: ItemCallData) -> ItemReply {
         let plugin = self.plugin.clone();
         let handler_id = self.handler_id;
         let run = async move {
@@ -914,8 +1055,28 @@ impl PluginItem {
                             .await?
                             .0;
                         Ok(match reply {
-                            BlockReply::Interaction(result) => Some(result),
-                            _ => None,
+                            BlockReply::Interaction(result) => ItemReply::Interaction(result),
+                            BlockReply::Stacked(result) => {
+                                let (slot, carried) = guest.with(|mut store| {
+                                    let state = store.data_mut();
+                                    let slot =
+                                        result.slot_stack.map(|s| state.take(s)).transpose()?;
+                                    let carried =
+                                        result.carried.map(|s| state.take(s)).transpose()?;
+                                    Ok::<_, wasmtime::Error>((slot, carried))
+                                })?;
+                                let empty = pumpkin_data::item_stack::ItemStack::EMPTY;
+                                let slot = match slot {
+                                    Some(stack) => stack.lock().await.clone(),
+                                    None => empty.clone(),
+                                };
+                                let carried = match carried {
+                                    Some(stack) => stack.lock().await.clone(),
+                                    None => empty.clone(),
+                                };
+                                ItemReply::Stacked(slot, carried)
+                            }
+                            _ => ItemReply::None,
                         })
                     })
                 })
@@ -928,7 +1089,7 @@ impl PluginItem {
         };
         result.unwrap_or_else(|error| {
             tracing::error!(handler_id, error = ?error, "Wasm item hook failed");
-            None
+            ItemReply::None
         })
     }
 }
