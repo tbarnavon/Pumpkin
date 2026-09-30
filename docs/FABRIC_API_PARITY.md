@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 58 (56 %) | 19 (18 %) | 27 (26 %) |
+| 59 (57 %) | 18 (17 %) | 27 (26 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -97,7 +97,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
 | `ServerLivingEntityEvents` ALLOW_DAMAGE / AFTER_DAMAGE / ALLOW_DEATH / AFTER_DEATH | ✅ | core | `entity-damage-event`, `entity-death-event`, `entity-resurrect-event` | |
-| `ServerPlayerEvents` JOIN / LEAVE / AFTER_RESPAWN / COPY_FROM | 🟡 | core | join, leave, respawn events; no COPY_FROM (data kept across respawn) | |
+| `ServerPlayerEvents` JOIN / LEAVE / AFTER_RESPAWN / COPY_FROM | ✅ | core | join, leave, respawn events; COPY_FROM is not needed: Pumpkin keeps the same player (and its custom data) across respawn | |
 | `ServerEntityCombatEvents` AFTER_KILLED_OTHER_ENTITY | 🟡 | core | `entity-death-event` has the killer | |
 | `ServerEntityLevelChangeEvents` | ✅ | core | `player-change-world-event`, `entity-portal-event` | |
 | `EntitySleepEvents` | 🟡 | core | bed enter/leave; no ALLOW_SLEEP_TIME, bed direction or respawn-anchor hooks | |
