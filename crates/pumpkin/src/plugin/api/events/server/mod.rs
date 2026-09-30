@@ -27,3 +27,5 @@ pub use server_tick_start::*;
 pub use service_register::*;
 pub use service_unregister::*;
 pub use tab_complete::*;
+pub mod server_stopping;
+pub use server_stopping::*;

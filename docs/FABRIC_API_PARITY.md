@@ -86,7 +86,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | `ServerTickEvents` START / END_SERVER_TICK | ✅ | core | `server-tick-start-event`, `server-tick-end-event` | |
 | `ServerTickEvents` per level | 🟡 | core | `server-tick-start-event` / `server-tick-end-event` cover all worlds; no per-world event (data first: prefer scheduled ticks) | |
 | `ServerLifecycleEvents` SERVER_STARTED | ✅ | core | `server-load-event`; plugin `on-load` | |
-| `ServerLifecycleEvents` STOPPING / STOPPED, datapack reload | 🟡 | core | plugin `on-unload`; no reload event | |
+| `ServerLifecycleEvents` STOPPING / STOPPED, datapack reload | 🟡 | core | `server-stopping-event`; plugin `on-unload` is the last call (plugins unload before worlds save); no reload event | |
 | `ServerLevelEvents` LOAD / UNLOAD | ✅ | core | `world-load-event`, `world-unload-event` | |
 | `ServerChunkEvents` LOAD / UNLOAD | ✅ | core | `chunk-load-event`, `chunk-unload-event` | |
 | `ServerEntityEvents` LOAD / UNLOAD | ✅ | core | `entity-spawn-event`, `entities-load-event`, `entity-remove-event` | |

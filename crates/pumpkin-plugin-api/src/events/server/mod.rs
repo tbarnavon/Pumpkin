@@ -23,3 +23,6 @@ pub use server_load::*;
 pub use server_tick_end::*;
 pub use server_tick_start::*;
 pub use spawn_change::*;
+/// The server is stopping: players are still online and worlds not yet saved (Fabric `ServerLifecycleEvents.SERVER_STOPPING`). Plugins unload right after; `on-unload` is the last call.
+pub mod server_stopping;
+pub use server_stopping::*;

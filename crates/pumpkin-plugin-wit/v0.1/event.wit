@@ -309,6 +309,12 @@ interface event {
         block-entity-type: string,
     }
 
+    /// The server is stopping: players are still online and worlds not yet saved (Fabric `ServerLifecycleEvents.SERVER_STOPPING`). Plugins unload right after; `on-unload` is the last call.
+    record server-stopping-event-data {
+        /// Players online when the stop started.
+        player-count: u32
+    }
+
     record block-break-event-data {
         player: option<player>,
         block: string,
@@ -1990,6 +1996,7 @@ interface event {
         inventory-close-event,
         block-redstone-event,
         block-break-event,
+        server-stopping-event,
         block-entity-unload-event,
         block-entity-load-event,
         player-stop-tracking-event,
@@ -2275,6 +2282,7 @@ interface event {
         inventory-close-event(inventory-close-event-data),
         block-redstone-event(block-redstone-event-data),
         block-break-event(block-break-event-data),
+        server-stopping-event(server-stopping-event-data),
         block-entity-unload-event(block-entity-unload-event-data),
         block-entity-load-event(block-entity-load-event-data),
         player-stop-tracking-event(player-stop-tracking-event-data),

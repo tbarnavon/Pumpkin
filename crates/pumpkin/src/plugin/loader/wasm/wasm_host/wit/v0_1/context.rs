@@ -1482,6 +1482,11 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
                     crate::plugin::api::events::block::block_entity_unload::BlockEntityUnloadEvent,
                 >(ctx, &handler, priority, blocking);
             }
+            EventType::ServerStoppingEvent => {
+                register_typed_event::<
+                    crate::plugin::api::events::server::server_stopping::ServerStoppingEvent,
+                >(ctx, &handler, priority, blocking);
+            }
             event_type @ (EventType::PacketReceivedEvent
             | EventType::PacketSentEvent
             | EventType::ServerCommandEvent

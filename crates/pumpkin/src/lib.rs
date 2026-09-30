@@ -522,6 +522,15 @@ impl PumpkinServer {
             error!("Error saving all players advancements during shutdown: {e}");
         }
 
+        let mut stopping =
+            crate::plugin::api::events::server::server_stopping::ServerStoppingEvent {
+                player_count: self.server.get_all_players().len() as u32,
+            };
+        self.server
+            .plugin_manager
+            .fire(&self.server, &mut stopping)
+            .await;
+
         let kick_message = TextComponent::text("Server stopped");
         for player in self.server.get_all_players() {
             player.kick(DisconnectReason::Shutdown, &kick_message);

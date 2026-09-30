@@ -294,6 +294,41 @@ impl ToFromWasmEvent for MapInitializeEvent {
     }
 }
 
+impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
+    for crate::plugin::api::events::server::server_stopping::ServerStoppingEvent
+{
+    fn to_wasm_event(
+        &self,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event {
+        #[allow(unused_imports)]
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::{
+            to_wasm_block_position, to_wasm_position,
+        };
+        let _ = &state;
+        crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::ServerStoppingEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::ServerStoppingEventData {
+                player_count: self.player_count,
+            },
+        )
+    }
+
+    fn apply_wasm_event(
+        &mut self,
+        event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) {
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(
+        _event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        _state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> Self {
+        panic!("Cannot construct ServerStoppingEvent from WASM")
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -346,6 +346,7 @@ pub fn cleanup_event(event: &Event, state: &mut PluginHostState) {
             cleanup_player(state, &data.player);
         }
         Event::InventoryMoveItemEvent(_) => {}
+        Event::ServerStoppingEvent(_) => {}
         Event::BlockEntityUnloadEvent(_) => {}
         Event::BlockEntityLoadEvent(_) => {}
         Event::PlayerStopTrackingEvent(data) => {
