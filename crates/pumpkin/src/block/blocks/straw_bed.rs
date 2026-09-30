@@ -221,7 +221,20 @@ impl StrawBedBlock {
         bed_head_pos: BlockPos,
         bed_foot_pos: BlockPos,
     ) -> Option<TextComponent> {
-        if !world.dimension.bed_rule.can_sleep(world.is_dark_outside()) {
+        let monsters_nearby = world.entities.load().iter().any(|entity| {
+            let pos = entity.get_entity().pos.load();
+            NO_SLEEP_IDS.contains(&entity.get_entity().entity_type.id)
+                && (pos.is_within_bounds(bed_head_pos.to_f64(), 8.0, 5.0, 8.0)
+                    || pos.is_within_bounds(bed_foot_pos.to_f64(), 8.0, 5.0, 8.0))
+        });
+        let (time_ok, monsters_ok) = super::bed::sleep_check(
+            world,
+            player,
+            bed_head_pos,
+            world.dimension.bed_rule.can_sleep(world.is_dark_outside()),
+            !monsters_nearby,
+        );
+        if !time_ok {
             return Some(pumpkin_macros::translate_cross!(
                 translation::java::BLOCK_MINECRAFT_BED_NO_SLEEP,
                 translation::bedrock::TILE_BED_NOSLEEP
@@ -257,19 +270,11 @@ impl StrawBedBlock {
             ));
         }
 
-        for entity in world.entities.load().iter() {
-            if !NO_SLEEP_IDS.contains(&entity.get_entity().entity_type.id) {
-                continue;
-            }
-            let pos = entity.get_entity().pos.load();
-            if pos.is_within_bounds(bed_head_pos.to_f64(), 8.0, 5.0, 8.0)
-                || pos.is_within_bounds(bed_foot_pos.to_f64(), 8.0, 5.0, 8.0)
-            {
-                return Some(pumpkin_macros::translate_cross!(
-                    translation::java::BLOCK_MINECRAFT_BED_NOT_SAFE,
-                    translation::bedrock::TILE_BED_NOTSAFE
-                ));
-            }
+        if !monsters_ok {
+            return Some(pumpkin_macros::translate_cross!(
+                translation::java::BLOCK_MINECRAFT_BED_NOT_SAFE,
+                translation::bedrock::TILE_BED_NOTSAFE
+            ));
         }
 
         None

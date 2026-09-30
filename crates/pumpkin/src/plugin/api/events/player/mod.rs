@@ -174,3 +174,5 @@ pub mod player_stop_tracking;
 pub use player_stop_tracking::*;
 pub mod player_login_query_response;
 pub use player_login_query_response::*;
+pub mod player_sleep_check;
+pub use player_sleep_check::*;

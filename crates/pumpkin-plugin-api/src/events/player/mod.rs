@@ -239,3 +239,6 @@ pub use player_stop_tracking::*;
 /// A client answered a login query registered with `context.register-login-query` (Fabric `ServerLoginNetworking` receivers). Cancel to disconnect the client.
 pub mod player_login_query_response;
 pub use player_login_query_response::*;
+/// A player tries to sleep; set `time-ok` or `monsters-ok` to allow or forbid it (Fabric `EntitySleepEvents.ALLOW_SLEEP_TIME` and `ALLOW_NEARBY_MONSTERS`).
+pub mod player_sleep_check;
+pub use player_sleep_check::*;

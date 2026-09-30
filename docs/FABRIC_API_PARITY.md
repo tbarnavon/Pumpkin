@@ -100,7 +100,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | `ServerPlayerEvents` JOIN / LEAVE / AFTER_RESPAWN / COPY_FROM | ✅ | core | join, leave, respawn events; COPY_FROM is not needed: Pumpkin keeps the same player (and its custom data) across respawn | |
 | `ServerEntityCombatEvents` AFTER_KILLED_OTHER_ENTITY | 🟡 | core | `entity-death-event` has the killer | |
 | `ServerEntityLevelChangeEvents` | ✅ | core | `player-change-world-event`, `entity-portal-event` | |
-| `EntitySleepEvents` | 🟡 | core | bed enter/leave; no ALLOW_SLEEP_TIME, bed direction or respawn-anchor hooks | |
+| `EntitySleepEvents` | 🟡 | core | bed enter/leave; `player-sleep-check-event` (ALLOW_SLEEP_TIME, ALLOW_NEARBY_MONSTERS); no bed direction, wake-up position or respawn-anchor hooks | |
 | `EntityElytraEvents` ALLOW / CUSTOM | 🟡 | core | `entity-toggle-glide-event`; no custom elytra | |
 | `ServerMobEffectEvents` | ✅ | core | `entity-potion-effect-event` | |
 

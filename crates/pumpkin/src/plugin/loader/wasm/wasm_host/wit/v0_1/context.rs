@@ -1490,6 +1490,11 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
             EventType::PlayerLoginQueryResponseEvent => {
                 register_typed_event::<crate::plugin::api::events::player::player_login_query_response::PlayerLoginQueryResponseEvent>(ctx, &handler, priority, blocking);
             }
+            EventType::PlayerSleepCheckEvent => {
+                register_typed_event::<
+                    crate::plugin::api::events::player::player_sleep_check::PlayerSleepCheckEvent,
+                >(ctx, &handler, priority, blocking);
+            }
             event_type @ (EventType::PacketReceivedEvent
             | EventType::PacketSentEvent
             | EventType::ServerCommandEvent

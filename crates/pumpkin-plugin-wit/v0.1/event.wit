@@ -327,6 +327,16 @@ interface event {
         cancelled: bool
     }
 
+    /// A player tries to sleep; set `time-ok` or `monsters-ok` to allow or forbid it (Fabric `EntitySleepEvents.ALLOW_SLEEP_TIME` and `ALLOW_NEARBY_MONSTERS`).
+    record player-sleep-check-event-data {
+        player: player,
+        bed-pos: block-pos,
+        /// Whether the time and weather allow sleeping.
+        time-ok: bool,
+        /// Whether no monster is close enough to stop it.
+        monsters-ok: bool
+    }
+
     record block-break-event-data {
         player: option<player>,
         block: string,
@@ -2008,6 +2018,7 @@ interface event {
         inventory-close-event,
         block-redstone-event,
         block-break-event,
+        player-sleep-check-event,
         player-login-query-response-event,
         server-stopping-event,
         block-entity-unload-event,
@@ -2295,6 +2306,7 @@ interface event {
         inventory-close-event(inventory-close-event-data),
         block-redstone-event(block-redstone-event-data),
         block-break-event(block-break-event-data),
+        player-sleep-check-event(player-sleep-check-event-data),
         player-login-query-response-event(player-login-query-response-event-data),
         server-stopping-event(server-stopping-event-data),
         block-entity-unload-event(block-entity-unload-event-data),

@@ -2819,3 +2819,47 @@ impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent 
         panic!("Cannot construct PlayerLoginQueryResponseEvent from WASM")
     }
 }
+
+impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
+    for crate::plugin::api::events::player::player_sleep_check::PlayerSleepCheckEvent
+{
+    fn to_wasm_event(
+        &self,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event {
+        #[allow(unused_imports)]
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::{
+            to_wasm_block_position, to_wasm_position,
+        };
+        let _ = &state;
+        crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::PlayerSleepCheckEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::PlayerSleepCheckEventData {
+                player: state
+                    .add(self.player.clone())
+                    .expect("failed to add player resource"),
+                bed_pos: to_wasm_block_position(self.bed_position),
+                time_ok: self.time_ok,
+                monsters_ok: self.monsters_ok,
+            },
+        )
+    }
+
+    fn apply_wasm_event(
+        &mut self,
+        event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) {
+        if let crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::PlayerSleepCheckEvent(data) = &event {
+            self.time_ok = data.time_ok;
+            self.monsters_ok = data.monsters_ok;
+        }
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(
+        _event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        _state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> Self {
+        panic!("Cannot construct PlayerSleepCheckEvent from WASM")
+    }
+}

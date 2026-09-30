@@ -293,6 +293,15 @@ impl BedBlock {
             ));
         }
 
+        let monsters_nearby = world.entities.load().iter().any(|entity| {
+            let pos = entity.get_entity().pos.load();
+            entity_prevents_sleep(entity.get_entity())
+                && (pos.is_within_bounds(bed_head_pos.to_f64(), 8.0, 5.0, 8.0)
+                    || pos.is_within_bounds(bed_foot_pos.to_f64(), 8.0, 5.0, 8.0))
+        });
+        let (can_sleep, monsters_ok) =
+            sleep_check(world, player, bed_head_pos, can_sleep, !monsters_nearby);
+
         // Make sure the time and weather allows sleep
         if !can_sleep {
             player.send_system_message_raw(
@@ -306,24 +315,15 @@ impl BedBlock {
         }
 
         // Make sure there are no monsters nearby
-        for entity in world.entities.load().iter() {
-            if !entity_prevents_sleep(entity.get_entity()) {
-                continue;
-            }
-
-            let pos = entity.get_entity().pos.load();
-            if pos.is_within_bounds(bed_head_pos.to_f64(), 8.0, 5.0, 8.0)
-                || pos.is_within_bounds(bed_foot_pos.to_f64(), 8.0, 5.0, 8.0)
-            {
-                player.send_system_message_raw(
-                    &pumpkin_macros::translate_cross!(
-                        translation::java::BLOCK_MINECRAFT_BED_NOT_SAFE,
-                        translation::bedrock::TILE_BED_NOTSAFE
-                    ),
-                    true,
-                );
-                return BlockActionResult::SuccessServer;
-            }
+        if !monsters_ok {
+            player.send_system_message_raw(
+                &pumpkin_macros::translate_cross!(
+                    translation::java::BLOCK_MINECRAFT_BED_NOT_SAFE,
+                    translation::bedrock::TILE_BED_NOTSAFE
+                ),
+                true,
+            );
+            return BlockActionResult::SuccessServer;
         }
 
         if let Some(server) = world.server.upgrade() {
@@ -351,6 +351,28 @@ impl BedBlock {
 
         BlockActionResult::SuccessServer
     }
+}
+
+/// Fires `PlayerSleepCheckEvent`: plugins may allow or forbid sleeping regardless of the time
+/// and nearby monsters. Returns the (possibly changed) `(time_ok, monsters_ok)`.
+pub fn sleep_check(
+    world: &Arc<World>,
+    player: &Arc<Player>,
+    bed_pos: BlockPos,
+    time_ok: bool,
+    monsters_ok: bool,
+) -> (bool, bool) {
+    let Some(server) = world.server.upgrade() else {
+        return (time_ok, monsters_ok);
+    };
+    let mut event = crate::plugin::api::events::player::player_sleep_check::PlayerSleepCheckEvent {
+        player: player.clone(),
+        bed_position: bed_pos,
+        time_ok,
+        monsters_ok,
+    };
+    server.plugin_manager.fire_blocking(&server, &mut event);
+    (event.time_ok, event.monsters_ok)
 }
 
 impl BedBlock {
