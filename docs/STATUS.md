@@ -141,3 +141,81 @@ Real client (2026-09-30): sneak + empty hand opens the drawer UI; it works.
 Not verified: the menu closing by distance (cannot move with a menu open), and a packet
 comparison of `open_screen` against a real Fabric server.
 
+
+## Phase 4: the rest of Storage Drawers (plugin only, 2026-09-30)
+
+Plugin commits 03e454a..c8320db (plus a clippy clean-up), no host change. Build and clippy are
+clean, and the release plugin loads (86 drawer blocks: 78 standard, 8 compacting).
+
+Implemented, each from the 26.3.0.1 source:
+- Controller hopper storage and controller I/O (`DrawerStorageImpl` over `drawerSlots`). The
+  controller and every I/O block its search binds get a host storage mirroring the network's
+  slots in priority order, so hoppers fill populated drawers first. The cache refreshes on
+  `BlockController.tick` (100 ticks, persisted tick chain) and on use, and follows every drawer
+  save. This fixes "a hopper can't insert into the controller".
+- Fixes: a drawer's own hopper slots now follow `getAccessibleDrawerSlots` (populated slots first),
+  hopper moves rebalance balanced drawers, and inserts and takes rebalance across the network
+  (`StorageUtil.onNetwork`).
+- Redstone upgrade (combined, min, max) and comparator output.
+- Remote and remote group upgrades: binding on the controller front, `checkBoundController`,
+  `RemoteNodes`, remote search roots with `maxRange` / `maxGroupRange`, unbinding when the
+  controller goes, and the 60-tick check of held bound upgrades.
+- Compacting drawers (2 and 3 slots, full, half, framed): pooled storage and NBT, compacting chains
+  from 3x3 / 2x2 recipes both ways through `match-crafting`, `CompTierRegistry` rules, the `slots`
+  block state, and the comp UIs.
+- Detached drawers: drawer puller, putting drawers back, `forceMaxCapacityCheck`, heavy drawers
+  (slowness) with the portability upgrade, and the filled-drawer storage deny rule.
+- Key buttons, keyring sneak-use rotation, and the keyring cooldown.
+- Special recipes: add_upgrade, add_detached_upgrade, keyring, personal_key_cycle,
+  remote_group_upgrade.
+- Framing table (two-part block, UI, taking framed blocks apart), framed drawers, compacting
+  drawers, trims, controllers and I/O keeping their materials on place, drop and pick, and
+  retrim / repartition with sneak-use.
+- Conversion upgrade: `itemEquivalenceGroups`.
+
+Blocked on a missing host API (rows marked in `FABRIC_API_PARITY.md`):
+- **Hopper and magnet upgrades.** `BlockEntityDrawers.addItemEntity` (from `BlockDrawers.tick` /
+  `pushItemsTick` / `suckInItems`, and `entityInside` for the hopper upgrade) reads an
+  `ItemEntity`'s stack, puts it into the drawer, then shrinks or discards the entity. The plugin
+  needs to read an item entity's stack (item, count, components) and set or remove it, for
+  entities found with `world.get-entities-in-box`. Nothing gives a plugin an item entity's stack:
+  `entity` has no item accessor, and `item-spawn-event` carries only the item name.
+- **Keyring insert and remove in the inventory.** `ItemKeyring.overrideOtherStackedOnMe`
+  right-click puts the cursor key into the keyring, or takes the first key out into the cursor.
+  The plugin needs to set the player's cursor (carried) item, or a stacked-on-me item hook. The
+  `inventory-click-event` can cancel a click but cannot change the cursor.
+- **Keyring contents when it burns.** `ItemKeyring.onDestroyed` spills its keys; there is no hook
+  for an item entity being destroyed.
+- **`canStoreInContainers`** (Filled and Detached): `Item.canFitInsideContainerItems` keeps filled
+  drawers out of bundles and shulker boxes. No per-item hook in the host, so they are allowed.
+- **Conversion upgrade tags.** `ItemStackTagMatcher` matches items sharing an allowed item tag
+  (`oreTypeAllowList` x `oreMaterialAllowList`, `tagAllowList`); the host exposes no item tags.
+  Equivalence groups work.
+
+Known limits (worked around, not blocking):
+- Strong redstone power: the host gives one strong power to all sides; SD powers only the block
+  below, so none is given (only matters with `analogOutput = false`).
+- Compacting drawers through hoppers: host slots are independent, so several hoppers on one
+  compacting drawer in the same tick can take a little more or less than the pool holds; an
+  insert that doesn't fit the pool is lost.
+- Controllers after a restart serve hoppers from their stored storage until their first tick;
+  a change before that is diffed against the drawers' saved state.
+- `findLowerTier` starts from the 1x1 craft (the host can't list recipes); a shapeless 2x2 / 3x3
+  recipe counts where SD needs a shaped one.
+
+Real-client tests to run (none done yet):
+1. Hopper into a controller and into a controller I/O: items go to drawers holding them first,
+   then empty ones; hopper under the controller pulls items out; counts update on the drawers.
+2. Right-click the controller front with an item no drawer holds: it goes into an empty drawer
+   (`allowEmpty`); double-click puts only items already stored.
+3. Redstone upgrade on a drawer with a comparator next to it.
+4. Remote upgrade: bind on the controller front, put it in a drawer away from the network, check
+   the controller reaches it; break the controller, the upgrade becomes unbound.
+5. Compacting drawer: iron ingots in, block/ingot/nugget slots show; take nuggets and blocks;
+   `slots` state (open slots) changes; compacting UI; hopper in and out.
+6. Drawer puller on a slot, put the detached drawer back; add_detached_upgrade recipe.
+7. Key buttons on a controller; keyring sneak-use rotation.
+8. Recipes: add_upgrade (drawer + upgrade), keyring, remote_group_upgrade.
+9. Framing table: place (two halves), frame a drawer, take the result, break a framed drawer and
+   place it back; retrim a drawer with a trim (sneak).
+10. Conversion upgrade with an `itemEquivalenceGroups` entry.

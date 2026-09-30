@@ -11,11 +11,11 @@ Status:
 - ❌ missing.
 - ➖ not needed: client-only, dev-time only, or resolved when the Extractor dumps the mod's data.
 
-Summary (104 rows in the tables below, not counting the 13 marked ➖):
+Summary (109 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 64 (62 %) | 17 (16 %) | 23 (22 %) |
+| 64 (59 %) | 17 (16 %) | 28 (26 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -115,7 +115,10 @@ for a mod's, whose data only lives in the chunk as NBT:
 | `CustomDamageHandler` | ❌ | modded | | |
 | `EquipmentSlotProvider` | ❌ | modded | | |
 | `EnchantmentEvents` ALLOW_ENCHANTING / MODIFY | 🟡 | core | `prepare-item-enchant-event`, `enchant-item-event`; no per-item allow | |
-| `ItemClickBehaviorCallback` (click one stack onto another in a menu) | ❌ | core | `inventory-click-event` only | |
+| `ItemClickBehaviorCallback` / `Item.overrideOtherStackedOnMe` (click one stack onto another in a menu) | ❌ | core | `inventory-click-event` can cancel but cannot set the cursor (carried) item | ❌ keyring: add or take out keys in the inventory |
+| `Item.onDestroyed` (the item entity of a stack is destroyed) | ❌ | modded | | ❌ keyring: keys spill out when a keyring burns |
+| `Item.canFitInsideContainerItems` (bundles, shulker boxes) | ❌ | modded | | ❌ `canStoreInContainers` for filled and detached drawers |
+| Item tags of a stack (`ItemStack.is(TagKey)`, tag members) | ❌ | core | | ❌ conversion upgrade tag allow list (equivalence groups work) |
 | `BlockTransformerEvents` (strip, till, flatten...) | ❌ | core | | |
 | `ItemComponentTooltipProviderRegistry` | ➖ | - | tooltips are drawn by the client | |
 
@@ -148,8 +151,8 @@ for a mod's, whose data only lives in the chunk as NBT:
 ### fabric-lookup-api-v1 and fabric-transfer-api-v1
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
-| `BlockApiLookup` / `ItemApiLookup` / `EntityApiLookup` | ❌ | modded | | ✅ controller, hoppers |
-| `ItemStorage.SIDED`, `Storage<ItemVariant>` for hoppers | 🟡 | core | data first: `world.set-item-storage` puts host-held slots on a plugin block entity (count, capacity in stacks, insert/extract, accept-new, keep-item, void); hoppers use them without calling the plugin; `item-storage-changed-event` once per tick. No sides, no transactions, no plugin-to-plugin transfer | ✅ hoppers into drawers |
+| `BlockApiLookup` / `ItemApiLookup` / `EntityApiLookup` | ❌ | modded | | ➖ SD's capabilities are read inside the plugin |
+| `ItemStorage.SIDED`, `Storage<ItemVariant>` for hoppers | 🟡 | core | data first: `world.set-item-storage` puts host-held slots on a plugin block entity (count, capacity in stacks, insert/extract, accept-new, keep-item, void); hoppers use them without calling the plugin; `item-storage-changed-event` once per tick. No sides, no transactions, no plugin-to-plugin transfer, no slots sharing one pool | ✅ drawers, compacting drawers, controller and controller I/O (the network's slots mirrored) |
 | `FluidStorage` | ❌ | modded | | |
 
 Hoppers see a storage slot as at most one stack, one item short of full while there is room,
@@ -166,10 +169,10 @@ as a full slot while any is stored, so hoppers only take it out.
 ### fabric-recipe-api-v1
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
-| Mod recipes | ✅ | host + core | imported from the dump; recipes of custom serializer types (a mod's `CustomRecipe` code) are skipped and crafted by a plugin with `context.register-crafting-handler` | ✅ |
+| Mod recipes | ✅ | host + core | imported from the dump; recipes of custom serializer types (a mod's `CustomRecipe` code) are skipped and crafted by a plugin with `context.register-crafting-handler` | ✅ add_upgrade, add_detached_upgrade, keyring, personal_key_cycle, remote_group_upgrade |
 | Register shaped / shapeless / cooking recipes from code | ✅ | core | `recipe.register-*` | |
 | `CustomIngredient` (`fabric:all_of`, `any_of`, `components`, `difference`) | 🟡 | host | all four parse and match in mod and datapack recipes; `components` checks only its base item, as recipes match items, not stacks | |
-| Look up recipes from code (`RecipeManager`) | 🟡 | core | `recipe-manager.match-crafting` (vanilla, datapack, mod and plugin recipes), `match-cooking` (vanilla recipes, as furnaces do); no listing by output | ✅ compacting drawers |
+| Look up recipes from code (`RecipeManager`) | 🟡 | core | `recipe-manager.match-crafting` (vanilla, datapack, mod and plugin recipes), `match-cooking` (vanilla recipes, as furnaces do); no listing by output | ✅ compacting drawers (lower tiers found from the 1x1 craft instead of listing recipes) |
 | `RecipeSynchronization` (send recipes to the client) | ❌ | modded | | |
 
 ### fabric-command-api-v2
@@ -250,16 +253,17 @@ keep their native behaviour.
 | `Block.getDrops` | ✅ | modded | `drops` | ✅ |
 | `Block.affectNeighborsAfterRemoval` / `onRemove` | ✅ | modded | `removed` | ✅ |
 | `Block.tick` (scheduled) | ✅ | modded | `scheduled-tick` hook; scheduled with `world.schedule-block-tick` | ✅ |
-| `Block.getSignal` / `getDirectSignal` / `isSignalSource` | 🟡 | modded | data first: `signal-source` hook flag + `world.set-redstone-output(weak, strong)`, held by the host; same power on every side | ✅ redstone upgrade |
+| `Block.getSignal` / `getDirectSignal` / `isSignalSource` | 🟡 | modded | data first: `signal-source` hook flag + `world.set-redstone-output(weak, strong)`, held by the host; same power on every side | 🟡 redstone upgrade (with `analogOutput` off): SD powers only the block below strongly, so no strong power is given |
 | `Block.getAnalogOutputSignal` (comparator) | ✅ | modded | data first: `analog-output` hook flag + `world.set-comparator-output`, held by the host | ✅ |
 | `Block.neighborChanged` | ✅ | modded | `neighbor-changed` hook (opt-in per block) | |
-| `Block.updateShape` | ✅ | modded | `update-shape` hook (opt-in per block), replies with the new state | |
+| `Block.updateShape` | ✅ | modded | `update-shape` hook (opt-in per block), replies with the new state | ✅ key buttons |
 | `Block.randomTick` | ✅ | modded | `random-tick` hook, only for states the mod marks as randomly ticking (from the dump) | |
 | `Block.entityInside`, `stepOn` | ✅ | modded | opt-in `entity-inside` and `step-on` hooks: called every tick, only for blocks registered with them | |
-| `BlockEntity` ticker | ✅ | modded | opt-in `ticker` block hook: every tick for each block entity of the block in ticking chunks; worlds skip the scan until a plugin registers one. Prefer `world.schedule-block-tick` and host-held data where they fit | ✅ hopper/magnet upgrades |
+| `BlockEntity` ticker | ✅ | modded | opt-in `ticker` block hook: every tick for each block entity of the block in ticking chunks; worlds skip the scan until a plugin registers one. Prefer `world.schedule-block-tick` and host-held data where they fit | ➖ SD uses scheduled ticks |
 | `Item.useOn` / `use` | ✅ | modded | item hooks | ✅ |
-| `Item.inventoryTick` | ✅ | modded | opt-in `inventory-tick` item hook: called every tick for each stack in a player's inventory, only for items registered with it | |
-| Find entities in an area | ✅ | core | `world.get-entities-in-box`, `entity.get-nearby-entities` | ✅ magnet |
+| `Item.inventoryTick` | ✅ | modded | opt-in `inventory-tick` item hook: called every tick for each stack in a player's inventory, only for items registered with it | ✅ bound remote upgrades, heavy drawers (`PlayerEventListener`) |
+| Find entities in an area | ✅ | core | `world.get-entities-in-box`, `entity.get-nearby-entities` | |
+| Read and change an item entity's stack (`ItemEntity.getItem` / `setItem`) | ❌ | core | `item-spawn-event` gives only the item name | ❌ hopper and magnet upgrades (`BlockEntityDrawers.addItemEntity`) |
 
 ## Open items before an upstream PR
 
