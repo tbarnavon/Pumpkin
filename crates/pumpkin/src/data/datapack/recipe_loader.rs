@@ -42,6 +42,27 @@ fn parse_ingredient(value: &Value) -> Option<OwnedRecipeIngredient> {
             || OwnedRecipeIngredient::Simple(normalize_id(s)),
             |tag| OwnedRecipeIngredient::Tagged(normalize_id(tag)),
         )),
+        // Fabric's custom ingredients (`CustomIngredientImpl.TYPE_KEY`).
+        Value::Object(map) if map.contains_key("fabric:type") => {
+            let parts = |key: &str| -> Option<Vec<OwnedRecipeIngredient>> {
+                map.get(key)?
+                    .as_array()?
+                    .iter()
+                    .map(parse_ingredient)
+                    .collect()
+            };
+            let one = |key: &str| map.get(key).and_then(parse_ingredient).map(Box::new);
+            match map.get("fabric:type").and_then(Value::as_str)? {
+                "fabric:any_of" => Some(OwnedRecipeIngredient::AnyOf(parts("ingredients")?)),
+                "fabric:all_of" => Some(OwnedRecipeIngredient::AllOf(parts("ingredients")?)),
+                "fabric:difference" => Some(OwnedRecipeIngredient::Difference(
+                    one("base")?,
+                    one("subtracted")?,
+                )),
+                "fabric:components" => Some(OwnedRecipeIngredient::Components(one("base")?)),
+                _ => None,
+            }
+        }
         Value::Object(map) => map
             .get("tag")
             .and_then(Value::as_str)
@@ -235,6 +256,25 @@ fn parse_brewing(recipe_id: String, value: &Value) -> Option<OwnedBrewingRecipe>
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn parse_fabric_custom_ingredients() {
+        let json: Value = serde_json::from_str(
+            r#"{
+                "fabric:type": "fabric:difference",
+                "base": {
+                    "fabric:type": "fabric:any_of",
+                    "ingredients": ["minecraft:stick", "minecraft:diamond"]
+                },
+                "subtracted": "minecraft:stick"
+            }"#,
+        )
+        .expect("valid json");
+        let ingredient = parse_ingredient(&json).expect("custom ingredient parses");
+        assert!(ingredient.match_item(&pumpkin_data::item::Item::DIAMOND));
+        assert!(!ingredient.match_item(&pumpkin_data::item::Item::STICK));
+        assert!(!ingredient.match_item(&pumpkin_data::item::Item::DIRT));
+    }
 
     #[test]
     fn parse_shaped_recipe() {

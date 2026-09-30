@@ -8,6 +8,15 @@ pub enum OwnedRecipeIngredient {
     Simple(String),
     Tagged(String),
     OneOf(Vec<String>),
+    /// Fabric `fabric:any_of`: matches if any part does.
+    AnyOf(Vec<Self>),
+    /// Fabric `fabric:all_of`: matches if every part does.
+    AllOf(Vec<Self>),
+    /// Fabric `fabric:difference`: matches `base` but not `subtracted`.
+    Difference(Box<Self>, Box<Self>),
+    /// Fabric `fabric:components`: `base` with required components. Pumpkin matches items, not
+    /// stacks, so only `base` is checked.
+    Components(Box<Self>),
 }
 
 /// The item's namespaced id: vanilla registry keys have no namespace, modded ones keep theirs.
@@ -26,7 +35,22 @@ impl OwnedRecipeIngredient {
             Self::Simple(id) => item_id(item) == *id,
             Self::Tagged(tag) => item.is_tagged_with(tag).unwrap_or(false),
             Self::OneOf(ids) => ids.contains(&item_id(item)),
+            Self::AnyOf(parts) => parts.iter().any(|part| part.match_item(item)),
+            Self::AllOf(parts) => parts.iter().all(|part| part.match_item(item)),
+            Self::Difference(base, subtracted) => {
+                base.match_item(item) && !subtracted.match_item(item)
+            }
+            Self::Components(base) => base.match_item(item),
         }
+    }
+
+    /// Every item the ingredient matches, for recipe displays.
+    #[must_use]
+    pub fn matching_items(&self) -> Vec<&'static Item> {
+        (0..Item::count())
+            .filter_map(Item::from_id)
+            .filter(|item| self.match_item(item))
+            .collect()
     }
 }
 

@@ -736,6 +736,23 @@ fn write_dynamic_ingredient_slot_display(
                 write_empty_slot_display(write, version)?;
             }
         }
+        crate::codec::recipe::OwnedRecipeIngredient::AnyOf(_)
+        | crate::codec::recipe::OwnedRecipeIngredient::AllOf(_)
+        | crate::codec::recipe::OwnedRecipeIngredient::Difference(..)
+        | crate::codec::recipe::OwnedRecipeIngredient::Components(_) => {
+            let items = ingredient.matching_items();
+            if items.is_empty() {
+                write_empty_slot_display(write, version)?;
+            } else if items.len() == 1 {
+                write_item_slot_display(write, items[0], version)?;
+            } else {
+                write.write_var_int(&VarInt(SLOT_DISPLAY_COMPOSITE as i32))?;
+                write.write_var_int(&VarInt(items.len() as i32))?;
+                for item in &items {
+                    write_item_slot_display(write, item, version)?;
+                }
+            }
+        }
         crate::codec::recipe::OwnedRecipeIngredient::OneOf(ids) => {
             let items: Vec<&Item> = ids
                 .iter()
@@ -791,6 +808,16 @@ fn write_dynamic_ingredient_holderset(
                 };
                 write.write_var_int(&VarInt(0))?;
                 write.write_string(&full_tag)?;
+            }
+        }
+        crate::codec::recipe::OwnedRecipeIngredient::AnyOf(_)
+        | crate::codec::recipe::OwnedRecipeIngredient::AllOf(_)
+        | crate::codec::recipe::OwnedRecipeIngredient::Difference(..)
+        | crate::codec::recipe::OwnedRecipeIngredient::Components(_) => {
+            let items = ingredient.matching_items();
+            write.write_var_int(&VarInt(items.len() as i32 + 1))?;
+            for item in &items {
+                write.write_var_int(&VarInt(i32::from(item.id)))?;
             }
         }
         crate::codec::recipe::OwnedRecipeIngredient::OneOf(ids) => {
