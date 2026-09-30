@@ -13,4 +13,7 @@ pub struct ModdedConfig {
     /// data is loaded. Fabric clients with the mods installed need it to join. Other loaders'
     /// handshakes get their own switch.
     pub fabric_handshake: bool,
+    /// Keep the Bedrock listener on while modded content is enabled. Bedrock clients cannot see
+    /// modded blocks or items, so it is turned off unless this is set.
+    pub force_bedrock: bool,
 }

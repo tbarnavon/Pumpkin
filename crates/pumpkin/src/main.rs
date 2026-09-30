@@ -67,11 +67,22 @@ async fn main() {
 
     let exec_dir = std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."));
 
-    let config = PumpkinConfig::load(&exec_dir);
+    let mut config = PumpkinConfig::load(&exec_dir);
 
     let vanilla_data = VanillaData::load();
 
     pumpkin::init_logger(&config.advanced);
+
+    // Bedrock clients cannot show modded content, so modded servers are Java only by default.
+    if config.advanced.modded.enabled
+        && !config.advanced.modded.force_bedrock
+        && config.advanced.networking.bedrock.enabled
+    {
+        info!(
+            "Bedrock Edition is disabled because modded content is enabled ([modded] force_bedrock)"
+        );
+        config.advanced.networking.bedrock.enabled = false;
+    }
 
     // Modded registry entries must be installed before anything looks up blocks or items.
     let mod_data = if config.advanced.modded.enabled {

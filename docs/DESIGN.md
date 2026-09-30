@@ -417,9 +417,11 @@ upstream:
 [modded]
 enabled = false          # read mod-data/ and allow the modded plugin API
 fabric_handshake = false # Fabric's login handshake and fabric:registry/sync
+force_bedrock = false    # keep the Bedrock listener on with modded content
 ```
 
-With `enabled = false`, no mod data is read, and `register-block-hooks`, `register-item-hooks`
+With `enabled = true`, the Bedrock listener is turned off (Bedrock clients cannot show modded
+content) unless `force_bedrock` is set. With `enabled = false`, no mod data is read, and `register-block-hooks`, `register-item-hooks`
 and `modded.open-menu` return an error. Each mod loader's handshake gets its own switch
 (`forge_handshake` and `neoforge_handshake` are planned next to `fabric_handshake`).
 
