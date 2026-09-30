@@ -83,6 +83,15 @@ interface recipe {
 
         /// Registers a cooking recipe.
         register-cooking: func(id: string, station-type: cooking-type, recipe: cooking-recipe);
+
+        /// The result of crafting `grid` (row by row, `width` slots per row, at most 3 by 3), as a
+        /// crafting table would give it: vanilla, datapack, mod and plugin recipes. Like Fabric's
+        /// `RecipeManager.getRecipeFor(RecipeType.CRAFTING, ...)`.
+        match-crafting: func(width: u32, grid: list<option<borrow<item-stack>>>) -> option<item-stack>;
+
+        /// The result of cooking `input` at a station, as a furnace, blast furnace, smoker or
+        /// campfire would give it.
+        match-cooking: func(station-type: cooking-type, input: borrow<item-stack>) -> option<item-stack>;
     }
 }
 

@@ -14,7 +14,147 @@ use wasmtime::component::Resource;
 
 impl RecipeHost for PluginHostState {}
 
+/// A crafting grid given by a plugin, for `match_crafting_recipe`.
+struct Grid {
+    width: usize,
+    items: Vec<pumpkin_data::item_stack::ItemStack>,
+}
+
+impl pumpkin_inventory::Clearable for Grid {
+    fn clear(&self) {}
+}
+
+impl pumpkin_inventory::inventory::Inventory for Grid {
+    fn size(&self) -> usize {
+        self.items.len()
+    }
+
+    fn is_empty(&self) -> bool {
+        self.items
+            .iter()
+            .all(pumpkin_data::item_stack::ItemStack::is_empty)
+    }
+
+    fn get_stack(&self, slot: usize) -> pumpkin_data::item_stack::ItemStack {
+        self.items
+            .get(slot)
+            .cloned()
+            .unwrap_or_else(|| pumpkin_data::item_stack::ItemStack::EMPTY.clone())
+    }
+
+    fn remove_stack(&self, slot: usize) -> pumpkin_data::item_stack::ItemStack {
+        self.get_stack(slot)
+    }
+
+    fn remove_stack_specific(
+        &self,
+        slot: usize,
+        _amount: u8,
+    ) -> pumpkin_data::item_stack::ItemStack {
+        self.get_stack(slot)
+    }
+
+    fn set_stack(&self, _slot: usize, _stack: pumpkin_data::item_stack::ItemStack) {}
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+}
+
+impl pumpkin_inventory::crafting::recipes::RecipeInputInventory for Grid {
+    fn get_width(&self) -> usize {
+        self.width
+    }
+
+    fn get_height(&self) -> usize {
+        self.items.len().div_ceil(self.width.max(1))
+    }
+}
+
+/// A recipe result as a new item stack resource.
+fn result_stack(
+    state: &mut PluginHostState,
+    item_id: &str,
+    count: u8,
+) -> wasmtime::Result<Option<Resource<super::pumpkin::plugin::item_stack::ItemStack>>> {
+    let Some(item) = pumpkin_data::item::Item::from_registry_key(
+        item_id.strip_prefix("minecraft:").unwrap_or(item_id),
+    )
+    .or_else(|| pumpkin_data::item::Item::from_registry_key(item_id)) else {
+        return Ok(None);
+    };
+    state
+        .add::<super::pumpkin::plugin::item_stack::ItemStack>(std::sync::Arc::new(
+            tokio::sync::Mutex::new(pumpkin_data::item_stack::ItemStack::new(count, item)),
+        ))
+        .map(Some)
+}
+
 impl HostRecipeManager for PluginHostState {
+    async fn match_crafting(
+        &mut self,
+        _res: Resource<WitRecipeManager>,
+        width: u32,
+        grid: Vec<Option<Resource<super::pumpkin::plugin::item_stack::ItemStack>>>,
+    ) -> wasmtime::Result<Option<Resource<super::pumpkin::plugin::item_stack::ItemStack>>> {
+        let width = width as usize;
+        if width == 0 || width > 3 || grid.len() > 9 {
+            return Ok(None);
+        }
+        let mut handles = Vec::with_capacity(grid.len());
+        for slot in &grid {
+            handles.push(
+                slot.as_ref()
+                    .map(|slot| self.get(slot).cloned())
+                    .transpose()?,
+            );
+        }
+        let mut items = Vec::with_capacity(handles.len());
+        for handle in handles {
+            items.push(match handle {
+                Some(handle) => handle.lock().await.clone(),
+                None => pumpkin_data::item_stack::ItemStack::EMPTY.clone(),
+            });
+        }
+        let server = self
+            .server
+            .clone()
+            .ok_or_else(|| wasmtime::Error::msg("Server not available"))?;
+        let provider: &dyn pumpkin_inventory::crafting::recipe_provider::RecipeProvider =
+            server.recipe_manager.as_ref();
+        let Some(result) =
+            pumpkin_inventory::crafting::crafting_screen_handler::match_crafting_recipe(
+                &Grid { width, items },
+                Some(provider),
+            )
+        else {
+            return Ok(None);
+        };
+        result_stack(self, &result.item_id, result.count)
+    }
+
+    async fn match_cooking(
+        &mut self,
+        _res: Resource<WitRecipeManager>,
+        station_type: WitCookingType,
+        input: Resource<super::pumpkin::plugin::item_stack::ItemStack>,
+    ) -> wasmtime::Result<Option<Resource<super::pumpkin::plugin::item_stack::ItemStack>>> {
+        use pumpkin_data::recipes::CookingRecipeKind;
+        let input = self.get(&input)?.clone();
+        let item = input.lock().await.item;
+        let kind = match station_type {
+            WitCookingType::Smelting => CookingRecipeKind::Smelting,
+            WitCookingType::Blasting => CookingRecipeKind::Blasting,
+            WitCookingType::Smoking => CookingRecipeKind::Smoking,
+            WitCookingType::Campfire => CookingRecipeKind::CampfireCooking,
+        };
+        let Some(recipe) = pumpkin_data::recipes::get_cooking_recipe_with_ingredient(item, kind)
+        else {
+            return Ok(None);
+        };
+        result_stack(self, recipe.result.id, recipe.result.count)
+    }
+
     async fn register_shaped(
         &mut self,
         _res: Resource<WitRecipeManager>,

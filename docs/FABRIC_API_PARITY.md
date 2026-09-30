@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 57 (55 %) | 17 (16 %) | 30 (29 %) |
+| 57 (55 %) | 18 (17 %) | 29 (28 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -169,7 +169,7 @@ as a full slot while any is stored, so hoppers only take it out.
 | Mod recipes | 🟡 | host | imported from the dump; 5 recipes of custom serializer types are skipped | ✅ |
 | Register shaped / shapeless / cooking recipes from code | ✅ | core | `recipe.register-*` | |
 | `CustomIngredient` (`fabric:all_of`, `any_of`, `components`, `difference`) | ❌ | host | | |
-| Look up recipes from code (`RecipeManager`) | ❌ | core | | ✅ compacting drawers |
+| Look up recipes from code (`RecipeManager`) | 🟡 | core | `recipe-manager.match-crafting` (vanilla, datapack, mod and plugin recipes), `match-cooking` (vanilla recipes, as furnaces do); no listing by output | ✅ compacting drawers |
 | `RecipeSynchronization` (send recipes to the client) | ❌ | modded | | |
 
 ### fabric-command-api-v2
