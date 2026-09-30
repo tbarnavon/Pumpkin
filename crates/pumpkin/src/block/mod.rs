@@ -14,6 +14,7 @@ use std::sync::Arc;
 
 pub mod blocks;
 pub mod entities;
+pub mod flammability;
 pub mod fluid;
 pub mod registry;
 pub mod viewer;

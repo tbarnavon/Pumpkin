@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 58 (56 %) | 18 (17 %) | 28 (27 %) |
+| 58 (56 %) | 19 (18 %) | 27 (26 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -182,7 +182,7 @@ as a full slot while any is stored, so hoppers only take it out.
 ### fabric-content-registries-v0
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
-| Flammable, oxidizable, strippable, compostable, fuel, villager interactions, path types, vibration frequencies | ❌ | core | vanilla values are hardcoded | |
+| Flammable, oxidizable, strippable, compostable, fuel, villager interactions, path types, vibration frequencies | 🟡 | core | flammable: `server.set-flammable`; fuel and compostable are item components (a mod's come with the dump, per stack with `item-stack.set-component-by-id`); the rest are hardcoded | |
 | `FluidBehavior`, `EntityFluidInteractionRegistry` | ❌ | modded | | |
 
 ### fabric-game-rule-api-v1

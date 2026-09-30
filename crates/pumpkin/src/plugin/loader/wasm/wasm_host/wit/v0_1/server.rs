@@ -265,6 +265,20 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
             .collect()
     }
 
+    async fn set_flammable(
+        &mut self,
+        _rep: Resource<Server>,
+        block: String,
+        burn_chance: u8,
+        spread_chance: u8,
+    ) -> wasmtime::Result<Result<(), String>> {
+        let Some(block) = pumpkin_data::Block::from_name(&block) else {
+            return Ok(Err(format!("unknown block {block}")));
+        };
+        crate::block::flammability::set(block, burn_chance, spread_chance);
+        Ok(Ok(()))
+    }
+
     async fn get_player_count_in_world(
         &mut self,
         _rep: Resource<Server>,

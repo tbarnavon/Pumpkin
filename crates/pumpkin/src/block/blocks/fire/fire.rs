@@ -41,7 +41,7 @@ impl FireBlock {
             return false;
         }
 
-        block.flammable.as_ref().is_some_and(|f| f.burn_chance > 0)
+        crate::block::flammability::get(block).is_some_and(|f| f.burn_chance > 0)
     }
 
     fn are_blocks_around_flammable(block_accessor: &dyn BlockAccessor, pos: &BlockPos) -> bool {
@@ -97,7 +97,7 @@ impl FireBlock {
             if *world.get_fluid(&pos.offset(dir.to_offset())) != Fluid::EMPTY {
                 continue; // Skip if there is a fluid
             }
-            if let Some(flammable) = &neighbor_block.flammable {
+            if let Some(flammable) = crate::block::flammability::get(neighbor_block) {
                 total_burn_chance = total_burn_chance.max(i32::from(flammable.spread_chance));
             }
         }
@@ -115,7 +115,7 @@ impl FireBlock {
 
     // Get burn odds for a block, used in try_spreading_fire
     fn get_burn_odds(block: &Block) -> i32 {
-        block.flammable.as_ref().map_or(0, |f| f.burn_chance.into())
+        crate::block::flammability::get(block).map_or(0, |f| f.burn_chance.into())
     }
 
     fn is_increased_burnout_biome(world: &World, pos: &BlockPos) -> bool {

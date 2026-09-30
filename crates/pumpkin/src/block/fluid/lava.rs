@@ -51,10 +51,7 @@ impl FlowingLava {
         if block.is_waterlogged(block_state.id) {
             return false;
         }
-        block
-            .flammable
-            .as_ref()
-            .is_some_and(|flammable| flammable.burn_chance > 0)
+        crate::block::flammability::get(block).is_some_and(|flammable| flammable.burn_chance > 0)
     }
 
     fn is_flammable(world: &Arc<World>, pos: &BlockPos) -> bool {

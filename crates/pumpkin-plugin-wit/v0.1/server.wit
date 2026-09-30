@@ -208,6 +208,11 @@ interface server {
         /// Returns the number of online players in a specific world.
         get-player-count-in-world: func(world-ref: %world) -> u32;
 
+        /// Sets how easily a block catches fire (`burn-chance`) and spreads it
+        /// (`spread-chance`), like Fabric's `FlammableBlockRegistry.add`; 0 and 0 make it
+        /// fireproof. Replaces the vanilla values until the server stops.
+        set-flammable: func(block: string, burn-chance: u8, spread-chance: u8) -> result<_, string>;
+
         /// Players who have the chunk loaded, like Fabric's `PlayerLookup.tracking(level, pos)`
         /// (also what a block entity's updates reach).
         get-players-tracking-chunk: func(world-ref: borrow<%world>, chunk-x: s32, chunk-z: s32) -> list<player>;
