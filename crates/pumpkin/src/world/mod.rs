@@ -4987,7 +4987,11 @@ impl World {
 
         for chunk_pos in &chunks_set {
             self.save_block_entities(*chunk_pos);
-            self.block_entities.remove(chunk_pos);
+            if let Some((_, entities)) = self.block_entities.remove(chunk_pos) {
+                for (pos, entity) in entities {
+                    self.fire_block_entity_lifecycle(pos, entity.resource_location(), false);
+                }
+            }
         }
     }
 
@@ -6254,6 +6258,7 @@ impl World {
             .entry(chunk_pos)
             .or_default()
             .insert(*block_pos, entity.clone());
+        self.fire_block_entity_lifecycle(*block_pos, entity.resource_location(), true);
         Some(entity)
     }
 
@@ -6333,10 +6338,12 @@ impl World {
             );
         }
 
+        let block_entity_type = block_entity.resource_location();
         self.block_entities
             .entry(chunk_pos)
             .or_default()
             .insert(block_pos, block_entity);
+        self.fire_block_entity_lifecycle(block_pos, block_entity_type, true);
 
         if let Some(nbt) = block_entity_nbt {
             let mut full_nbt = nbt;
@@ -6389,15 +6396,45 @@ impl World {
             });
     }
 
+    /// Fires `BlockEntityLoadEvent` or `BlockEntityUnloadEvent`.
+    fn fire_block_entity_lifecycle(
+        &self,
+        block_pos: BlockPos,
+        block_entity_type: &str,
+        load: bool,
+    ) {
+        let Some(server) = self.server.upgrade() else {
+            return;
+        };
+        let world_name = self.get_world_name().to_string();
+        let block_entity_type = block_entity_type.to_string();
+        if load {
+            let mut event =
+                crate::plugin::api::events::block::block_entity_load::BlockEntityLoadEvent {
+                    world_name,
+                    block_position: block_pos,
+                    block_entity_type,
+                };
+            server.plugin_manager.fire_blocking(&server, &mut event);
+        } else {
+            let mut event =
+                crate::plugin::api::events::block::block_entity_unload::BlockEntityUnloadEvent {
+                    world_name,
+                    block_position: block_pos,
+                    block_entity_type,
+                };
+            server.plugin_manager.fire_blocking(&server, &mut event);
+        }
+    }
+
     pub fn remove_block_entity(&self, block_pos: &BlockPos) {
         let chunk_pos = block_pos.chunk_position();
-        let removed =
-            self.block_entities
-                .get_mut(&chunk_pos)
-                .is_some_and(|mut chunk_block_entities| {
-                    chunk_block_entities.remove(block_pos).is_some()
-                });
-        if removed {
+        let removed = self
+            .block_entities
+            .get_mut(&chunk_pos)
+            .and_then(|mut chunk_block_entities| chunk_block_entities.remove(block_pos));
+        if let Some(removed) = removed {
+            self.fire_block_entity_lifecycle(*block_pos, removed.resource_location(), false);
             self.custom_block_entity_data.remove(block_pos);
             // Drop the chunk's map once its last block entity is gone.
             self.block_entities

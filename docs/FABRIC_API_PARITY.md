@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 55 (53 %) | 14 (13 %) | 35 (34 %) |
+| 55 (53 %) | 15 (14 %) | 34 (33 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -90,7 +90,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | `ServerLevelEvents` LOAD / UNLOAD | ✅ | core | `world-load-event`, `world-unload-event` | |
 | `ServerChunkEvents` LOAD / UNLOAD | ✅ | core | `chunk-load-event`, `chunk-unload-event` | |
 | `ServerEntityEvents` LOAD / UNLOAD | ✅ | core | `entity-spawn-event`, `entities-load-event`, `entity-remove-event` | |
-| `ServerBlockEntityEvents` LOAD / UNLOAD | ❌ | core | | |
+| `ServerBlockEntityEvents` LOAD / UNLOAD | 🟡 | core | `block-entity-load-event`, `block-entity-unload-event` for block entities Pumpkin implements; they load the first time they are used, not with the chunk. A mod's block entities (chunk NBT only) fire none | |
 | `CommonLifecycleEvents` TAGS_LOADED | ➖ | - | tags are fixed after load | |
 
 ### fabric-entity-events-v1

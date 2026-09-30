@@ -137,3 +137,9 @@ pub use block_broken::*;
 /// Event fired when a block break was cancelled.
 pub mod block_break_canceled;
 pub use block_break_canceled::*;
+/// A block entity was added to its world, placed or read from its chunk (Fabric `ServerBlockEntityEvents.BLOCK_ENTITY_LOAD`). Pumpkin creates block entities the first time they are used.
+pub mod block_entity_load;
+pub use block_entity_load::*;
+/// A block entity left its world, removed or unloaded with its chunk (Fabric `ServerBlockEntityEvents.BLOCK_ENTITY_UNLOAD`).
+pub mod block_entity_unload;
+pub use block_entity_unload::*;

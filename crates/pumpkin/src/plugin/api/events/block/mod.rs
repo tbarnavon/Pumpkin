@@ -104,3 +104,7 @@ pub mod block_broken;
 pub use block_broken::*;
 pub mod block_break_canceled;
 pub use block_break_canceled::*;
+pub mod block_entity_load;
+pub use block_entity_load::*;
+pub mod block_entity_unload;
+pub use block_entity_unload::*;

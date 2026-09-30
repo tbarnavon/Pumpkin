@@ -1472,6 +1472,16 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
             EventType::PlayerStopTrackingEvent => {
                 register_typed_event::<crate::plugin::api::events::player::player_stop_tracking::PlayerStopTrackingEvent>(ctx, &handler, priority, blocking);
             }
+            EventType::BlockEntityLoadEvent => {
+                register_typed_event::<
+                    crate::plugin::api::events::block::block_entity_load::BlockEntityLoadEvent,
+                >(ctx, &handler, priority, blocking);
+            }
+            EventType::BlockEntityUnloadEvent => {
+                register_typed_event::<
+                    crate::plugin::api::events::block::block_entity_unload::BlockEntityUnloadEvent,
+                >(ctx, &handler, priority, blocking);
+            }
             event_type @ (EventType::PacketReceivedEvent
             | EventType::PacketSentEvent
             | EventType::ServerCommandEvent

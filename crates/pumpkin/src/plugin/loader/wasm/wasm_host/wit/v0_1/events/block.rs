@@ -1489,3 +1489,77 @@ impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
         panic!("Cannot construct BlockBreakCanceledEvent from WASM")
     }
 }
+
+impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
+    for crate::plugin::api::events::block::block_entity_load::BlockEntityLoadEvent
+{
+    fn to_wasm_event(
+        &self,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event {
+        #[allow(unused_imports)]
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::{
+            to_wasm_block_position, to_wasm_position,
+        };
+        let _ = &state;
+        crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::BlockEntityLoadEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::BlockEntityLoadEventData {
+                world_name: self.world_name.clone(),
+                block_pos: to_wasm_block_position(self.block_position),
+                block_entity_type: self.block_entity_type.clone(),
+            },
+        )
+    }
+
+    fn apply_wasm_event(
+        &mut self,
+        event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) {
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(
+        _event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        _state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> Self {
+        panic!("Cannot construct BlockEntityLoadEvent from WASM")
+    }
+}
+
+impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
+    for crate::plugin::api::events::block::block_entity_unload::BlockEntityUnloadEvent
+{
+    fn to_wasm_event(
+        &self,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event {
+        #[allow(unused_imports)]
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::{
+            to_wasm_block_position, to_wasm_position,
+        };
+        let _ = &state;
+        crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::BlockEntityUnloadEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::BlockEntityUnloadEventData {
+                world_name: self.world_name.clone(),
+                block_pos: to_wasm_block_position(self.block_position),
+                block_entity_type: self.block_entity_type.clone(),
+            },
+        )
+    }
+
+    fn apply_wasm_event(
+        &mut self,
+        event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) {
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(
+        _event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        _state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> Self {
+        panic!("Cannot construct BlockEntityUnloadEvent from WASM")
+    }
+}
