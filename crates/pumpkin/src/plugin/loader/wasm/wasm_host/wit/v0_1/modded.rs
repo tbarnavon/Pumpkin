@@ -13,8 +13,8 @@ use wasmtime::component::{Access, HasSelf, Resource};
 use crate::block::registry::BlockActionResult;
 use crate::block::{
     BlockBehaviour, EmitsRedstonePowerArgs, GetComparatorOutputArgs, GetRedstonePowerArgs,
-    NormalUseArgs, OnNeighborUpdateArgs, OnPlaceArgs, OnScheduledTickArgs, PlayerPlacedArgs,
-    RandomTickArgs, UseWithItemArgs,
+    GetStateForNeighborUpdateArgs, NormalUseArgs, OnNeighborUpdateArgs, OnPlaceArgs,
+    OnScheduledTickArgs, PlayerPlacedArgs, RandomTickArgs, UseWithItemArgs,
 };
 use crate::entity::EntityBase;
 use crate::entity::player::Player;
@@ -29,7 +29,7 @@ use super::pumpkin::plugin::menu::MenuDefinition;
 use super::pumpkin::plugin::modded::{
     self as wit, BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, Interaction,
     InteractionResult, ItemCall, ItemHooks, ItemUse, ItemUseOnBlock, NeighborChange, Placement,
-    Removal, Tick,
+    Removal, ShapeUpdate, Tick,
 };
 use super::pumpkin::plugin::player::Player as WitPlayer;
 use super::pumpkin::plugin::world::World as WitWorld;
@@ -92,6 +92,14 @@ enum CallData {
         pos: BlockPos,
         state: BlockStateId,
         random: bool,
+    },
+    ShapeUpdate {
+        world: Arc<World>,
+        pos: BlockPos,
+        state: BlockStateId,
+        direction: BlockDirection,
+        neighbor_pos: BlockPos,
+        neighbor_state: BlockStateId,
     },
     NeighborChanged {
         world: Arc<World>,
@@ -374,6 +382,21 @@ fn build_call(
                 BlockCall::ScheduledTick(tick)
             }
         }
+        CallData::ShapeUpdate {
+            world,
+            pos,
+            state: block_state,
+            direction,
+            neighbor_pos,
+            neighbor_state,
+        } => BlockCall::UpdateShape(ShapeUpdate {
+            world: state.add::<WitWorld>(world)?,
+            pos: to_wit_pos(pos),
+            state: block_state.as_u16(),
+            direction: to_wit_block_direction(direction),
+            neighbor_pos: to_wit_pos(neighbor_pos),
+            neighbor_state: neighbor_state.as_u16(),
+        }),
         CallData::NeighborChanged {
             world,
             pos,
@@ -548,6 +571,42 @@ impl BlockBehaviour for PluginBlock {
                 random: true,
             },
         );
+    }
+
+    fn get_state_for_neighbor_update(
+        &self,
+        args: GetStateForNeighborUpdateArgs<'_>,
+    ) -> BlockStateId {
+        if !self.hooks.contains(BlockHooks::UPDATE_SHAPE) {
+            return args.state_id;
+        }
+        let Some(server) = args.world.server.upgrade() else {
+            return args.state_id;
+        };
+        // The hook needs the world as a resource, which takes the shared handle.
+        let Some(world) = server
+            .worlds
+            .load()
+            .iter()
+            .find(|world| std::ptr::eq(world.as_ref(), args.world))
+            .cloned()
+        else {
+            return args.state_id;
+        };
+        match self.invoke(
+            &server,
+            CallData::ShapeUpdate {
+                world,
+                pos: *args.position,
+                state: args.state_id,
+                direction: args.direction,
+                neighbor_pos: *args.neighbor_position,
+                neighbor_state: args.neighbor_state_id,
+            },
+        ) {
+            HookReply::State(state) => BlockStateId::new_or_air(state),
+            _ => args.state_id,
+        }
     }
 
     fn on_neighbor_update(&self, args: OnNeighborUpdateArgs<'_>) {

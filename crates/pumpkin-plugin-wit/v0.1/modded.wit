@@ -32,6 +32,9 @@ interface modded {
         neighbor-changed,
         /// `Block.randomTick`: only for states the mod marks as randomly ticking.
         random-tick,
+        /// `Block.updateShape`: a neighbour's state changed; reply with the state this block
+        /// should take, or `none` to keep it.
+        update-shape,
         /// `Block.isSignalSource`: the block gives the redstone power set with
         /// `world.set-redstone-output`. No call is made.
         signal-source,
@@ -92,6 +95,16 @@ interface modded {
         state: u16,
     }
 
+    record shape-update {
+        %world: %world,
+        pos: block-pos,
+        state: u16,
+        /// The side the changed neighbour is on.
+        direction: block-direction,
+        neighbor-pos: block-pos,
+        neighbor-state: u16,
+    }
+
     record neighbor-change {
         %world: %world,
         pos: block-pos,
@@ -110,6 +123,7 @@ interface modded {
         scheduled-tick(tick),
         neighbor-changed(neighbor-change),
         random-tick(tick),
+        update-shape(shape-update),
     }
 
     /// `InteractionResult`.

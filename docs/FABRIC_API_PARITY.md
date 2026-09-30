@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 57 (55 %) | 18 (17 %) | 29 (28 %) |
+| 58 (56 %) | 18 (17 %) | 28 (27 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -253,7 +253,7 @@ keep their native behaviour.
 | `Block.getSignal` / `getDirectSignal` / `isSignalSource` | 🟡 | modded | data first: `signal-source` hook flag + `world.set-redstone-output(weak, strong)`, held by the host; same power on every side | ✅ redstone upgrade |
 | `Block.getAnalogOutputSignal` (comparator) | ✅ | modded | data first: `analog-output` hook flag + `world.set-comparator-output`, held by the host | ✅ |
 | `Block.neighborChanged` | ✅ | modded | `neighbor-changed` hook (opt-in per block) | |
-| `Block.updateShape` | ❌ | modded | | |
+| `Block.updateShape` | ✅ | modded | `update-shape` hook (opt-in per block), replies with the new state | |
 | `Block.randomTick` | ✅ | modded | `random-tick` hook, only for states the mod marks as randomly ticking (from the dump) | |
 | `Block.entityInside`, `stepOn` | ❌ | modded | | |
 | `BlockEntity` ticker | 🟡 | modded | data first: no per-tick calls; a block reschedules itself with `world.schedule-block-tick`, and hopper/signal work is host-held (`set-item-storage`, `set-redstone-output`) | ✅ hopper/magnet upgrades |
