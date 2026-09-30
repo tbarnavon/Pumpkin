@@ -11,6 +11,12 @@ Status:
 - ❌ missing.
 - ➖ not needed: client-only, dev-time only, or resolved when the Extractor dumps the mod's data.
 
+Summary (102 rows in the tables below, not counting the 13 marked ➖):
+
+| Done ✅ | Partial 🟡 | Missing ❌ |
+|:--|:--|:--|
+| 46 (45 %) | 14 (14 %) | 42 (41 %) |
+
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
 - **modded**: `modded.wit`. Only makes sense with mod content or Fabric clients.
