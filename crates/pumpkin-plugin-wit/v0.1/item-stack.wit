@@ -46,6 +46,13 @@ interface item-stack {
         /// Returns the maximum number of items that can be in this stack.
         get-max-count: func() -> u8;
 
+        /// The item's tags (`ItemStack.getTags`), namespaced like `minecraft:logs` or
+        /// `c:ingots/iron`, with the entries mods add.
+        get-tags: func() -> list<string>;
+        /// Whether the item is in a tag (`ItemStack.is(TagKey)`). A leading `#` and the
+        /// `minecraft:` namespace are optional.
+        has-tag: func(tag: string) -> bool;
+
         /// Returns all enchantments on this item stack.
         get-enchantments: func() -> list<enchantment-value>;
         /// Adds an enchantment to this item stack.

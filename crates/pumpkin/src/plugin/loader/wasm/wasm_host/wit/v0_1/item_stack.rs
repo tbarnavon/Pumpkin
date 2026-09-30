@@ -116,6 +116,33 @@ impl HostItemStack for PluginHostState {
         Ok(())
     }
 
+    async fn get_tags(&mut self, res: Resource<ItemStackHandle>) -> wasmtime::Result<Vec<String>> {
+        let id = self.get(&res)?.lock().await.item.id;
+        Ok(
+            pumpkin_data::dynamic::tags::merged(pumpkin_data::tag::RegistryKey::Item)
+                .into_iter()
+                .filter(|(_, ids)| ids.contains(&id))
+                .map(|(name, _)| {
+                    if name.contains(':') {
+                        name.to_string()
+                    } else {
+                        format!("minecraft:{name}")
+                    }
+                })
+                .collect(),
+        )
+    }
+
+    async fn has_tag(
+        &mut self,
+        res: Resource<ItemStackHandle>,
+        tag: String,
+    ) -> wasmtime::Result<bool> {
+        use pumpkin_data::tag::Taggable;
+        let item = self.get(&res)?.lock().await.item;
+        Ok(item.is_tagged_with(&tag) == Some(true))
+    }
+
     async fn get_max_count(&mut self, res: Resource<ItemStackHandle>) -> wasmtime::Result<u8> {
         let stack = self.get(&res)?;
         let stack = stack.lock().await;
