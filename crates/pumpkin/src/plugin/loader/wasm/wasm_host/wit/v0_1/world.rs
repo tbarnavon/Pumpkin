@@ -1305,7 +1305,34 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
         strong: u8,
     ) -> wasmtime::Result<()> {
         let world = self.get(&world)?.clone();
-        world.set_plugin_redstone_output(&BlockPos::new(pos.x, pos.y, pos.z), weak, strong);
+        world.set_plugin_redstone_output(
+            &BlockPos::new(pos.x, pos.y, pos.z),
+            [weak; 6],
+            [strong; 6],
+        );
+        Ok(())
+    }
+
+    async fn set_redstone_output_sides(
+        &mut self,
+        world: Resource<World>,
+        pos: WitBlockPos,
+        weak: Vec<u8>,
+        strong: Vec<u8>,
+    ) -> wasmtime::Result<()> {
+        let sides = |list: Vec<u8>| {
+            let mut sides = [0; 6];
+            for (side, v) in sides.iter_mut().zip(list) {
+                *side = v;
+            }
+            sides
+        };
+        let world = self.get(&world)?.clone();
+        world.set_plugin_redstone_output(
+            &BlockPos::new(pos.x, pos.y, pos.z),
+            sides(weak),
+            sides(strong),
+        );
         Ok(())
     }
 

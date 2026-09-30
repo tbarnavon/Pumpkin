@@ -15,7 +15,7 @@ Summary (110 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 71 (65 %) | 16 (14 %) | 23 (21 %) |
+| 72 (65 %) | 15 (14 %) | 23 (21 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -254,7 +254,7 @@ keep their native behaviour.
 | `Block.getDrops` | ✅ | modded | `drops` | ✅ |
 | `Block.affectNeighborsAfterRemoval` / `onRemove` | ✅ | modded | `removed` | ✅ |
 | `Block.tick` (scheduled) | ✅ | modded | `scheduled-tick` hook; scheduled with `world.schedule-block-tick` | ✅ |
-| `Block.getSignal` / `getDirectSignal` / `isSignalSource` | 🟡 | modded | data first: `signal-source` hook flag + `world.set-redstone-output(weak, strong)`, held by the host; same power on every side | 🟡 redstone upgrade (with `analogOutput` off): SD powers only the block below strongly, so no strong power is given |
+| `Block.getSignal` / `getDirectSignal` / `isSignalSource` | ✅ | modded | data first: `signal-source` hook flag + `world.set-redstone-output(weak, strong)` or `set-redstone-output-sides` (per side), held by the host | ✅ redstone upgrade (with `analogOutput` off): weak on every side, strong to the block below |
 | `Block.getAnalogOutputSignal` (comparator) | ✅ | modded | data first: `analog-output` hook flag + `world.set-comparator-output`, held by the host | ✅ |
 | `Block.neighborChanged` | ✅ | modded | `neighbor-changed` hook (opt-in per block) | |
 | `Block.updateShape` | ✅ | modded | `update-shape` hook (opt-in per block), replies with the new state | ✅ key buttons |

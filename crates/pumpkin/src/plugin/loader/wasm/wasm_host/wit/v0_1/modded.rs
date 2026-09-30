@@ -608,14 +608,14 @@ impl BlockBehaviour for PluginBlock {
         if !self.hooks.contains(BlockHooks::SIGNAL_SOURCE) {
             return 0;
         }
-        args.world.plugin_signals(args.position).weak
+        args.world.plugin_signals(args.position).weak(args.direction)
     }
 
     fn get_strong_redstone_power(&self, args: GetRedstonePowerArgs<'_>) -> u8 {
         if !self.hooks.contains(BlockHooks::SIGNAL_SOURCE) {
             return 0;
         }
-        args.world.plugin_signals(args.position).strong
+        args.world.plugin_signals(args.position).strong(args.direction)
     }
 
     fn get_comparator_output(&self, args: GetComparatorOutputArgs<'_>) -> Option<u8> {

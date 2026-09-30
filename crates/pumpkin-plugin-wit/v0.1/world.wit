@@ -989,6 +989,12 @@ interface %world {
         /// the plugin. Kept with the block entity when there is one, otherwise until restart.
         set-redstone-output: func(pos: block-pos, weak: u8, strong: u8);
 
+        /// Like `set-redstone-output`, with a power per side: `weak` and `strong` list six values
+        /// in `block-direction` order, each for the query with that direction, as vanilla's
+        /// `getSignal(..., side)`. `up` is what the block below reads (a floor button's strong
+        /// power). Missing values are 0.
+        set-redstone-output-sides: func(pos: block-pos, weak: list<u8>, strong: list<u8>);
+
         /// Sets what comparators read from a plugin block with the `analog-output` hook
         /// (`Block.getAnalogOutputSignal`), and updates them when it changes.
         set-comparator-output: func(pos: block-pos, value: u8);

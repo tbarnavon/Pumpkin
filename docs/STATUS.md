@@ -279,3 +279,7 @@ drawers and detached drawers kept out of bundles and shulker boxes, conversion u
   width, height and cells, shapeless with ingredients, each ingredient as item ids (tags
   resolved). The plugin's `findLowerTier` now scans shaped 2x2 and 3x3 recipes like the mod,
   instead of starting from the 1x1 craft.
+- 8. `world.set-redstone-output-sides`: weak and strong power per side, held and saved by the
+  host (`PumpkinSignals` keeps a byte when every side is the same, else a byte array). The
+  redstone upgrade gives weak power on every side and strong power to the block below, like
+  `BlockDrawers.getDirectSignal`.
