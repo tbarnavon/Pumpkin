@@ -11,11 +11,11 @@ Status:
 - ❌ missing.
 - ➖ not needed: client-only, dev-time only, or resolved when the Extractor dumps the mod's data.
 
-Summary (102 rows in the tables below, not counting the 13 marked ➖):
+Summary (103 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 46 (45 %) | 14 (14 %) | 42 (41 %) |
+| 47 (46 %) | 14 (14 %) | 42 (41 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -125,6 +125,7 @@ as raw NBT; vanilla block entities use `world.get/set-block-entity-nbt`). The re
 | Vanilla menu types | ✅ | core | `gui` resource, `player.open-gui` | |
 | `ExtendedMenuType` / `ExtendedMenuProvider` (modded menu, `fabric-menu-api-v1:open_screen` with extra data) | ✅ | modded | `modded.open-menu` | ✅ drawer GUI |
 | Plugin-defined slot layout and quick-move rules | ✅ | core | `menu` interface, `handle-menu-call` export | ✅ drawer GUI |
+| Menu contents and `stillValid` without per-tick calls | ✅ | core | host keeps the slots (`menu-definition.contents`, `menu.update-slot`), checks a `menu-anchor` itself, `menu.close`; the plugin is only called on clicks and close | ✅ drawer GUI |
 
 ### fabric-object-builder-api-v1
 | Feature | Status | API | Pumpkin | SD |
@@ -265,9 +266,4 @@ keep their native behaviour.
   entities with no native implementation), use `nbt-tree` instead of bytes, and broadcast the
   update. Fold them into core: make `get-block-entity-nbt` fall back to pending NBT, add
   `world.remove-block-entity` and a `world.send-block-entity-update`, then delete the modded ones.
-- **Menus should be data first.** While a plugin menu is open, the host calls the plugin's
-  `contents` every tick (slot items and validity). A reviewer asked for a data-first design that
-  does not call WASM on every tick: the host keeps the slot contents, which the plugin pushes when
-  they change (`menu.set-contents`), and checks validity itself from an anchor position and a
-  distance; WASM is only called on player actions.
 

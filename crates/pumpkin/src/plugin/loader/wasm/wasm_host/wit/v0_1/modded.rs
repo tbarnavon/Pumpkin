@@ -802,7 +802,7 @@ impl wit::HostWithStore<PluginHostState> for HasSelf<PluginHostState> {
         {
             return Ok(Err(format!("unknown modded menu type {menu_type}")));
         }
-        let open = match super::menu::resolve(host.get(), &player, handler_id, menu)? {
+        let open = match super::menu::resolve(host.get(), &player, handler_id, menu).await? {
             Ok(open) => open,
             Err(error) => return Ok(Err(error)),
         };

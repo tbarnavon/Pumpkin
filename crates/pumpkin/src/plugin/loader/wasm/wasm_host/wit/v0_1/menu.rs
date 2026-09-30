@@ -1,7 +1,9 @@
 //! Host side of the `menu` interface: menus whose slots a plugin defines.
 
 use std::any::Any;
-use std::sync::{Arc, Mutex as StdMutex};
+use std::collections::HashMap;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, LazyLock, Mutex as StdMutex, Weak};
 
 use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::screen::WindowType;
@@ -13,6 +15,7 @@ use pumpkin_inventory::screen_handler::{
     SharedScreenHandler,
 };
 use pumpkin_inventory::slot::{NormalSlot, Slot};
+use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::text::TextComponent;
 use tokio::sync::Mutex;
 use wasmtime::component::{Access, HasSelf, Resource};
@@ -20,11 +23,13 @@ use wasmtime::component::{Access, HasSelf, Resource};
 use crate::entity::player::Player;
 use crate::plugin::loader::wasm::wasm_host::{PluginInstance, WasmPlugin, state::PluginHostState};
 use crate::server::Server;
+use crate::world::World;
 
 use super::gui::from_wit_screen;
 use super::pumpkin::plugin::item_stack::ItemStack as WitItemStack;
 use super::pumpkin::plugin::menu::{
-    self as wit, MenuCall, MenuDefinition, MenuReply, MenuSlot, QuickMoveStep, SetSlot, SlotItem,
+    self as wit, MenuAnchor, MenuCall, MenuDefinition, MenuReply, MenuSlot, QuickMoveStep, SetSlot,
+    SlotItem,
 };
 use super::pumpkin::plugin::player::Player as WitPlayer;
 use super::pumpkin::plugin::screens::Screen as WitScreen;
@@ -34,7 +39,6 @@ const MAX_SLOT_COUNT: u32 = 256;
 
 /// What the host asks the plugin, with the items as host stacks.
 enum Call {
-    Contents,
     SetItem(u32, Option<ItemStack>),
     MayPlace(u32, ItemStack),
     MayPickup(u32),
@@ -45,19 +49,87 @@ enum Call {
 
 enum Reply {
     None,
-    Contents(Vec<ItemStack>, bool),
     Allowed(bool),
     Count(u32),
     QuickMove(Vec<QuickMoveStep>),
 }
 
-struct Contents {
-    tick: i32,
-    items: Vec<ItemStack>,
-    valid: bool,
+/// The plugin slots of every open menu with the same plugin, handler and menu id. The plugin
+/// pushes changes with `menu.update-slot`; the host reads them when it syncs the viewers.
+struct SharedContents {
+    items: StdMutex<Vec<ItemStack>>,
+    closed: AtomicBool,
 }
 
-/// One open plugin menu: who it belongs to and a per-tick copy of the plugin slots.
+impl SharedContents {
+    fn set(&self, slot: usize, item: ItemStack) {
+        let mut items = self
+            .items
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        if let Some(entry) = items.get_mut(slot) {
+            *entry = item;
+        }
+    }
+}
+
+type ContentsKey = (usize, u32, u32);
+
+/// Open menus' contents by `(plugin, handler id, menu id)`. Entries die with their last menu.
+static CONTENTS: LazyLock<StdMutex<HashMap<ContentsKey, Weak<SharedContents>>>> =
+    LazyLock::new(|| StdMutex::new(HashMap::new()));
+
+fn contents_key(plugin: &Arc<WasmPlugin>, handler_id: u32, menu_id: u32) -> ContentsKey {
+    (Arc::as_ptr(plugin) as usize, handler_id, menu_id)
+}
+
+fn find_contents(key: ContentsKey) -> Option<Arc<SharedContents>> {
+    CONTENTS
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .get(&key)
+        .and_then(Weak::upgrade)
+}
+
+/// The shared contents for a menu being opened, set to the items it was opened with.
+fn open_contents(key: ContentsKey, items: Vec<ItemStack>) -> Arc<SharedContents> {
+    let mut map = CONTENTS
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    map.retain(|_, contents| contents.strong_count() > 0);
+    if let Some(contents) = map.get(&key).and_then(Weak::upgrade) {
+        let mut current = contents
+            .items
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        // Another viewer may have a larger layout; keep its slots.
+        for (slot, item) in items.into_iter().enumerate() {
+            match current.get_mut(slot) {
+                Some(entry) => *entry = item,
+                None => current.push(item),
+            }
+        }
+        drop(current);
+        contents.closed.store(false, Ordering::Relaxed);
+        return contents;
+    }
+    let contents = Arc::new(SharedContents {
+        items: StdMutex::new(items),
+        closed: AtomicBool::new(false),
+    });
+    map.insert(key, Arc::downgrade(&contents));
+    contents
+}
+
+/// A `menu-anchor` resolved when the menu opens.
+struct Anchor {
+    world: Weak<World>,
+    pos: BlockPos,
+    block: pumpkin_data::BlockId,
+    max_distance_sq: f64,
+}
+
+/// One open plugin menu: who it belongs to and the plugin slots it shows.
 pub struct PluginMenu {
     plugin: Arc<WasmPlugin>,
     handler_id: u32,
@@ -65,7 +137,8 @@ pub struct PluginMenu {
     viewer: Arc<Player>,
     server: Arc<Server>,
     size: usize,
-    contents: StdMutex<Option<Contents>>,
+    contents: Arc<SharedContents>,
+    anchor: Option<Anchor>,
 }
 
 impl PluginMenu {
@@ -89,7 +162,6 @@ impl PluginMenu {
                                 state.add::<WitItemStack>(Arc::new(Mutex::new(stack)))
                             };
                             Ok::<_, wasmtime::Error>(match call {
-                                Call::Contents => MenuCall::Contents,
                                 Call::SetItem(slot, item) => MenuCall::SetItem(SetSlot {
                                     slot,
                                     item: item.map(&mut stack).transpose()?,
@@ -117,24 +189,6 @@ impl PluginMenu {
                             .0;
                         Ok(match reply {
                             MenuReply::None => Reply::None,
-                            MenuReply::Contents(contents) => {
-                                let handles = guest.with(|mut store| {
-                                    contents
-                                        .items
-                                        .into_iter()
-                                        .map(|item| item.map(|i| store.data_mut().take(i)))
-                                        .map(Option::transpose)
-                                        .collect::<wasmtime::Result<Vec<_>>>()
-                                })?;
-                                let mut items = Vec::with_capacity(handles.len());
-                                for handle in handles {
-                                    items.push(match handle {
-                                        Some(handle) => handle.lock().await.clone(),
-                                        None => ItemStack::EMPTY.clone(),
-                                    });
-                                }
-                                Reply::Contents(items, contents.valid)
-                            }
                             MenuReply::Allowed(allowed) => Reply::Allowed(allowed),
                             MenuReply::Count(count) => Reply::Count(count),
                             MenuReply::QuickMove(steps) => Reply::QuickMove(steps),
@@ -158,34 +212,39 @@ impl PluginMenu {
         }
     }
 
-    /// The plugin slots and validity for this tick, asking the plugin if they are stale.
-    fn with_contents<R>(&self, read: impl FnOnce(&Contents) -> R) -> R {
-        let tick = self
-            .server
-            .tick_count
-            .load(std::sync::atomic::Ordering::Relaxed);
-        let mut contents = self
-            .contents
+    fn get_item(&self, slot: usize) -> ItemStack {
+        self.contents
+            .items
             .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        if contents.as_ref().is_some_and(|c| c.tick != tick) {
-            *contents = None;
-        }
-        read(contents.get_or_insert_with(|| {
-            let (mut items, valid) = match self.call(Call::Contents) {
-                Some(Reply::Contents(items, valid)) => (items, valid),
-                _ => (Vec::new(), false),
-            };
-            items.resize_with(self.size, || ItemStack::EMPTY.clone());
-            Contents { tick, items, valid }
-        }))
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .get(slot)
+            .cloned()
+            .unwrap_or_else(|| ItemStack::EMPTY.clone())
     }
 
-    fn invalidate(&self) {
-        *self
-            .contents
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner) = None;
+    /// `AbstractContainerMenu.stillValid`, from the anchor alone.
+    fn still_valid(&self) -> bool {
+        if self.contents.closed.load(Ordering::Relaxed) {
+            return false;
+        }
+        let Some(anchor) = &self.anchor else {
+            return true;
+        };
+        let Some(world) = anchor.world.upgrade() else {
+            return false;
+        };
+        if !Arc::ptr_eq(&world, &self.viewer.world()) {
+            return false;
+        }
+        if pumpkin_data::BlockId::from_state_id(world.get_block_state_id(&anchor.pos))
+            != anchor.block
+        {
+            return false;
+        }
+        let center = anchor.pos.to_centered_f64();
+        let pos = self.viewer.living_entity.entity.pos.load();
+        let (dx, dy, dz) = (pos.x - center.x, pos.y - center.y, pos.z - center.z);
+        dx * dx + dy * dy + dz * dz <= anchor.max_distance_sq
     }
 
     pub(super) fn clone_plugin(&self) -> Arc<WasmPlugin> {
@@ -211,16 +270,16 @@ impl Inventory for PluginMenuInventory {
 
     fn is_empty(&self) -> bool {
         self.0
-            .with_contents(|c| c.items.iter().all(ItemStack::is_empty))
+            .contents
+            .items
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .iter()
+            .all(ItemStack::is_empty)
     }
 
     fn get_stack(&self, slot: usize) -> ItemStack {
-        self.0.with_contents(|c| {
-            c.items
-                .get(slot)
-                .cloned()
-                .unwrap_or_else(|| ItemStack::EMPTY.clone())
-        })
+        self.0.get_item(slot)
     }
 
     fn remove_stack(&self, slot: usize) -> ItemStack {
@@ -240,9 +299,9 @@ impl Inventory for PluginMenuInventory {
     }
 
     fn set_stack(&self, slot: usize, stack: ItemStack) {
+        self.0.contents.set(slot, stack.clone());
         let item = (!stack.is_empty()).then_some(stack);
         self.0.call(Call::SetItem(slot as u32, item));
-        self.0.invalidate();
     }
 
     fn as_any(&self) -> &dyn Any {
@@ -333,10 +392,10 @@ impl PluginMenuHandler {
         handler
     }
 
-    /// Whether the plugin still considers the menu usable; checked every tick.
+    /// Whether the menu is still usable; checked every tick, without calling the plugin.
     #[must_use]
     pub fn still_valid(&self) -> bool {
-        self.menu.with_contents(|c| c.valid)
+        self.menu.still_valid()
     }
 }
 
@@ -458,7 +517,7 @@ pub(super) struct OpenMenu {
     pub player: Arc<Player>,
 }
 
-pub(super) fn resolve(
+pub(super) async fn resolve(
     state: &mut PluginHostState,
     player: &Resource<WitPlayer>,
     handler_id: u32,
@@ -488,6 +547,29 @@ pub(super) fn resolve(
     }
     let player = state.get(player)?.clone();
     let title = state.take(definition.title)?;
+    let mut handles = Vec::with_capacity(size);
+    for item in definition.contents.into_iter().take(size) {
+        handles.push(item.map(|item| state.take(item)).transpose()?);
+    }
+    let mut items = Vec::with_capacity(size);
+    for handle in handles {
+        items.push(match handle {
+            Some(handle) => handle.lock().await.clone(),
+            None => ItemStack::EMPTY.clone(),
+        });
+    }
+    items.resize_with(size, || ItemStack::EMPTY.clone());
+    let anchor = definition.anchor.map(|MenuAnchor { pos, max_distance }| {
+        let world = player.world();
+        let pos = BlockPos::new(pos.x, pos.y, pos.z);
+        Anchor {
+            block: pumpkin_data::BlockId::from_state_id(world.get_block_state_id(&pos)),
+            world: Arc::downgrade(&world),
+            pos,
+            max_distance_sq: max_distance * max_distance,
+        }
+    });
+    let contents = open_contents(contents_key(&plugin, handler_id, definition.menu_id), items);
     Ok(Ok(OpenMenu {
         menu: Arc::new(PluginMenu {
             plugin,
@@ -496,7 +578,8 @@ pub(super) fn resolve(
             viewer: player.clone(),
             server,
             size,
-            contents: StdMutex::new(None),
+            contents,
+            anchor,
         }),
         slots: definition.slots,
         title,
@@ -517,7 +600,42 @@ impl OpenMenu {
     }
 }
 
-impl wit::Host for PluginHostState {}
+impl wit::Host for PluginHostState {
+    async fn update_slot(
+        &mut self,
+        handler_id: u32,
+        menu_id: u32,
+        slot: u32,
+        item: Option<Resource<WitItemStack>>,
+    ) -> wasmtime::Result<()> {
+        let state = self;
+        let item = item.map(|item| state.take(item)).transpose()?;
+        let Some(plugin) = state.plugin.as_ref().and_then(Weak::upgrade) else {
+            return Ok(());
+        };
+        let Some(contents) = find_contents(contents_key(&plugin, handler_id, menu_id)) else {
+            return Ok(());
+        };
+        let item = match item {
+            Some(item) => item.lock().await.clone(),
+            None => ItemStack::EMPTY.clone(),
+        };
+        contents.set(slot as usize, item);
+        Ok(())
+    }
+
+    async fn close(&mut self, handler_id: u32, menu_id: u32) -> wasmtime::Result<()> {
+        let state = self;
+        let Some(plugin) = state.plugin.as_ref().and_then(Weak::upgrade) else {
+            return Ok(());
+        };
+        if let Some(contents) = find_contents(contents_key(&plugin, handler_id, menu_id)) {
+            // The viewers' next tick sees the menu as no longer valid and closes it.
+            contents.closed.store(true, Ordering::Relaxed);
+        }
+        Ok(())
+    }
+}
 
 impl wit::HostWithStore<PluginHostState> for HasSelf<PluginHostState> {
     async fn open(
@@ -527,7 +645,7 @@ impl wit::HostWithStore<PluginHostState> for HasSelf<PluginHostState> {
         screen: WitScreen,
         menu: MenuDefinition,
     ) -> wasmtime::Result<Result<(), String>> {
-        let open = match resolve(host.get(), &player, handler_id, menu)? {
+        let open = match resolve(host.get(), &player, handler_id, menu).await? {
             Ok(open) => open,
             Err(error) => return Ok(Err(error)),
         };

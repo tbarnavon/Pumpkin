@@ -1,17 +1,22 @@
 //! Menus whose slots the plugin defines: see the `menu` WIT interface.
 //!
+//! The host keeps the items of the plugin's slots. Give them in [`MenuDefinition::contents`] and
+//! push changes with [`update_slot`]; the handler is only called when a player acts.
+//!
 //! ```ignore
 //! struct Chest;
 //! impl MenuHandler for Chest {
 //!     fn handle(&self, menu_id: u32, player: Player, call: MenuCall) -> MenuReply {
 //!         match call {
-//!             MenuCall::Contents => MenuReply::Contents(MenuContents { items: vec![None; 27], valid: true }),
+//!             MenuCall::SetItem(set) => { /* store set.item */ MenuReply::None }
+//!             MenuCall::MayPlace(_) | MenuCall::MayPickup(_) => MenuReply::Allowed(true),
 //!             _ => MenuReply::None,
 //!         }
 //!     }
 //! }
 //! let handler = register_menu_handler(Chest);
 //! menu::open(&player, handler, Screen::Generic9x3, MenuDefinition { .. })?;
+//! menu::update_slot(handler, menu_id, 0, Some(&stack));
 //! ```
 
 use std::collections::BTreeMap;
@@ -20,8 +25,8 @@ use std::sync::{Arc, Mutex};
 use crate::wit::pumpkin::plugin::player::Player;
 
 pub use crate::wit::pumpkin::plugin::menu::{
-    MenuCall, MenuContents, MenuDefinition, MenuReply, MenuSlot, QuickMoveStep, SetSlot, SlotItem,
-    open,
+    MenuAnchor, MenuCall, MenuDefinition, MenuReply, MenuSlot, QuickMoveStep, SetSlot, SlotItem,
+    close, open, update_slot,
 };
 
 /// Answers the host's calls about the plugin slots of the menus opened with its id.
