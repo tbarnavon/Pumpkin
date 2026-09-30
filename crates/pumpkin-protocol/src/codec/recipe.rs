@@ -10,19 +10,22 @@ pub enum OwnedRecipeIngredient {
     OneOf(Vec<String>),
 }
 
+/// The item's namespaced id: vanilla registry keys have no namespace, modded ones keep theirs.
+fn item_id(item: &Item) -> String {
+    if item.registry_key.contains(':') {
+        item.registry_key.to_string()
+    } else {
+        format!("minecraft:{}", item.registry_key)
+    }
+}
+
 impl OwnedRecipeIngredient {
     #[must_use]
     pub fn match_item(&self, item: &Item) -> bool {
         match self {
-            Self::Simple(id) => {
-                let name = format!("minecraft:{}", item.registry_key);
-                name == *id
-            }
+            Self::Simple(id) => item_id(item) == *id,
             Self::Tagged(tag) => item.is_tagged_with(tag).unwrap_or(false),
-            Self::OneOf(ids) => {
-                let name = format!("minecraft:{}", item.registry_key);
-                ids.contains(&name)
-            }
+            Self::OneOf(ids) => ids.contains(&item_id(item)),
         }
     }
 }
