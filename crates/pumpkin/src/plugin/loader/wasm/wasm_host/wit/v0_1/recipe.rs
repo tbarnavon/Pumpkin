@@ -1,6 +1,7 @@
 use crate::plugin::loader::wasm::wasm_host::state::PluginHostState;
 use crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::recipe::{
-    CookingRecipe as WitCookingRecipe, CookingType as WitCookingType, Host as RecipeHost,
+    CookingRecipe as WitCookingRecipe, CookingType as WitCookingType,
+    CraftingRecipeInfo as WitCraftingRecipeInfo, Host as RecipeHost,
     HostRecipeManager, Ingredient as WitIngredient, RecipeCategory as WitRecipeCategory,
     RecipeManager as WitRecipeManager, ShapedRecipe as WitShapedRecipe,
     ShapelessRecipe as WitShapelessRecipe,
@@ -169,7 +170,154 @@ fn result_stack(
         .map(Some)
 }
 
+/// Every item id `accepts` takes, for `crafting-recipes-for`.
+fn accepted_items(accepts: impl Fn(&pumpkin_data::item::Item) -> bool) -> Vec<String> {
+    (1..pumpkin_data::item::Item::count())
+        .filter_map(pumpkin_data::item::Item::from_id)
+        .filter(|item| accepts(item))
+        .map(|item| item.namespaced_name().into_owned())
+        .collect()
+}
+
+/// A shaped recipe's cells row by row, `None` for an empty one.
+fn shaped_cells<T>(
+    pattern: &[impl AsRef<str>],
+    key: impl Fn(char) -> Option<T>,
+) -> (u32, u32, Vec<Option<T>>) {
+    let width = pattern
+        .iter()
+        .map(|row| row.as_ref().chars().count())
+        .max()
+        .unwrap_or(0);
+    let mut cells = Vec::with_capacity(width * pattern.len());
+    for row in pattern {
+        let mut chars = row.as_ref().chars();
+        for _ in 0..width {
+            cells.push(chars.next().filter(|c| *c != ' ').and_then(&key));
+        }
+    }
+    (width as u32, pattern.len() as u32, cells)
+}
+
+/// The crafting recipes whose result is `item`, as `crafting-recipes-for` lists them.
+fn crafting_recipes_for(
+    item: &str,
+    dynamic: &[pumpkin_protocol::codec::recipe::DynamicRecipe],
+) -> Vec<WitCraftingRecipeInfo> {
+    use pumpkin_data::recipes::{CraftingRecipeTypes, RECIPES_CRAFTING};
+    let wanted = if item.contains(':') {
+        item.to_string()
+    } else {
+        format!("minecraft:{item}")
+    };
+    let is_wanted = |id: &str| {
+        if id.contains(':') {
+            id == wanted
+        } else {
+            wanted.strip_prefix("minecraft:") == Some(id)
+        }
+    };
+    let info = |shaped, (width, height, ingredients), result: &str, result_count| {
+        WitCraftingRecipeInfo {
+            shaped,
+            width,
+            height,
+            ingredients,
+            output: result.to_string(),
+            output_count: result_count,
+        }
+    };
+    let mut out = Vec::new();
+    for recipe in RECIPES_CRAFTING {
+        match recipe {
+            CraftingRecipeTypes::CraftingShaped {
+                key,
+                pattern,
+                result,
+                ..
+            } if is_wanted(result.id) => {
+                let cells = shaped_cells(pattern, |c| {
+                    let (_, ingredient) = key.iter().find(|(k, _)| *k == c)?;
+                    Some(accepted_items(|item| ingredient.match_item(item)))
+                });
+                out.push(info(true, cells, &wanted, result.count));
+            }
+            CraftingRecipeTypes::CraftingShapeless {
+                ingredients,
+                result,
+                ..
+            } if is_wanted(result.id) => {
+                let ingredients = ingredients
+                    .iter()
+                    .map(|ingredient| Some(accepted_items(|item| ingredient.match_item(item))))
+                    .collect();
+                out.push(info(false, (0, 0, ingredients), &wanted, result.count));
+            }
+            CraftingRecipeTypes::CraftingTransmute {
+                input,
+                material,
+                result,
+                ..
+            } if is_wanted(result.id) => {
+                let ingredients = [input, material]
+                    .iter()
+                    .map(|ingredient| Some(accepted_items(|item| ingredient.match_item(item))))
+                    .collect();
+                out.push(info(false, (0, 0, ingredients), &wanted, result.count));
+            }
+            _ => {}
+        }
+    }
+    for recipe in dynamic {
+        let pumpkin_protocol::codec::recipe::DynamicRecipe::Crafting(recipe) = recipe else {
+            continue;
+        };
+        match recipe {
+            OwnedCraftingRecipe::Shaped {
+                key,
+                pattern,
+                result,
+                ..
+            } if is_wanted(&result.item_id) => {
+                let cells = shaped_cells(pattern, |c| {
+                    let (_, ingredient) = key.iter().find(|(k, _)| *k == c)?;
+                    Some(accepted_items(|item| ingredient.match_item(item)))
+                });
+                out.push(info(true, cells, &wanted, result.count));
+            }
+            OwnedCraftingRecipe::Shapeless {
+                ingredients,
+                result,
+                ..
+            } if is_wanted(&result.item_id) => {
+                let ingredients = ingredients
+                    .iter()
+                    .map(|ingredient| Some(accepted_items(|item| ingredient.match_item(item))))
+                    .collect();
+                out.push(info(false, (0, 0, ingredients), &wanted, result.count));
+            }
+            _ => {}
+        }
+    }
+    out
+}
+
 impl HostRecipeManager for PluginHostState {
+    async fn crafting_recipes_for(
+        &mut self,
+        _res: Resource<WitRecipeManager>,
+        item: String,
+    ) -> wasmtime::Result<Vec<WitCraftingRecipeInfo>> {
+        let server = self
+            .server
+            .clone()
+            .ok_or_else(|| wasmtime::Error::msg("Server not available"))?;
+        Ok(crafting_recipes_for(
+            &item,
+            &server.recipe_manager.get_dynamic_recipes_internal(),
+        ))
+    }
+
     async fn match_crafting(
         &mut self,
         _res: Resource<WitRecipeManager>,

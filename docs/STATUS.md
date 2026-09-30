@@ -272,3 +272,10 @@ Real-client results (2026-09-30), all work: framing table and framed items (drop
 inventory), remote upgrade (bind, reach, unbind when the controller breaks), hopper upgrade,
 magnet upgrade, keyring keys added and taken out in the inventory, keyring keys spilled in lava,
 drawers and detached drawers kept out of bundles and shulker boxes, conversion upgrade tags.
+
+## Phase 4: Storage Drawers limits 7 to 10 (2026-09-30, HANDOFF-3)
+
+- 7. `recipe-manager.crafting-recipes-for`: the crafting recipes of a result item, shaped with
+  width, height and cells, shapeless with ingredients, each ingredient as item ids (tags
+  resolved). The plugin's `findLowerTier` now scans shaped 2x2 and 3x3 recipes like the mod,
+  instead of starting from the 1x1 craft.

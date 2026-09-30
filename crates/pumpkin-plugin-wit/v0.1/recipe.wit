@@ -73,6 +73,22 @@ interface recipe {
         campfire,
     }
 
+    /// A crafting recipe the server has, as `recipe-manager.crafting-recipes-for` lists it.
+    record crafting-recipe-info {
+        /// True for a shaped recipe, false for a shapeless one.
+        shaped: bool,
+        /// A shaped recipe's pattern size (at most 3 by 3); 0 for a shapeless one.
+        width: u32,
+        height: u32,
+        /// A shaped recipe's cells row by row (`width` per row), `none` for an empty one; a
+        /// shapeless recipe's ingredients. Each lists the item ids it accepts, tags resolved.
+        ingredients: list<option<list<string>>>,
+        /// The result item id (`minecraft:iron_block`).
+        output: string,
+        /// How many the recipe makes.
+        output-count: u8,
+    }
+
     /// Common interface for registering recipes.
     resource recipe-manager {
         /// Registers a shaped crafting recipe.
@@ -88,6 +104,13 @@ interface recipe {
         /// crafting table would give it: vanilla, datapack, mod and plugin recipes. Like Fabric's
         /// `RecipeManager.getRecipeFor(RecipeType.CRAFTING, ...)`.
         match-crafting: func(width: u32, grid: list<option<borrow<item-stack>>>) -> option<item-stack>;
+
+        /// The crafting recipes (vanilla, datapack, mod and plugin) whose result is `item` (an id,
+        /// `minecraft:` optional), with their shapes and ingredients. Like Fabric's
+        /// `RecipeManager.recipes.byType(RecipeType.CRAFTING)` filtered by result. Special
+        /// recipes whose result depends on the grid (a plugin's crafting handler, decorated pots)
+        /// are not listed.
+        crafting-recipes-for: func(item: string) -> list<crafting-recipe-info>;
 
         /// The result of cooking `input` at a station, as a furnace, blast furnace, smoker or
         /// campfire would give it.

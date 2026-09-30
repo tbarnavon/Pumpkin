@@ -15,7 +15,7 @@ Summary (110 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 70 (64 %) | 17 (15 %) | 23 (21 %) |
+| 71 (65 %) | 16 (14 %) | 23 (21 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -173,7 +173,7 @@ as a full slot while any is stored, so hoppers only take it out.
 | Mod recipes | ✅ | host + core | imported from the dump; recipes of custom serializer types (a mod's `CustomRecipe` code) are skipped and crafted by a plugin with `context.register-crafting-handler` | ✅ add_upgrade, add_detached_upgrade, keyring, personal_key_cycle, remote_group_upgrade |
 | Register shaped / shapeless / cooking recipes from code | ✅ | core | `recipe.register-*` | |
 | `CustomIngredient` (`fabric:all_of`, `any_of`, `components`, `difference`) | 🟡 | host | all four parse and match in mod and datapack recipes; `components` checks only its base item, as recipes match items, not stacks | |
-| Look up recipes from code (`RecipeManager`) | 🟡 | core | `recipe-manager.match-crafting` (vanilla, datapack, mod and plugin recipes), `match-cooking` (vanilla recipes, as furnaces do); no listing by output | ✅ compacting drawers (lower tiers found from the 1x1 craft instead of listing recipes) |
+| Look up recipes from code (`RecipeManager`) | ✅ | core | `recipe-manager.match-crafting` (vanilla, datapack, mod and plugin recipes), `match-cooking` (vanilla recipes, as furnaces do), `crafting-recipes-for` (crafting recipes by result, with shape and ingredients, tags resolved) | ✅ compacting drawers (`findLowerTier` over shaped recipes) |
 | `RecipeSynchronization` (send recipes to the client) | ❌ | modded | | |
 
 ### fabric-command-api-v2
