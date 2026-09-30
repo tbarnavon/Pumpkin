@@ -1258,6 +1258,8 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
                 accept_new: slot.accept_new,
                 keep_item: slot.keep_item,
                 void_overflow: slot.void_overflow,
+                pool: slot.pool,
+                rate: slot.rate,
             });
         }
         Ok(world.set_item_storage(&pos, &host_slots))
@@ -1292,6 +1294,8 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
                 accept_new: slot.accept_new,
                 keep_item: slot.keep_item,
                 void_overflow: slot.void_overflow,
+                pool: slot.pool,
+                rate: slot.rate,
             });
         }
         Ok(Some(out))

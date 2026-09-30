@@ -814,6 +814,14 @@ interface %world {
         keep-item: bool,
         /// Whether items past capacity are accepted and destroyed.
         void-overflow: bool,
+        /// Slots with the same non-zero `pool` share one count, like the tiers of a compacting
+        /// drawer (1 block = 9 ingots = 81 nuggets): `count` is then the pool's total in its
+        /// smallest unit, the same on each of its slots, and the slot holds `count / rate` items.
+        /// A hopper moving one item of the slot moves `rate` units, and every slot of the pool
+        /// sees it. 0: the slot has its own count.
+        pool: u32,
+        /// How many units of its pool one item of the slot is; 0 counts as 1.
+        rate: u32,
     }
 
     resource %world {

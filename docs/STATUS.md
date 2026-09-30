@@ -283,3 +283,8 @@ drawers and detached drawers kept out of bundles and shulker boxes, conversion u
   host (`PumpkinSignals` keeps a byte when every side is the same, else a byte array). The
   redstone upgrade gives weak power on every side and strong power to the block below, like
   `BlockDrawers.getDirectSignal`.
+- 9. `storage-slot.pool` and `rate`: slots with the same pool share one count, kept by the host
+  in the smallest unit (each slot holds `count / rate`); a hopper moving one item of a slot
+  moves `rate` units, capped at the pool's capacity, and every slot of the pool sees it.
+  Compacting drawers (alone and through a controller, one pool per drawer) use it, so several
+  hoppers in one tick move exactly what the pool holds and no insert overflows it.

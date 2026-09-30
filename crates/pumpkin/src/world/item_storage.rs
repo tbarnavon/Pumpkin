@@ -40,6 +40,11 @@ pub struct StorageSlot {
     pub keep_item: bool,
     /// Items past capacity are accepted and destroyed.
     pub void_overflow: bool,
+    /// Slots with the same non-zero pool share one count: `count` is the pool's total in its
+    /// smallest unit, and the slot holds `count / rate` items. 0: the slot has its own count.
+    pub pool: u32,
+    /// Units of the pool one item of the slot is (0 counts as 1).
+    pub rate: u32,
 }
 
 impl StorageSlot {
@@ -56,18 +61,42 @@ impl StorageSlot {
         !self.item.is_empty()
     }
 
+    const fn rate(&self) -> u32 {
+        if self.pool == 0 || self.rate == 0 {
+            1
+        } else {
+            self.rate
+        }
+    }
+
+    /// The items the slot holds: its count, or its share of the pool.
+    const fn items(&self) -> u32 {
+        self.count / self.rate()
+    }
+
+    /// The capacity in units of `count`: the slot's capacity times its rate.
+    fn unit_capacity(&self, item: &ItemStack) -> u32 {
+        self.capacity(item).saturating_mul(self.rate())
+    }
+
+    /// Whether one more item of the slot fits.
+    fn has_room(&self) -> bool {
+        self.count.saturating_add(self.rate()) <= self.unit_capacity(&self.item)
+    }
+
     /// The stack a hopper sees: at most one stack, and one item short of full while there is
     /// room, so hoppers keep adding.
     fn view(&self) -> ItemStack {
-        if !self.has_item() || self.count == 0 {
+        let items = self.items();
+        if !self.has_item() || items == 0 {
             return ItemStack::EMPTY.clone();
         }
         let max = u32::from(self.item.get_max_stack_size());
-        let room = self.void_overflow || self.count < self.capacity(&self.item);
-        let shown = if self.count >= max && room && max > 1 {
+        let room = self.void_overflow || self.has_room();
+        let shown = if items >= max && room && max > 1 {
             max - 1
         } else {
-            self.count.min(max)
+            items.min(max)
         };
         self.item.copy_with_count(shown as u8)
     }
@@ -78,30 +107,29 @@ impl StorageSlot {
         }
         if self.has_item() {
             self.item.are_items_and_components_equal(stack)
-                && (self.void_overflow || self.count < self.capacity(&self.item))
+                && (self.void_overflow || self.has_room())
         } else {
-            self.accept_new
+            self.accept_new && self.capacity(stack) > 0
         }
     }
 
-    /// Applies a hopper's write to the view as a change of the real count.
+    /// Applies a hopper's write to the view as a change of the real count (in units of the
+    /// pool for a pooled slot, keeping the part of the pool smaller than one item).
     fn apply(&mut self, stack: &ItemStack) {
         let shown = u32::from(self.view().item_count);
-        if stack.is_empty() {
-            self.count = self.count.saturating_sub(shown);
-        } else if !self.has_item() {
+        let rate = self.rate();
+        if !stack.is_empty() && !self.has_item() {
             self.item = stack.copy_with_count(1);
-            self.count = u32::from(stack.item_count).min(self.capacity(stack));
+        }
+        let target = u32::from(stack.item_count);
+        if target >= shown {
+            // Only whole items that fit; the rest is voided.
+            let room = self.unit_capacity(&self.item).saturating_sub(self.count) / rate;
+            let added = (target - shown).min(room);
+            self.count = self.count.saturating_add(added * rate);
         } else {
-            let target = u32::from(stack.item_count);
-            if target >= shown {
-                self.count = self
-                    .count
-                    .saturating_add(target - shown)
-                    .min(self.capacity(&self.item));
-            } else {
-                self.count = self.count.saturating_sub(shown - target);
-            }
+            let removed = (shown - target).min(self.items());
+            self.count -= removed * rate;
         }
         if self.count == 0 && !self.keep_item {
             self.item = ItemStack::EMPTY.clone();
@@ -134,6 +162,10 @@ impl StorageSlot {
         .filter(|(on, _)| *on)
         .fold(0u8, |bits, (_, bit)| bits | bit);
         nbt.put_byte("flags", flags as i8);
+        if self.pool != 0 {
+            nbt.put_int("pool", self.pool as i32);
+            nbt.put_int("rate", self.rate as i32);
+        }
         nbt
     }
 
@@ -151,6 +183,29 @@ impl StorageSlot {
             accept_new: flags & Self::FLAG_ACCEPT_NEW != 0,
             keep_item: flags & Self::FLAG_KEEP_ITEM != 0,
             void_overflow: flags & Self::FLAG_VOID != 0,
+            pool: nbt.get_int("pool").unwrap_or(0) as u32,
+            rate: nbt.get_int("rate").unwrap_or(0) as u32,
+        }
+    }
+}
+
+/// Applies a hopper's write to slot `index`, then gives the other slots of its pool the new
+/// count (and drops their item when the pool empties, unless they keep it).
+fn apply_to(slots: &mut [StorageSlot], index: usize, stack: &ItemStack) {
+    let Some(entry) = slots.get_mut(index) else {
+        return;
+    };
+    entry.apply(stack);
+    let (pool, count) = (entry.pool, entry.count);
+    if pool == 0 {
+        return;
+    }
+    for (i, slot) in slots.iter_mut().enumerate() {
+        if i != index && slot.pool == pool {
+            slot.count = count;
+            if count == 0 && !slot.keep_item {
+                slot.item = ItemStack::EMPTY.clone();
+            }
         }
     }
 }
@@ -215,7 +270,7 @@ impl Inventory for PluginItemStorage {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .iter()
-            .all(|slot| slot.count == 0)
+            .all(|slot| slot.items() == 0)
     }
 
     fn get_stack(&self, slot: usize) -> ItemStack {
@@ -248,10 +303,10 @@ impl Inventory for PluginItemStorage {
                 .slots
                 .lock()
                 .unwrap_or_else(std::sync::PoisonError::into_inner);
-            let Some(entry) = slots.get_mut(slot) else {
+            if slot >= slots.len() {
                 return;
-            };
-            entry.apply(&stack);
+            }
+            apply_to(&mut slots, slot, &stack);
         };
         self.changed();
     }
@@ -412,7 +467,59 @@ mod tests {
             accept_new: true,
             keep_item: false,
             void_overflow: false,
+            pool: 0,
+            rate: 0,
         }
+    }
+
+    /// A compacting chain: iron block (81), ingot (9), nugget (1), sharing pool 1.
+    fn iron_pool(units: u32, max_blocks: u32) -> Vec<StorageSlot> {
+        [(&Item::IRON_BLOCK, 81), (&Item::IRON_INGOT, 9), (&Item::IRON_NUGGET, 1)]
+            .into_iter()
+            .map(|(item, rate)| StorageSlot {
+                pool: 1,
+                rate,
+                max_stacks: max_blocks * 81 / rate / 64,
+                ..slot(item, units, 0)
+            })
+            .collect()
+    }
+
+    #[test]
+    fn pooled_slots_show_their_share() {
+        let slots = iron_pool(81 + 9 * 2 + 5, 64);
+        assert_eq!(slots[0].view().item_count, 1);
+        assert_eq!(slots[1].view().item_count, 11);
+        assert_eq!(slots[2].view().item_count, 63);
+    }
+
+    #[test]
+    fn pooled_extract_moves_the_whole_pool() {
+        let mut slots = iron_pool(81 + 5, 64);
+        let mut shown = slots[0].view();
+        let _ = shown.split(1);
+        apply_to(&mut slots, 0, &shown);
+        assert!(slots.iter().all(|s| s.count == 5));
+        assert_eq!(slots[0].view().item_count, 0);
+        assert!(!slots[0].item.is_empty(), "the pool still holds nuggets");
+        let mut shown = slots[2].view();
+        let _ = shown.split(5);
+        apply_to(&mut slots, 2, &shown);
+        assert!(slots.iter().all(|s| s.count == 0 && s.item.is_empty()));
+    }
+
+    #[test]
+    fn pooled_insert_stops_at_the_pool_capacity() {
+        // 64 blocks: 5184 units; one nugget short of full.
+        let mut slots = iron_pool(64 * 81 - 1, 64);
+        assert!(!slots[0].accepts(&ItemStack::new(1, &Item::IRON_BLOCK)));
+        assert!(!slots[1].accepts(&ItemStack::new(1, &Item::IRON_INGOT)));
+        assert!(slots[2].accepts(&ItemStack::new(1, &Item::IRON_NUGGET)));
+        let mut shown = slots[2].view();
+        shown.item_count += 1;
+        apply_to(&mut slots, 2, &shown);
+        assert!(slots.iter().all(|s| s.count == 64 * 81));
+        assert!(!slots[2].accepts(&ItemStack::new(1, &Item::IRON_NUGGET)));
     }
 
     #[test]
@@ -471,6 +578,8 @@ mod tests {
                 accept_new: false,
                 keep_item: true,
                 void_overflow: true,
+                pool: 2,
+                rate: 9,
             },
         ];
         let mut nbt = NbtCompound::new();

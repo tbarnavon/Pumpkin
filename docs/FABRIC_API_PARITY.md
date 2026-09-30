@@ -153,7 +153,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
 | `BlockApiLookup` / `ItemApiLookup` / `EntityApiLookup` | ❌ | modded | | ➖ SD's capabilities are read inside the plugin |
-| `ItemStorage.SIDED`, `Storage<ItemVariant>` for hoppers | 🟡 | core | data first: `world.set-item-storage` puts host-held slots on a plugin block entity (count, capacity in stacks, insert/extract, accept-new, keep-item, void); hoppers use them without calling the plugin; `item-storage-changed-event` once per tick. No sides, no transactions, no plugin-to-plugin transfer, no slots sharing one pool | ✅ drawers, compacting drawers, controller and controller I/O (the network's slots mirrored) |
+| `ItemStorage.SIDED`, `Storage<ItemVariant>` for hoppers | 🟡 | core | data first: `world.set-item-storage` puts host-held slots on a plugin block entity (count, capacity in stacks, insert/extract, accept-new, keep-item, void, slots sharing one pool at a per-slot rate); hoppers use them without calling the plugin; `item-storage-changed-event` once per tick. No sides, no transactions, no plugin-to-plugin transfer | ✅ drawers, compacting drawers, controller and controller I/O (the network's slots mirrored) |
 | `FluidStorage` | ❌ | modded | | |
 
 Hoppers see a storage slot as at most one stack, one item short of full while there is room,
