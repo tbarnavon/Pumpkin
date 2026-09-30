@@ -1400,3 +1400,92 @@ impl ToFromWasmEvent for VaultDisplayItemEvent {
         }
     }
 }
+
+impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
+    for crate::plugin::api::events::block::block_broken::BlockBrokenEvent
+{
+    fn to_wasm_event(
+        &self,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event {
+        #[allow(unused_imports)]
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::{
+            to_wasm_block_position, to_wasm_position,
+        };
+        let _ = &state;
+        crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::BlockBrokenEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::BlockBrokenEventData {
+                player: self.player.as_ref().map(|player| {
+                    state
+                        .add(player.clone())
+                        .expect("failed to add player resource")
+                }),
+                target_world: state
+                    .add(self.world.clone())
+                    .expect("failed to add world resource"),
+                block: super::to_wasm_block_name(self.block),
+                block_pos: to_wasm_block_position(self.block_position),
+                state: self.state_id,
+            },
+        )
+    }
+
+    fn apply_wasm_event(
+        &mut self,
+        event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) {
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(
+        _event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        _state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> Self {
+        panic!("Cannot construct BlockBrokenEvent from WASM")
+    }
+}
+
+impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
+    for crate::plugin::api::events::block::block_break_canceled::BlockBreakCanceledEvent
+{
+    fn to_wasm_event(
+        &self,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event {
+        #[allow(unused_imports)]
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::{
+            to_wasm_block_position, to_wasm_position,
+        };
+        let _ = &state;
+        crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::BlockBreakCanceledEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::BlockBreakCanceledEventData {
+                player: self.player.as_ref().map(|player| {
+                    state
+                        .add(player.clone())
+                        .expect("failed to add player resource")
+                }),
+                target_world: state
+                    .add(self.world.clone())
+                    .expect("failed to add world resource"),
+                block: super::to_wasm_block_name(self.block),
+                block_pos: to_wasm_block_position(self.block_position),
+            },
+        )
+    }
+
+    fn apply_wasm_event(
+        &mut self,
+        event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) {
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(
+        _event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        _state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> Self {
+        panic!("Cannot construct BlockBreakCanceledEvent from WASM")
+    }
+}

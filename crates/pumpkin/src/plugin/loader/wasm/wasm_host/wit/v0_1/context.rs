@@ -1452,6 +1452,14 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
         let handler = Arc::new(WasmPluginEventHandler { handler_id, plugin });
 
         match event_type {
+            EventType::BlockBrokenEvent => {
+                register_typed_event::<
+                    crate::plugin::api::events::block::block_broken::BlockBrokenEvent,
+                >(ctx, &handler, priority, blocking);
+            }
+            EventType::BlockBreakCanceledEvent => {
+                register_typed_event::<crate::plugin::api::events::block::block_break_canceled::BlockBreakCanceledEvent>(ctx, &handler, priority, blocking);
+            }
             event_type @ (EventType::PacketReceivedEvent
             | EventType::PacketSentEvent
             | EventType::ServerCommandEvent

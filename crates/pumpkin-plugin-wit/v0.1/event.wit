@@ -236,6 +236,24 @@ interface event {
         cancelled: bool
     }
 
+    /// A block was broken, after it left the world (Fabric `PlayerBlockBreakEvents.AFTER`).
+    record block-broken-event-data {
+        player: option<player>,
+        target-world: %world,
+        block: string,
+        block-pos: block-pos,
+        /// The state that was broken.
+        state: u16,
+    }
+
+    /// A `block-break-event` was cancelled (Fabric `PlayerBlockBreakEvents.CANCELED`).
+    record block-break-canceled-event-data {
+        player: option<player>,
+        target-world: %world,
+        block: string,
+        block-pos: block-pos,
+    }
+
     record block-break-event-data {
         player: option<player>,
         block: string,
@@ -1917,6 +1935,8 @@ interface event {
         inventory-close-event,
         block-redstone-event,
         block-break-event,
+        block-break-canceled-event,
+        block-broken-event,
         block-burn-event,
         block-can-build-event,
         block-grow-event,
@@ -2194,6 +2214,8 @@ interface event {
         inventory-close-event(inventory-close-event-data),
         block-redstone-event(block-redstone-event-data),
         block-break-event(block-break-event-data),
+        block-break-canceled-event(block-break-canceled-event-data),
+        block-broken-event(block-broken-event-data),
         block-burn-event(block-burn-event-data),
         block-can-build-event(block-can-build-event-data),
         block-grow-event(block-grow-event-data),

@@ -131,3 +131,9 @@ pub use sign_change::*;
 pub use sponge_absorb::*;
 pub use tnt_prime::*;
 pub use vault_display_item::*;
+/// Event fired after a block was broken.
+pub mod block_broken;
+pub use block_broken::*;
+/// Event fired when a block break was cancelled.
+pub mod block_break_canceled;
+pub use block_break_canceled::*;

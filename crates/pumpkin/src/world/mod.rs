@@ -5248,6 +5248,45 @@ impl World {
         replaced_block_state_id
     }
 
+    /// Fabric `PlayerBlockBreakEvents.CANCELED`.
+    fn fire_block_break_canceled(
+        self: &Arc<Self>,
+        cause: Option<&Arc<Player>>,
+        block: &'static Block,
+        position: &BlockPos,
+    ) {
+        if let Some(server) = self.server.upgrade() {
+            let mut event =
+                crate::plugin::api::events::block::block_break_canceled::BlockBreakCanceledEvent {
+                    player: cause.cloned(),
+                    world: self.clone(),
+                    block,
+                    block_position: *position,
+                };
+            server.plugin_manager.fire_blocking(&server, &mut event);
+        }
+    }
+
+    /// Fabric `PlayerBlockBreakEvents.AFTER`.
+    fn fire_block_broken(
+        self: &Arc<Self>,
+        cause: Option<&Arc<Player>>,
+        block: &'static Block,
+        position: &BlockPos,
+        state_id: BlockStateId,
+    ) {
+        if let Some(server) = self.server.upgrade() {
+            let mut event = crate::plugin::api::events::block::block_broken::BlockBrokenEvent {
+                player: cause.cloned(),
+                world: self.clone(),
+                block,
+                block_position: *position,
+                state_id: state_id.as_u16(),
+            };
+            server.plugin_manager.fire_blocking(&server, &mut event);
+        }
+    }
+
     pub fn break_block(
         self: &Arc<Self>,
         position: &BlockPos,
@@ -5291,6 +5330,7 @@ impl World {
             server.plugin_manager.fire_blocking(&server, &mut event);
         }
         if event.cancelled {
+            self.fire_block_break_canceled(cause, broken_block, position);
             return None;
         }
 
@@ -5323,6 +5363,9 @@ impl World {
 
         let broken_state_id = self.set_block_state(position, new_state_id, flags);
         let broken_block = Block::from_state_id(broken_state_id);
+        if broken_state_id != new_state_id {
+            self.fire_block_broken(cause, broken_block, position, broken_state_id);
+        }
         if !broken_block.is_air()
             && broken_state_id != new_state_id
             && broken_block != &Block::FIRE

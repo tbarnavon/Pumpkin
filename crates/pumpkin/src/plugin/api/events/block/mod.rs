@@ -100,3 +100,7 @@ pub trait BlockEvent: Send + Sync {
     /// A reference to the `Block` involved in the event.
     fn get_block(&self) -> &Block;
 }
+pub mod block_broken;
+pub use block_broken::*;
+pub mod block_break_canceled;
+pub use block_break_canceled::*;
