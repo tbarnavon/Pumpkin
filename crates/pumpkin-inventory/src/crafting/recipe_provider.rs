@@ -2,6 +2,16 @@ use pumpkin_protocol::codec::recipe::DynamicRecipe;
 
 pub trait RecipeProvider: Send + Sync {
     fn get_dynamic_recipes(&self) -> Vec<DynamicRecipe>;
+
+    /// The result of a grid no recipe matches, from recipes defined in code (a mod's
+    /// `CustomRecipe`). `grid` is row by row, `width` slots per row.
+    fn match_special(
+        &self,
+        _width: usize,
+        _grid: &[pumpkin_data::item_stack::ItemStack],
+    ) -> Option<pumpkin_data::item_stack::ItemStack> {
+        None
+    }
 }
 
 #[derive(Clone, Copy)]

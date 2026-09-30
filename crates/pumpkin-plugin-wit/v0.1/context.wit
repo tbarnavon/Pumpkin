@@ -55,6 +55,11 @@ interface context {
         /// Registering a channel again replaces its payload.
         register-login-query: func(channel: string, payload: list<u8>);
 
+        /// Lets the plugin craft grids no recipe matches, like a mod's `CustomRecipe`
+        /// (`matches` + `assemble`). The host calls the `handle-crafting` export with
+        /// `handler-id` only when a crafting grid changes and no other recipe matches.
+        register-crafting-handler: func(handler-id: u32);
+
         /// Sends `payload` on `channel` to every Java client at the start of the configuration
         /// phase, like Fabric's `ServerConfigurationNetworking.send` from a configuration task.
         /// Payloads the client sends back during configuration fire

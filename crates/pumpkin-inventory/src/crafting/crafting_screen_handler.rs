@@ -416,7 +416,18 @@ impl ResultSlot {
                 .unwrap_or(&pumpkin_data::item::Item::AIR);
             ItemStack::new(matched.count, item)
         } else {
-            ItemStack::EMPTY.clone()
+            self.recipe_provider
+                .as_deref()
+                .and_then(|provider| {
+                    let grid: Vec<ItemStack> = (0..self.inventory.size())
+                        .map(|i| self.inventory.get_stack(i))
+                        .collect();
+                    if grid.iter().all(ItemStack::is_empty) {
+                        return None;
+                    }
+                    provider.match_special(self.inventory.get_width(), &grid)
+                })
+                .unwrap_or_else(|| ItemStack::EMPTY.clone())
         };
         *self
             .result

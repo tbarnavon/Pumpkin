@@ -79,6 +79,8 @@ use std::sync::OnceLock;
 pub mod block;
 /// Plugin command registration and handling utilities.
 pub mod commands;
+/// Crafting recipes defined in code.
+pub mod crafting;
 /// Datapack management and query utilities.
 pub mod datapack;
 /// Display and interaction entity utilities and builders.
@@ -411,6 +413,14 @@ impl wit::Guest for Component {
         call: wit::pumpkin::plugin::modded::ItemCall,
     ) -> wit::pumpkin::plugin::modded::BlockReply {
         crate::modded::dispatch_item(handler_id, server, call)
+    }
+
+    fn handle_crafting(
+        handler_id: u32,
+        width: u32,
+        grid: Vec<Option<wit::pumpkin::plugin::item_stack::ItemStack>>,
+    ) -> Option<wit::pumpkin::plugin::item_stack::ItemStack> {
+        crate::crafting::dispatch(handler_id, width, grid)
     }
 
     fn handle_menu_call(

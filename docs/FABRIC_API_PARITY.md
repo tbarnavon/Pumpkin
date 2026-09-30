@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 60 (58 %) | 19 (18 %) | 25 (24 %) |
+| 61 (59 %) | 18 (17 %) | 25 (24 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -166,7 +166,7 @@ as a full slot while any is stored, so hoppers only take it out.
 ### fabric-recipe-api-v1
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
-| Mod recipes | 🟡 | host | imported from the dump; 5 recipes of custom serializer types are skipped | ✅ |
+| Mod recipes | ✅ | host + core | imported from the dump; recipes of custom serializer types (a mod's `CustomRecipe` code) are skipped and crafted by a plugin with `context.register-crafting-handler` | ✅ |
 | Register shaped / shapeless / cooking recipes from code | ✅ | core | `recipe.register-*` | |
 | `CustomIngredient` (`fabric:all_of`, `any_of`, `components`, `difference`) | 🟡 | host | all four parse and match in mod and datapack recipes; `components` checks only its base item, as recipes match items, not stacks | |
 | Look up recipes from code (`RecipeManager`) | 🟡 | core | `recipe-manager.match-crafting` (vanilla, datapack, mod and plugin recipes), `match-cooking` (vanilla recipes, as furnaces do); no listing by output | ✅ compacting drawers |

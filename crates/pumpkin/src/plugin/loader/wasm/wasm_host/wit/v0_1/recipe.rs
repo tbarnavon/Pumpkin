@@ -14,6 +14,85 @@ use wasmtime::component::Resource;
 
 impl RecipeHost for PluginHostState {}
 
+/// A plugin's `handle-crafting`, as a special crafting handler.
+pub struct PluginCraftingHandler {
+    pub plugin: std::sync::Arc<crate::plugin::loader::wasm::wasm_host::WasmPlugin>,
+    pub handler_id: u32,
+    pub server: std::sync::Weak<crate::server::Server>,
+}
+
+impl crate::server::recipe::SpecialCraftingHandler for PluginCraftingHandler {
+    fn craft(
+        &self,
+        width: usize,
+        grid: &[pumpkin_data::item_stack::ItemStack],
+    ) -> Option<pumpkin_data::item_stack::ItemStack> {
+        let server = self.server.upgrade()?;
+        let plugin = self.plugin.clone();
+        let handler_id = self.handler_id;
+        let grid = grid.to_vec();
+        let run = async move {
+            let generation = plugin.current();
+            let crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_1(instance) =
+                &generation.plugin_instance;
+            let function = instance.func_handle_crafting();
+            generation
+                .store
+                .call_guest(move |mut guest| {
+                    Box::pin(async move {
+                        let resources = guest.with(|mut store| {
+                            grid.into_iter()
+                                .map(|stack| {
+                                    (!stack.is_empty())
+                                        .then(|| {
+                                            store.data_mut().add::<super::pumpkin::plugin::item_stack::ItemStack>(
+                                                std::sync::Arc::new(tokio::sync::Mutex::new(stack)),
+                                            )
+                                        })
+                                        .transpose()
+                                })
+                                .collect::<wasmtime::Result<Vec<_>>>()
+                        })?;
+                        let result = guest
+                            .call(function, (handler_id, width as u32, resources))
+                            .await?
+                            .0;
+                        let Some(result) = result else {
+                            return Ok(None);
+                        };
+                        let handle = guest.with(|mut store| store.data_mut().take(result))?;
+                        let stack = handle.lock().await.clone();
+                        Ok::<_, wasmtime::Error>(Some(stack))
+                    })
+                })
+                .await
+        };
+        let result = if tokio::runtime::Handle::try_current().is_ok() {
+            tokio::task::block_in_place(|| server.runtime.block_on(run))
+        } else {
+            server.runtime.block_on(run)
+        };
+        match result {
+            Ok(stack) => stack.filter(|stack| !stack.is_empty()),
+            Err(error) => {
+                tracing::error!(handler_id, error = ?error, "Wasm crafting handler failed");
+                None
+            }
+        }
+    }
+
+    fn same_as(&self, other: &dyn std::any::Any) -> bool {
+        other.downcast_ref::<Self>().is_some_and(|other| {
+            std::sync::Arc::ptr_eq(&self.plugin, &other.plugin)
+                && self.handler_id == other.handler_id
+        })
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+}
+
 /// A crafting grid given by a plugin, for `match_crafting_recipe`.
 struct Grid {
     width: usize,

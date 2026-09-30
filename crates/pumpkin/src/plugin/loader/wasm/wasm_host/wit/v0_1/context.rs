@@ -1786,6 +1786,27 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
         Ok(())
     }
 
+    async fn register_crafting_handler(
+        &mut self,
+        _context: Resource<WitContext>,
+        handler_id: u32,
+    ) -> wasmtime::Result<()> {
+        let (Some(plugin), Some(server)) = (
+            self.plugin.as_ref().and_then(std::sync::Weak::upgrade),
+            self.server.clone(),
+        ) else {
+            return Ok(());
+        };
+        server
+            .recipe_manager
+            .add_special(Arc::new(super::recipe::PluginCraftingHandler {
+                plugin,
+                handler_id,
+                server: Arc::downgrade(&server),
+            }));
+        Ok(())
+    }
+
     async fn register_login_query(
         &mut self,
         _context: Resource<WitContext>,

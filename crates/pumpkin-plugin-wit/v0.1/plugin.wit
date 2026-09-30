@@ -13,6 +13,7 @@ world plugin {
     use modded.{block-call, block-reply, item-call};
     use menu.{menu-call, menu-reply};
     use player.{player as player-instance};
+    use item-stack.{item-stack};
 
     // --- Host-provided imports ---
 
@@ -120,6 +121,11 @@ world plugin {
     /// Dispatches an item hook registered with `context.register-item-hooks`. Only the
     /// `interaction` and `none` replies are meaningful.
     export handle-item-hook: func(handler-id: u32, server: server-instance, call: item-call) -> block-reply;
+
+    /// Answers a crafting grid for a handler registered with `context.register-crafting-handler`:
+    /// the result, or none when the grid is not this handler's recipe. `grid` is row by row,
+    /// `width` slots per row.
+    export handle-crafting: func(handler-id: u32, width: u32, grid: list<option<item-stack>>) -> option<item-stack>;
 
     /// Answers a call about a menu opened with `menu.open` or `modded.open-menu`.
     export handle-menu-call: func(handler-id: u32, menu-id: u32, player: player-instance, call: menu-call) -> menu-reply;
