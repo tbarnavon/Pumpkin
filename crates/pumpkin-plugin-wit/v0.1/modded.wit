@@ -41,6 +41,12 @@ interface modded {
         /// `Block.hasAnalogOutputSignal`: comparators read the value set with
         /// `world.set-comparator-output`. No call is made.
         analog-output,
+        /// `Block.entityInside`: every tick an entity's box is inside the block. Opt in only
+        /// for blocks that need it; it is called every tick.
+        entity-inside,
+        /// `Block.stepOn`: every tick an entity walks on top of the block. Opt in only for
+        /// blocks that need it; it is called every tick.
+        step-on,
     }
 
     /// Where a player's crosshair hit the block.
@@ -95,6 +101,15 @@ interface modded {
         state: u16,
     }
 
+    record entity-contact {
+        %world: %world,
+        pos: block-pos,
+        state: u16,
+        entity-id: s32,
+        /// Like `minecraft:zombie`.
+        entity-type: string,
+    }
+
     record shape-update {
         %world: %world,
         pos: block-pos,
@@ -124,6 +139,8 @@ interface modded {
         neighbor-changed(neighbor-change),
         random-tick(tick),
         update-shape(shape-update),
+        entity-inside(entity-contact),
+        step-on(entity-contact),
     }
 
     /// `InteractionResult`.

@@ -13,8 +13,9 @@ use wasmtime::component::{Access, HasSelf, Resource};
 use crate::block::registry::BlockActionResult;
 use crate::block::{
     BlockBehaviour, EmitsRedstonePowerArgs, GetComparatorOutputArgs, GetRedstonePowerArgs,
-    GetStateForNeighborUpdateArgs, NormalUseArgs, OnNeighborUpdateArgs, OnPlaceArgs,
-    OnScheduledTickArgs, PlayerPlacedArgs, RandomTickArgs, UseWithItemArgs,
+    GetStateForNeighborUpdateArgs, NormalUseArgs, OnEntityCollisionArgs, OnEntityStepArgs,
+    OnNeighborUpdateArgs, OnPlaceArgs, OnScheduledTickArgs, PlayerPlacedArgs, RandomTickArgs,
+    UseWithItemArgs,
 };
 use crate::entity::EntityBase;
 use crate::entity::player::Player;
@@ -27,9 +28,9 @@ use super::pumpkin::plugin::common::{BlockPos as WitBlockPos, Hand as WitHand};
 use super::pumpkin::plugin::item_stack::ItemStack as WitItemStack;
 use super::pumpkin::plugin::menu::MenuDefinition;
 use super::pumpkin::plugin::modded::{
-    self as wit, BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, Interaction,
-    InteractionResult, ItemCall, ItemHooks, ItemUse, ItemUseOnBlock, NeighborChange, Placement,
-    Removal, ShapeUpdate, Tick,
+    self as wit, BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, EntityContact, Interaction,
+    InteractionResult, ItemCall, ItemHooks, ItemUse, ItemUseOnBlock,
+    NeighborChange, Placement, Removal, ShapeUpdate, Tick,
 };
 use super::pumpkin::plugin::player::Player as WitPlayer;
 use super::pumpkin::plugin::world::World as WitWorld;
@@ -92,6 +93,14 @@ enum CallData {
         pos: BlockPos,
         state: BlockStateId,
         random: bool,
+    },
+    EntityContact {
+        world: Arc<World>,
+        pos: BlockPos,
+        state: BlockStateId,
+        entity_id: i32,
+        entity_type: String,
+        step: bool,
     },
     ShapeUpdate {
         world: Arc<World>,
@@ -382,6 +391,27 @@ fn build_call(
                 BlockCall::ScheduledTick(tick)
             }
         }
+        CallData::EntityContact {
+            world,
+            pos,
+            state: block_state,
+            entity_id,
+            entity_type,
+            step,
+        } => {
+            let contact = EntityContact {
+                world: state.add::<WitWorld>(world)?,
+                pos: to_wit_pos(pos),
+                state: block_state.as_u16(),
+                entity_id,
+                entity_type,
+            };
+            if step {
+                BlockCall::StepOn(contact)
+            } else {
+                BlockCall::EntityInside(contact)
+            }
+        }
         CallData::ShapeUpdate {
             world,
             pos,
@@ -553,6 +583,45 @@ impl BlockBehaviour for PluginBlock {
         self.hooks
             .contains(BlockHooks::ANALOG_OUTPUT)
             .then(|| args.world.plugin_signals(args.position).comparator)
+    }
+
+    fn on_entity_collision(&self, args: OnEntityCollisionArgs<'_>) {
+        if !self.hooks.contains(BlockHooks::ENTITY_INSIDE) {
+            return;
+        }
+        let entity = args.entity.get_entity();
+        self.invoke(
+            args.server,
+            CallData::EntityContact {
+                world: args.world.clone(),
+                pos: *args.position,
+                state: args.state.id,
+                entity_id: entity.entity_id,
+                entity_type: format!("minecraft:{}", entity.entity_type.resource_name),
+                step: false,
+            },
+        );
+    }
+
+    fn on_entity_step(&self, args: OnEntityStepArgs<'_>) {
+        if !self.hooks.contains(BlockHooks::STEP_ON) {
+            return;
+        }
+        let Some(server) = args.world.server.upgrade() else {
+            return;
+        };
+        let entity = args.entity.get_entity();
+        self.invoke(
+            &server,
+            CallData::EntityContact {
+                world: args.world.clone(),
+                pos: *args.position,
+                state: args.state.id,
+                entity_id: entity.entity_id,
+                entity_type: format!("minecraft:{}", entity.entity_type.resource_name),
+                step: true,
+            },
+        );
     }
 
     fn random_tick(&self, args: RandomTickArgs<'_>) {
