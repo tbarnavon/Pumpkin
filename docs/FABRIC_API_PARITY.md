@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 52 (50 %) | 15 (14 %) | 37 (36 %) |
+| 54 (52 %) | 14 (13 %) | 36 (35 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -59,7 +59,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | `ServerConfigurationNetworking`, configuration tasks | ❌ | core | no plugin hook in the configuration phase | |
 | `ServerLoginNetworking`, login queries | 🟡 | core | `player-pre-login-event`, `player-login-event`; no login query/response | |
 | `EntityTrackingEvents` START / STOP_TRACKING | ❌ | core | | |
-| `PlayerLookup.tracking(...)` (players watching a chunk, block entity or entity) | ❌ | core | only all players or players in a world | ✅ `count_update` |
+| `PlayerLookup.tracking(...)` (players watching a chunk, block entity or entity) | ✅ | core | `server.get-players-tracking-chunk`, `get-players-tracking-entity` | ✅ `count_update` |
 
 ### fabric-registry-sync-v0
 | Feature | Status | API | Pumpkin | SD |
@@ -259,7 +259,7 @@ keep their native behaviour.
 | `BlockEntity` ticker | ❌ | modded | only scheduled ticks | ✅ hopper/magnet upgrades |
 | `Item.useOn` / `use` | ✅ | modded | item hooks | ✅ |
 | `Item.inventoryTick` | ❌ | modded | | |
-| Find entities in an area | 🟡 | core | `entity.get-nearby-entities` (around an entity); no box query on a world | ✅ magnet |
+| Find entities in an area | ✅ | core | `world.get-entities-in-box`, `entity.get-nearby-entities` | ✅ magnet |
 
 ## Open items before an upstream PR
 

@@ -951,6 +951,29 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
         Ok(entities)
     }
 
+    async fn get_entities_in_box(
+        &mut self,
+        world: Resource<World>,
+        min: WitPosition,
+        max: WitPosition,
+    ) -> wasmtime::Result<Vec<Resource<pumpkin::plugin::entity::Entity>>> {
+        let world = self.get(&world)?.clone();
+        let aabb = pumpkin_util::math::boundingbox::BoundingBox::new(
+            pumpkin_util::math::vector3::Vector3::new(min.0, min.1, min.2),
+            pumpkin_util::math::vector3::Vector3::new(max.0, max.1, max.2),
+        );
+        let mut entities: Vec<Arc<dyn crate::entity::EntityBase>> = world
+            .get_players_at_box(&aabb)
+            .into_iter()
+            .map(|player| player as Arc<dyn crate::entity::EntityBase>)
+            .collect();
+        entities.extend(world.get_entities_at_box(&aabb));
+        entities
+            .into_iter()
+            .map(|entity| self.add(entity))
+            .collect()
+    }
+
     async fn ray_trace_blocks(
         &mut self,
         world: Resource<World>,

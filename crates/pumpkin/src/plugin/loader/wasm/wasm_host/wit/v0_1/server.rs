@@ -224,6 +224,47 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(player_resources)
     }
 
+    async fn get_players_tracking_chunk(
+        &mut self,
+        _rep: Resource<Server>,
+        world: Resource<pumpkin::plugin::world::World>,
+        chunk_x: i32,
+        chunk_z: i32,
+    ) -> wasmtime::Result<Vec<Resource<pumpkin::plugin::player::Player>>> {
+        let world = self.get(&world)?.clone();
+        world
+            .players
+            .load()
+            .iter()
+            .filter(|player| {
+                player
+                    .watched_section
+                    .load()
+                    .is_within_distance(chunk_x, chunk_z)
+            })
+            .map(|player| self.add(player.clone()))
+            .collect()
+    }
+
+    async fn get_players_tracking_entity(
+        &mut self,
+        _rep: Resource<Server>,
+        world: Resource<pumpkin::plugin::world::World>,
+        entity_id: i32,
+    ) -> wasmtime::Result<Vec<Resource<pumpkin::plugin::player::Player>>> {
+        let world = self.get(&world)?.clone();
+        let Some(tracked) = world.entity_tracker.get_tracked_entity(entity_id) else {
+            return Ok(Vec::new());
+        };
+        world
+            .players
+            .load()
+            .iter()
+            .filter(|player| tracked.seen_by.contains(&player.gameprofile.id))
+            .map(|player| self.add(player.clone()))
+            .collect()
+    }
+
     async fn get_player_count_in_world(
         &mut self,
         _rep: Resource<Server>,

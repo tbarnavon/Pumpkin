@@ -924,6 +924,10 @@ interface %world {
         /// Returns a list of all entities in this world.
         get-entities: func() -> list<entity>;
 
+        /// Entities, players included, whose bounding box intersects the box from `min` to `max`,
+        /// like `Level.getEntities(entity, aabb)`.
+        get-entities-in-box: func(min: position, max: position) -> list<entity>;
+
         /// Spawns a lightning bolt at the specified position.
         strike-lightning: func(pos: position, effect-only: bool);
 
