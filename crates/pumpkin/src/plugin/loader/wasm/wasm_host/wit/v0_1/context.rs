@@ -802,6 +802,11 @@ fn register_inventory_event(
         EventType::InventoryMoveItemEvent => {
             register_typed_event::<InventoryMoveItemEvent>(resource, handler, priority, blocking);
         }
+        EventType::ItemStorageChangedEvent => {
+            register_typed_event::<
+                crate::plugin::api::events::inventory::item_storage_changed::ItemStorageChangedEvent,
+            >(resource, handler, priority, blocking);
+        }
         EventType::InventoryPickupItemEvent => {
             register_typed_event::<InventoryPickupItemEvent>(resource, handler, priority, blocking);
         }
@@ -1626,6 +1631,7 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
             | EventType::InventoryCreativeEvent
             | EventType::InventoryInteractEvent
             | EventType::InventoryMoveItemEvent
+            | EventType::ItemStorageChangedEvent
             | EventType::InventoryPickupItemEvent
             | EventType::PrepareAnvilEvent
             | EventType::PrepareGrindstoneEvent

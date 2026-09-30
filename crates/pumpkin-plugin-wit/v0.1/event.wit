@@ -1743,6 +1743,13 @@ interface event {
         cancelled: bool
     }
 
+    /// Hoppers moved items in or out of plugin item storages during the last tick. Read the
+    /// new contents with `world.get-item-storage`.
+    record item-storage-changed-event-data {
+        target-world: %world,
+        positions: list<block-pos>,
+    }
+
     record inventory-pickup-item-event-data {
         block-pos: block-pos,
         item-entity-id: s32,
@@ -2003,6 +2010,7 @@ interface event {
         inventory-creative-event,
         inventory-interact-event,
         inventory-move-item-event,
+        item-storage-changed-event,
         inventory-pickup-item-event,
         prepare-anvil-event,
         prepare-grindstone-event,
@@ -2279,6 +2287,7 @@ interface event {
         inventory-creative-event(inventory-creative-event-data),
         inventory-interact-event(inventory-interact-event-data),
         inventory-move-item-event(inventory-move-item-event-data),
+        item-storage-changed-event(item-storage-changed-event-data),
         inventory-pickup-item-event(inventory-pickup-item-event-data),
         prepare-anvil-event(prepare-anvil-event-data),
         prepare-grindstone-event(prepare-grindstone-event-data),

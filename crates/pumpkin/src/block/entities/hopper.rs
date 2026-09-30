@@ -225,9 +225,8 @@ impl HopperBlockEntity {
             return false;
         }
 
-        if let Some(entity) = world.get_block_entity(pos_up)
-            && let Some(container) = entity.clone().get_inventory()
-        {
+        let entity = world.get_block_entity(pos_up);
+        if let Some(container) = world.get_inventory_at(pos_up) {
             // TODO check WorldlyContainer
             for i in 0..container.size() {
                 let mut item = container.get_stack(i);
@@ -240,8 +239,9 @@ impl HopperBlockEntity {
                         // If extracting from furnace output slot (index 2), drop XP as orbs
                         let furnace_output_slot: usize = 2;
                         if i == furnace_output_slot
-                            && let Some(experience_container) =
-                                entity.clone().to_experience_container()
+                            && let Some(experience_container) = entity
+                                .clone()
+                                .and_then(super::BlockEntity::to_experience_container)
                         {
                             let xp = experience_container.extract_experience();
                             if xp > 0 {
@@ -371,8 +371,8 @@ impl HopperBlockEntity {
     fn eject_items(&self, world: &Arc<World>) -> bool {
         // TODO getEntityContainer
 
-        if let Some(entity) = world.get_block_entity(&self.position.offset(to_offset(&self.facing)))
-            && let Some(container) = entity.get_inventory()
+        if let Some(container) =
+            world.get_inventory_at(&self.position.offset(to_offset(&self.facing)))
         {
             // TODO check WorldlyContainer
             let mut is_full = true;

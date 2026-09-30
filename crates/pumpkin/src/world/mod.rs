@@ -25,6 +25,7 @@ pub mod brightness;
 pub mod chunker;
 pub mod explosion;
 pub mod generation_cache;
+pub mod item_storage;
 pub mod loot;
 pub mod map;
 pub mod portal;
@@ -296,6 +297,10 @@ pub struct World {
     pub custom_data: std::sync::Mutex<NbtCompound>,
     /// Persistent custom data for block entities at specific positions
     pub custom_block_entity_data: DashMap<BlockPos, NbtCompound>,
+    /// Parsed plugin item storages (see `item_storage`), by block position.
+    item_storages: DashMap<BlockPos, Arc<item_storage::PluginItemStorage>>,
+    /// Item storages hoppers changed this tick.
+    item_storage_changes: std::sync::Mutex<Vec<BlockPos>>,
     /// Entity tracker responsible for tracking entity visibility and sending delta/status packets to watchers.
     pub entity_tracker: entity_tracker::EntityTracker,
 }
@@ -430,6 +435,8 @@ impl World {
             pending_block_entity_migrations: crossbeam::queue::SegQueue::new(),
             custom_data: std::sync::Mutex::new(custom_data),
             custom_block_entity_data: DashMap::new(),
+            item_storages: DashMap::new(),
+            item_storage_changes: std::sync::Mutex::new(Vec::new()),
             entity_tracker: entity_tracker::EntityTracker::new(),
         }
     }
@@ -1526,6 +1533,7 @@ impl World {
 
         self.flush_block_updates();
         self.flush_synced_block_events();
+        self.flush_item_storage_changes(server);
         self.update_active_chunks();
         self.tick_environment();
         let mut raids = {
@@ -6318,6 +6326,7 @@ impl World {
     /// Removes the stored block-entity NBT at `block_pos`. Modded block entities exist only as this
     /// NBT (their plugin owns the data), so nothing else removes it when the block goes away.
     pub fn remove_pending_block_entity_nbt(&self, block_pos: &BlockPos) {
+        self.forget_item_storage(block_pos);
         self.level
             .read_chunk_sync(&block_pos.chunk_position(), |chunk| {
                 let removed = chunk

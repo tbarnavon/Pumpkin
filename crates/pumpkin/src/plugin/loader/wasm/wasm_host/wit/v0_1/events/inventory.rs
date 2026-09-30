@@ -532,3 +532,32 @@ impl ToFromWasmEvent for TradeSelectEvent {
         }
     }
 }
+
+impl ToFromWasmEvent
+    for crate::plugin::api::events::inventory::item_storage_changed::ItemStorageChangedEvent
+{
+    fn to_wasm_event(&self, state: &mut PluginHostState) -> Event {
+        let target_world = state
+            .add(self.world.clone())
+            .expect("failed to add world resource");
+        Event::ItemStorageChangedEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::ItemStorageChangedEventData {
+                target_world,
+                positions: self.positions.iter().copied().map(to_wasm_block_position).collect(),
+            },
+        )
+    }
+
+    fn apply_wasm_event(&mut self, event: Event, state: &mut PluginHostState) {
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(event: Event, _state: &mut PluginHostState) -> Self {
+        match event {
+            Event::ItemStorageChangedEvent(_) => {
+                panic!("Cannot construct ItemStorageChangedEvent from WASM")
+            }
+            _ => panic!("unexpected event type"),
+        }
+    }
+}

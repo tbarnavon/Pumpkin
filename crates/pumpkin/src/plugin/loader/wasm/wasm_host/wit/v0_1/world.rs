@@ -1132,7 +1132,7 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
             },
         );
         Ok(nbt.map(|mut nbt| {
-            for key in ["id", "x", "y", "z"] {
+            for key in ["id", "x", "y", "z", crate::world::item_storage::NBT_KEY] {
                 nbt.child_tags.remove(key);
             }
             super::common::to_wit_nbt_tree(pumpkin_nbt::tag::NbtTag::Compound(nbt))
@@ -1162,11 +1162,20 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
         for key in ["id", "x", "y", "z"] {
             nbt.child_tags.remove(key);
         }
+        nbt.child_tags.remove(crate::world::item_storage::NBT_KEY);
         let data = nbt.clone();
         nbt.put_string("id", block_entity_type);
         nbt.put_int("x", pos.0.x);
         nbt.put_int("y", pos.0.y);
         nbt.put_int("z", pos.0.z);
+        // The item storage belongs to the host, not to the data the plugin writes.
+        let storage = world
+            .pending_block_entity_nbt(&pos)
+            .and_then(|old| old.get(crate::world::item_storage::NBT_KEY).cloned());
+        nbt.child_tags.remove(crate::world::item_storage::NBT_KEY);
+        if let Some(storage) = storage {
+            nbt.put(crate::world::item_storage::NBT_KEY, storage);
+        }
         // Drop a live block entity so the new data replaces it, not the other way round.
         world.remove_block_entity(&pos);
         world.add_block_entity_nbt(pos, &nbt);
@@ -1186,6 +1195,68 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
             );
         }
         Ok(Ok(()))
+    }
+
+    async fn set_item_storage(
+        &mut self,
+        world: Resource<World>,
+        pos: WitBlockPos,
+        slots: Vec<super::pumpkin::plugin::world::StorageSlot>,
+    ) -> wasmtime::Result<Result<(), String>> {
+        let world = self.get(&world)?.clone();
+        let pos = BlockPos::new(pos.x, pos.y, pos.z);
+        let mut host_slots = Vec::with_capacity(slots.len());
+        for slot in slots {
+            let item = match slot.item {
+                Some(item) => self.take(item)?.lock().await.copy_with_count(1),
+                None => pumpkin_data::item_stack::ItemStack::EMPTY.clone(),
+            };
+            host_slots.push(crate::world::item_storage::StorageSlot {
+                count: if item.is_empty() { 0 } else { slot.count },
+                item,
+                max_stacks: slot.max_stacks,
+                insert: slot.insert,
+                extract: slot.extract,
+                accept_new: slot.accept_new,
+                keep_item: slot.keep_item,
+                void_overflow: slot.void_overflow,
+            });
+        }
+        Ok(world.set_item_storage(&pos, &host_slots))
+    }
+
+    async fn get_item_storage(
+        &mut self,
+        world: Resource<World>,
+        pos: WitBlockPos,
+    ) -> wasmtime::Result<Option<Vec<super::pumpkin::plugin::world::StorageSlot>>> {
+        let world = self.get(&world)?.clone();
+        let Some(slots) = world.get_item_storage(&BlockPos::new(pos.x, pos.y, pos.z)) else {
+            return Ok(None);
+        };
+        let mut out = Vec::with_capacity(slots.len());
+        for slot in slots {
+            let item = if slot.item.is_empty() {
+                None
+            } else {
+                Some(
+                    self.add::<super::pumpkin::plugin::item_stack::ItemStack>(Arc::new(
+                        tokio::sync::Mutex::new(slot.item),
+                    ))?,
+                )
+            };
+            out.push(super::pumpkin::plugin::world::StorageSlot {
+                item,
+                count: slot.count,
+                max_stacks: slot.max_stacks,
+                insert: slot.insert,
+                extract: slot.extract,
+                accept_new: slot.accept_new,
+                keep_item: slot.keep_item,
+                void_overflow: slot.void_overflow,
+            });
+        }
+        Ok(Some(out))
     }
 
     async fn remove_block_entity(

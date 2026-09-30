@@ -346,6 +346,9 @@ pub fn cleanup_event(event: &Event, state: &mut PluginHostState) {
             cleanup_player(state, &data.player);
         }
         Event::InventoryMoveItemEvent(_) => {}
+        Event::ItemStorageChangedEvent(data) => {
+            cleanup_world(state, &data.target_world);
+        }
         Event::InventoryPickupItemEvent(_) => {}
         Event::PrepareAnvilEvent(data) => {
             cleanup_player(state, &data.player);

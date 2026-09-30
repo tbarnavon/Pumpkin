@@ -15,7 +15,7 @@ Summary (103 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 47 (46 %) | 14 (14 %) | 42 (41 %) |
+| 47 (46 %) | 15 (15 %) | 41 (40 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -149,11 +149,12 @@ for a mod's, whose data only lives in the chunk as NBT:
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
 | `BlockApiLookup` / `ItemApiLookup` / `EntityApiLookup` | ❌ | modded | | ✅ controller, hoppers |
-| `ItemStorage.SIDED`, `Storage<ItemVariant>`, transactions | ❌ | modded | | ✅ hoppers into drawers |
+| `ItemStorage.SIDED`, `Storage<ItemVariant>` for hoppers | 🟡 | core | data first: `world.set-item-storage` puts host-held slots on a plugin block entity (count, capacity in stacks, insert/extract, accept-new, keep-item, void); hoppers use them without calling the plugin; `item-storage-changed-event` once per tick. No sides, no transactions, no plugin-to-plugin transfer | ✅ hoppers into drawers |
 | `FluidStorage` | ❌ | modded | | |
 
-Vanilla hoppers moving items into a plugin block also need the host to ask the plugin for its
-inventory.
+Hoppers see a storage slot as at most one stack, one item short of full while there is room,
+so they keep inserting into drawers holding thousands of items. An item that stacks to 1 shows
+as a full slot while any is stored, so hoppers only take it out.
 
 ### fabric-loot-api-v3
 | Feature | Status | API | Pumpkin | SD |

@@ -26,6 +26,8 @@ pub mod inventory_move_item;
 pub mod inventory_open;
 /// Inventory pickup item event.
 pub mod inventory_pickup_item;
+/// Event fired when hoppers changed plugin item storages.
+pub mod item_storage_changed;
 /// Prepare anvil event.
 pub mod prepare_anvil;
 /// Prepare grindstone event.
@@ -55,6 +57,7 @@ pub use inventory_interact::*;
 pub use inventory_move_item::*;
 pub use inventory_open::*;
 pub use inventory_pickup_item::*;
+pub use item_storage_changed::*;
 pub use prepare_anvil::*;
 pub use prepare_grindstone::*;
 pub use prepare_inventory_result::*;

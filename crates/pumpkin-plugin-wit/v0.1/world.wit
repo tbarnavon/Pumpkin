@@ -787,6 +787,27 @@ interface %world {
     }
 
     /// Represents a Minecraft world (dimension).
+    /// A slot of a plugin block's item storage (`world.set-item-storage`), like one
+    /// `StorageView` of a mod's Fabric `Storage<ItemVariant>`. Hoppers see at most one stack of
+    /// it and move items without calling the plugin.
+    record storage-slot {
+        /// The stored item (its count is ignored), or none when the slot is empty.
+        item: option<item-stack>,
+        count: u32,
+        /// Capacity in stacks of the slot's item; 4294967295 for no limit.
+        max-stacks: u32,
+        /// Whether hoppers may put items in.
+        insert: bool,
+        /// Whether hoppers may take items out.
+        extract: bool,
+        /// Whether an empty slot takes any item.
+        accept-new: bool,
+        /// Whether the item stays in the slot when its count reaches zero.
+        keep-item: bool,
+        /// Whether items past capacity are accepted and destroyed.
+        void-overflow: bool,
+    }
+
     resource %world {
         /// Returns the unique identifier of this world.
         get-id: func() -> string;
@@ -941,6 +962,14 @@ interface %world {
 
         /// Removes the block entity at `pos` and its stored data.
         remove-block-entity: func(pos: block-pos);
+
+        /// Gives the plugin block entity at `pos` an item storage that hoppers use, replacing the
+        /// previous one. It is saved with the block entity and removed with it. When hoppers
+        /// change it, `item-storage-changed-event` fires once for that tick.
+        set-item-storage: func(pos: block-pos, slots: list<storage-slot>) -> result<_, string>;
+
+        /// The item storage at `pos`, as hoppers last left it.
+        get-item-storage: func(pos: block-pos) -> option<list<storage-slot>>;
 
         /// Drops `stack` as an item entity at `pos`, like `Block.popResource`.
         drop-item: func(pos: block-pos, stack: borrow<item-stack>);
