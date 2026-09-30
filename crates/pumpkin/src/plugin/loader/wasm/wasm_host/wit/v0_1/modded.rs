@@ -100,6 +100,7 @@ enum CallData {
         state: BlockStateId,
         entity_id: i32,
         entity_type: String,
+        entity: Arc<dyn EntityBase>,
         step: bool,
     },
     ShapeUpdate {
@@ -433,6 +434,7 @@ fn build_call(
             state: block_state,
             entity_id,
             entity_type,
+            entity,
             step,
         } => {
             let contact = EntityContact {
@@ -441,6 +443,7 @@ fn build_call(
                 state: block_state.as_u16(),
                 entity_id,
                 entity_type,
+                entity: state.add::<super::pumpkin::plugin::world::Entity>(entity)?,
             };
             if step {
                 BlockCall::StepOn(contact)
@@ -626,6 +629,9 @@ impl BlockBehaviour for PluginBlock {
             return;
         }
         let entity = args.entity.get_entity();
+        let Some(handle) = args.world.get_entity_by_id(entity.entity_id) else {
+            return;
+        };
         self.invoke(
             args.server,
             CallData::EntityContact {
@@ -634,6 +640,7 @@ impl BlockBehaviour for PluginBlock {
                 state: args.state.id,
                 entity_id: entity.entity_id,
                 entity_type: format!("minecraft:{}", entity.entity_type.resource_name),
+                entity: handle,
                 step: false,
             },
         );
@@ -647,6 +654,9 @@ impl BlockBehaviour for PluginBlock {
             return;
         };
         let entity = args.entity.get_entity();
+        let Some(handle) = args.world.get_entity_by_id(entity.entity_id) else {
+            return;
+        };
         self.invoke(
             &server,
             CallData::EntityContact {
@@ -655,6 +665,7 @@ impl BlockBehaviour for PluginBlock {
                 state: args.state.id,
                 entity_id: entity.entity_id,
                 entity_type: format!("minecraft:{}", entity.entity_type.resource_name),
+                entity: handle,
                 step: true,
             },
         );

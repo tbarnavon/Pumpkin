@@ -15,7 +15,7 @@ Summary (109 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 64 (59 %) | 17 (16 %) | 28 (26 %) |
+| 65 (60 %) | 17 (16 %) | 27 (25 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -264,7 +264,7 @@ keep their native behaviour.
 | `Item.useOn` / `use` | ✅ | modded | item hooks | ✅ |
 | `Item.inventoryTick` | ✅ | modded | opt-in `inventory-tick` item hook: called every tick for each stack in a player's inventory, only for items registered with it | ✅ bound remote upgrades, heavy drawers (`PlayerEventListener`) |
 | Find entities in an area | ✅ | core | `world.get-entities-in-box`, `entity.get-nearby-entities` | |
-| Read and change an item entity's stack (`ItemEntity.getItem` / `setItem`) | ❌ | core | `item-spawn-event` gives only the item name | ❌ hopper and magnet upgrades (`BlockEntityDrawers.addItemEntity`) |
+| Read and change an item entity's stack (`ItemEntity.getItem` / `setItem`) | ✅ | core | `entity.get-item-stack`, `entity.set-item-stack` (none or empty removes the entity), on entities from `world.get-entities-in-box` | ✅ hopper and magnet upgrades (`BlockEntityDrawers.addItemEntity`) |
 
 ## Open items before an upstream PR
 

@@ -155,6 +155,20 @@ impl ItemEntity {
         &self.item_stack
     }
 
+    /// `ItemEntity.setItem`. An empty stack removes the entity, as its next tick would.
+    pub fn set_item_stack(&self, stack: ItemStack) {
+        let empty = stack.is_empty();
+        *self
+            .item_stack
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = stack;
+        if empty {
+            self.entity.remove();
+        } else {
+            self.init_data_tracker();
+        }
+    }
+
     pub fn get_pickup_delay(&self) -> u8 {
         self.pickup_delay.load(Ordering::Relaxed)
     }

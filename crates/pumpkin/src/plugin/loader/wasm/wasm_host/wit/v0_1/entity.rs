@@ -792,6 +792,39 @@ impl HostEntity for PluginHostState {
         Ok(entity.get_mob().is_some())
     }
 
+    async fn get_item_stack(
+        &mut self,
+        this: Resource<Entity>,
+    ) -> wasmtime::Result<Option<Resource<super::pumpkin::plugin::item_stack::ItemStack>>> {
+        let entity = self.get(&this)?.clone();
+        let Some(item) = entity.get_item_entity() else {
+            return Ok(None);
+        };
+        let stack = item
+            .get_item_stack()
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone();
+        Ok(Some(self.add(Arc::new(tokio::sync::Mutex::new(stack)))?))
+    }
+
+    async fn set_item_stack(
+        &mut self,
+        this: Resource<Entity>,
+        stack: Option<Resource<super::pumpkin::plugin::item_stack::ItemStack>>,
+    ) -> wasmtime::Result<bool> {
+        let stack = match stack {
+            Some(stack) => self.get(&stack)?.lock().await.clone(),
+            None => pumpkin_data::item_stack::ItemStack::EMPTY.clone(),
+        };
+        let entity = self.get(&this)?.clone();
+        let Some(item) = entity.get_item_entity() else {
+            return Ok(false);
+        };
+        item.set_item_stack(stack);
+        Ok(true)
+    }
+
     async fn drop(&mut self, rep: Resource<Entity>) -> wasmtime::Result<()> {
         self.drop(rep)
     }

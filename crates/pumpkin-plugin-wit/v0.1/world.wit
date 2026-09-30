@@ -524,6 +524,14 @@ interface %world {
 
         /// Returns whether this entity is an AI-driven mob.
         is-mob: func() -> bool;
+
+        /// For an item entity (`ItemEntity.getItem`): a copy of its stack. None for other
+        /// entities.
+        get-item-stack: func() -> option<item-stack>;
+        /// For an item entity (`ItemEntity.setItem`): replaces its stack. None or an empty stack
+        /// removes the entity, as vanilla discards an item entity whose stack became empty.
+        /// Returns false for other entities.
+        set-item-stack: func(stack: option<borrow<item-stack>>) -> bool;
     }
 
     /// Represents a living entity with health, combat stats, attributes, and equipment (mobs, players, armor stands).

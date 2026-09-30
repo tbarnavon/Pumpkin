@@ -6,7 +6,7 @@
 /// the same points where vanilla calls the corresponding `Block` methods.
 interface modded {
     use common.{block-pos, position, nbt-tree, hand};
-    use %world.{%world, block-direction};
+    use %world.{%world, block-direction, entity};
     use player.{player};
     use item-stack.{item-stack};
     use menu.{menu-definition};
@@ -112,6 +112,8 @@ interface modded {
         entity-id: s32,
         /// Like `minecraft:zombie`.
         entity-type: string,
+        /// The entity itself, for example to read an item entity's stack.
+        entity: entity,
     }
 
     record shape-update {
