@@ -27,14 +27,14 @@ API, where the feature belongs:
 
 ## What `modded.wit` has
 
-Only what needs mod content stays in `modded.wit`: the block and item hooks, and the storage for
-block entities whose type Pumpkin has no native implementation of (the data lives in the chunk
-as raw NBT; vanilla block entities use `world.get/set-block-entity-nbt`). The rest moved to core:
+Only what needs mod content stays in `modded.wit`: the block and item hooks, and modded menu
+types. The rest moved to core; block-entity data works the same for vanilla block entities and
+for a mod's, whose data only lives in the chunk as NBT:
 
 | Function | Now in |
 |:--|:--|
 | `register-block-hooks`, `register-item-hooks`, block and item calls | `modded` |
-| `get/set/remove-block-entity-data` | `modded` (see open items) |
+| `get/set-block-entity-data`, `remove-block-entity` | `world` |
 | `get/set/remove-component-by-id` | `item-stack` |
 | `to-nbt`, `from-nbt` | `item-stack` |
 | `give-item` | `player` |
@@ -130,7 +130,7 @@ as raw NBT; vanilla block entities use `world.get/set-block-entity-nbt`). The re
 ### fabric-object-builder-api-v1
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
-| `FabricBlockEntityTypeBuilder` | ✅ | host + modded | types from the dump; data through `modded.set-block-entity-data` | ✅ |
+| `FabricBlockEntityTypeBuilder` | ✅ | host + modded | types from the dump; data through `world.set-block-entity-data` | ✅ |
 | `WoodTypeBuilder`, `BlockSetTypeBuilder` | ➖ | - | resolved in the dump | |
 | `FabricEntityType`, modded entities | ❌ | modded | | detached drawers? |
 | `FabricDefaultAttributeRegistry` | ❌ | modded | | |
@@ -229,7 +229,7 @@ inventory.
 | `fabric-resource-loader-v1` | 🟡 | host | mod data comes from the dump; no reload listeners |
 | `fabric-creative-tab-api-v1` | ➖ | - | client side; the registry is synced |
 | `fabric-block-api-v1` | ➖ | - | block appearance is client side |
-| `fabric-block-getter-api-v2` | ✅ | modded | render data is block entity data, sent by `set-block-entity-data` |
+| `fabric-block-getter-api-v2` | ✅ | modded | render data is block entity data, sent by `world.set-block-entity-data` |
 | `fabric-serialization-api-v1` | ➖ | - | Java codec helpers |
 | `fabric-data-generation-api-v1`, `fabric-gametest-api-v1`, `fabric-debug-api-v1` | ➖ | - | dev time |
 | rendering, model loading, screen, key mapping, sound, client gametest | ➖ | - | client only |
@@ -261,9 +261,4 @@ keep their native behaviour.
 
 ## Open items before an upstream PR
 
-- **Block-entity data belongs in core.** `modded.get/set/remove-block-entity-data` duplicate core's
-  `world.get/set-block-entity-nbt`: they only see the chunk's `pending_block_entities` (block
-  entities with no native implementation), use `nbt-tree` instead of bytes, and broadcast the
-  update. Fold them into core: make `get-block-entity-nbt` fall back to pending NBT, add
-  `world.remove-block-entity` and a `world.send-block-entity-update`, then delete the modded ones.
-
+- A packet comparison of `fabric-menu-api-v1:open_screen` against a real Fabric server.

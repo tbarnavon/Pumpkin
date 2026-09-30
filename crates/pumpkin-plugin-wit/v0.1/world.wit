@@ -928,6 +928,20 @@ interface %world {
         /// The NBT must contain a valid "id" field (e.g. "minecraft:chest").
         set-block-entity-nbt: func(pos: block-pos, nbt-data: list<u8>) -> result<_, string>;
 
+        /// The data of the block entity at `pos`, without the `id`, `x`, `y`, `z` keys, like
+        /// vanilla's `BlockEntity.saveWithoutMetadata`. Also covers block entities Pumpkin has no
+        /// implementation of (a mod's), whose data is only stored with the chunk.
+        get-block-entity-data: func(pos: block-pos) -> option<nbt-tree>;
+
+        /// Replaces the block entity at `pos` with one of `block-entity-type` (namespaced, for
+        /// example `minecraft:chest`) holding `data`, saves it with the chunk, and sends it to
+        /// every player who has the chunk loaded, as vanilla's `ClientboundBlockEntityDataPacket`
+        /// does. Types Pumpkin has no implementation of keep `data` as it is.
+        set-block-entity-data: func(pos: block-pos, block-entity-type: string, data: nbt-tree) -> result<_, string>;
+
+        /// Removes the block entity at `pos` and its stored data.
+        remove-block-entity: func(pos: block-pos);
+
         /// Drops `stack` as an item entity at `pos`, like `Block.popResource`.
         drop-item: func(pos: block-pos, stack: borrow<item-stack>);
 

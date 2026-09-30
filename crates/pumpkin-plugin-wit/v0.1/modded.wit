@@ -144,17 +144,6 @@ interface modded {
         %use(item-use),
     }
 
-    /// The block-entity data stored at `pos`, without the `id`, `x`, `y`, `z` keys.
-    get-block-entity-data: func(%world: borrow<%world>, pos: block-pos) -> option<nbt-tree>;
-
-    /// Stores block-entity data at `pos` (saved with the chunk) and sends it to every player who
-    /// has the chunk loaded, as vanilla's `ClientboundBlockEntityDataPacket` does.
-    /// `block-entity-type` is the namespaced type, for example `storagedrawers:standard_drawers_1`.
-    set-block-entity-data: func(%world: borrow<%world>, pos: block-pos, block-entity-type: string, data: nbt-tree);
-
-    /// Removes the block-entity data at `pos`.
-    remove-block-entity-data: func(%world: borrow<%world>, pos: block-pos);
-
     /// Opens a menu of a modded menu type, like Fabric's `ExtendedMenuProvider`: the client gets
     /// `fabric-menu-api-v1:open_screen` with the type, the title and `data`, the bytes the menu
     /// type's stream codec reads.

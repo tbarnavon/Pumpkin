@@ -1103,6 +1103,103 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
         Ok(Ok(()))
     }
 
+    async fn get_block_entity_data(
+        &mut self,
+        world: Resource<World>,
+        pos: WitBlockPos,
+    ) -> wasmtime::Result<Option<super::common::WitNbtTree>> {
+        let world = self.get(&world)?.clone();
+        let pos = BlockPos::new(pos.x, pos.y, pos.z);
+        let nbt = world.get_block_entity(&pos).map_or_else(
+            || {
+                // A block entity Pumpkin has no implementation of lives only as chunk NBT.
+                world
+                    .level
+                    .read_chunk_sync(&pos.chunk_position(), |chunk| {
+                        chunk
+                            .pending_block_entities
+                            .lock()
+                            .unwrap_or_else(std::sync::PoisonError::into_inner)
+                            .get(&pos)
+                            .cloned()
+                    })
+                    .flatten()
+            },
+            |entity| {
+                let mut nbt = pumpkin_nbt::compound::NbtCompound::new();
+                entity.write_internal(&mut nbt);
+                Some(nbt)
+            },
+        );
+        Ok(nbt.map(|mut nbt| {
+            for key in ["id", "x", "y", "z"] {
+                nbt.child_tags.remove(key);
+            }
+            super::common::to_wit_nbt_tree(pumpkin_nbt::tag::NbtTag::Compound(nbt))
+        }))
+    }
+
+    async fn set_block_entity_data(
+        &mut self,
+        world: Resource<World>,
+        pos: WitBlockPos,
+        block_entity_type: String,
+        data: super::common::WitNbtTree,
+    ) -> wasmtime::Result<Result<(), String>> {
+        let world = self.get(&world)?.clone();
+        let pos = BlockPos::new(pos.x, pos.y, pos.z);
+        let pumpkin_nbt::tag::NbtTag::Compound(mut nbt) =
+            super::common::from_wit_nbt_tree(&data).map_err(wasmtime::Error::msg)?
+        else {
+            return Ok(Err("block-entity data must be a compound".to_string()));
+        };
+        let Some(type_id) = pumpkin_data::dynamic::names::block_entity_type_id(&block_entity_type)
+        else {
+            return Ok(Err(format!(
+                "unknown block-entity type {block_entity_type}"
+            )));
+        };
+        for key in ["id", "x", "y", "z"] {
+            nbt.child_tags.remove(key);
+        }
+        let data = nbt.clone();
+        nbt.put_string("id", block_entity_type);
+        nbt.put_int("x", pos.0.x);
+        nbt.put_int("y", pos.0.y);
+        nbt.put_int("z", pos.0.z);
+        // Drop a live block entity so the new data replaces it, not the other way round.
+        world.remove_block_entity(&pos);
+        world.add_block_entity_nbt(pos, &nbt);
+        if let Some(entity) = world.get_block_entity(&pos) {
+            // Pumpkin implements the type: send its own update tag.
+            world.update_block_entity(&entity);
+        } else {
+            // Same payload vanilla sends: the update tag, without id and position.
+            let bytes = pumpkin_nbt::Nbt::from(data).write_unnamed();
+            world.broadcast_to_chunk(
+                pos.chunk_position(),
+                &pumpkin_protocol::java::client::play::CBlockEntityData::new(
+                    pos,
+                    pumpkin_protocol::codec::var_int::VarInt(i32::from(type_id)),
+                    bytes.as_ref().into(),
+                ),
+            );
+        }
+        Ok(Ok(()))
+    }
+
+    async fn remove_block_entity(
+        &mut self,
+        world: Resource<World>,
+        pos: WitBlockPos,
+    ) -> wasmtime::Result<()> {
+        let world = self.get(&world)?.clone();
+        let pos = BlockPos::new(pos.x, pos.y, pos.z);
+        world.remove_block_entity(&pos);
+        world.remove_pending_block_entity_nbt(&pos);
+        Ok(())
+    }
+
     async fn set_chunk_generator(
         &mut self,
         world: Resource<World>,
