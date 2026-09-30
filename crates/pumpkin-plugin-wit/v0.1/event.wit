@@ -337,6 +337,15 @@ interface event {
         monsters-ok: bool
     }
 
+    /// A client sent a custom payload during the configuration phase (Fabric `ServerConfigurationNetworking` receivers). Cancel to disconnect the client.
+    record player-configuration-payload-event-data {
+        player-name: string,
+        player-uuid: string,
+        channel: string,
+        data: list<u8>,
+        cancelled: bool
+    }
+
     record block-break-event-data {
         player: option<player>,
         block: string,
@@ -2018,6 +2027,7 @@ interface event {
         inventory-close-event,
         block-redstone-event,
         block-break-event,
+        player-configuration-payload-event,
         player-sleep-check-event,
         player-login-query-response-event,
         server-stopping-event,
@@ -2306,6 +2316,7 @@ interface event {
         inventory-close-event(inventory-close-event-data),
         block-redstone-event(block-redstone-event-data),
         block-break-event(block-break-event-data),
+        player-configuration-payload-event(player-configuration-payload-event-data),
         player-sleep-check-event(player-sleep-check-event-data),
         player-login-query-response-event(player-login-query-response-event-data),
         server-stopping-event(server-stopping-event-data),

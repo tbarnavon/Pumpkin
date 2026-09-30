@@ -613,6 +613,22 @@ impl PendingConnection {
                 Ok(brand) => self.brand = Some(brand.to_string()),
                 Err(e) => self.kick(TextComponent::text(e.to_string())).await,
             }
+            return;
+        }
+        let (Some(server), Some(profile)) = (self.server.upgrade(), self.gameprofile.clone())
+        else {
+            return;
+        };
+        let mut event = crate::plugin::api::events::player::player_configuration_payload::PlayerConfigurationPayloadEvent {
+            player_name: profile.name,
+            player_uuid: profile.id,
+            channel: plugin_message.channel.to_string(),
+            data: plugin_message.data.to_vec(),
+            cancelled: false,
+        };
+        server.plugin_manager.fire(&server, &mut event).await;
+        if event.cancelled {
+            self.kick(TextComponent::text("Disconnected")).await;
         }
     }
 

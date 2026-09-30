@@ -22,6 +22,28 @@ pub fn register(channel: String, payload: Vec<u8>) {
     }
 }
 
+static CONFIGURATION: Mutex<Vec<(String, Vec<u8>)>> = Mutex::new(Vec::new());
+
+/// Registers or replaces the payload sent on `channel` in the configuration phase.
+pub fn register_configuration(channel: String, payload: Vec<u8>) {
+    let mut payloads = CONFIGURATION
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    if let Some(entry) = payloads.iter_mut().find(|(c, _)| *c == channel) {
+        entry.1 = payload;
+    } else {
+        payloads.push((channel, payload));
+    }
+}
+
+/// Every configuration-phase payload, in registration order.
+pub fn configuration() -> Vec<(String, Vec<u8>)> {
+    CONFIGURATION
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .clone()
+}
+
 /// Every registered query, in registration order.
 pub fn all() -> Vec<(String, Vec<u8>)> {
     QUERIES

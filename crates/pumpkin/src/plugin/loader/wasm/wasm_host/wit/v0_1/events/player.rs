@@ -2863,3 +2863,43 @@ impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
         panic!("Cannot construct PlayerSleepCheckEvent from WASM")
     }
 }
+
+impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent for crate::plugin::api::events::player::player_configuration_payload::PlayerConfigurationPayloadEvent {
+    fn to_wasm_event(
+        &self,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event {
+        #[allow(unused_imports)]
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::{
+            to_wasm_block_position, to_wasm_position,
+        };
+        let _ = &state;
+        crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::PlayerConfigurationPayloadEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::PlayerConfigurationPayloadEventData {
+                player_name: self.player_name.clone(),
+                player_uuid: self.player_uuid.to_string(),
+                channel: self.channel.clone(),
+                data: self.data.clone(),
+                cancelled: self.cancelled,
+            },
+        )
+    }
+
+    fn apply_wasm_event(
+        &mut self,
+        event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) {
+        if let crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::PlayerConfigurationPayloadEvent(data) = &event {
+            self.cancelled = data.cancelled;
+        }
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(
+        _event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        _state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> Self {
+        panic!("Cannot construct PlayerConfigurationPayloadEvent from WASM")
+    }
+}

@@ -30,6 +30,11 @@ impl PendingConnection {
     pub async fn continue_configuration(&mut self, server: &Server) {
         self.send_packet_now(&server.get_branding()).await;
 
+        for (channel, payload) in crate::plugin::login_queries::configuration() {
+            self.send_packet_now(&CPluginMessage::new(&channel, &payload))
+                .await;
+        }
+
         if server.advanced_config.server_links.enabled {
             let mut links: Vec<Link> = Vec::new();
 

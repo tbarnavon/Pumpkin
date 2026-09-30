@@ -176,3 +176,5 @@ pub mod player_login_query_response;
 pub use player_login_query_response::*;
 pub mod player_sleep_check;
 pub use player_sleep_check::*;
+pub mod player_configuration_payload;
+pub use player_configuration_payload::*;

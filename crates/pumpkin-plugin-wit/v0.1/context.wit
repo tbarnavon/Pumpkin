@@ -55,6 +55,12 @@ interface context {
         /// Registering a channel again replaces its payload.
         register-login-query: func(channel: string, payload: list<u8>);
 
+        /// Sends `payload` on `channel` to every Java client at the start of the configuration
+        /// phase, like Fabric's `ServerConfigurationNetworking.send` from a configuration task.
+        /// Payloads the client sends back during configuration fire
+        /// `player-configuration-payload-event`. Registering a channel again replaces it.
+        register-configuration-payload: func(channel: string, payload: list<u8>);
+
         /// Registers block hooks for the given namespaced block names. The host calls
         /// `handle-block-hook` with `handler-id` for each hook in `hooks`.
         register-block-hooks: func(handler-id: u32, blocks: list<string>, hooks: block-hooks) -> result<_, string>;

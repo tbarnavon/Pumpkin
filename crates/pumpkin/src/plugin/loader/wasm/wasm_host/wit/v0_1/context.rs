@@ -1495,6 +1495,9 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
                     crate::plugin::api::events::player::player_sleep_check::PlayerSleepCheckEvent,
                 >(ctx, &handler, priority, blocking);
             }
+            EventType::PlayerConfigurationPayloadEvent => {
+                register_typed_event::<crate::plugin::api::events::player::player_configuration_payload::PlayerConfigurationPayloadEvent>(ctx, &handler, priority, blocking);
+            }
             event_type @ (EventType::PacketReceivedEvent
             | EventType::PacketSentEvent
             | EventType::ServerCommandEvent
@@ -1771,6 +1774,16 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
 
         let context_res = self.get(&context)?;
         Ok(context_res.register_permission(util_permission))
+    }
+
+    async fn register_configuration_payload(
+        &mut self,
+        _context: Resource<WitContext>,
+        channel: String,
+        payload: Vec<u8>,
+    ) -> wasmtime::Result<()> {
+        crate::plugin::login_queries::register_configuration(channel, payload);
+        Ok(())
     }
 
     async fn register_login_query(

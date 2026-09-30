@@ -242,3 +242,6 @@ pub use player_login_query_response::*;
 /// A player tries to sleep; set `time-ok` or `monsters-ok` to allow or forbid it (Fabric `EntitySleepEvents.ALLOW_SLEEP_TIME` and `ALLOW_NEARBY_MONSTERS`).
 pub mod player_sleep_check;
 pub use player_sleep_check::*;
+/// A client sent a custom payload during the configuration phase (Fabric `ServerConfigurationNetworking` receivers). Cancel to disconnect the client.
+pub mod player_configuration_payload;
+pub use player_configuration_payload::*;

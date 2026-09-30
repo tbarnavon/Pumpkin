@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 60 (58 %) | 17 (16 %) | 27 (26 %) |
+| 60 (58 %) | 18 (17 %) | 26 (25 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -56,7 +56,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | `ServerPlayNetworking.registerGlobalReceiver` | ✅ | core | `player-custom-payload-event` | |
 | `PayloadTypeRegistry` (payload codecs) | ➖ | - | the plugin encodes its own bytes | |
 | `ServerPlayConnectionEvents` INIT / JOIN / DISCONNECT | ✅ | core | `player-join-event`, `player-leave-event` | |
-| `ServerConfigurationNetworking`, configuration tasks | ❌ | core | no plugin hook in the configuration phase | |
+| `ServerConfigurationNetworking`, configuration tasks | 🟡 | core | data first: `context.register-configuration-payload` is sent to every client in configuration, replies fire `player-configuration-payload-event` (cancel to disconnect); no tasks that hold configuration until a reply | |
 | `ServerLoginNetworking`, login queries | ✅ | core | `player-pre-login-event`, `player-login-event`; data first: `context.register-login-query(channel, payload)` is sent to every client before login success, answers in `player-login-query-response-event` (cancel to disconnect) | |
 | `EntityTrackingEvents` START / STOP_TRACKING | ✅ | core | `player-start-tracking-event`, `player-stop-tracking-event` | |
 | `PlayerLookup.tracking(...)` (players watching a chunk, block entity or entity) | ✅ | core | `server.get-players-tracking-chunk`, `get-players-tracking-entity` | ✅ `count_update` |
