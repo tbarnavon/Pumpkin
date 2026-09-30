@@ -92,7 +92,7 @@ enum CallData {
         world: Arc<World>,
         pos: BlockPos,
         state: BlockStateId,
-        random: bool,
+        kind: TickKind,
     },
     EntityContact {
         world: Arc<World>,
@@ -117,6 +117,17 @@ enum CallData {
         source: &'static str,
     },
 }
+
+#[derive(Clone, Copy)]
+enum TickKind {
+    Scheduled,
+    Random,
+    BlockEntity,
+}
+
+/// Whether any plugin block asked for the `ticker` hook, so worlds only look for plugin block
+/// entities to tick when one did.
+pub static ANY_TICKER: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 
 /// What a hook call returned, with item-stack resources already resolved.
 pub enum HookReply {
@@ -217,6 +228,31 @@ impl PluginBlock {
             InteractionResult::Consume => BlockActionResult::Consume,
             InteractionResult::Fail => BlockActionResult::Fail,
         }
+    }
+
+    /// Whether the plugin asked for the `ticker` hook.
+    #[must_use]
+    pub fn ticks_block_entities(&self) -> bool {
+        self.hooks.contains(BlockHooks::TICKER)
+    }
+
+    /// The block entity ticker, for a block that opted in with `ticker`.
+    pub fn block_entity_tick(
+        &self,
+        server: &Server,
+        world: &Arc<World>,
+        pos: BlockPos,
+        state: BlockStateId,
+    ) {
+        self.invoke(
+            server,
+            CallData::Tick {
+                world: world.clone(),
+                pos,
+                state,
+                kind: TickKind::BlockEntity,
+            },
+        );
     }
 
     /// `Block.attack`. Returns `true` when the plugin handled the click; the caller then keeps a
@@ -378,17 +414,17 @@ fn build_call(
             world,
             pos,
             state: block_state,
-            random,
+            kind,
         } => {
             let tick = Tick {
                 world: state.add::<WitWorld>(world)?,
                 pos: to_wit_pos(pos),
                 state: block_state.as_u16(),
             };
-            if random {
-                BlockCall::RandomTick(tick)
-            } else {
-                BlockCall::ScheduledTick(tick)
+            match kind {
+                TickKind::Scheduled => BlockCall::ScheduledTick(tick),
+                TickKind::Random => BlockCall::RandomTick(tick),
+                TickKind::BlockEntity => BlockCall::BlockEntityTick(tick),
             }
         }
         CallData::EntityContact {
@@ -637,7 +673,7 @@ impl BlockBehaviour for PluginBlock {
                 world: args.world.clone(),
                 pos: *args.position,
                 state: args.world.get_block_state_id(args.position),
-                random: true,
+                kind: TickKind::Random,
             },
         );
     }
@@ -709,7 +745,7 @@ impl BlockBehaviour for PluginBlock {
                 world: args.world.clone(),
                 pos: *args.position,
                 state: args.world.get_block_state_id(args.position),
-                random: false,
+                kind: TickKind::Scheduled,
             },
         );
     }

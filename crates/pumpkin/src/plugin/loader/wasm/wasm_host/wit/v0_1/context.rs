@@ -1833,6 +1833,9 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
         if !server.advanced_config.modded.enabled {
             return Ok(Err(super::modded::DISABLED.to_string()));
         }
+        if hooks.contains(pumpkin::plugin::modded::BlockHooks::TICKER) {
+            super::modded::ANY_TICKER.store(true, std::sync::atomic::Ordering::Relaxed);
+        }
         let behaviour = Arc::new(super::modded::PluginBlock {
             plugin,
             handler_id,

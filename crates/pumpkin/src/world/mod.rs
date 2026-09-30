@@ -1674,6 +1674,7 @@ impl World {
                 be.tick(self);
             }
         });
+        self.tick_plugin_block_entities(server, &active_chunks);
         // Drained after all ticks, so changes (hopper -> chest) land in the same tick.
         let guard = be_handle.enter();
         self.flush_comparator_updates(&block_entities);
@@ -6394,6 +6395,41 @@ impl World {
                     chunk.mark_dirty(true);
                 }
             });
+    }
+
+    /// Runs the `ticker` hook of plugin blocks that asked for it, for their block entities in
+    /// ticking chunks. Does nothing unless a plugin registered one.
+    fn tick_plugin_block_entities(
+        self: &Arc<Self>,
+        server: &Arc<Server>,
+        active_chunks: &FxHashSet<Vector2<i32>>,
+    ) {
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::ANY_TICKER;
+        if !ANY_TICKER.load(std::sync::atomic::Ordering::Relaxed) {
+            return;
+        }
+        for chunk_pos in active_chunks {
+            let positions: Vec<BlockPos> = self
+                .level
+                .read_chunk_sync(chunk_pos, |chunk| {
+                    chunk
+                        .pending_block_entities
+                        .lock()
+                        .unwrap_or_else(std::sync::PoisonError::into_inner)
+                        .keys()
+                        .copied()
+                        .collect()
+                })
+                .unwrap_or_default();
+            for pos in positions {
+                let state = self.get_block_state_id(&pos);
+                if let Some(plugin) = self.block_registry.plugin_block(state.to_block().id)
+                    && plugin.ticks_block_entities()
+                {
+                    plugin.block_entity_tick(server, self, pos, state);
+                }
+            }
+        }
     }
 
     /// Fires `BlockEntityLoadEvent` or `BlockEntityUnloadEvent`.

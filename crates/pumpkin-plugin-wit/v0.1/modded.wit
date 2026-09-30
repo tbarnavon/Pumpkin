@@ -47,6 +47,10 @@ interface modded {
         /// `Block.stepOn`: every tick an entity walks on top of the block. Opt in only for
         /// blocks that need it; it is called every tick.
         step-on,
+        /// A block entity ticker (`EntityBlock.getTicker`): every tick for each block of this
+        /// kind that has block-entity data, in chunks that tick. Opt in only for blocks that
+        /// need it; it is called every tick.
+        ticker,
     }
 
     /// Where a player's crosshair hit the block.
@@ -141,6 +145,7 @@ interface modded {
         update-shape(shape-update),
         entity-inside(entity-contact),
         step-on(entity-contact),
+        block-entity-tick(tick),
     }
 
     /// `InteractionResult`.
