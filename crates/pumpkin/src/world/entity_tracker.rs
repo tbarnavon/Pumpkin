@@ -450,8 +450,40 @@ impl TrackedEntity {
         }
     }
 
+    /// Fires `PlayerStartTrackingEvent` or `PlayerStopTrackingEvent` for this entity.
+    fn fire_tracking(&self, player: &Player, start: bool) {
+        let world = player.world();
+        let Some(server) = world.server.upgrade() else {
+            return;
+        };
+        let Some(player) = world.get_player_by_uuid(player.gameprofile.id) else {
+            return;
+        };
+        let entity_type = format!(
+            "minecraft:{}",
+            self.entity.get_entity().entity_type.resource_name
+        );
+        if start {
+            let mut event = crate::plugin::api::events::player::player_start_tracking::PlayerStartTrackingEvent {
+                player,
+                entity_id: self.entity_id,
+                entity_type,
+            };
+            server.plugin_manager.fire_blocking(&server, &mut event);
+        } else {
+            let mut event =
+                crate::plugin::api::events::player::player_stop_tracking::PlayerStopTrackingEvent {
+                    player,
+                    entity_id: self.entity_id,
+                    entity_type,
+                };
+            server.plugin_manager.fire_blocking(&server, &mut event);
+        }
+    }
+
     #[allow(clippy::too_many_lines)]
     pub fn add_pairing(&self, player: &Arc<Player>) {
+        self.fire_tracking(player, true);
         player.client.try_enqueue_spawn_packet(&self.entity);
         player.try_restore_vehicle(&self.entity);
 
@@ -590,6 +622,7 @@ impl TrackedEntity {
     }
 
     pub fn remove_pairing(&self, player: &Player) {
+        self.fire_tracking(player, false);
         let entity_ids = [self.entity_id.into()];
         match player.client.as_ref() {
             ClientPlatform::Java(client) => {
@@ -623,6 +656,7 @@ impl TrackedEntity {
         let mut java_recipients = Vec::new();
         let mut bedrock_recipients = Vec::new();
         for p in recipients {
+            self.fire_tracking(p, false);
             match p.client.as_ref() {
                 ClientPlatform::Java(_) => java_recipients.push(p),
                 ClientPlatform::Bedrock(be_client) => bedrock_recipients.push(be_client),

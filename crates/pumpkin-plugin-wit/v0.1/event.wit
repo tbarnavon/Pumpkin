@@ -277,6 +277,20 @@ interface event {
         cancelled: bool
     }
 
+    /// An entity became visible to a player's client (Fabric `EntityTrackingEvents.START_TRACKING`).
+    record player-start-tracking-event-data {
+        player: player,
+        entity-id: s32,
+        entity-type: string,
+    }
+
+    /// An entity stopped being visible to a player's client (Fabric `EntityTrackingEvents.STOP_TRACKING`).
+    record player-stop-tracking-event-data {
+        player: player,
+        entity-id: s32,
+        entity-type: string,
+    }
+
     record block-break-event-data {
         player: option<player>,
         block: string,
@@ -1958,6 +1972,8 @@ interface event {
         inventory-close-event,
         block-redstone-event,
         block-break-event,
+        player-stop-tracking-event,
+        player-start-tracking-event,
         player-pick-item-entity-event,
         player-pick-item-block-event,
         block-break-canceled-event,
@@ -2239,6 +2255,8 @@ interface event {
         inventory-close-event(inventory-close-event-data),
         block-redstone-event(block-redstone-event-data),
         block-break-event(block-break-event-data),
+        player-stop-tracking-event(player-stop-tracking-event-data),
+        player-start-tracking-event(player-start-tracking-event-data),
         player-pick-item-entity-event(player-pick-item-entity-event-data),
         player-pick-item-block-event(player-pick-item-block-event-data),
         block-break-canceled-event(block-break-canceled-event-data),

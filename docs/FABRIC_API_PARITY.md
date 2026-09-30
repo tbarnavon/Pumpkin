@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 54 (52 %) | 14 (13 %) | 36 (35 %) |
+| 55 (53 %) | 14 (13 %) | 35 (34 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -58,7 +58,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | `ServerPlayConnectionEvents` INIT / JOIN / DISCONNECT | ✅ | core | `player-join-event`, `player-leave-event` | |
 | `ServerConfigurationNetworking`, configuration tasks | ❌ | core | no plugin hook in the configuration phase | |
 | `ServerLoginNetworking`, login queries | 🟡 | core | `player-pre-login-event`, `player-login-event`; no login query/response | |
-| `EntityTrackingEvents` START / STOP_TRACKING | ❌ | core | | |
+| `EntityTrackingEvents` START / STOP_TRACKING | ✅ | core | `player-start-tracking-event`, `player-stop-tracking-event` | |
 | `PlayerLookup.tracking(...)` (players watching a chunk, block entity or entity) | ✅ | core | `server.get-players-tracking-chunk`, `get-players-tracking-entity` | ✅ `count_update` |
 
 ### fabric-registry-sync-v0

@@ -168,3 +168,7 @@ pub mod player_pick_item_block;
 pub use player_pick_item_block::*;
 pub mod player_pick_item_entity;
 pub use player_pick_item_entity::*;
+pub mod player_start_tracking;
+pub use player_start_tracking::*;
+pub mod player_stop_tracking;
+pub use player_stop_tracking::*;

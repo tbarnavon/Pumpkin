@@ -2700,3 +2700,81 @@ impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
         panic!("Cannot construct PlayerPickItemEntityEvent from WASM")
     }
 }
+
+impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
+    for crate::plugin::api::events::player::player_start_tracking::PlayerStartTrackingEvent
+{
+    fn to_wasm_event(
+        &self,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event {
+        #[allow(unused_imports)]
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::{
+            to_wasm_block_position, to_wasm_position,
+        };
+        let _ = &state;
+        crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::PlayerStartTrackingEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::PlayerStartTrackingEventData {
+                player: state
+                    .add(self.player.clone())
+                    .expect("failed to add player resource"),
+                entity_id: self.entity_id,
+                entity_type: self.entity_type.clone(),
+            },
+        )
+    }
+
+    fn apply_wasm_event(
+        &mut self,
+        event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) {
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(
+        _event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        _state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> Self {
+        panic!("Cannot construct PlayerStartTrackingEvent from WASM")
+    }
+}
+
+impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
+    for crate::plugin::api::events::player::player_stop_tracking::PlayerStopTrackingEvent
+{
+    fn to_wasm_event(
+        &self,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event {
+        #[allow(unused_imports)]
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::{
+            to_wasm_block_position, to_wasm_position,
+        };
+        let _ = &state;
+        crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::PlayerStopTrackingEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::PlayerStopTrackingEventData {
+                player: state
+                    .add(self.player.clone())
+                    .expect("failed to add player resource"),
+                entity_id: self.entity_id,
+                entity_type: self.entity_type.clone(),
+            },
+        )
+    }
+
+    fn apply_wasm_event(
+        &mut self,
+        event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) {
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(
+        _event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        _state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> Self {
+        panic!("Cannot construct PlayerStopTrackingEvent from WASM")
+    }
+}

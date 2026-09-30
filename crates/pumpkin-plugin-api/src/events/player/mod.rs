@@ -230,3 +230,9 @@ pub use player_pick_item_block::*;
 /// A player middle-clicks an entity (Fabric `PlayerPickItemEvents.ENTITY`). Set `item` to give that stack instead of the spawn egg; cancel to give nothing.
 pub mod player_pick_item_entity;
 pub use player_pick_item_entity::*;
+/// An entity became visible to a player's client (Fabric `EntityTrackingEvents.START_TRACKING`).
+pub mod player_start_tracking;
+pub use player_start_tracking::*;
+/// An entity stopped being visible to a player's client (Fabric `EntityTrackingEvents.STOP_TRACKING`).
+pub mod player_stop_tracking;
+pub use player_stop_tracking::*;

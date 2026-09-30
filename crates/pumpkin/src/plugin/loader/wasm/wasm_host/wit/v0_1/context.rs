@@ -1466,6 +1466,12 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
             EventType::PlayerPickItemEntityEvent => {
                 register_typed_event::<crate::plugin::api::events::player::player_pick_item_entity::PlayerPickItemEntityEvent>(ctx, &handler, priority, blocking);
             }
+            EventType::PlayerStartTrackingEvent => {
+                register_typed_event::<crate::plugin::api::events::player::player_start_tracking::PlayerStartTrackingEvent>(ctx, &handler, priority, blocking);
+            }
+            EventType::PlayerStopTrackingEvent => {
+                register_typed_event::<crate::plugin::api::events::player::player_stop_tracking::PlayerStopTrackingEvent>(ctx, &handler, priority, blocking);
+            }
             event_type @ (EventType::PacketReceivedEvent
             | EventType::PacketSentEvent
             | EventType::ServerCommandEvent
