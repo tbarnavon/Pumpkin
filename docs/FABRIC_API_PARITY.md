@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 59 (57 %) | 18 (17 %) | 27 (26 %) |
+| 60 (58 %) | 17 (16 %) | 27 (26 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -57,7 +57,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | `PayloadTypeRegistry` (payload codecs) | ➖ | - | the plugin encodes its own bytes | |
 | `ServerPlayConnectionEvents` INIT / JOIN / DISCONNECT | ✅ | core | `player-join-event`, `player-leave-event` | |
 | `ServerConfigurationNetworking`, configuration tasks | ❌ | core | no plugin hook in the configuration phase | |
-| `ServerLoginNetworking`, login queries | 🟡 | core | `player-pre-login-event`, `player-login-event`; no login query/response | |
+| `ServerLoginNetworking`, login queries | ✅ | core | `player-pre-login-event`, `player-login-event`; data first: `context.register-login-query(channel, payload)` is sent to every client before login success, answers in `player-login-query-response-event` (cancel to disconnect) | |
 | `EntityTrackingEvents` START / STOP_TRACKING | ✅ | core | `player-start-tracking-event`, `player-stop-tracking-event` | |
 | `PlayerLookup.tracking(...)` (players watching a chunk, block entity or entity) | ✅ | core | `server.get-players-tracking-chunk`, `get-players-tracking-entity` | ✅ `count_update` |
 

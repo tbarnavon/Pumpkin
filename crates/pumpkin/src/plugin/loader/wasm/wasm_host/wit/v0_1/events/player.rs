@@ -2778,3 +2778,44 @@ impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
         panic!("Cannot construct PlayerStopTrackingEvent from WASM")
     }
 }
+
+impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent for crate::plugin::api::events::player::player_login_query_response::PlayerLoginQueryResponseEvent {
+    fn to_wasm_event(
+        &self,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event {
+        #[allow(unused_imports)]
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::{
+            to_wasm_block_position, to_wasm_position,
+        };
+        let _ = &state;
+        crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::PlayerLoginQueryResponseEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::PlayerLoginQueryResponseEventData {
+                player_name: self.player_name.clone(),
+                player_uuid: self.player_uuid.to_string(),
+                channel: self.channel.clone(),
+                understood: self.understood,
+                data: self.data.clone(),
+                cancelled: self.cancelled,
+            },
+        )
+    }
+
+    fn apply_wasm_event(
+        &mut self,
+        event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) {
+        if let crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::PlayerLoginQueryResponseEvent(data) = &event {
+            self.cancelled = data.cancelled;
+        }
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(
+        _event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        _state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> Self {
+        panic!("Cannot construct PlayerLoginQueryResponseEvent from WASM")
+    }
+}

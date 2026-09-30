@@ -155,6 +155,30 @@ impl PendingConnection {
             return Some(PacketHandlerResult::Stop);
         }
 
+        // Plugin login queries first; login success follows the last answer.
+        let queries = crate::plugin::login_queries::all();
+        if !queries.is_empty() {
+            self.gameprofile = Some(profile.clone());
+            for (i, (channel, payload)) in queries.into_iter().enumerate() {
+                let id = crate::plugin::login_queries::FIRST_MESSAGE_ID + i as i32;
+                self.send_packet_now(
+                    &pumpkin_protocol::java::client::login::CLoginPluginRequest::new(
+                        pumpkin_protocol::codec::var_int::VarInt(id),
+                        &channel,
+                        &payload,
+                    ),
+                )
+                .await;
+                self.login_queries.push((id, channel));
+            }
+            return None;
+        }
+        self.send_login_success(profile).await;
+        None
+    }
+
+    /// `ClientboundLoginFinishedPacket`.
+    pub(super) async fn send_login_success(&mut self, profile: &GameProfile) {
         let props = profile.properties.load();
         let packet = CLoginSuccess::new(
             &profile.id,
@@ -164,7 +188,6 @@ impl PendingConnection {
             uuid::Uuid::new_v4(),
         );
         self.send_packet_now(&packet).await;
-        None
     }
 
     async fn authenticate(

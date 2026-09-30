@@ -8,6 +8,31 @@ impl PendingConnection {
         plugin_response: SLoginPluginResponse,
     ) -> Option<PacketHandlerResult> {
         debug!("Handling plugin");
+        if let Some(index) = self
+            .login_queries
+            .iter()
+            .position(|(id, _)| *id == plugin_response.message_id.0)
+        {
+            let (_, channel) = self.login_queries.remove(index);
+            let profile = self.gameprofile.clone()?;
+            let mut event = crate::plugin::api::events::player::player_login_query_response::PlayerLoginQueryResponseEvent {
+                player_name: profile.name.clone(),
+                player_uuid: profile.id,
+                channel,
+                understood: plugin_response.data.is_some(),
+                data: plugin_response.data.map(Vec::from),
+                cancelled: false,
+            };
+            server.plugin_manager.fire(server, &mut event).await;
+            if event.cancelled {
+                self.kick(TextComponent::text("Disconnected")).await;
+                return Some(PacketHandlerResult::Stop);
+            }
+            if self.login_queries.is_empty() {
+                self.send_login_success(&profile).await;
+            }
+            return None;
+        }
         let proxy_config = &server.advanced_config.networking.proxy;
         if proxy_config.vine.enabled {
             let expected_challenge = self.vine_challenge.take();

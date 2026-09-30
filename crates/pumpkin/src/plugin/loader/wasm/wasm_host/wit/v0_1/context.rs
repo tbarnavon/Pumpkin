@@ -1487,6 +1487,9 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
                     crate::plugin::api::events::server::server_stopping::ServerStoppingEvent,
                 >(ctx, &handler, priority, blocking);
             }
+            EventType::PlayerLoginQueryResponseEvent => {
+                register_typed_event::<crate::plugin::api::events::player::player_login_query_response::PlayerLoginQueryResponseEvent>(ctx, &handler, priority, blocking);
+            }
             event_type @ (EventType::PacketReceivedEvent
             | EventType::PacketSentEvent
             | EventType::ServerCommandEvent
@@ -1763,6 +1766,16 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
 
         let context_res = self.get(&context)?;
         Ok(context_res.register_permission(util_permission))
+    }
+
+    async fn register_login_query(
+        &mut self,
+        _context: Resource<WitContext>,
+        channel: String,
+        payload: Vec<u8>,
+    ) -> wasmtime::Result<()> {
+        crate::plugin::login_queries::register(channel, payload);
+        Ok(())
     }
 
     async fn register_block_hooks(

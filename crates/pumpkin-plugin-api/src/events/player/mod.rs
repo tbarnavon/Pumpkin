@@ -236,3 +236,6 @@ pub use player_start_tracking::*;
 /// An entity stopped being visible to a player's client (Fabric `EntityTrackingEvents.STOP_TRACKING`).
 pub mod player_stop_tracking;
 pub use player_stop_tracking::*;
+/// A client answered a login query registered with `context.register-login-query` (Fabric `ServerLoginNetworking` receivers). Cancel to disconnect the client.
+pub mod player_login_query_response;
+pub use player_login_query_response::*;

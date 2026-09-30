@@ -75,6 +75,8 @@ pub struct PendingConnection {
     pub packet_limiter: PacketRateLimiter,
     pub verify_token: Option<[u8; 4]>,
     pub vine_challenge: Option<[u8; 16]>,
+    /// Plugin login queries still waiting for an answer: message id and channel.
+    pub login_queries: Vec<(i32, String)>,
     /// Fabric configuration handshake, only when mods are installed.
     pub fabric: Option<pumpkin_fabric::handshake::FabricHandshake>,
     /// For the connection packet events.
@@ -106,6 +108,7 @@ impl PendingConnection {
             packet_limiter,
             verify_token: None,
             vine_challenge: None,
+            login_queries: Vec::new(),
             fabric: None,
             server,
         }

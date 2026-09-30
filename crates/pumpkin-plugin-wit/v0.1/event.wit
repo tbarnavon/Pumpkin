@@ -315,6 +315,18 @@ interface event {
         player-count: u32
     }
 
+    /// A client answered a login query registered with `context.register-login-query` (Fabric `ServerLoginNetworking` receivers). Cancel to disconnect the client.
+    record player-login-query-response-event-data {
+        player-name: string,
+        player-uuid: string,
+        channel: string,
+        /// Whether the client knows the channel.
+        understood: bool,
+        /// The client's answer, when it understood the query.
+        data: option<list<u8>>,
+        cancelled: bool
+    }
+
     record block-break-event-data {
         player: option<player>,
         block: string,
@@ -1996,6 +2008,7 @@ interface event {
         inventory-close-event,
         block-redstone-event,
         block-break-event,
+        player-login-query-response-event,
         server-stopping-event,
         block-entity-unload-event,
         block-entity-load-event,
@@ -2282,6 +2295,7 @@ interface event {
         inventory-close-event(inventory-close-event-data),
         block-redstone-event(block-redstone-event-data),
         block-break-event(block-break-event-data),
+        player-login-query-response-event(player-login-query-response-event-data),
         server-stopping-event(server-stopping-event-data),
         block-entity-unload-event(block-entity-unload-event-data),
         block-entity-load-event(block-entity-load-event-data),

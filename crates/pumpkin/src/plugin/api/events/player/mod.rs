@@ -172,3 +172,5 @@ pub mod player_start_tracking;
 pub use player_start_tracking::*;
 pub mod player_stop_tracking;
 pub use player_stop_tracking::*;
+pub mod player_login_query_response;
+pub use player_login_query_response::*;
