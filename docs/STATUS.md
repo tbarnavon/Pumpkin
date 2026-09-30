@@ -239,3 +239,38 @@ Real-client tests to run:
 9. Framing table: place (two halves), frame a drawer, take the result, break a framed drawer and
    place it back; retrim a drawer with a trim (sneak).
 10. Conversion upgrade with an `itemEquivalenceGroups` entry.
+
+
+## Phase 4: host APIs for the rest of Storage Drawers (2026-09-30, HANDOFF-2)
+
+Host (branch `modded`), each with its parity row:
+- `modded.register-component-stream-codec`: a plugin describes a modded component's
+  `networkSynchronized` stream codec once (composite, primitives, item stacks, lists, optionals);
+  the item stack serializer writes and reads the mod's bytes with it. Tested in
+  `pumpkin-protocol/tests/modded_component_stream_codec.rs` (`ControllerBinding`, `FrameData`).
+- `entity.get-item-stack` / `set-item-stack`, and `entity-contact.entity` (the entity itself).
+- Item hooks `stacked-on-me`, `stacked-on-other` (pickup clicks in any menu), `destroyed`
+  (item entity killed), and the `not-in-containers` flag (bundles; shulker box menus now use
+  `ShulkerBoxSlot` and the shulker box menu type, as vanilla).
+- `item-stack.get-tags` / `has-tag`.
+
+Plugin: `frame_data` and `controller_binding` codecs, hopper upgrade (`entityInside`) and magnet
+upgrade (tick chain with `activeSpeed` / `idleSpeed`), keyring keys added and taken out in the
+inventory, keyring keys spilled when it burns, `canStoreInContainers` (filled and detached),
+conversion upgrade tag allow and deny lists.
+
+Build: host clippy and tests (`pumpkin`, `pumpkin-protocol`, `pumpkin-inventory`,
+`pumpkin-data`) pass; plugin builds; server boots with the plugin (86 drawer blocks).
+
+Real-client tests to run:
+1. Framing table: place, frame a drawer, take the result; break a framed drawer and place it
+   back; framed trims, controllers and I/O as items (no disconnect).
+2. Remote upgrade (old test 4): bind on the controller front, put it in a drawer away from the
+   network, check the controller reaches it; break the controller, the upgrade becomes unbound.
+3. Hopper upgrade on a half drawer: items thrown into it go in.
+4. Magnet upgrade (levels 1-3): items dropped nearby are pulled into a drawer holding them.
+5. Keyring: right-click a key onto a keyring in the inventory (key goes on), right-click the
+   keyring with an empty cursor (first key comes off); throw a keyring with keys into lava (keys
+   drop).
+6. A drawer and a detached drawer can't go into a bundle or a shulker box.
+7. Conversion upgrade with `tagAllowList = ["c:ingots/iron"]` or an ore type/material pair.
