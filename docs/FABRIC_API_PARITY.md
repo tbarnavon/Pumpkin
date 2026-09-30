@@ -15,7 +15,7 @@ Summary (109 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 64 (59 %) | 17 (16 %) | 28 (26 %) |
+| 63 (58 %) | 18 (17 %) | 28 (26 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -109,7 +109,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 |:--|:--|:--|:--|:--|
 | Item `useOn` / `use` for modded items | ✅ | modded | modded item hooks | ✅ |
 | Read / write item components by id | ✅ | core | `item-stack.get/set/remove-component-by-id` | ✅ |
-| Keep unknown modded components (e.g. `storagedrawers:drawer_count`) | ✅ | host | `ItemStack.unknown_patch`: raw NBT on disk and on the network | ✅ GUI, drops |
+| Keep unknown modded components (e.g. `storagedrawers:drawer_count`) | 🟡 | host | `ItemStack.unknown_patch`: raw NBT on disk and on the network. On the network that is only right for components without their own stream codec (`networkSynchronized`); the client fails to decode the others and disconnects (`container_set_content`) | ✅ GUI, drops; ❌ `frame_data` (framing table, framed items) and `controller_binding` (bound remote upgrades) |
 | `DefaultItemComponentEvents` | ➖ | - | default components come from the dump | |
 | `FabricItem` (recipe remainder, attribute modifiers, reequip animation) | ❌ | modded | | |
 | `CustomDamageHandler` | ❌ | modded | | |

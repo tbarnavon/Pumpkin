@@ -188,6 +188,14 @@ Blocked on a missing host API (rows marked in `FABRIC_API_PARITY.md`):
   for an item entity being destroyed.
 - **`canStoreInContainers`** (Filled and Detached): `Item.canFitInsideContainerItems` keeps filled
   drawers out of bundles and shulker boxes. No per-item hook in the host, so they are allowed.
+- **Items with `frame_data` or `controller_binding`** (framing table, framed drawers and blocks,
+  bound remote upgrades). Both components have their own stream codec (`FrameData.STREAM_CODEC`:
+  four `ItemStack.OPTIONAL_STREAM_CODEC`; `ControllerBinding.STREAM_CODEC`: bool + three ints),
+  but the host sends every modded component as network NBT. Any packet carrying such a stack
+  fails to decode on the client, which disconnects ("Failed to decode packet
+  container_set_content" when opening the framing table). The host needs to encode modded
+  components with the mod's stream codec (a codec description in the mod dump, or a plugin
+  encoder). Seen 2026-09-30; left as is by the user's choice.
 - **Conversion upgrade tags.** `ItemStackTagMatcher` matches items sharing an allowed item tag
   (`oreTypeAllowList` x `oreMaterialAllowList`, `tagAllowList`); the host exposes no item tags.
   Equivalence groups work.
@@ -203,7 +211,16 @@ Known limits (worked around, not blocking):
 - `findLowerTier` starts from the 1x1 craft (the host can't list recipes); a shapeless 2x2 / 3x3
   recipe counts where SD needs a shaped one.
 
-Real-client tests to run (none done yet):
+Real-client results (2026-09-30):
+- Work: hoppers into and out of drawers and the controller, controller I/O (after the refresh
+  fix), left-click slot choice (after the eye ray-trace fix), drawer puller, key buttons, keyring
+  rotation.
+- Fixed while testing: controllers placed by an older build had no block entity; the attack hit
+  point is the block centre, so the plugin ray-traces from the eyes; a lost scheduled tick left the
+  controller refresh stopped.
+- Fails: framing table (disconnect, see the `frame_data` entry above).
+
+Real-client tests to run:
 1. Hopper into a controller and into a controller I/O: items go to drawers holding them first,
    then empty ones; hopper under the controller pulls items out; counts update on the drawers.
 2. Right-click the controller front with an item no drawer holds: it goes into an empty drawer
