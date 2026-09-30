@@ -1,5 +1,6 @@
 use crate::VarInt;
 use crate::codec::data_component::{DataComponentCodec, deserialize, serialize};
+use crate::codec::modded_component::ComponentStreamCodec;
 use crate::ser::{NetworkReadExt, NetworkWriteExt, ReadingError, WritingError};
 use pumpkin_data::data_component::DataComponent;
 use pumpkin_data::data_component_impl::{
@@ -39,8 +40,9 @@ fn item_component_counts(stack: &ItemStack) -> (u8, u8) {
     (to_add, to_remove)
 }
 
-/// Writes the added unknown (modded) components: raw id, then the value as a network NBT tag,
-/// which is vanilla's default stream codec for a component (`ByteBufCodecs.fromCodecWithRegistries`).
+/// Writes the added unknown (modded) components: raw id, then the value in the stream format a
+/// plugin registered for the type ([`ComponentStreamCodec`]), or else as a network NBT tag, which
+/// is vanilla's default stream codec for a component (`ByteBufCodecs.fromCodecWithRegistries`).
 fn write_unknown_added(
     stack: &ItemStack,
     length_prefixed: bool,
@@ -50,9 +52,13 @@ fn write_unknown_added(
         if let Some(data) = data {
             write.put_var_int(&VarInt(i32::from(*id)))?;
             let mut bytes = Vec::new();
-            data.clone()
-                .serialize(&mut NbtWriteHelperJava::new(&mut bytes))
-                .map_err(|e| WritingError::Message(e.to_string()))?;
+            if let Some(codec) = ComponentStreamCodec::get(*id) {
+                codec.encode(data, &mut bytes)?;
+            } else {
+                data.clone()
+                    .serialize(&mut NbtWriteHelperJava::new(&mut bytes))
+                    .map_err(|e| WritingError::Message(e.to_string()))?;
+            }
             if length_prefixed {
                 write.put_var_int(&VarInt::from(bytes.len() as i32))?;
             }
@@ -94,7 +100,10 @@ fn read_any_component_id(read: &mut impl NetworkReadExt) -> Result<ComponentId, 
         .ok_or_else(|| ReadingError::Message(format!("Unknown component ID: {id_val}")))
 }
 
-fn read_unknown_value(read: &mut impl NetworkReadExt) -> Result<NbtTag, ReadingError> {
+fn read_unknown_value(read: &mut impl NetworkReadExt, id: u16) -> Result<NbtTag, ReadingError> {
+    if let Some(codec) = ComponentStreamCodec::get(id) {
+        return codec.decode(read);
+    }
     read.get_nbt_with_version(&JavaMinecraftVersion::V_26_3)?
         .ok_or_else(|| ReadingError::Message("Missing component value".into()))
 }
@@ -310,12 +319,16 @@ fn read_length_prefixed_component(
             let mut data = vec![0u8; byte_len];
             read.read_bytes_to_buf(&mut data)?;
             let mut cursor = Cursor::new(data.as_slice());
-            let tag = NbtTag::deserialize(&mut pumpkin_nbt::deserializer::NbtReadHelperJava::new(
-                &mut cursor,
-            ))
-            .map_err(|err| {
-                ReadingError::Message(format!("Failed to decode component NBT: {err}"))
-            })?;
+            let tag = if let Some(codec) = ComponentStreamCodec::get(id) {
+                codec.decode(&mut cursor)?
+            } else {
+                NbtTag::deserialize(&mut pumpkin_nbt::deserializer::NbtReadHelperJava::new(
+                    &mut cursor,
+                ))
+                .map_err(|err| {
+                    ReadingError::Message(format!("Failed to decode component NBT: {err}"))
+                })?
+            };
             return Ok(LengthPrefixedComponent::Unknown(id, tag));
         }
     };
@@ -378,7 +391,7 @@ impl ItemStackSerializer<'_> {
             let id = match read_any_component_id(read)? {
                 ComponentId::Known(id) => id,
                 ComponentId::Unknown(id) => {
-                    unknown_patch.push((id, Some(read_unknown_value(read)?)));
+                    unknown_patch.push((id, Some(read_unknown_value(read, id)?)));
                     continue;
                 }
             };
@@ -541,7 +554,7 @@ impl ItemStackSerializer<'_> {
             let id = match read_any_component_id(read)? {
                 ComponentId::Known(id) => id,
                 ComponentId::Unknown(id) => {
-                    unknown_patch.push((id, Some(read_unknown_value(read)?)));
+                    unknown_patch.push((id, Some(read_unknown_value(read, id)?)));
                     continue;
                 }
             };

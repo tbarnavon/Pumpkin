@@ -4,6 +4,7 @@ pub mod data_component;
 pub mod item_stack_seralizer;
 pub mod little_endian;
 pub mod lp_vector_3d;
+pub mod modded_component;
 pub mod optional_int;
 pub mod recipe;
 mod u24_type;

@@ -1005,7 +1005,53 @@ impl crate::item::ItemBehaviour for PluginItem {
     }
 }
 
-impl wit::Host for PluginHostState {}
+impl wit::Host for PluginHostState {
+    async fn register_component_stream_codec(
+        &mut self,
+        component: String,
+        nodes: Vec<wit::StreamCodecNode>,
+    ) -> wasmtime::Result<Result<(), String>> {
+        use pumpkin_protocol::codec::modded_component::{ComponentStreamCodec, StreamCodecNode};
+
+        if !self
+            .server
+            .as_ref()
+            .is_some_and(|server| server.advanced_config.modded.enabled)
+        {
+            return Ok(Err(DISABLED.to_string()));
+        }
+        let Some(raw_id) = pumpkin_data::item_stack::unknown_component_id(&component) else {
+            return Ok(Err(format!("unknown modded component type {component}")));
+        };
+        let nodes = nodes
+            .into_iter()
+            .map(|node| match node {
+                wit::StreamCodecNode::Bool => StreamCodecNode::Bool,
+                wit::StreamCodecNode::Byte => StreamCodecNode::Byte,
+                wit::StreamCodecNode::Short => StreamCodecNode::Short,
+                wit::StreamCodecNode::Int => StreamCodecNode::Int,
+                wit::StreamCodecNode::Long => StreamCodecNode::Long,
+                wit::StreamCodecNode::Float => StreamCodecNode::Float,
+                wit::StreamCodecNode::Double => StreamCodecNode::Double,
+                wit::StreamCodecNode::VarInt => StreamCodecNode::VarInt,
+                wit::StreamCodecNode::VarLong => StreamCodecNode::VarLong,
+                wit::StreamCodecNode::String => StreamCodecNode::String,
+                wit::StreamCodecNode::Nbt => StreamCodecNode::Nbt,
+                wit::StreamCodecNode::ItemStack => StreamCodecNode::ItemStack,
+                wit::StreamCodecNode::OptionalItemStack => StreamCodecNode::OptionalItemStack,
+                wit::StreamCodecNode::Uuid => StreamCodecNode::Uuid,
+                wit::StreamCodecNode::BlockPos => StreamCodecNode::BlockPos,
+                wit::StreamCodecNode::Composite(fields) => StreamCodecNode::Composite(fields),
+                wit::StreamCodecNode::List(child) => StreamCodecNode::List(child),
+                wit::StreamCodecNode::Optional(child) => StreamCodecNode::Optional(child),
+            })
+            .collect();
+        Ok(ComponentStreamCodec::register(
+            raw_id,
+            ComponentStreamCodec { nodes },
+        ))
+    }
+}
 
 impl wit::HostWithStore<PluginHostState> for HasSelf<PluginHostState> {
     async fn open_menu(

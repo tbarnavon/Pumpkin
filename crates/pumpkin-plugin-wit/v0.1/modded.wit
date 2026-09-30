@@ -219,4 +219,54 @@ interface modded {
     /// `fabric-menu-api-v1:open_screen` with the type, the title and `data`, the bytes the menu
     /// type's stream codec reads.
     open-menu: func(player: borrow<player>, handler-id: u32, menu-type: string, data: list<u8>, menu: menu-definition) -> result<_, string>;
+
+    /// One node of a modded component type's stream codec. Nodes refer to their children by index
+    /// in the list given to `register-component-stream-codec`; the root is node 0. Each node says
+    /// how a part of the stored value (the NBT the type's persistent codec writes) goes on the
+    /// network.
+    variant stream-codec-node {
+        /// `ByteBufCodecs.BOOL`; NBT byte 0 or 1.
+        %bool,
+        /// `ByteBufCodecs.BYTE`.
+        byte,
+        /// `ByteBufCodecs.SHORT`.
+        short,
+        /// `ByteBufCodecs.INT`.
+        int,
+        /// `ByteBufCodecs.LONG`.
+        long,
+        /// `ByteBufCodecs.FLOAT`.
+        float,
+        /// `ByteBufCodecs.DOUBLE`.
+        double,
+        /// `ByteBufCodecs.VAR_INT`; NBT int.
+        var-int,
+        /// `ByteBufCodecs.VAR_LONG`; NBT long.
+        var-long,
+        /// `ByteBufCodecs.STRING_UTF8`.
+        %string,
+        /// `ByteBufCodecs.TAG`: any NBT value as a network NBT tag.
+        nbt,
+        /// `ItemStack.STREAM_CODEC`; NBT as `ItemStack.CODEC`.
+        item-stack,
+        /// `ItemStack.OPTIONAL_STREAM_CODEC`; NBT as `ItemStack.OPTIONAL_CODEC` (`{}` when empty).
+        optional-item-stack,
+        /// `UUIDUtil.STREAM_CODEC`; NBT int array of 4.
+        uuid,
+        /// `BlockPos.STREAM_CODEC`; NBT int array of 3.
+        block-pos,
+        /// `StreamCodec.composite`: an NBT compound, written field by field in this order, each
+        /// as (NBT key, node index).
+        composite(list<tuple<string, u32>>),
+        /// `ByteBufCodecs.list()`: an NBT list of the node.
+        %list(u32),
+        /// `ByteBufCodecs.optional()`: a bool, then the node when present. As a composite field,
+        /// an absent key is empty.
+        optional(u32),
+    }
+
+    /// Gives a modded component type (like `storagedrawers:frame_data`) its stream codec, for types
+    /// registered with `networkSynchronized(...)`. Without one, the host sends the value as a
+    /// network NBT tag, vanilla's default stream codec. Replaces an earlier codec for the type.
+    register-component-stream-codec: func(component: string, nodes: list<stream-codec-node>) -> result<_, string>;
 }
