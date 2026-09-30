@@ -29,7 +29,7 @@ use super::pumpkin::plugin::item_stack::ItemStack as WitItemStack;
 use super::pumpkin::plugin::menu::MenuDefinition;
 use super::pumpkin::plugin::modded::{
     self as wit, BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, EntityContact, Interaction,
-    InteractionResult, ItemCall, ItemHooks, ItemUse, ItemUseOnBlock,
+    InteractionResult, ItemCall, ItemHooks, ItemInventoryTick, ItemUse, ItemUseOnBlock,
     NeighborChange, Placement, Removal, ShapeUpdate, Tick,
 };
 use super::pumpkin::plugin::player::Player as WitPlayer;
@@ -739,6 +739,13 @@ enum ItemCallData {
         hand: WitHand,
         stack: pumpkin_data::item_stack::ItemStack,
     },
+    InventoryTick {
+        world: Arc<World>,
+        player: Arc<Player>,
+        slot: u32,
+        selected: bool,
+        stack: pumpkin_data::item_stack::ItemStack,
+    },
 }
 
 fn build_item_call(state: &mut PluginHostState, data: ItemCallData) -> wasmtime::Result<ItemCall> {
@@ -772,6 +779,19 @@ fn build_item_call(state: &mut PluginHostState, data: ItemCallData) -> wasmtime:
             hand,
             stack: state.add::<WitItemStack>(Arc::new(Mutex::new(stack)))?,
         }),
+        ItemCallData::InventoryTick {
+            world,
+            player,
+            slot,
+            selected,
+            stack,
+        } => ItemCall::InventoryTick(ItemInventoryTick {
+            world: state.add::<WitWorld>(world)?,
+            player: state.add::<WitPlayer>(player)?,
+            slot,
+            selected,
+            stack: state.add::<WitItemStack>(Arc::new(Mutex::new(stack)))?,
+        }),
     })
 }
 
@@ -789,6 +809,36 @@ impl PluginItem {
             (Some(a), Some(b)) => Arc::ptr_eq(&a.plugin, &b.plugin) && a.handler_id == b.handler_id,
             _ => false,
         }
+    }
+
+    /// `Item.inventoryTick` for a stack in `player`'s inventory, when the plugin opted in.
+    pub fn inventory_tick(
+        &self,
+        server: &Server,
+        player: &Arc<Player>,
+        slot: usize,
+        selected: bool,
+        stack: pumpkin_data::item_stack::ItemStack,
+    ) {
+        if !self.hooks.contains(ItemHooks::INVENTORY_TICK) {
+            return;
+        }
+        self.invoke(
+            server,
+            ItemCallData::InventoryTick {
+                world: player.world(),
+                player: player.clone(),
+                slot: slot as u32,
+                selected,
+                stack,
+            },
+        );
+    }
+
+    /// Whether the plugin asked for `inventory-tick` calls.
+    #[must_use]
+    pub fn ticks_in_inventory(&self) -> bool {
+        self.hooks.contains(ItemHooks::INVENTORY_TICK)
     }
 
     fn invoke(&self, server: &Server, data: ItemCallData) -> Option<InteractionResult> {

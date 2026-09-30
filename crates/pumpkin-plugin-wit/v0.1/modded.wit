@@ -168,6 +168,9 @@ interface modded {
         use-on-block,
         /// `Item.use`: right click in the air.
         %use,
+        /// `Item.inventoryTick`: every tick for each stack of the item in a player's
+        /// inventory. Opt in only for items that need it; it is called every tick.
+        inventory-tick,
     }
 
     record item-use-on-block {
@@ -190,9 +193,21 @@ interface modded {
         stack: item-stack,
     }
 
+    record item-inventory-tick {
+        %world: %world,
+        player: player,
+        /// Inventory slot: 0-8 hotbar, 9-35 main, 36-39 armor, 40 offhand.
+        slot: u32,
+        /// Whether the slot is the selected hotbar slot.
+        selected: bool,
+        /// A copy of the stack. Change it through the player's inventory.
+        stack: item-stack,
+    }
+
     variant item-call {
         use-on-block(item-use-on-block),
         %use(item-use),
+        inventory-tick(item-inventory-tick),
     }
 
     /// Opens a menu of a modded menu type, like Fabric's `ExtendedMenuProvider`: the client gets

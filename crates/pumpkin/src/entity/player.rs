@@ -2766,6 +2766,8 @@ impl Player {
             }
         }
 
+        self.tick_plugin_items(server);
+
         // Statistics updates
         if let Ok(mut stats) = self.stats.try_lock() {
             stats.increment_custom(statistics::CustomStatistic::PlayTime, 1);
@@ -4463,6 +4465,36 @@ impl Player {
             }) {
                 client.try_enqueue_packet(data);
             }
+        }
+    }
+
+    /// `Item.inventoryTick` for the plugin items that opted in; nothing else is looked at.
+    fn tick_plugin_items(&self, server: &Server) {
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginItem;
+        let inventory = self.inventory();
+        let selected = usize::from(inventory.get_selected_slot());
+        let mut player = None;
+        for slot in 0..pumpkin_inventory::inventory::Inventory::size(inventory.as_ref()) {
+            let stack =
+                pumpkin_inventory::inventory::Inventory::get_stack(inventory.as_ref(), slot);
+            if stack.is_empty() {
+                continue;
+            }
+            let Some(item) = server
+                .item_registry
+                .get_pumpkin_item(stack.item.id)
+                .and_then(|behaviour| behaviour.as_any().downcast_ref::<PluginItem>())
+                .filter(|item| item.ticks_in_inventory())
+            else {
+                continue;
+            };
+            let Some(player) = player
+                .get_or_insert_with(|| self.world().get_player_by_id(self.entity_id()))
+                .clone()
+            else {
+                return;
+            };
+            item.inventory_tick(server, &player, slot, slot == selected, stack);
         }
     }
 

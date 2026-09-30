@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 62 (60 %) | 18 (17 %) | 24 (23 %) |
+| 63 (61 %) | 18 (17 %) | 23 (22 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -258,7 +258,7 @@ keep their native behaviour.
 | `Block.entityInside`, `stepOn` | ✅ | modded | opt-in `entity-inside` and `step-on` hooks: called every tick, only for blocks registered with them | |
 | `BlockEntity` ticker | 🟡 | modded | data first: no per-tick calls; a block reschedules itself with `world.schedule-block-tick`, and hopper/signal work is host-held (`set-item-storage`, `set-redstone-output`) | ✅ hopper/magnet upgrades |
 | `Item.useOn` / `use` | ✅ | modded | item hooks | ✅ |
-| `Item.inventoryTick` | ❌ | modded | | |
+| `Item.inventoryTick` | ✅ | modded | opt-in `inventory-tick` item hook: called every tick for each stack in a player's inventory, only for items registered with it | |
 | Find entities in an area | ✅ | core | `world.get-entities-in-box`, `entity.get-nearby-entities` | ✅ magnet |
 
 ## Open items before an upstream PR
