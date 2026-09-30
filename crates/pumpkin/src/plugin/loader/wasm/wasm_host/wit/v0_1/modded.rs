@@ -12,8 +12,9 @@ use wasmtime::component::{Access, HasSelf, Resource};
 
 use crate::block::registry::BlockActionResult;
 use crate::block::{
-    BlockBehaviour, NormalUseArgs, OnNeighborUpdateArgs, OnPlaceArgs, OnScheduledTickArgs,
-    PlayerPlacedArgs, RandomTickArgs, UseWithItemArgs,
+    BlockBehaviour, EmitsRedstonePowerArgs, GetComparatorOutputArgs, GetRedstonePowerArgs,
+    NormalUseArgs, OnNeighborUpdateArgs, OnPlaceArgs, OnScheduledTickArgs, PlayerPlacedArgs,
+    RandomTickArgs, UseWithItemArgs,
 };
 use crate::entity::EntityBase;
 use crate::entity::player::Player;
@@ -502,6 +503,30 @@ impl BlockBehaviour for PluginBlock {
     fn use_with_item(&self, _args: UseWithItemArgs<'_>) -> BlockActionResult {
         // Vanilla `useItemOn` defaults to trying `useWithoutItem`, which is where `use` runs.
         BlockActionResult::PassToDefaultBlockAction
+    }
+
+    fn emits_redstone_power(&self, _args: EmitsRedstonePowerArgs<'_>) -> bool {
+        self.hooks.contains(BlockHooks::SIGNAL_SOURCE)
+    }
+
+    fn get_weak_redstone_power(&self, args: GetRedstonePowerArgs<'_>) -> u8 {
+        if !self.hooks.contains(BlockHooks::SIGNAL_SOURCE) {
+            return 0;
+        }
+        args.world.plugin_signals(args.position).weak
+    }
+
+    fn get_strong_redstone_power(&self, args: GetRedstonePowerArgs<'_>) -> u8 {
+        if !self.hooks.contains(BlockHooks::SIGNAL_SOURCE) {
+            return 0;
+        }
+        args.world.plugin_signals(args.position).strong
+    }
+
+    fn get_comparator_output(&self, args: GetComparatorOutputArgs<'_>) -> Option<u8> {
+        self.hooks
+            .contains(BlockHooks::ANALOG_OUTPUT)
+            .then(|| args.world.plugin_signals(args.position).comparator)
     }
 
     fn random_tick(&self, args: RandomTickArgs<'_>) {

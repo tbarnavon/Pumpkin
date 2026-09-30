@@ -1132,7 +1132,14 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
             },
         );
         Ok(nbt.map(|mut nbt| {
-            for key in ["id", "x", "y", "z", crate::world::item_storage::NBT_KEY] {
+            for key in [
+                "id",
+                "x",
+                "y",
+                "z",
+                crate::world::item_storage::NBT_KEY,
+                crate::world::plugin_signals::NBT_KEY,
+            ] {
                 nbt.child_tags.remove(key);
             }
             super::common::to_wit_nbt_tree(pumpkin_nbt::tag::NbtTag::Compound(nbt))
@@ -1163,18 +1170,22 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
             nbt.child_tags.remove(key);
         }
         nbt.child_tags.remove(crate::world::item_storage::NBT_KEY);
+        nbt.child_tags.remove(crate::world::plugin_signals::NBT_KEY);
         let data = nbt.clone();
         nbt.put_string("id", block_entity_type);
         nbt.put_int("x", pos.0.x);
         nbt.put_int("y", pos.0.y);
         nbt.put_int("z", pos.0.z);
-        // The item storage belongs to the host, not to the data the plugin writes.
-        let storage = world
-            .pending_block_entity_nbt(&pos)
-            .and_then(|old| old.get(crate::world::item_storage::NBT_KEY).cloned());
-        nbt.child_tags.remove(crate::world::item_storage::NBT_KEY);
-        if let Some(storage) = storage {
-            nbt.put(crate::world::item_storage::NBT_KEY, storage);
+        // The item storage and signals belong to the host, not to the data the plugin writes.
+        let old = world.pending_block_entity_nbt(&pos);
+        for key in [
+            crate::world::item_storage::NBT_KEY,
+            crate::world::plugin_signals::NBT_KEY,
+        ] {
+            nbt.child_tags.remove(key);
+            if let Some(value) = old.as_ref().and_then(|old| old.get(key)) {
+                nbt.put(key, value.clone());
+            }
         }
         // Drop a live block entity so the new data replaces it, not the other way round.
         world.remove_block_entity(&pos);
@@ -1257,6 +1268,29 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
             });
         }
         Ok(Some(out))
+    }
+
+    async fn set_redstone_output(
+        &mut self,
+        world: Resource<World>,
+        pos: WitBlockPos,
+        weak: u8,
+        strong: u8,
+    ) -> wasmtime::Result<()> {
+        let world = self.get(&world)?.clone();
+        world.set_plugin_redstone_output(&BlockPos::new(pos.x, pos.y, pos.z), weak, strong);
+        Ok(())
+    }
+
+    async fn set_comparator_output(
+        &mut self,
+        world: Resource<World>,
+        pos: WitBlockPos,
+        value: u8,
+    ) -> wasmtime::Result<()> {
+        let world = self.get(&world)?.clone();
+        world.set_plugin_comparator_output(&BlockPos::new(pos.x, pos.y, pos.z), value);
+        Ok(())
     }
 
     async fn remove_block_entity(

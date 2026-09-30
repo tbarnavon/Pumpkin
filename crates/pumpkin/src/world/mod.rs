@@ -28,6 +28,7 @@ pub mod generation_cache;
 pub mod item_storage;
 pub mod loot;
 pub mod map;
+pub mod plugin_signals;
 pub mod portal;
 pub mod raid;
 pub mod random_sequences;
@@ -301,6 +302,8 @@ pub struct World {
     item_storages: DashMap<BlockPos, Arc<item_storage::PluginItemStorage>>,
     /// Item storages hoppers changed this tick.
     item_storage_changes: std::sync::Mutex<Vec<BlockPos>>,
+    /// Redstone and comparator outputs plugins set on their blocks.
+    plugin_signals: DashMap<BlockPos, plugin_signals::PluginSignals>,
     /// Entity tracker responsible for tracking entity visibility and sending delta/status packets to watchers.
     pub entity_tracker: entity_tracker::EntityTracker,
 }
@@ -437,6 +440,7 @@ impl World {
             custom_block_entity_data: DashMap::new(),
             item_storages: DashMap::new(),
             item_storage_changes: std::sync::Mutex::new(Vec::new()),
+            plugin_signals: DashMap::new(),
             entity_tracker: entity_tracker::EntityTracker::new(),
         }
     }
@@ -6327,6 +6331,7 @@ impl World {
     /// NBT (their plugin owns the data), so nothing else removes it when the block goes away.
     pub fn remove_pending_block_entity_nbt(&self, block_pos: &BlockPos) {
         self.forget_item_storage(block_pos);
+        self.plugin_signals.remove(block_pos);
         self.level
             .read_chunk_sync(&block_pos.chunk_position(), |chunk| {
                 let removed = chunk

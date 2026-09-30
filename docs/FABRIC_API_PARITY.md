@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 49 (47 %) | 15 (14 %) | 40 (38 %) |
+| 50 (48 %) | 16 (15 %) | 38 (37 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -250,8 +250,8 @@ keep their native behaviour.
 | `Block.getDrops` | ✅ | modded | `drops` | ✅ |
 | `Block.affectNeighborsAfterRemoval` / `onRemove` | ✅ | modded | `removed` | ✅ |
 | `Block.tick` (scheduled) | ✅ | modded | `scheduled-tick` hook; scheduled with `world.schedule-block-tick` | ✅ |
-| `Block.getSignal` / `getDirectSignal` / `isSignalSource` | ❌ | modded | | ✅ redstone upgrade |
-| `Block.getAnalogOutputSignal` (comparator) | ❌ | modded | | ✅ |
+| `Block.getSignal` / `getDirectSignal` / `isSignalSource` | 🟡 | modded | data first: `signal-source` hook flag + `world.set-redstone-output(weak, strong)`, held by the host; same power on every side | ✅ redstone upgrade |
+| `Block.getAnalogOutputSignal` (comparator) | ✅ | modded | data first: `analog-output` hook flag + `world.set-comparator-output`, held by the host | ✅ |
 | `Block.neighborChanged` | ✅ | modded | `neighbor-changed` hook (opt-in per block) | |
 | `Block.updateShape` | ❌ | modded | | |
 | `Block.randomTick` | ✅ | modded | `random-tick` hook, only for states the mod marks as randomly ticking (from the dump) | |

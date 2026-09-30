@@ -32,6 +32,12 @@ interface modded {
         neighbor-changed,
         /// `Block.randomTick`: only for states the mod marks as randomly ticking.
         random-tick,
+        /// `Block.isSignalSource`: the block gives the redstone power set with
+        /// `world.set-redstone-output`. No call is made.
+        signal-source,
+        /// `Block.hasAnalogOutputSignal`: comparators read the value set with
+        /// `world.set-comparator-output`. No call is made.
+        analog-output,
     }
 
     /// Where a player's crosshair hit the block.

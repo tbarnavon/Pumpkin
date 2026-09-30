@@ -971,6 +971,16 @@ interface %world {
         /// The item storage at `pos`, as hoppers last left it.
         get-item-storage: func(pos: block-pos) -> option<list<storage-slot>>;
 
+        /// Sets the redstone power a plugin block with the `signal-source` hook gives on every
+        /// side (`Block.getSignal`, and `getDirectSignal` for `strong`), and updates its
+        /// neighbours when it changes. The host answers redstone queries from it without calling
+        /// the plugin. Kept with the block entity when there is one, otherwise until restart.
+        set-redstone-output: func(pos: block-pos, weak: u8, strong: u8);
+
+        /// Sets what comparators read from a plugin block with the `analog-output` hook
+        /// (`Block.getAnalogOutputSignal`), and updates them when it changes.
+        set-comparator-output: func(pos: block-pos, value: u8);
+
         /// Drops `stack` as an item entity at `pos`, like `Block.popResource`.
         drop-item: func(pos: block-pos, stack: borrow<item-stack>);
 
