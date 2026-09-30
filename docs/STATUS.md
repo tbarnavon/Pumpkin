@@ -262,18 +262,13 @@ conversion upgrade tag allow and deny lists.
 Build: host clippy and tests (`pumpkin`, `pumpkin-protocol`, `pumpkin-inventory`,
 `pumpkin-data`) pass; plugin builds; server boots with the plugin (86 drawer blocks).
 
-Real-client results (2026-09-30): tests 1 (framing table, framed items) and 2 (remote upgrade)
-work.
+Hopper upgrade follow-up: the client draws the hole in the drawer top (`BlockDrawers.getShape`
+with the upgrade), but the server kept a full cube, so items rested on top. Fixed with
+`modded.set-block-collision-shape` (per position, held and saved by the host, used for entity
+movement); the plugin sets `AABB_*_HOPPER` on every drawer save. The upgrade doesn't pull from
+containers in 26.3.0.1: it only collects item entities (`entityInside`).
 
-Real-client tests to run:
-1. Framing table: place, frame a drawer, take the result; break a framed drawer and place it
-   back; framed trims, controllers and I/O as items (no disconnect).
-2. Remote upgrade (old test 4): bind on the controller front, put it in a drawer away from the
-   network, check the controller reaches it; break the controller, the upgrade becomes unbound.
-3. Hopper upgrade on a half drawer: items thrown into it go in.
-4. Magnet upgrade (levels 1-3): items dropped nearby are pulled into a drawer holding them.
-5. Keyring: right-click a key onto a keyring in the inventory (key goes on), right-click the
-   keyring with an empty cursor (first key comes off); throw a keyring with keys into lava (keys
-   drop).
-6. A drawer and a detached drawer can't go into a bundle or a shulker box.
-7. Conversion upgrade with `tagAllowList = ["c:ingots/iron"]` or an ore type/material pair.
+Real-client results (2026-09-30), all work: framing table and framed items (drop, pick,
+inventory), remote upgrade (bind, reach, unbind when the controller breaks), hopper upgrade,
+magnet upgrade, keyring keys added and taken out in the inventory, keyring keys spilled in lava,
+drawers and detached drawers kept out of bundles and shulker boxes, conversion upgrade tags.
