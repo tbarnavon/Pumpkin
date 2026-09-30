@@ -30,6 +30,8 @@ interface modded {
         scheduled-tick,
         /// `Block.neighborChanged`: a block next to this one changed.
         neighbor-changed,
+        /// `Block.randomTick`: only for states the mod marks as randomly ticking.
+        random-tick,
     }
 
     /// Where a player's crosshair hit the block.
@@ -101,6 +103,7 @@ interface modded {
         removed(removal),
         scheduled-tick(tick),
         neighbor-changed(neighbor-change),
+        random-tick(tick),
     }
 
     /// `InteractionResult`.

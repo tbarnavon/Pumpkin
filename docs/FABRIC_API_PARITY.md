@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 48 (46 %) | 15 (14 %) | 41 (39 %) |
+| 49 (47 %) | 15 (14 %) | 40 (38 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -254,7 +254,7 @@ keep their native behaviour.
 | `Block.getAnalogOutputSignal` (comparator) | ❌ | modded | | ✅ |
 | `Block.neighborChanged` | ✅ | modded | `neighbor-changed` hook (opt-in per block) | |
 | `Block.updateShape` | ❌ | modded | | |
-| `Block.randomTick` | ❌ | modded | | |
+| `Block.randomTick` | ✅ | modded | `random-tick` hook, only for states the mod marks as randomly ticking (from the dump) | |
 | `Block.entityInside`, `stepOn` | ❌ | modded | | |
 | `BlockEntity` ticker | ❌ | modded | only scheduled ticks | ✅ hopper/magnet upgrades |
 | `Item.useOn` / `use` | ✅ | modded | item hooks | ✅ |

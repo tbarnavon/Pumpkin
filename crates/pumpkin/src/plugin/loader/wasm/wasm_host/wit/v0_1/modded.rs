@@ -13,7 +13,7 @@ use wasmtime::component::{Access, HasSelf, Resource};
 use crate::block::registry::BlockActionResult;
 use crate::block::{
     BlockBehaviour, NormalUseArgs, OnNeighborUpdateArgs, OnPlaceArgs, OnScheduledTickArgs,
-    PlayerPlacedArgs, UseWithItemArgs,
+    PlayerPlacedArgs, RandomTickArgs, UseWithItemArgs,
 };
 use crate::entity::EntityBase;
 use crate::entity::player::Player;
@@ -87,6 +87,7 @@ enum CallData {
         world: Arc<World>,
         pos: BlockPos,
         state: BlockStateId,
+        random: bool,
     },
     NeighborChanged {
         world: Arc<World>,
@@ -271,6 +272,7 @@ impl PluginBlock {
     }
 }
 
+#[allow(clippy::too_many_lines)]
 fn build_call(
     state: &mut PluginHostState,
     data: CallData,
@@ -355,11 +357,19 @@ fn build_call(
             world,
             pos,
             state: block_state,
-        } => BlockCall::ScheduledTick(Tick {
-            world: state.add::<WitWorld>(world)?,
-            pos: to_wit_pos(pos),
-            state: block_state.as_u16(),
-        }),
+            random,
+        } => {
+            let tick = Tick {
+                world: state.add::<WitWorld>(world)?,
+                pos: to_wit_pos(pos),
+                state: block_state.as_u16(),
+            };
+            if random {
+                BlockCall::RandomTick(tick)
+            } else {
+                BlockCall::ScheduledTick(tick)
+            }
+        }
         CallData::NeighborChanged {
             world,
             pos,
@@ -494,6 +504,24 @@ impl BlockBehaviour for PluginBlock {
         BlockActionResult::PassToDefaultBlockAction
     }
 
+    fn random_tick(&self, args: RandomTickArgs<'_>) {
+        if !self.hooks.contains(BlockHooks::RANDOM_TICK) {
+            return;
+        }
+        let Some(server) = args.world.server.upgrade() else {
+            return;
+        };
+        self.invoke(
+            &server,
+            CallData::Tick {
+                world: args.world.clone(),
+                pos: *args.position,
+                state: args.world.get_block_state_id(args.position),
+                random: true,
+            },
+        );
+    }
+
     fn on_neighbor_update(&self, args: OnNeighborUpdateArgs<'_>) {
         if !self.hooks.contains(BlockHooks::NEIGHBOR_CHANGED) {
             return;
@@ -525,6 +553,7 @@ impl BlockBehaviour for PluginBlock {
                 world: args.world.clone(),
                 pos: *args.position,
                 state: args.world.get_block_state_id(args.position),
+                random: false,
             },
         );
     }
