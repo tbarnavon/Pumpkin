@@ -11,11 +11,11 @@ Status:
 - ❌ missing.
 - ➖ not needed: client-only, dev-time only, or resolved when the Extractor dumps the mod's data.
 
-Summary (103 rows in the tables below, not counting the 13 marked ➖):
+Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 47 (46 %) | 15 (15 %) | 41 (40 %) |
+| 48 (46 %) | 15 (14 %) | 41 (39 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -252,7 +252,8 @@ keep their native behaviour.
 | `Block.tick` (scheduled) | ✅ | modded | `scheduled-tick` hook; scheduled with `world.schedule-block-tick` | ✅ |
 | `Block.getSignal` / `getDirectSignal` / `isSignalSource` | ❌ | modded | | ✅ redstone upgrade |
 | `Block.getAnalogOutputSignal` (comparator) | ❌ | modded | | ✅ |
-| `Block.neighborChanged`, `updateShape` | ❌ | modded | | |
+| `Block.neighborChanged` | ✅ | modded | `neighbor-changed` hook (opt-in per block) | |
+| `Block.updateShape` | ❌ | modded | | |
 | `Block.randomTick` | ❌ | modded | | |
 | `Block.entityInside`, `stepOn` | ❌ | modded | | |
 | `BlockEntity` ticker | ❌ | modded | only scheduled ticks | ✅ hopper/magnet upgrades |

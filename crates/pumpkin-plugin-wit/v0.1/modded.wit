@@ -28,6 +28,8 @@ interface modded {
         removed,
         /// `Block.tick`: a tick scheduled with `world.schedule-block-tick` fired.
         scheduled-tick,
+        /// `Block.neighborChanged`: a block next to this one changed.
+        neighbor-changed,
     }
 
     /// Where a player's crosshair hit the block.
@@ -82,6 +84,14 @@ interface modded {
         state: u16,
     }
 
+    record neighbor-change {
+        %world: %world,
+        pos: block-pos,
+        state: u16,
+        /// The block that changed next to this one, like `minecraft:redstone_wire`.
+        source-block: string,
+    }
+
     variant block-call {
         placement-state(placement),
         placed(placement),
@@ -90,6 +100,7 @@ interface modded {
         drops(breaking),
         removed(removal),
         scheduled-tick(tick),
+        neighbor-changed(neighbor-change),
     }
 
     /// `InteractionResult`.

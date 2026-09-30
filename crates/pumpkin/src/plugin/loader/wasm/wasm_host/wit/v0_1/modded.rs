@@ -12,8 +12,8 @@ use wasmtime::component::{Access, HasSelf, Resource};
 
 use crate::block::registry::BlockActionResult;
 use crate::block::{
-    BlockBehaviour, NormalUseArgs, OnPlaceArgs, OnScheduledTickArgs, PlayerPlacedArgs,
-    UseWithItemArgs,
+    BlockBehaviour, NormalUseArgs, OnNeighborUpdateArgs, OnPlaceArgs, OnScheduledTickArgs,
+    PlayerPlacedArgs, UseWithItemArgs,
 };
 use crate::entity::EntityBase;
 use crate::entity::player::Player;
@@ -27,7 +27,8 @@ use super::pumpkin::plugin::item_stack::ItemStack as WitItemStack;
 use super::pumpkin::plugin::menu::MenuDefinition;
 use super::pumpkin::plugin::modded::{
     self as wit, BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, Interaction,
-    InteractionResult, ItemCall, ItemHooks, ItemUse, ItemUseOnBlock, Placement, Removal, Tick,
+    InteractionResult, ItemCall, ItemHooks, ItemUse, ItemUseOnBlock, NeighborChange, Placement,
+    Removal, Tick,
 };
 use super::pumpkin::plugin::player::Player as WitPlayer;
 use super::pumpkin::plugin::world::World as WitWorld;
@@ -86,6 +87,12 @@ enum CallData {
         world: Arc<World>,
         pos: BlockPos,
         state: BlockStateId,
+    },
+    NeighborChanged {
+        world: Arc<World>,
+        pos: BlockPos,
+        state: BlockStateId,
+        source: &'static str,
     },
 }
 
@@ -353,6 +360,17 @@ fn build_call(
             pos: to_wit_pos(pos),
             state: block_state.as_u16(),
         }),
+        CallData::NeighborChanged {
+            world,
+            pos,
+            state: block_state,
+            source,
+        } => BlockCall::NeighborChanged(NeighborChange {
+            world: state.add::<WitWorld>(world)?,
+            pos: to_wit_pos(pos),
+            state: block_state.as_u16(),
+            source_block: source.to_string(),
+        }),
     })
 }
 
@@ -474,6 +492,24 @@ impl BlockBehaviour for PluginBlock {
     fn use_with_item(&self, _args: UseWithItemArgs<'_>) -> BlockActionResult {
         // Vanilla `useItemOn` defaults to trying `useWithoutItem`, which is where `use` runs.
         BlockActionResult::PassToDefaultBlockAction
+    }
+
+    fn on_neighbor_update(&self, args: OnNeighborUpdateArgs<'_>) {
+        if !self.hooks.contains(BlockHooks::NEIGHBOR_CHANGED) {
+            return;
+        }
+        let Some(server) = args.world.server.upgrade() else {
+            return;
+        };
+        self.invoke(
+            &server,
+            CallData::NeighborChanged {
+                world: args.world.clone(),
+                pos: *args.position,
+                state: args.world.get_block_state_id(args.position),
+                source: args.source_block.name,
+            },
+        );
     }
 
     fn on_scheduled_tick(&self, args: OnScheduledTickArgs<'_>) {
