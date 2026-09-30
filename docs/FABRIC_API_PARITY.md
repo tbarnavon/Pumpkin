@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 55 (53 %) | 15 (14 %) | 34 (33 %) |
+| 57 (55 %) | 17 (16 %) | 30 (29 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -84,7 +84,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
 | `ServerTickEvents` START / END_SERVER_TICK | ✅ | core | `server-tick-start-event`, `server-tick-end-event` | |
-| `ServerTickEvents` per level | ❌ | core | | |
+| `ServerTickEvents` per level | 🟡 | core | `server-tick-start-event` / `server-tick-end-event` cover all worlds; no per-world event (data first: prefer scheduled ticks) | |
 | `ServerLifecycleEvents` SERVER_STARTED | ✅ | core | `server-load-event`; plugin `on-load` | |
 | `ServerLifecycleEvents` STOPPING / STOPPED, datapack reload | 🟡 | core | plugin `on-unload`; no reload event | |
 | `ServerLevelEvents` LOAD / UNLOAD | ✅ | core | `world-load-event`, `world-unload-event` | |
@@ -142,7 +142,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
 | Persistent data on entities and block entities | 🟡 | core | `set-custom-data` on entities and block entities; not Fabric's NBT layout | |
-| Data on chunks and levels | ❌ | core | | |
+| Data on chunks and levels | ✅ | core | `chunk.set-custom-data`, `world.set-custom-data` | |
 | `AttachmentSyncPredicate` (sync to clients, `fabric:attachment_sync`) | ❌ | modded | | |
 
 ### fabric-lookup-api-v1 and fabric-transfer-api-v1
@@ -201,7 +201,7 @@ as a full slot while any is stored, so hoppers only take it out.
 | Feature | Status | API | Pumpkin | SD |
 |:--|:--|:--|:--|:--|
 | `ServerMessageEvents` ALLOW / CHAT / COMMAND / GAME | ✅ | core | `player-chat-event`, `player-command-preprocess-event`, `server-broadcast-event` | |
-| `ServerMessageDecoratorEvent` | ❌ | core | | |
+| `ServerMessageDecoratorEvent` | ✅ | core | `async-player-chat-event` changes the message and its `format` | |
 
 ### fabric-advancement-api-v1
 | Feature | Status | API | Pumpkin | SD |
@@ -256,7 +256,7 @@ keep their native behaviour.
 | `Block.updateShape` | ❌ | modded | | |
 | `Block.randomTick` | ✅ | modded | `random-tick` hook, only for states the mod marks as randomly ticking (from the dump) | |
 | `Block.entityInside`, `stepOn` | ❌ | modded | | |
-| `BlockEntity` ticker | ❌ | modded | only scheduled ticks | ✅ hopper/magnet upgrades |
+| `BlockEntity` ticker | 🟡 | modded | data first: no per-tick calls; a block reschedules itself with `world.schedule-block-tick`, and hopper/signal work is host-held (`set-item-storage`, `set-redstone-output`) | ✅ hopper/magnet upgrades |
 | `Item.useOn` / `use` | ✅ | modded | item hooks | ✅ |
 | `Item.inventoryTick` | ❌ | modded | | |
 | Find entities in an area | ✅ | core | `world.get-entities-in-box`, `entity.get-nearby-entities` | ✅ magnet |
