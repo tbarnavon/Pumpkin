@@ -216,7 +216,8 @@ Real-client results (2026-09-30):
   fix), left-click slot choice (after the eye ray-trace fix), controller right-click and
   double-click, redstone upgrade and comparator, compacting drawers (UI, hoppers), drawer puller
   and putting drawers back, add_detached_upgrade (as in single player: the capacity only matters
-  with `forceMaxCapacityCheck`), key buttons, keyring rotation, add_upgrade and keyring recipes.
+  with `forceMaxCapacityCheck`), key buttons, keyring rotation, add_upgrade and keyring recipes,
+  conversion upgrade with an `itemEquivalenceGroups` entry.
 - Fixed while testing: controllers placed by an older build had no block entity; the attack hit
   point is the block centre, so the plugin ray-traces from the eyes; a lost scheduled tick left the
   controller refresh stopped.
