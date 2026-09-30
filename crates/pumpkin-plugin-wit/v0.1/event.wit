@@ -254,6 +254,29 @@ interface event {
         block-pos: block-pos,
     }
 
+    /// A player middle-clicks a block (Fabric `PlayerPickItemEvents.BLOCK`). Set `item` to give that stack instead of the block's item; cancel to give nothing.
+    record player-pick-item-block-event-data {
+        player: player,
+        block-pos: block-pos,
+        state: u16,
+        /// Whether the client asked for the block entity data too (ctrl + middle click).
+        include-data: bool,
+        /// The stack to pick instead of the default one.
+        item: option<item-stack>,
+        cancelled: bool
+    }
+
+    /// A player middle-clicks an entity (Fabric `PlayerPickItemEvents.ENTITY`). Set `item` to give that stack instead of the spawn egg; cancel to give nothing.
+    record player-pick-item-entity-event-data {
+        player: player,
+        entity-id: s32,
+        entity-type: string,
+        include-data: bool,
+        /// The stack to pick instead of the default one.
+        item: option<item-stack>,
+        cancelled: bool
+    }
+
     record block-break-event-data {
         player: option<player>,
         block: string,
@@ -1935,6 +1958,8 @@ interface event {
         inventory-close-event,
         block-redstone-event,
         block-break-event,
+        player-pick-item-entity-event,
+        player-pick-item-block-event,
         block-break-canceled-event,
         block-broken-event,
         block-burn-event,
@@ -2214,6 +2239,8 @@ interface event {
         inventory-close-event(inventory-close-event-data),
         block-redstone-event(block-redstone-event-data),
         block-break-event(block-break-event-data),
+        player-pick-item-entity-event(player-pick-item-entity-event-data),
+        player-pick-item-block-event(player-pick-item-block-event-data),
         block-break-canceled-event(block-break-canceled-event-data),
         block-broken-event(block-broken-event-data),
         block-burn-event(block-burn-event-data),

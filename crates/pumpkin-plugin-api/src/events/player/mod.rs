@@ -224,3 +224,9 @@ pub use player_toggle_sprint::*;
 pub use player_unleash_entity::*;
 pub use player_unregister_channel::*;
 pub use player_velocity::*;
+/// A player middle-clicks a block (Fabric `PlayerPickItemEvents.BLOCK`). Set `item` to give that stack instead of the block's item; cancel to give nothing.
+pub mod player_pick_item_block;
+pub use player_pick_item_block::*;
+/// A player middle-clicks an entity (Fabric `PlayerPickItemEvents.ENTITY`). Set `item` to give that stack instead of the spawn egg; cancel to give nothing.
+pub mod player_pick_item_entity;
+pub use player_pick_item_entity::*;

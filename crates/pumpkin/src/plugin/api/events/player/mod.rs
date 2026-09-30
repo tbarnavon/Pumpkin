@@ -164,3 +164,7 @@ pub trait PlayerEvent: Send + Sync {
     /// A reference to the `Arc<Player>` involved in the event.
     fn get_player(&self) -> &Arc<Player>;
 }
+pub mod player_pick_item_block;
+pub use player_pick_item_block::*;
+pub mod player_pick_item_entity;
+pub use player_pick_item_entity::*;

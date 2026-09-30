@@ -15,7 +15,7 @@ Summary (104 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 51 (49 %) | 15 (14 %) | 38 (37 %) |
+| 52 (50 %) | 15 (14 %) | 37 (36 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -77,7 +77,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | `UseItemCallback` | ✅ | core + modded | `player-interact-event`; per item: modded item `use` hook | ✅ |
 | `UseEntityCallback`, `AttackEntityCallback` | ✅ | core | `player-interact-entity-event`, `entity-damage-by-entity-event` | |
 | `PlayerBlockBreakEvents` BEFORE / AFTER / CANCELED | ✅ | core | `block-break-event` (before, cancellable), `block-broken-event` (after), `block-break-canceled-event` | |
-| `PlayerPickItemEvents` (middle click block/entity) | ❌ | core | | |
+| `PlayerPickItemEvents` (middle click block/entity) | ✅ | core | `player-pick-item-block-event`, `player-pick-item-entity-event`: set `item` to replace the pick, cancel for none | |
 | `FakePlayer` | ❌ | core | | |
 
 ### fabric-lifecycle-events-v1

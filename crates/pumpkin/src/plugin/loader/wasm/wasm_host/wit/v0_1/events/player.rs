@@ -2592,3 +2592,111 @@ impl ToFromWasmEvent for PlayerUnregisterChannelEvent {
         }
     }
 }
+
+impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
+    for crate::plugin::api::events::player::player_pick_item_block::PlayerPickItemBlockEvent
+{
+    fn to_wasm_event(
+        &self,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event {
+        #[allow(unused_imports)]
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::{
+            to_wasm_block_position, to_wasm_position,
+        };
+        let _ = &state;
+        crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::PlayerPickItemBlockEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::PlayerPickItemBlockEventData {
+                player: state
+                    .add(self.player.clone())
+                    .expect("failed to add player resource"),
+                block_pos: to_wasm_block_position(self.block_position),
+                state: self.state_id,
+                include_data: self.include_data,
+                item: None,
+                cancelled: self.cancelled,
+            },
+        )
+    }
+
+    fn apply_wasm_event(
+        &mut self,
+        event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) {
+        if let crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::PlayerPickItemBlockEvent(data) = &event {
+            self.cancelled = data.cancelled;
+            if let Some(item) = &data.item {
+                let mutex = state
+                    .resource_table
+                    .delete::<std::sync::Arc<tokio::sync::Mutex<pumpkin_data::item_stack::ItemStack>>>(
+                        wasmtime::component::Resource::new_own(item.rep()),
+                    )
+                    .expect("invalid item stack resource handle");
+                self.item = Some(mutex.try_lock().expect("lock item stack").clone());
+            }
+        }
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(
+        _event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        _state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> Self {
+        panic!("Cannot construct PlayerPickItemBlockEvent from WASM")
+    }
+}
+
+impl crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::ToFromWasmEvent
+    for crate::plugin::api::events::player::player_pick_item_entity::PlayerPickItemEntityEvent
+{
+    fn to_wasm_event(
+        &self,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event {
+        #[allow(unused_imports)]
+        use crate::plugin::loader::wasm::wasm_host::wit::v0_1::events::{
+            to_wasm_block_position, to_wasm_position,
+        };
+        let _ = &state;
+        crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::PlayerPickItemEntityEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::PlayerPickItemEntityEventData {
+                player: state
+                    .add(self.player.clone())
+                    .expect("failed to add player resource"),
+                entity_id: self.entity_id,
+                entity_type: self.entity_type.clone(),
+                include_data: self.include_data,
+                item: None,
+                cancelled: self.cancelled,
+            },
+        )
+    }
+
+    fn apply_wasm_event(
+        &mut self,
+        event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) {
+        if let crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event::PlayerPickItemEntityEvent(data) = &event {
+            self.cancelled = data.cancelled;
+            if let Some(item) = &data.item {
+                let mutex = state
+                    .resource_table
+                    .delete::<std::sync::Arc<tokio::sync::Mutex<pumpkin_data::item_stack::ItemStack>>>(
+                        wasmtime::component::Resource::new_own(item.rep()),
+                    )
+                    .expect("invalid item stack resource handle");
+                self.item = Some(mutex.try_lock().expect("lock item stack").clone());
+            }
+        }
+        super::cleanup::cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(
+        _event: crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::Event,
+        _state: &mut crate::plugin::loader::wasm::wasm_host::state::PluginHostState,
+    ) -> Self {
+        panic!("Cannot construct PlayerPickItemEntityEvent from WASM")
+    }
+}

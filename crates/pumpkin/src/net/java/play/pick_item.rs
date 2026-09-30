@@ -1,6 +1,9 @@
 #[allow(clippy::wildcard_imports)]
 use super::*;
 
+use crate::plugin::api::events::player::player_pick_item_block::PlayerPickItemBlockEvent;
+use crate::plugin::api::events::player::player_pick_item_entity::PlayerPickItemEntityEvent;
+
 impl JavaClient {
     pub fn handle_pick_item_from_block(
         &self,
@@ -12,40 +15,32 @@ impl JavaClient {
         }
 
         let world = player.world();
-        let block = world.get_block(&pick_item.pos);
+        let state_id = world.get_block_state_id(&pick_item.pos);
+        let block = state_id.to_block();
 
-        if block.item_id == 0 {
-            // Invalid block id (blocks such as tall seagrass)
-            return;
-        }
+        // Blocks without an item (tall seagrass...) pick nothing by default.
+        let default = (block.item_id != 0)
+            .then(|| Item::from_id(block.item_id))
+            .flatten()
+            .map(|item| ItemStack::new(1, item));
 
-        let Some(item) = Item::from_id(block.item_id) else {
-            return;
+        let mut event = PlayerPickItemBlockEvent {
+            player: player.clone(),
+            block_position: pick_item.pos,
+            state_id: state_id.as_u16(),
+            include_data: pick_item.include_data,
+            item: None,
+            cancelled: false,
         };
-        let stack = ItemStack::new(1, item);
-
-        let slot_with_stack = player.inventory().get_slot_with_stack(&stack);
-
-        if slot_with_stack != -1 {
-            if PlayerInventory::is_valid_hotbar_index(slot_with_stack as usize) {
-                player.inventory.set_selected_slot(slot_with_stack as u8);
-            } else {
-                player
-                    .inventory
-                    .swap_slot_with_hotbar(slot_with_stack as usize);
-            }
-        } else if player.gamemode.load() == GameMode::Creative {
-            player.inventory.swap_stack_with_hotbar(stack);
+        if let Some(server) = world.server.upgrade() {
+            server.plugin_manager.fire_blocking(&server, &mut event);
         }
-
-        player.try_send_client_packet(&CSetSelectedSlot::new(
-            player.inventory.get_selected_slot() as i8
-        ));
-        player
-            .player_screen_handler
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .send_content_updates();
+        if event.cancelled {
+            return;
+        }
+        if let Some(stack) = event.item.or(default) {
+            Self::pick(player, stack);
+        }
     }
 
     pub fn handle_pick_item_from_entity(
@@ -69,42 +64,55 @@ impl JavaClient {
             return;
         }
 
-        let target_type_id = target.get_entity().entity_type.id;
-        let mut found_egg: Option<u16> = None;
-        for &egg_id in &spawn_egg_ids() {
-            if let Some(et) = entity_from_egg(egg_id)
-                && et.id == target_type_id
-            {
-                found_egg = Some(egg_id);
-                break;
+        let target_type = target.get_entity().entity_type;
+        let default = spawn_egg_ids()
+            .into_iter()
+            .find(|&egg_id| entity_from_egg(egg_id).is_some_and(|et| et.id == target_type.id))
+            .and_then(Item::from_id)
+            .map(|item| ItemStack::new(1, item));
+
+        let mut event = PlayerPickItemEntityEvent {
+            player: player.clone(),
+            entity_id: pick_item.id.0,
+            entity_type: format!("minecraft:{}", target_type.resource_name),
+            include_data: pick_item.include_data,
+            item: None,
+            cancelled: false,
+        };
+        if let Some(server) = world.server.upgrade() {
+            server.plugin_manager.fire_blocking(&server, &mut event);
+        }
+        if event.cancelled {
+            return;
+        }
+        if let Some(stack) = event.item.or(default) {
+            Self::pick(player, stack);
+        }
+    }
+
+    /// Selects the picked stack if the player has it, or puts it in the hotbar in creative.
+    fn pick(player: &Arc<Player>, stack: ItemStack) {
+        let slot_with_stack = player.inventory().get_slot_with_stack(&stack);
+
+        if slot_with_stack != -1 {
+            if PlayerInventory::is_valid_hotbar_index(slot_with_stack as usize) {
+                player.inventory.set_selected_slot(slot_with_stack as u8);
+            } else {
+                player
+                    .inventory
+                    .swap_slot_with_hotbar(slot_with_stack as usize);
             }
+        } else if player.gamemode.load() == GameMode::Creative {
+            player.inventory.swap_stack_with_hotbar(stack);
         }
 
-        if let Some(item) = found_egg.and_then(Item::from_id) {
-            let stack = ItemStack::new(1, item);
-
-            let slot_with_stack = player.inventory().get_slot_with_stack(&stack);
-
-            if slot_with_stack != -1 {
-                if PlayerInventory::is_valid_hotbar_index(slot_with_stack as usize) {
-                    player.inventory.set_selected_slot(slot_with_stack as u8);
-                } else {
-                    player
-                        .inventory
-                        .swap_slot_with_hotbar(slot_with_stack as usize);
-                }
-            } else if player.gamemode.load() == GameMode::Creative {
-                player.inventory.swap_stack_with_hotbar(stack);
-            }
-
-            player.try_send_client_packet(&CSetSelectedSlot::new(
-                player.inventory.get_selected_slot() as i8,
-            ));
-            player
-                .player_screen_handler
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .send_content_updates();
-        }
+        player.try_send_client_packet(&CSetSelectedSlot::new(
+            player.inventory.get_selected_slot() as i8
+        ));
+        player
+            .player_screen_handler
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .send_content_updates();
     }
 }

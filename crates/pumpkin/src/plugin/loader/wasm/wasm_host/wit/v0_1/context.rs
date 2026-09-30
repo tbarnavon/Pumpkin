@@ -1460,6 +1460,12 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
             EventType::BlockBreakCanceledEvent => {
                 register_typed_event::<crate::plugin::api::events::block::block_break_canceled::BlockBreakCanceledEvent>(ctx, &handler, priority, blocking);
             }
+            EventType::PlayerPickItemBlockEvent => {
+                register_typed_event::<crate::plugin::api::events::player::player_pick_item_block::PlayerPickItemBlockEvent>(ctx, &handler, priority, blocking);
+            }
+            EventType::PlayerPickItemEntityEvent => {
+                register_typed_event::<crate::plugin::api::events::player::player_pick_item_entity::PlayerPickItemEntityEvent>(ctx, &handler, priority, blocking);
+            }
             event_type @ (EventType::PacketReceivedEvent
             | EventType::PacketSentEvent
             | EventType::ServerCommandEvent

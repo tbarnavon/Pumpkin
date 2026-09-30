@@ -346,6 +346,12 @@ pub fn cleanup_event(event: &Event, state: &mut PluginHostState) {
             cleanup_player(state, &data.player);
         }
         Event::InventoryMoveItemEvent(_) => {}
+        Event::PlayerPickItemEntityEvent(data) => {
+            cleanup_player(state, &data.player);
+        }
+        Event::PlayerPickItemBlockEvent(data) => {
+            cleanup_player(state, &data.player);
+        }
         Event::BlockBreakCanceledEvent(data) => {
             if let Some(player) = &data.player {
                 cleanup_player(state, player);
