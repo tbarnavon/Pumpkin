@@ -1178,6 +1178,27 @@ impl crate::item::ItemBehaviour for PluginItem {
 }
 
 impl wit::Host for PluginHostState {
+    async fn set_block_collision_shape(
+        &mut self,
+        world: Resource<WitWorld>,
+        pos: WitBlockPos,
+        boxes: Option<Vec<wit::ShapeBox>>,
+    ) -> wasmtime::Result<()> {
+        use pumpkin_util::math::boundingbox::BoundingBox;
+        let world = self.get(&world)?.clone();
+        let boxes = boxes.map(|boxes| {
+            boxes
+                .into_iter()
+                .map(|b| BoundingBox {
+                    min: Vector3::new(b.min.0, b.min.1, b.min.2),
+                    max: Vector3::new(b.max.0, b.max.1, b.max.2),
+                })
+                .collect()
+        });
+        world.set_plugin_collision_shapes(&BlockPos::new(pos.x, pos.y, pos.z), boxes);
+        Ok(())
+    }
+
     async fn register_component_stream_codec(
         &mut self,
         component: String,

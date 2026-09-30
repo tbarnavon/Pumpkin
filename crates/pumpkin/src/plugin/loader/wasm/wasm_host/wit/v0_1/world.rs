@@ -1162,6 +1162,7 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
                 "z",
                 crate::world::item_storage::NBT_KEY,
                 crate::world::plugin_signals::NBT_KEY,
+                crate::world::plugin_shapes::NBT_KEY,
             ] {
                 nbt.child_tags.remove(key);
             }
@@ -1194,16 +1195,19 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
         }
         nbt.child_tags.remove(crate::world::item_storage::NBT_KEY);
         nbt.child_tags.remove(crate::world::plugin_signals::NBT_KEY);
+        nbt.child_tags.remove(crate::world::plugin_shapes::NBT_KEY);
         let data = nbt.clone();
         nbt.put_string("id", block_entity_type);
         nbt.put_int("x", pos.0.x);
         nbt.put_int("y", pos.0.y);
         nbt.put_int("z", pos.0.z);
-        // The item storage and signals belong to the host, not to the data the plugin writes.
+        // The item storage, signals and shape belong to the host, not to the data the plugin
+        // writes.
         let old = world.pending_block_entity_nbt(&pos);
         for key in [
             crate::world::item_storage::NBT_KEY,
             crate::world::plugin_signals::NBT_KEY,
+            crate::world::plugin_shapes::NBT_KEY,
         ] {
             nbt.child_tags.remove(key);
             if let Some(value) = old.as_ref().and_then(|old| old.get(key)) {

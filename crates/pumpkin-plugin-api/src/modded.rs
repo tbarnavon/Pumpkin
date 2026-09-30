@@ -18,7 +18,8 @@ use std::sync::{Arc, Mutex};
 
 pub use crate::wit::pumpkin::plugin::modded::{
     BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, Interaction, InteractionResult,
-    Placement, Removal, StreamCodecNode, Tick, open_menu, register_component_stream_codec,
+    Placement, Removal, ShapeBox, StreamCodecNode, Tick, open_menu,
+    register_component_stream_codec, set_block_collision_shape,
 };
 use crate::wit::pumpkin::plugin::server::Server;
 

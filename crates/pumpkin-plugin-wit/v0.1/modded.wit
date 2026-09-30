@@ -313,6 +313,18 @@ interface modded {
         optional(u32),
     }
 
+    /// A box of a block's shape, relative to the block (0 to 1 on each axis).
+    record shape-box {
+        min: position,
+        max: position,
+    }
+
+    /// Sets the collision shape of the plugin block at `pos` for entity movement, for a mod whose
+    /// `getShape` depends on the block entity (like a drawer with a hopper upgrade, which has a
+    /// hole in its top). None goes back to the block state's shape. The host keeps it with the
+    /// block entity (saved with the chunk) and drops it when the block entity is removed.
+    set-block-collision-shape: func(%world: borrow<%world>, pos: block-pos, boxes: option<list<shape-box>>);
+
     /// Gives a modded component type (like `storagedrawers:frame_data`) its stream codec, for types
     /// registered with `networkSynchronized(...)`. Without one, the host sends the value as a
     /// network NBT tag, vanilla's default stream codec. Replaces an earlier codec for the type.

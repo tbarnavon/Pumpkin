@@ -11,11 +11,11 @@ Status:
 - ❌ missing.
 - ➖ not needed: client-only, dev-time only, or resolved when the Extractor dumps the mod's data.
 
-Summary (109 rows in the tables below, not counting the 13 marked ➖):
+Summary (110 rows in the tables below, not counting the 13 marked ➖):
 
 | Done ✅ | Partial 🟡 | Missing ❌ |
 |:--|:--|:--|
-| 69 (63 %) | 17 (16 %) | 23 (21 %) |
+| 70 (64 %) | 17 (15 %) | 23 (21 %) |
 
 API, where the feature belongs:
 - **core**: Pumpkin's normal plugin API. Useful on a vanilla server too, so it can go upstream.
@@ -260,6 +260,7 @@ keep their native behaviour.
 | `Block.updateShape` | ✅ | modded | `update-shape` hook (opt-in per block), replies with the new state | ✅ key buttons |
 | `Block.randomTick` | ✅ | modded | `random-tick` hook, only for states the mod marks as randomly ticking (from the dump) | |
 | `Block.entityInside`, `stepOn` | ✅ | modded | opt-in `entity-inside` and `step-on` hooks: called every tick, only for blocks registered with them | |
+| `Block.getShape` / `getCollisionShape` that depends on the block entity | ✅ | modded | data first: `modded.set-block-collision-shape` per position, held and saved by the host, used for entity movement | ✅ hopper upgrade (the hole in the drawer top) |
 | `BlockEntity` ticker | ✅ | modded | opt-in `ticker` block hook: every tick for each block entity of the block in ticking chunks; worlds skip the scan until a plugin registers one. Prefer `world.schedule-block-tick` and host-held data where they fit | ➖ SD uses scheduled ticks |
 | `Item.useOn` / `use` | ✅ | modded | item hooks | ✅ |
 | `Item.inventoryTick` | ✅ | modded | opt-in `inventory-tick` item hook: called every tick for each stack in a player's inventory, only for items registered with it | ✅ bound remote upgrades, heavy drawers (`PlayerEventListener`) |

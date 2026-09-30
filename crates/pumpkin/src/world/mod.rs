@@ -28,6 +28,7 @@ pub mod generation_cache;
 pub mod item_storage;
 pub mod loot;
 pub mod map;
+pub mod plugin_shapes;
 pub mod plugin_signals;
 pub mod portal;
 pub mod raid;
@@ -304,6 +305,8 @@ pub struct World {
     item_storage_changes: std::sync::Mutex<Vec<BlockPos>>,
     /// Redstone and comparator outputs plugins set on their blocks.
     plugin_signals: DashMap<BlockPos, plugin_signals::PluginSignals>,
+    /// Collision shapes plugins set on their blocks (`None`: the block has none).
+    plugin_shapes: DashMap<BlockPos, Option<Arc<[BoundingBox]>>>,
     /// Entity tracker responsible for tracking entity visibility and sending delta/status packets to watchers.
     pub entity_tracker: entity_tracker::EntityTracker,
 }
@@ -441,6 +444,7 @@ impl World {
             item_storages: DashMap::new(),
             item_storage_changes: std::sync::Mutex::new(Vec::new()),
             plugin_signals: DashMap::new(),
+            plugin_shapes: DashMap::new(),
             entity_tracker: entity_tracker::EntityTracker::new(),
         }
     }
@@ -2369,6 +2373,14 @@ impl World {
                         collisions.push(shape);
                     }
                 }
+            } else if let Some(shapes) = self.plugin_collision_shapes(&pos, state) {
+                for shape in shapes.iter() {
+                    let shape = shape.at_pos(pos);
+                    if shape.intersects(&bounding_box) {
+                        collided = true;
+                        collisions.push(shape);
+                    }
+                }
             } else {
                 for shape in state.get_block_collision_shapes_at(&pos) {
                     let shape = shape.at_pos(pos);
@@ -2393,6 +2405,15 @@ impl World {
 
         for pos in BlockPos::iterate(min, max) {
             let state = self.get_block_state(&pos);
+            if let Some(shapes) = self.plugin_collision_shapes(&pos, state) {
+                if shapes
+                    .iter()
+                    .any(|s| s.at_pos(pos).intersects(&bounding_box))
+                {
+                    return false;
+                }
+                continue;
+            }
             let collided = Self::check_collision(&bounding_box, pos, state, false, |_| ());
 
             if collided {
@@ -6383,6 +6404,7 @@ impl World {
     pub fn remove_pending_block_entity_nbt(&self, block_pos: &BlockPos) {
         self.forget_item_storage(block_pos);
         self.plugin_signals.remove(block_pos);
+        self.plugin_shapes.remove(block_pos);
         self.level
             .read_chunk_sync(&block_pos.chunk_position(), |chunk| {
                 let removed = chunk
