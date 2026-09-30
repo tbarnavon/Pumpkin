@@ -262,6 +262,9 @@ conversion upgrade tag allow and deny lists.
 Build: host clippy and tests (`pumpkin`, `pumpkin-protocol`, `pumpkin-inventory`,
 `pumpkin-data`) pass; plugin builds; server boots with the plugin (86 drawer blocks).
 
+Real-client results (2026-09-30): tests 1 (framing table, framed items) and 2 (remote upgrade)
+work.
+
 Real-client tests to run:
 1. Framing table: place, frame a drawer, take the result; break a framed drawer and place it
    back; framed trims, controllers and I/O as items (no disconnect).
