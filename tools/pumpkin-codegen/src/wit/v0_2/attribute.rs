@@ -27,10 +27,10 @@ pub fn build() -> String {
 
     let mut attribute_enum = Enum::empty();
     for (raw_name, _) in sorted_attributes {
-        let name = raw_name
-            .strip_prefix("minecraft:")
-            .unwrap_or(&raw_name)
-            .replace('_', "-");
+        // 1.21.1 prefixes attributes (`generic.armor`); the WIT case drops the prefix like the
+        // Rust constant, so plugins see the same names as on later versions.
+        let bare = raw_name.strip_prefix("minecraft:").unwrap_or(&raw_name);
+        let name = bare.rsplit('.').next().unwrap_or(bare).replace('_', "-");
         attribute_enum.case(name);
     }
 

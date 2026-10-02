@@ -43,7 +43,7 @@ From the `ServerConfigurationPacketListenerImpl` patch and `NetworkRegistry`:
 
 | Piece | Channel / packet | Source | Status | Left |
 |:--|:--|:--|:--|:--|
-| Detection | Client's `neoforge:register` reply before the ping `0` pong | `ServerConfigurationPacketListenerImpl` patch | ✅ `pumpkin/src/net/java/loaders.rs` (one ping for Fabric and NeoForge) | |
+| Detection | Client's `neoforge:register` reply before the ping `0` pong | `ServerConfigurationPacketListenerImpl` patch | ✅ `pumpkin-core/src/net/java/loaders.rs` (one ping for Fabric and NeoForge) | |
 | Channel negotiation | `neoforge:register`, `neoforge:network`, `neoforge:modded_network_setup_failed` | `NetworkRegistry.initializeNeoForgeConnection`, `NetworkComponentNegotiator` | 🟡 `pumpkin-neoforge/src/{negotiation,handshake}.rs`; mods' channels from `modded.register-loader-channels` | `modded_network_setup_failed` (the reasons go in the disconnect message instead) |
 | Channel registration | `minecraft:register`, `minecraft:unregister` | `MinecraftRegisterPayload`, `NetworkRegistry.onMinecraftRegister` | ✅ shared with Fabric (`pumpkin-fabric/src/wire/register.rs`) | |
 | Common packets | `c:version`, `c:register` (same as Fabric) | `CommonVersionTask`, `CommonRegisterTask` | 🟡 run when the client listens on them | The server's play channel list is empty |

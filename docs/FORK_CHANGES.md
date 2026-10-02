@@ -10,15 +10,23 @@ upstream merge into "drop ours", "adapt ours" or "unrelated".
 
 When you commit to `latest`, add the commit to its area here (or add an area). Hooks and host
 functions also get a row in `HOOKS.md`. Paths below drop the `crates/` prefix; `WH` is
-`pumpkin/src/plugin/loader/wasm/wasm_host/wit/v0_1`.
+`pumpkin-wasm-host-v0_1/src`.
+
+Upstream split the server crate (`1859221e7`): `pumpkin-core` (the server), `pumpkin` (the bin),
+`pumpkin-wasm-host` (the loader: instantiation, restarts, worker jobs, task delivery),
+`pumpkin-wasm-host-common` (what every API version shares) and `pumpkin-wasm-host-v0_{1,2}`.
+Core can't name Wasm host types, so it calls plugin content through traits in
+`pumpkin-core/src/plugin/modded.rs` (`PluginBlockHooks`, `PluginItemHooks` via
+`ItemBehaviour::plugin_hooks`, `PluginTickTarget`, the data-only `PluginTickQueue`,
+`ANY_TICKER`) and `ScreenHandler::checks_can_use_each_tick` for plugin menus.
 
 Upstream branched a `pumpkin:plugin@0.2.0` API from v0.1 (`361c34c4d`). Every fork addition to
-the v0.1 WIT and host is mirrored in `pumpkin-plugin-wit/v0.2` and `WH/../v0_2`: the v0.2 host is
-v0.1's with upstream's renames (`v0_1` to `v0_2`, `_v0_2` on `PluginHostState` methods), so add
-to v0.1 and mirror. Block, item and menu behaviour that the server holds (`PluginBlock`,
-`PluginItem`, `PluginTickQueue`, `PluginMenuHandler`) is shared by both versions in
-`pumpkin/src/plugin/loader/wasm/wasm_host/modded/`; `WH/{modded,menu}.rs` only build each
-version's calls.
+the v0.1 WIT and host is mirrored in `pumpkin-plugin-wit/v0.2` and `pumpkin-wasm-host-v0_2`: the
+v0.2 crate is v0.1's with upstream's renames (`v0_1` to `v0_2`, `@0.1.0` to `@0.2.0`, `_v0_2` on
+`PluginHostState` methods), so add to v0.1 and mirror. Block, item and menu behaviour
+(`PluginBlock`, `PluginItem`, `PluginMenuHandler`) is shared by both versions in
+`pumpkin-wasm-host-common/src/modded/`; `WH/{modded,menu}.rs` only build each version's calls,
+behind the `GuestCalls` table each version exports as `GUEST`.
 
 ## 1. Modded registries at runtime
 
@@ -33,9 +41,9 @@ overlay after the vanilla ids.
 **Files:** `pumpkin-data/src/dynamic/*` (new), `pumpkin-data/src/{blocks,block_state,lib}.rs`,
 `pumpkin-data/src/generated/{block,item,tag,fluid,screen,flower_pot_transformations}.rs`,
 `tools/pumpkin-codegen/src/{block,item,tag,screen,flower_pot_transformations}.rs`,
-`pumpkin/src/block/registry.rs`, `pumpkin-world/src/block/mod.rs`, and two callers of changed
+`pumpkin-core/src/block/registry.rs`, `pumpkin-world/src/block/mod.rs`, and two callers of changed
 generated signatures: `pumpkin-world/src/generation/rule/block_match.rs`,
-`pumpkin/src/entity/mob/enderman.rs`. Tests: `pumpkin-data/tests/dynamic_registries.rs`.
+`pumpkin-core/src/entity/mob/enderman.rs`. Tests: `pumpkin-data/tests/dynamic_registries.rs`.
 
 **Rebase note:** the `generated/` files come from codegen. On conflict, take upstream's codegen
 inputs, keep the fork's codegen changes, and regenerate; don't merge generated files by hand.
@@ -49,8 +57,8 @@ tables; the server loads them at startup instead of running Java.
 - `04df1ec41` refresh the Storage Drawers dump fixture
 
 **Files:** `pumpkin-registry-ext/` (new crate, with the Storage Drawers dump as a test fixture),
-`pumpkin/Cargo.toml`, `pumpkin/src/main.rs`,
-`pumpkin/src/data/datapack/mod.rs`, `pumpkin/src/block/mod.rs`.
+`pumpkin/Cargo.toml`, `pumpkin-core/Cargo.toml`, `pumpkin/src/main.rs`,
+`pumpkin-core/src/data/datapack/mod.rs`, `pumpkin-core/src/block/mod.rs`.
 
 ## 3. Saving modded blocks and items
 
@@ -75,21 +83,21 @@ project must support.
 - `4843eeb1c` Fabric configuration handshake and registry sync
 - `728d5c4e5` stream codecs for modded component types
 - `a904c6276` NeoForge detection, channel negotiation and registry sync; one detection step
-  for both loaders (`pumpkin-neoforge/` new crate, `pumpkin/src/net/java/loaders.rs` new,
+  for both loaders (`pumpkin-neoforge/` new crate, `pumpkin-core/src/net/java/loaders.rs` new,
   `pumpkin-config/src/modded.rs`, `clippy.toml` new, for the `NeoForge` doc word)
 - `3035bfca5` NeoForge's synced config
 - `b708340f8` Forge detection and the `forge:handshake` configuration tasks (`pumpkin-forge/`
-  new crate, `pumpkin/src/net/java/loaders.rs`, `login/login_acknowledged.rs`,
+  new crate, `pumpkin-core/src/net/java/loaders.rs`, `login/login_acknowledged.rs`,
   `pumpkin-config/src/modded.rs`)
 - `a839b7299` modded menus on Forge clients (`WH/modded.rs`)
 - `45dfd1177` mods' network channels per loader (`modded.register-loader-channels`; `WH/modded.rs`,
-  `pumpkin/src/net/java/loaders.rs`, `pumpkin-forge/src/handshake.rs`)
+  `pumpkin-core/src/net/java/loaders.rs`, `pumpkin-forge/src/handshake.rs`)
 
 **Files:** `pumpkin-fabric/` (new crate, tested against a payload a real Fabric server sent),
 `pumpkin-protocol/src/codec/{modded_component,data_component}.rs`,
 `pumpkin-protocol/src/java/client/{config,play}/update_tags.rs`,
-`pumpkin/src/net/java/login/login_acknowledged.rs`, `pumpkin/src/net/java/pending.rs`,
-`pumpkin/src/net/java/chunk_data/v1_18.rs`. Tests:
+`pumpkin-core/src/net/java/login/login_acknowledged.rs`, `pumpkin-core/src/net/java/pending.rs`,
+`pumpkin-core/src/net/java/chunk_data/v1_18.rs`. Tests:
 `pumpkin-protocol/tests/modded_component_stream_codec.rs`.
 
 ## 5. Recipes
@@ -103,10 +111,10 @@ project must support.
 - `f86ab3824` match crafting and cooking recipes from plugins
 - `a490d007e` list crafting recipes by result
 
-**Files:** `pumpkin/src/data/datapack/recipe_loader.rs`, `pumpkin-protocol/src/codec/recipe.rs`,
+**Files:** `pumpkin-core/src/data/datapack/recipe_loader.rs`, `pumpkin-protocol/src/codec/recipe.rs`,
 `pumpkin-protocol/src/java/client/play/recipe_book_add.rs`,
 `pumpkin-inventory/src/crafting/{crafting_screen_handler,recipe_provider}.rs`,
-`pumpkin/src/server/recipe.rs`, `WH/recipe.rs`. Tests: `pumpkin/tests/modded_recipe_book.rs`.
+`pumpkin-core/src/server/recipe.rs`, `WH/recipe.rs`. Tests: `pumpkin-core/tests/modded_recipe_book.rs`.
 
 ## 6. Config
 
@@ -143,14 +151,14 @@ functions it needs. Each one is listed in `HOOKS.md`.
 
 **Files:** `pumpkin-plugin-wit/v0.{1,2}/*.wit` (`modded.wit` and `menu.wit` new),
 `pumpkin-plugin-api/src/{modded,menu,crafting,lib}.rs` and `src/events/*`, `WH/*` and its v0_2
-mirror, `wasm_host/modded/*`, `pumpkin-host-bindings/src/{v0_1,v0_2}.rs`, `pumpkin/src/plugin/api/events/*`,
-`pumpkin/src/plugin/login_queries.rs` (new), and the call sites the hooks and events fire from:
-`pumpkin/src/block/{mod,registry}.rs`, `pumpkin/src/item/registry.rs`,
-`pumpkin/src/entity/{player,item}.rs`, `pumpkin/src/net/java/play/{player_action,pick_item}.rs`,
-`pumpkin/src/net/java/login/{encryption_response,plugin_response}.rs`,
-`pumpkin/src/world/{mod,entity_tracker}.rs`, `pumpkin/src/block/blocks/{bed,straw_bed,shulker_box}.rs`,
-`pumpkin/src/block/blocks/fire/fire.rs`, `pumpkin/src/block/fluid/lava.rs`,
-`pumpkin/src/block/flammability.rs` (new), `pumpkin/src/lib.rs`,
+mirror, `pumpkin-wasm-host-common/src/modded/*`, `pumpkin-core/src/plugin/modded.rs`, `pumpkin-wasm-host-v0_{1,2}/src/bindings.rs`, `pumpkin-core/src/plugin/api/events/*`,
+`pumpkin-core/src/plugin/login_queries.rs` (new), and the call sites the hooks and events fire from:
+`pumpkin-core/src/block/{mod,registry}.rs`, `pumpkin-core/src/item/registry.rs`,
+`pumpkin-core/src/entity/{player,item}.rs`, `pumpkin-core/src/net/java/play/{player_action,pick_item}.rs`,
+`pumpkin-core/src/net/java/login/{encryption_response,plugin_response}.rs`,
+`pumpkin-core/src/world/{mod,entity_tracker}.rs`, `pumpkin-core/src/block/blocks/{bed,straw_bed,shulker_box}.rs`,
+`pumpkin-core/src/block/blocks/fire/fire.rs`, `pumpkin-core/src/block/fluid/lava.rs`,
+`pumpkin-core/src/block/flammability.rs` (new), `pumpkin-core/src/lib.rs`,
 `pumpkin-inventory/src/{screen_handler,generic_container_screen_handler}.rs`,
 `pumpkin-data/src/data_component_impl/utility.rs`.
 
@@ -164,8 +172,8 @@ under hidden keys (`PumpkinItemStorage`, `PumpkinSignals`, `PumpkinCollision`).
 - `a6f9674ba` redstone and comparator output, `7b1acc125` per side
 - `d36eaec65` per-position collision shapes
 
-**Files:** `pumpkin/src/world/{item_storage,plugin_signals,plugin_shapes}.rs` (new),
-`pumpkin/src/world/mod.rs`, `pumpkin/src/block/entities/hopper.rs`, `WH/world.rs`,
+**Files:** `pumpkin-core/src/world/{item_storage,plugin_signals,plugin_shapes}.rs` (new),
+`pumpkin-core/src/world/mod.rs`, `pumpkin-core/src/block/entities/hopper.rs`, `WH/world.rs`,
 `WH/modded.rs`.
 
 ## 9. Plugin runtime
@@ -173,16 +181,16 @@ under hidden keys (`PumpkinItemStorage`, `PumpkinSignals`, `PumpkinCollision`).
 **Why:** a trapped plugin (a panic in WASM) shouldn't take its mod down until restart.
 
 - `76482ef0b` restart a WASM plugin after it traps
-- `81f35ff24` worker jobs (`scheduler.spawn-job`): `wasm_host/jobs.rs` (new),
-  `wasm_host/mod.rs`, `WH/scheduler.rs`, `pumpkin/src/server/scheduler.rs`,
+- `81f35ff24` worker jobs (`scheduler.spawn-job`): `pumpkin-wasm-host/src/jobs.rs` and `pumpkin-wasm-host-common/src/jobs.rs` (new),
+  `pumpkin-wasm-host/src/runtime.rs`, `WH/scheduler.rs`, `pumpkin-wasm-host-common/src/scheduler.rs`, `pumpkin-wasm-host/src/scheduler.rs`,
   `pumpkin-plugin-wit/v0.1/{scheduler,plugin}.wit`, `pumpkin-plugin-api/src/{lib,scheduler}.rs`
 - `2d0f6aa31` drop an unused helper
 - `38ea03a66` format fork-changed files
 - `80a6603ee` `PLUGIN_API_VERSION` 2 to 3: native plugins see changed `StorageSlot`,
-  `PluginSignals` and `set_plugin_redstone_output` (`pumpkin/src/plugin/mod.rs`)
+  `PluginSignals` and `set_plugin_redstone_output` (`pumpkin-core/src/plugin/mod.rs`)
 
-**Files:** `pumpkin/src/plugin/loader/wasm/wasm_host/{mod,restart}.rs`, every `WH/*` resource
-module, `pumpkin/src/plugin/mod.rs`, `pumpkin/src/server/scheduler.rs`.
+**Files:** `pumpkin-wasm-host/src/{runtime,restart}.rs`, `pumpkin-wasm-host-common/src/plugin.rs`, every `WH/*` resource
+module, `pumpkin-core/src/plugin/mod.rs`, `pumpkin-wasm-host-common/src/scheduler.rs`, `pumpkin-wasm-host/src/scheduler.rs`.
 
 ## 10. Upstream bug fixes
 
@@ -190,8 +198,8 @@ module, `pumpkin/src/plugin/mod.rs`, `pumpkin/src/server/scheduler.rs`.
 send upstream (`ROADMAP.md`, item 12); once merged there, drop them here.
 
 - `6078f6e29` hoppers loaded from disk pushed down instead of their facing
-  (`pumpkin/src/block/entities/hopper.rs`)
-- `c0f42ce91` forced chunks never loaded (`pumpkin/src/world/{active_chunks,mod}.rs`)
+  (`pumpkin-core/src/block/entities/hopper.rs`)
+- `c0f42ce91` forced chunks never loaded (`pumpkin-core/src/world/{active_chunks,mod}.rs`)
 - `f0b482006` player inventory slots synced by the wrong index (`WH/{modded,player}.rs`)
 - `53edcddab` WIT sounds mapped to the wrong vanilla sounds (`WH/{modded,player,world}.rs`,
   `pumpkin-plugin-runtime/src/executor.rs`)
@@ -199,10 +207,31 @@ send upstream (`ROADMAP.md`, item 12); once merged there, drop them here.
 - `07ab1095f` configuration-phase kicks sent the reason as a string, not a text component, so the
   client couldn't read them (`pumpkin-protocol/src/java/client/config/config_disconnect.rs`)
 - `523f5c9a6` arrows passed their shooter as the direct entity, and the damage event packet sent
-  cause and direct entity swapped (`pumpkin/src/entity/{projectile/arrow,living}.rs`)
+  cause and direct entity swapped (`pumpkin-core/src/entity/{projectile/arrow,living}.rs`)
 - `f19f3dc6b` (branch `1.21.1`) badlands terracotta bands below y = 0 used a wrapped
   unsigned index: a panic in debug builds, the wrong band in release
   (`pumpkin-world/src/generation/surface/terrain.rs`)
+- `1d3b8e6dc` `setblock` and `fill` read only a block id, not `[properties]{nbt}`
+  (`pumpkin-command/src/argument_types/{block,block_predicate}.rs`,
+  `pumpkin-core/src/command/commands/{setblock,fill}.rs`)
+- `96e8e067c` new worlds kept the placeholder spawn height, so the console and other spawn users
+  sat at Y 200 (`pumpkin-core/src/server/mod.rs`)
+- `eae26f083` adventure mode ignored `can_break` and `can_place_on`: any block broke, none placed
+  (`pumpkin-core/src/entity/player/adventure.rs` new, `pumpkin-core/src/net/java/play/{player_action,use_item_on}.rs`,
+  `pumpkin-core/src/block/registry.rs`)
+- `dbc56b4ed` completing a villager trade deadlocked the server: the trade callback
+  locked the merchant screen handler it ran under (`pumpkin-core/src/entity/passive/villager/mod.rs`)
+- `22f9cb735` a right click interacted twice (`interact_at` and `interact`), so
+  players mounted twice and items were used twice (`pumpkin-core/src/net/java/play/interact.rs`,
+  `pumpkin-core/src/entity/mod.rs`)
+- `ef539eaf1` releasing shift was handled as pressing it
+  (`pumpkin-core/src/net/java/play/player_command.rs`)
+- `b2a0f0534` decorated pots lost their sherds (`pot_decorations` kept no data)
+  (`pumpkin-data/src/data_component_impl/basic.rs`, `pumpkin-core/src/block/entities/decorated_pot.rs`,
+  `pumpkin-protocol/src/codec/data_component.rs`, `tools/pumpkin-codegen/src/item.rs`)
+- `5aa0f45ce` goat horns always played Ponder: `instrument` kept no data and was sent as an empty
+  inline instrument (`pumpkin-data/src/data_component_impl/basic.rs`,
+  `pumpkin-core/src/item/items/goat_horn.rs`, `pumpkin-protocol/src/codec/data_component.rs`)
 
 ## 11. Docs
 
@@ -216,10 +245,10 @@ catalog".
 
 Files that both upstream and the fork edit often. Check these first after a sync:
 
-- `pumpkin/src/world/mod.rs`: ticking, block entities, active chunks, collisions.
-- `pumpkin/src/block/registry.rs`, `pumpkin/src/item/registry.rs`: hook dispatch.
-- `pumpkin/src/entity/player.rs`: inventory tick, menus.
-- `pumpkin/src/net/java/login/*`, `pending.rs`: the Fabric handshake.
+- `pumpkin-core/src/world/mod.rs`: ticking, block entities, active chunks, collisions.
+- `pumpkin-core/src/block/registry.rs`, `pumpkin-core/src/item/registry.rs`: hook dispatch.
+- `pumpkin-core/src/entity/player.rs`: inventory tick, menus.
+- `pumpkin-core/src/net/java/login/*`, `pending.rs`: the Fabric handshake.
 - `pumpkin-data/src/generated/*`: regenerate, don't merge.
 - `pumpkin-plugin-wit/v0.{1,2}/*.wit`: upstream mirrors the WIT to its own repo; keep fork
   additions additive, and in both versions.
