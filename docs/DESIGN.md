@@ -68,21 +68,21 @@ every addition into 0.2.0 (`crates/pumpkin-plugin-wit/v0.2/`) so a mod can targe
 
 ### 2.2 Block, item and entity dispatch
 
-- `BlockRegistry` (`crates/pumpkin/src/block/registry.rs:499`) maps
+- `BlockRegistry` (`crates/pumpkin-core/src/block/registry.rs:499`) maps
   `[u16; BlockId::COUNT]` to indices into `Vec<Arc<dyn BlockBehaviour>>`. The array is sized at
   compile time.
-- `ItemRegistry` (`crates/pumpkin/src/item/registry.rs:23`) is an `FxHashMap<u16, Arc<dyn
+- `ItemRegistry` (`crates/pumpkin-core/src/item/registry.rs:23`) is an `FxHashMap<u16, Arc<dyn
   ItemBehaviour>>`. It already works with any ID.
-- Block entities load through `block_entity_from_nbt` (`crates/pumpkin/src/block/entities/mod.rs:180`),
+- Block entities load through `block_entity_from_nbt` (`crates/pumpkin-core/src/block/entities/mod.rs:180`),
   a `match` on the NBT `id` string. Unknown IDs return `None`, so their data is dropped.
-- Entities: `from_type()` in `crates/pumpkin/src/entity/type.rs`. Storage Drawers adds no
+- Entities: `from_type()` in `crates/pumpkin-core/src/entity/type.rs`. Storage Drawers adds no
   entities.
 - `BlockBehaviour`, `ItemBehaviour` and `Goal` methods are synchronous and run inside the tick
   (`AGENTS.md`).
 
 ### 2.3 Configuration phase
 
-Code lives under `crates/pumpkin/src/net/java/`.
+Code lives under `crates/pumpkin-core/src/net/java/`.
 
 1. `handle_login_acknowledged` (`login/login_acknowledged.rs:5`) sends `minecraft:brand`, server
    links, an optional resource pack, then `CFeatureFlags` and `CKnownPacks` (`:97`).
@@ -112,9 +112,9 @@ Pumpkin has no concept of configuration "tasks". Finish-config is sent unconditi
 
 - WASM components (`wasm32-wasip2`), world `pumpkin:plugin@0.1.0`
   (`crates/pumpkin-plugin-wit/v0.1/plugin.wit`), or its 0.2.0 mirror. The host lives in
-  `crates/pumpkin/src/plugin/loader/wasm/wasm_host/wit/v0_1/` and `v0_2/`, with the block, item
-  and menu behaviour both share in `wasm_host/modded/`; the guest SDK in
-  `crates/pumpkin-plugin-api`.
+  `crates/pumpkin-wasm-host-v0_1/` and `-v0_2/`, with the block, item and menu behaviour both
+  share in `crates/pumpkin-wasm-host-common/src/modded/` and the loader in
+  `crates/pumpkin-wasm-host/`; the guest SDK in `crates/pumpkin-plugin-api`.
 - Plugin exports: `init-plugin`, `on-load`, `on-unload`, `handle-event`, `handle-command`,
   `handle-task`, `handle-ipc-message`, AI goal hooks and `handle-generate-phase`.
 - Things a plugin can register: event handlers, commands, permissions, enchantments and recipes
@@ -256,7 +256,7 @@ Each item says what breaks for a modded ID.
 13. `block_entity_from_nbt` (`block/entities/mod.rs:180`) drops unknown block-entity IDs, so
     modded block-entity data is lost on load.
 14. The WASM host's world API builds block lists sized to `BlockId::COUNT`
-    (`plugin/loader/wasm/wasm_host/wit/v0_1/world.rs:460`).
+    (`crates/pumpkin-wasm-host-v0_1/src/world.rs:460`).
 15. The configuration phase has no Fabric handshake and no task/wait mechanism (2.3).
 16. Command argument parsing (`block_state` / `item` arguments) resolves names through the
     functions in item 3.

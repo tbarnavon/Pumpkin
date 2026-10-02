@@ -328,7 +328,7 @@ Fabric API and Paper.
 
 ## Loaders: NeoForge and Forge clients (2026-10-03 to 10-04)
 
-- One detection step for every loader (`pumpkin/src/net/java/loaders.rs`): Forge by the
+- One detection step for every loader (`pumpkin-core/src/net/java/loaders.rs`): Forge by the
   `\0FORGE` marker in the handshake address; otherwise the server announces Fabric's and
   NeoForge's channels and pings, and the client's answers before the pong decide.
 - NeoForge (`pumpkin-neoforge`): channel negotiation, frozen registry sync, `c:` tasks and

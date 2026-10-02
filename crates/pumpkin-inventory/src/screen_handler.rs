@@ -288,6 +288,12 @@ pub trait ScreenHandler: Send + Sync {
         true
     }
 
+    /// Whether the player's tick checks [`Self::can_use`] and closes the screen when it fails,
+    /// like vanilla's `stillValid` check; for screens that can go away on their own.
+    fn checks_can_use_each_tick(&self) -> bool {
+        false
+    }
+
     /// Gets a reference to the screen handler behaviour.
     fn get_behaviour(&self) -> &ScreenHandlerBehaviour;
 
