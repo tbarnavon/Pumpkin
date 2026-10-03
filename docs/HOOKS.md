@@ -635,7 +635,7 @@ Every event class in NeoForge 26.3.x outside its client package (267 classes, ne
 
 #### Paper events Pumpkin doesn't declare
 
-Paper (26.3, `paper-api`) has 465 event classes; Pumpkin's WIT declares the Bukkit set and some of Paper's. These 199 are not declared at all (abstract bases left out), all ❌, need C for content mods (they matter for server plugins more than for mods). Some have a Pumpkin equivalent under another name: `PlayerQuitEvent` is `player-leave-event`, `PlayerGameModeChangeEvent` is `player-gamemode-change-event`, `PlayerPickItemEvent` is `player-pick-item-block/entity-event`, `PlayerTrackEntityEvent` and `PlayerUntrackEntityEvent` are `player-start/stop-tracking-event`, `ChunkLoadEvent` is `chunk-load-event`.
+Paper (26.3, `paper-api`) has 465 event classes; Pumpkin's WIT declares the Bukkit set and some of Paper's. These 199 are not declared at all (abstract bases left out), all ❌. They are need C for content mods, but the server runs plugins as well as mods, so they count for porting Paper plugins: they get their own batch (below). Some have a Pumpkin equivalent under another name: `PlayerQuitEvent` is `player-leave-event`, `PlayerGameModeChangeEvent` is `player-gamemode-change-event`, `PlayerPickItemEvent` is `player-pick-item-block/entity-event`, `PlayerTrackEntityEvent` and `PlayerUntrackEntityEvent` are `player-start/stop-tracking-event`, `ChunkLoadEvent` is `chunk-load-event`.
 
 | Group | Events |
 |:--|:--|
@@ -691,7 +691,10 @@ Every ❌ and 🟡 row in the tables above falls in one of these batches.
    abilities (`canPerformAction`); hooks for vanilla blocks next to their own behaviour.
 8. **B, content registries:** default component changes for vanilla items; strip, till,
    flatten and wax; fuel and brewing; modded mob effects, particles and fluids; fake players.
-9. **C:** everything else marked C (fall and bounce, ladders, pistons, light and friction per
-   position, path types, data maps, compost and oxidation, modded game rules and argument
-   types, sleep details, knockback, critical hits, the Paper events Pumpkin doesn't declare,
-   and upstream's never-fired events).
+9. **Plugins (Paper parity):** fire upstream's 56 declared-but-never-fired events, then declare
+   and fire the Paper events above, starting with the ones plugins use most (chat, connection
+   and configuration, player interaction, entity movement and spawning). Can run alongside the
+   mod batches.
+10. **C:** everything else marked C (fall and bounce, ladders, pistons, light and friction per
+    position, path types, data maps, compost and oxidation, modded game rules and argument
+    types, sleep details, knockback, critical hits).
