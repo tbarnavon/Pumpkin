@@ -39,10 +39,12 @@ ticking block entity now costs ~0.4 µs, so ~100,000 of them fit in a 50 ms tick
    `get-block-states-in-box` (up to 32,768 blocks), `set-block-states` and
    `get-block-entity-data-list`. Whole inventories were already one call upstream
    (`inventory.get-all-items` / `set-all-items`).
-3. **Worker jobs.** `scheduler.spawn-job(handler, bytes)` runs the plugin's `run-job` export in
-   a worker instance (same `InstancePre`, own memory) on a thread pool; the result comes back as
-   an event on a later tick. Workers get no world access. For autocrafting (AE2 calculates on a
-   background thread too), pathfinding, large recipe searches.
+3. ~~**Worker jobs.**~~ done (2026-10-03, `WORKERJOBS`): `scheduler.spawn-job(kind, input)` runs
+   the plugin's `run-job` export on a worker instance (same `InstancePre`, own store, no
+   server) on a dedicated pool of a quarter of the cores; up to 2 idle workers per plugin are
+   kept. The output reaches the `handle-job-result` export on a later tick (an export rather
+   than an event: no registration, and no change to upstream's event list). In the SDK:
+   `scheduler::spawn_job(kind, input, callback)` and `Plugin::run_job`.
 4. **Shared-memory threads** in a plugin, once wasmtime supports them for components
    (shared-everything threads proposal).
 5. **Parallel plugin ticking by region**, only if a measured bottleneck needs it: mod state

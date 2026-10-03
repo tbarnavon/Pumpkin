@@ -51,6 +51,7 @@ each plugin one `handle-tick-batch` call per world after block entities tick (se
 
 | API | What it does | Commit |
 |:--|:--|:--|
+| `scheduler.spawn-job` + exports `run-job`, `handle-job-result` | Runs `run-job` on a worker instance (own memory, no server access) on a background thread pool; the output reaches `handle-job-result` on the main instance at the start of a later tick | `WORKERJOBS` |
 | export `handle-tick-batch` (`modded.tick-batch`) | One call per plugin, world and tick with all its batched per-tick hooks, in vanilla order: inventories, entity contacts, block entities | `1fa249829` |
 | `context.register-crafting-handler` + export `handle-crafting` | Crafts a grid for recipes defined in code (a mod's `CustomRecipe`) | `981c23443` |
 | `menu.open` / `update-slot` / `close` + export `handle-menu-call` | Menus whose slots the plugin defines, held by the host | `cddec52a8`, `31377bbf9` |

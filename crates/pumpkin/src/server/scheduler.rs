@@ -1,4 +1,5 @@
 use crate::plugin::loader::wasm::wasm_host::WasmPlugin;
+use crate::plugin::loader::wasm::wasm_host::jobs::JobResult;
 use crate::server::Server;
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashSet};
@@ -38,6 +39,8 @@ impl Ord for ScheduledTask {
 
 pub struct TaskScheduler {
     tasks: Mutex<BinaryHeap<ScheduledTask>>,
+    /// Finished `scheduler.spawn-job` jobs, handed to their plugins on the next tick.
+    job_results: Mutex<Vec<JobResult>>,
     cancelled_tasks: Mutex<HashSet<TaskId>>,
     disabled_plugins: Mutex<Vec<Weak<WasmPlugin>>>,
     next_task_id: std::sync::atomic::AtomicU32,
@@ -54,6 +57,7 @@ impl TaskScheduler {
     pub fn new() -> Self {
         Self {
             tasks: Mutex::new(BinaryHeap::new()),
+            job_results: Mutex::new(Vec::new()),
             cancelled_tasks: Mutex::new(HashSet::new()),
             disabled_plugins: Mutex::new(Vec::new()),
             next_task_id: std::sync::atomic::AtomicU32::new(0),
@@ -156,7 +160,65 @@ impl TaskScheduler {
             .any(|entry| Weak::ptr_eq(entry, &plugin))
     }
 
+    /// Queues a finished job for its plugin's `handle-job-result`.
+    pub fn push_job_result(&self, result: JobResult) {
+        self.job_results
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .push(result);
+    }
+
+    /// Hands finished jobs to their plugins' `handle-job-result`.
+    fn deliver_job_results(&self, server: &Arc<Server>) {
+        let results = std::mem::take(
+            &mut *self
+                .job_results
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner),
+        );
+        for JobResult {
+            plugin,
+            job_id,
+            output,
+        } in results
+        {
+            let mut disabled_plugins = self
+                .disabled_plugins
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+            if Self::is_plugin_disabled(&mut disabled_plugins, &plugin) {
+                continue;
+            }
+            drop(disabled_plugins);
+            let server_clone = server.clone();
+            server.spawn_task(async move {
+                let generation = plugin.current();
+                let function = match &generation.plugin_instance {
+                    crate::plugin::loader::wasm::wasm_host::PluginInstance::V0_1(instance) => {
+                        instance.func_handle_job_result()
+                    }
+                };
+                if let Err(error) = generation
+                    .store
+                    .call_guest(move |mut guest| {
+                        Box::pin(async move {
+                            let server_resource =
+                                guest.with(|mut store| store.data_mut().add(server_clone))?;
+                            guest
+                                .call(function, (job_id, server_resource, output))
+                                .await
+                        })
+                    })
+                    .await
+                {
+                    tracing::error!(job_id, %error, "Wasm job result failed");
+                }
+            });
+        }
+    }
+
     pub fn tick(&self, server: &Arc<Server>) {
+        self.deliver_job_results(server);
         let current_tick = server.tick_count.load(AtomicOrdering::Relaxed) as u64;
         let mut tasks_to_run = Vec::new();
 

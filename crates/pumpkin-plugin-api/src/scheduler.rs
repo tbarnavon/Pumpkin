@@ -15,7 +15,7 @@
 
 use crate::wit::pumpkin::plugin::context::Server;
 use crate::wit::pumpkin::plugin::scheduler;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::sync::{Arc, Mutex};
 
 /// A type alias for a closure that can be scheduled as a task.
@@ -139,4 +139,36 @@ where
 /// Cancels a scheduled task.
 pub fn cancel_task(task_id: u32) {
     scheduler::cancel_task(task_id);
+}
+
+/// Called with a job's output on the main instance.
+pub type JobCallback = Box<dyn FnOnce(Server, Result<Vec<u8>, String>) + Send>;
+
+static JOB_CALLBACKS: Mutex<Option<HashMap<u64, JobCallback>>> = Mutex::new(None);
+
+/// Runs [`Plugin::run_job`](crate::Plugin::run_job) with `kind` and `input` on a worker, off the
+/// tick, then calls `on_result` with its output at the start of a later tick. For CPU-heavy work
+/// that needs no world access, like autocrafting plans or path searches. Returns the job id.
+pub fn spawn_job<F>(kind: u32, input: &[u8], on_result: F) -> u64
+where
+    F: FnOnce(Server, Result<Vec<u8>, String>) + Send + 'static,
+{
+    let job_id = scheduler::spawn_job(kind, input);
+    JOB_CALLBACKS
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .get_or_insert_with(HashMap::new)
+        .insert(job_id, Box::new(on_result));
+    job_id
+}
+
+pub(crate) fn dispatch_job_result(job_id: u64, server: Server, output: Result<Vec<u8>, String>) {
+    let callback = JOB_CALLBACKS
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .as_mut()
+        .and_then(|callbacks| callbacks.remove(&job_id));
+    if let Some(callback) = callback {
+        callback(server, output);
+    }
 }

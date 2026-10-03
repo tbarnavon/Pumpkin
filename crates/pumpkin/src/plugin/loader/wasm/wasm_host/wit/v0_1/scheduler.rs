@@ -47,6 +47,19 @@ impl scheduler::Host for PluginHostState {
         Ok(task_id)
     }
 
+    async fn spawn_job(&mut self, kind: u32, input: Vec<u8>) -> wasmtime::Result<u64> {
+        let plugin = self
+            .plugin
+            .as_ref()
+            .and_then(std::sync::Weak::upgrade)
+            .ok_or_else(|| wasmtime::Error::msg("Plugin not found"))?;
+        let server = self
+            .server
+            .as_ref()
+            .ok_or_else(|| wasmtime::Error::msg("Server not found"))?;
+        Ok(plugin.spawn_job(server, kind, input))
+    }
+
     async fn cancel_task(&mut self, task_id: u32) -> wasmtime::Result<()> {
         let server = self
             .server

@@ -126,6 +126,13 @@ world plugin {
     /// is at least one.
     export handle-tick-batch: func(server: server-instance, batch: tick-batch);
 
+    /// Runs a job started with `scheduler.spawn-job`. Called on a worker instance, never on the
+    /// main one.
+    export run-job: func(kind: u32, input: list<u8>) -> result<list<u8>, string>;
+
+    /// Receives the output of the job `job-id` started with `scheduler.spawn-job`.
+    export handle-job-result: func(job-id: u64, server: server-instance, output: result<list<u8>, string>);
+
     /// Answers a crafting grid for a handler registered with `context.register-crafting-handler`:
     /// the result, or none when the grid is not this handler's recipe. `grid` is row by row,
     /// `width` slots per row.

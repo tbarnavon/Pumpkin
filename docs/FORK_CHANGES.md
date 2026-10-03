@@ -143,6 +143,9 @@ under hidden keys (`PumpkinItemStorage`, `PumpkinSignals`, `PumpkinCollision`).
 **Why:** a trapped plugin (a panic in WASM) shouldn't take its mod down until restart.
 
 - `76482ef0b` restart a WASM plugin after it traps
+- `WORKERJOBS` worker jobs (`scheduler.spawn-job`): `wasm_host/jobs.rs` (new),
+  `wasm_host/mod.rs`, `WH/scheduler.rs`, `pumpkin/src/server/scheduler.rs`,
+  `pumpkin-plugin-wit/v0.1/{scheduler,plugin}.wit`, `pumpkin-plugin-api/src/{lib,scheduler}.rs`
 - `2d0f6aa31` drop an unused helper
 - `38ea03a66` format fork-changed files
 - `80a6603ee` `PLUGIN_API_VERSION` 2 to 3: native plugins see changed `StorageSlot`,

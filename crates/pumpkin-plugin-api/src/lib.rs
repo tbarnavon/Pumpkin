@@ -419,6 +419,14 @@ impl wit::Guest for Component {
         crate::modded::dispatch_tick_batch(server, batch);
     }
 
+    fn run_job(kind: u32, input: Vec<u8>) -> Result<Vec<u8>, String> {
+        plugin().run_job(kind, input)
+    }
+
+    fn handle_job_result(job_id: u64, server: Server, output: Result<Vec<u8>, String>) {
+        crate::scheduler::dispatch_job_result(job_id, server, output);
+    }
+
     fn handle_crafting(
         handler_id: u32,
         width: u32,
@@ -515,6 +523,13 @@ pub trait Plugin: Send + Sync {
         _message: wit::IpcMessage,
     ) -> Result<wit::IpcMessage, String> {
         Err("This plugin cannot receive messages.".to_string())
+    }
+
+    /// Runs a job started with [`scheduler::spawn_job`] on a worker instance: a fresh copy of
+    /// the plugin where [`new`](Plugin::new) ran but [`on_load`](Plugin::on_load) did not, with
+    /// no access to the server. Work only on `input`; `kind` tells jobs apart.
+    fn run_job(&self, _kind: u32, _input: Vec<u8>) -> std::result::Result<Vec<u8>, String> {
+        Err("This plugin runs no jobs.".to_string())
     }
 }
 

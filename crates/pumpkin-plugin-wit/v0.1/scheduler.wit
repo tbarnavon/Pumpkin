@@ -21,4 +21,11 @@ interface scheduler {
     ///
     /// * `task-id`: The ID of the task to cancel.
     cancel-task: func(task-id: u32);
+
+    /// Runs the plugin's `run-job` export with `kind` and `input` on a worker: another instance
+    /// of the plugin, with its own memory, on a background thread. The worker runs `init-plugin`
+    /// but not `on-load`, and has no access to the server or its worlds, so a job works only on
+    /// its input. The output reaches the main instance's `handle-job-result` export with the
+    /// returned job id, at the start of a later tick.
+    spawn-job: func(kind: u32, input: list<u8>) -> u64;
 }

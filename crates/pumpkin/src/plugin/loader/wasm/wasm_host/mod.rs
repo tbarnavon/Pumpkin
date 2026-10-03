@@ -14,6 +14,7 @@ use pumpkin_plugin_runtime::RuntimeSpawner;
 
 pub mod args;
 pub mod concurrent_store;
+pub mod jobs;
 pub mod logging;
 mod restart;
 pub mod signature;
@@ -139,6 +140,7 @@ impl Drop for PluginGeneration {
 pub struct WasmPlugin {
     generation: ArcSwap<PluginGeneration>,
     restarter: restart::Restarter,
+    jobs: jobs::JobWorkers,
 }
 
 impl WasmPlugin {
@@ -231,6 +233,11 @@ impl PluginRuntime {
 
         let plugin_pre = wit::v0_1::prepare_plugin(&instance_pre)
             .map_err(PluginInitError::ApiVersionMismatch)?;
+        let jobs = jobs::JobWorkers::new(
+            self.engine.clone(),
+            plugin_pre.clone(),
+            self.legacy_sync_reentry.clone(),
+        );
         let restarter = restart::Restarter::new(
             self.engine.clone(),
             plugin_pre,
@@ -242,6 +249,7 @@ impl PluginRuntime {
         let wasm_plugin = Arc::new(WasmPlugin {
             generation: ArcSwap::from(generation),
             restarter,
+            jobs,
         });
         wasm_plugin
             .restarter
