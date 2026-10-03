@@ -6,7 +6,7 @@ upstream merge into "drop ours", "adapt ours" or "unrelated".
 
 - **Upstream:** `https://github.com/Pumpkin-MC/Pumpkin`, branch `master`.
 - **Last sync:** merge base `4426d1113` (2026-09-28).
-- **Fork commits since then:** 76 (2026-10-03).
+- **Fork commits since then:** 99 (2026-10-03, this file's commit included).
 
 When you commit to `modded`, add the commit to its area here (or add an area). Hooks and host
 functions also get a row in `HOOKS.md`. Paths below drop the `crates/` prefix; `WH` is
@@ -25,7 +25,9 @@ overlay after the vanilla ids.
 **Files:** `pumpkin-data/src/dynamic/*` (new), `pumpkin-data/src/{blocks,block_state,lib}.rs`,
 `pumpkin-data/src/generated/{block,item,tag,fluid,screen,flower_pot_transformations}.rs`,
 `tools/pumpkin-codegen/src/{block,item,tag,screen,flower_pot_transformations}.rs`,
-`pumpkin/src/block/registry.rs`, `pumpkin-world/src/block/mod.rs`.
+`pumpkin/src/block/registry.rs`, `pumpkin-world/src/block/mod.rs`, and two callers of changed
+generated signatures: `pumpkin-world/src/generation/rule/block_match.rs`,
+`pumpkin/src/entity/mob/enderman.rs`. Tests: `pumpkin-data/tests/dynamic_registries.rs`.
 
 **Rebase note:** the `generated/` files come from codegen. On conflict, take upstream's codegen
 inputs, keep the fork's codegen changes, and regenerate; don't merge generated files by hand.
@@ -38,7 +40,8 @@ tables; the server loads them at startup instead of running Java.
 - `b2fdccf44` load Extractor mod dumps at startup
 - `04df1ec41` refresh the Storage Drawers dump fixture
 
-**Files:** `pumpkin-registry-ext/` (new crate), `pumpkin/src/main.rs`,
+**Files:** `pumpkin-registry-ext/` (new crate, with the Storage Drawers dump as a test fixture),
+`pumpkin/Cargo.toml`, `pumpkin/src/main.rs`,
 `pumpkin/src/data/datapack/mod.rs`, `pumpkin/src/block/mod.rs`.
 
 ## 3. Saving modded blocks and items
@@ -52,7 +55,8 @@ than delete them.
 
 **Files:** `pumpkin-world/src/chunk/{format/mod.rs,format/unknown_blocks.rs,mod.rs,palette.rs}`,
 `pumpkin-world/src/chunk_system/chunk_state.rs`, `pumpkin-data/src/item_stack/mod.rs`,
-`pumpkin-protocol/src/codec/item_stack_seralizer.rs`.
+`pumpkin-protocol/src/codec/item_stack_seralizer.rs`. Tests:
+`pumpkin-world/tests/modded_chunk_roundtrip.rs`, `pumpkin-protocol/tests/modded_item_components.rs`.
 
 ## 4. Fabric client networking
 
@@ -63,10 +67,12 @@ project must support.
 - `4843eeb1c` Fabric configuration handshake and registry sync
 - `728d5c4e5` stream codecs for modded component types
 
-**Files:** `pumpkin-fabric/` (new crate), `pumpkin-protocol/src/codec/modded_component.rs`,
+**Files:** `pumpkin-fabric/` (new crate, tested against a payload a real Fabric server sent),
+`pumpkin-protocol/src/codec/{modded_component,data_component}.rs`,
 `pumpkin-protocol/src/java/client/{config,play}/update_tags.rs`,
 `pumpkin/src/net/java/login/login_acknowledged.rs`, `pumpkin/src/net/java/pending.rs`,
-`pumpkin/src/net/java/chunk_data/v1_18.rs`.
+`pumpkin/src/net/java/chunk_data/v1_18.rs`. Tests:
+`pumpkin-protocol/tests/modded_component_stream_codec.rs`.
 
 ## 5. Recipes
 
@@ -82,7 +88,7 @@ project must support.
 **Files:** `pumpkin/src/data/datapack/recipe_loader.rs`, `pumpkin-protocol/src/codec/recipe.rs`,
 `pumpkin-protocol/src/java/client/play/recipe_book_add.rs`,
 `pumpkin-inventory/src/crafting/{crafting_screen_handler,recipe_provider}.rs`,
-`pumpkin/src/server/recipe.rs`, `WH/recipe.rs`.
+`pumpkin/src/server/recipe.rs`, `WH/recipe.rs`. Tests: `pumpkin/tests/modded_recipe_book.rs`.
 
 ## 6. Config
 
@@ -108,6 +114,7 @@ functions it needs. Each one is listed in `HOOKS.md`.
   `c19760f9c`, `e8ceb3e1e`, `d75320470`, `fcad77c09`
 - Host functions: `bd7f4c35e`, `8c64bfb06`, `4c0cc6ae9`, `786ca3cd8`, `1d73c14ae`, `907bef135`
 - Bulk world access: `5d96d025f`
+- `f76a58841` a missing `must_use`
 - Reorganisation (general functions out of `modded.wit` into core interfaces): `25b0b7b63`,
   `fb5343e2e`
 

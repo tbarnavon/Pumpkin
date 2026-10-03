@@ -300,3 +300,28 @@ drawers and detached drawers kept out of bundles and shulker boxes, conversion u
 
 Real-client result (2026-10-03): the user reports items 7 to 10, the controller storage fix and
 the hopper facing fix (`6078f6e29`) work in game.
+
+## Performance, bulk access and worker jobs (2026-10-03)
+
+- Batched per-tick hooks (`1fa249829`): `ticker`, `entity-inside`, `step-on` and
+  `inventory-tick` are queued while a world ticks and sent as one `handle-tick-batch` call per
+  plugin. Release benchmark, 10,000 ticking plugin block entities: 395 ms per tick before,
+  4.5 ms after (0.43 µs each); details in `ROADMAP.md`. The Storage Drawers plugin uses the new
+  API for its hopper upgrade (`entity-inside`) and its 60-tick inventory checks
+  (`inventory-tick`).
+- `PLUGIN_API_VERSION` 2 to 3 (`80a6603ee`).
+- Bulk world access (`5d96d025f`): `get-block-state-ids`, `get-block-states-in-box`,
+  `set-block-states`, `get-block-entity-data-list`. Storage Drawers reads its remote nodes'
+  states in one call.
+- Worker jobs (`81f35ff24`): `scheduler.spawn-job`, exports `run-job` and `handle-job-result`.
+
+Tested: clippy and tests (425 passed in the server crate); a test plugin on a scratch server ran
+a job (a worker instance that never ran `on_load`, its output back on a later tick, an unknown
+kind returned as an error) and the four bulk functions against single-block reads on a loaded
+chunk; the Storage Drawers plugin loads on the new API (boot test, 86 drawer blocks).
+Not tested with a real client yet: a drawer with a hopper upgrade pulling items in, and the
+remote upgrade and heavy drawer checks, which now run through the tick batch.
+
+Docs the same day: every loader's client networking audited against its 26.3 source
+(`modloaders/`), and the hook catalog in `HOOKS.md` with full lists from vanilla, NeoForge,
+Fabric API and Paper.
