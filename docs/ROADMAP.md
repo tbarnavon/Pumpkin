@@ -63,9 +63,10 @@ ticking block entity now costs ~0.4 µs, so ~100,000 of them fit in a 50 ms tick
      recipe sync; synced dynamic and mod-created registries; modded argument types and entity
      data serializers (`modloaders/fabric.md`, "Order of work").
    - **NeoForge adapter**, next to `pumpkin-fabric`: detection, `neoforge:register` negotiation
-     and frozen registry sync are implemented (`a904c6276`), waiting for a plain NeoForge
-     client test; then a NeoForge build of the Extractor and a test mod;
-     `advanced_open_screen`; config sync, data maps, extensible enum and feature flag checks;
+     and frozen registry sync (`a904c6276`) and NeoForge's synced config (`3035bfca5`) are
+     done, and a plain NeoForge client joins and plays (2026-10-03); next a NeoForge build of
+     the Extractor and a test mod; `advanced_open_screen`; mods' synced configs, data maps,
+     extensible enum and feature flag checks;
      recipe content, attachments, `neoforge:split`, custom ingredients
      (`modloaders/neoforge.md`).
    - **Quilt:** one real-client test of Storage Drawers on Quilt Loader 0.31 (it runs Fabric API
