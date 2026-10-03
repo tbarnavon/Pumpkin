@@ -68,7 +68,7 @@ them on every modded connection, not only once a mod adds an entry.
 
 | Piece | Channel | Source | Status | Left |
 |:--|:--|:--|:--|:--|
-| Menus with extra data | `neoforge:advanced_open_screen` | `AdvancedOpenScreenPayload` (`IMenuTypeExtension.create`) | ❌ | Same shape as Fabric's `open_screen`; reuse `modded.open-menu` |
+| Menus with extra data | `neoforge:advanced_open_screen` | `AdvancedOpenScreenPayload`, `ServerPlayer.openMenu` patch | 🟡 `modded.open-menu` sends it to NeoForge clients | Real-client test |
 | Entities with spawn data | `neoforge:advanced_add_entity` | `AdvancedAddEntityPayload` (`IEntityWithComplexSpawn`) | ❌ | With modded entities |
 | Container data above a short | `neoforge:advanced_container_set_data` | `AdvancedContainerSetDataPayload` | ❌ | Menus whose data slots exceed 16 bits |
 | Light data for extra sections | `neoforge:auxiliary_light_data` | `AuxiliaryLightDataPayload` | ➖ | Only with NeoForge's extended light API |

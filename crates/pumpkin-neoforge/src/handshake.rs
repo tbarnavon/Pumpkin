@@ -55,7 +55,10 @@ pub fn server_channels() -> Vec<(Protocol, Vec<Component>)> {
         ),
         (
             Protocol::Play,
-            vec![channel(wire::CONFIG_FILE_CHANNEL, Some(Flow::Clientbound))],
+            vec![
+                channel(wire::CONFIG_FILE_CHANNEL, Some(Flow::Clientbound)),
+                channel(wire::ADVANCED_OPEN_SCREEN_CHANNEL, Some(Flow::Clientbound)),
+            ],
         ),
     ]
 }

@@ -95,6 +95,8 @@ pub struct JavaClient {
     pub address: SocketAddr,
     /// The client's brand or modpack information. Lock-free `ArcSwap`.
     pub brand: ArcSwap<Option<String>>,
+    /// The mod loader whose handshake the client went through, if any.
+    pub mod_loader: Option<crate::net::java::loaders::ModLoader>,
     /// Associated player reference. Lock-free `ArcSwap`.
     pub player: ArcSwap<Option<Arc<Player>>>,
     /// A collection of tasks associated with this client. The tasks await completion when removing the client.
@@ -162,6 +164,10 @@ impl JavaClient {
             network_writer: std::sync::Mutex::new(Some(pending.network_writer)),
             network_reader: std::sync::Mutex::new(Some(pending.network_reader)),
             brand: ArcSwap::from_pointee(pending.brand),
+            mod_loader: pending
+                .loader
+                .as_ref()
+                .and_then(crate::net::java::loaders::LoaderHandshake::loader),
             player: ArcSwap::from_pointee(None),
             wait_for_keep_alive: AtomicBool::new(false),
             received_movement_this_tick: AtomicBool::new(false),

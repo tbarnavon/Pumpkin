@@ -132,6 +132,17 @@ impl LoaderHandshake {
         })
     }
 
+    /// The loader the client was found to run, once detection is over.
+    #[must_use]
+    pub const fn loader(&self) -> Option<ModLoader> {
+        match self {
+            Self::Fabric(_) => Some(ModLoader::Fabric),
+            Self::NeoForge(_) => Some(ModLoader::NeoForge),
+            Self::Forge(_) => Some(ModLoader::Forge),
+            Self::Detecting { .. } | Self::Vanilla => None,
+        }
+    }
+
     /// Packets to send right after login acknowledgement, before anything vanilla.
     #[must_use]
     pub fn start(&self) -> Vec<Outgoing> {

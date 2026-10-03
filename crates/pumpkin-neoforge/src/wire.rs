@@ -10,6 +10,8 @@ pub const QUERY_CHANNEL: &str = "neoforge:register";
 pub const NETWORK_CHANNEL: &str = "neoforge:network";
 /// `ModdedNetworkSetupFailedPayload.ID`.
 pub const SETUP_FAILED_CHANNEL: &str = "neoforge:modded_network_setup_failed";
+/// `AdvancedOpenScreenPayload.TYPE`: a modded menu with extra data, in play.
+pub const ADVANCED_OPEN_SCREEN_CHANNEL: &str = "neoforge:advanced_open_screen";
 /// `FrozenRegistrySyncStartPayload.TYPE`.
 pub const SYNC_START_CHANNEL: &str = "neoforge:frozen_registry_sync_start";
 /// `FrozenRegistryPayload.TYPE`.

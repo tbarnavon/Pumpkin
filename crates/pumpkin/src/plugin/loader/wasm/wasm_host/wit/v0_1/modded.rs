@@ -20,6 +20,7 @@ use crate::block::{
 };
 use crate::entity::EntityBase;
 use crate::entity::player::Player;
+use crate::net::java::loaders::ModLoader;
 use crate::plugin::loader::wasm::wasm_host::{PluginInstance, WasmPlugin, state::PluginHostState};
 use crate::server::Server;
 use crate::world::World;
@@ -38,12 +39,12 @@ use super::pumpkin::plugin::player::Player as WitPlayer;
 use super::pumpkin::plugin::world::World as WitWorld;
 
 /// Whether the player joined with Forge, whose handshake address carries Forge's marker.
-fn is_forge_client(player: &Player) -> bool {
-    matches!(
-        player.client.as_ref(),
-        crate::net::ClientPlatform::Java(client)
-            if pumpkin_forge::wire::forge_marker(&client.server_address).is_some()
-    )
+/// The mod loader the player joined with, if any.
+fn client_loader(player: &Player) -> Option<ModLoader> {
+    match player.client.as_ref() {
+        crate::net::ClientPlatform::Java(client) => client.mod_loader,
+        crate::net::ClientPlatform::Bedrock(_) => None,
+    }
 }
 
 const fn to_wit_pos(pos: BlockPos) -> WitBlockPos {
@@ -1416,24 +1417,49 @@ impl wit::HostWithStore<PluginHostState> for HasSelf<PluginHostState> {
                     |sync_id| {
                         let version = pumpkin_util::version::JavaMinecraftVersion::V_26_3;
                         let mut payload = Vec::new();
-                        let (channel, written) = if is_forge_client(&player) {
-                            // Forge's `OpenContainer` (`IForgeServerPlayer.openMenu`): the message
-                            // id, the menu type's raw id, the window id, the title, then the
-                            // extra data as a byte array.
-                            let written = payload
-                                .write_var_int(&VarInt(pumpkin_forge::wire::OPEN_CONTAINER))
-                                .and_then(|()| payload.write_var_int(&VarInt(menu_raw_id.into())))
-                                .and_then(|()| payload.write_var_int(&VarInt(sync_id.into())))
-                                .and_then(|()| payload.write_component(&open.title, &version))
-                                .and_then(|()| payload.write_var_int(&VarInt(data.len() as i32)));
-                            (pumpkin_forge::wire::HANDSHAKE_CHANNEL, written)
-                        } else {
-                            // fabric-menu-api-v1 `Networking.OpenScreenPayload.write`.
-                            let written = payload
-                                .write_string(&menu_type)
-                                .and_then(|()| payload.write_u8(sync_id))
-                                .and_then(|()| payload.write_component(&open.title, &version));
-                            ("fabric-menu-api-v1:open_screen", written)
+                        let (channel, written) = match client_loader(&player) {
+                            Some(ModLoader::Forge) => {
+                                // Forge's `OpenContainer` (`IForgeServerPlayer.openMenu`): the
+                                // message id, the menu type's raw id, the window id, the title,
+                                // then the extra data as a byte array.
+                                let written = payload
+                                    .write_var_int(&VarInt(pumpkin_forge::wire::OPEN_CONTAINER))
+                                    .and_then(|()| {
+                                        payload.write_var_int(&VarInt(menu_raw_id.into()))
+                                    })
+                                    .and_then(|()| payload.write_var_int(&VarInt(sync_id.into())))
+                                    .and_then(|()| payload.write_component(&open.title, &version))
+                                    .and_then(|()| {
+                                        payload.write_var_int(&VarInt(data.len() as i32))
+                                    });
+                                (pumpkin_forge::wire::HANDSHAKE_CHANNEL, written)
+                            }
+                            Some(ModLoader::NeoForge) => {
+                                // NeoForge's `AdvancedOpenScreenPayload` (`ServerPlayer.openMenu`
+                                // patch): the window id, the menu type's raw id, the title, then
+                                // the extra data as a byte array.
+                                let written = payload
+                                    .write_var_int(&VarInt(sync_id.into()))
+                                    .and_then(|()| {
+                                        payload.write_var_int(&VarInt(menu_raw_id.into()))
+                                    })
+                                    .and_then(|()| payload.write_component(&open.title, &version))
+                                    .and_then(|()| {
+                                        payload.write_var_int(&VarInt(data.len() as i32))
+                                    });
+                                (
+                                    pumpkin_neoforge::wire::ADVANCED_OPEN_SCREEN_CHANNEL,
+                                    written,
+                                )
+                            }
+                            _ => {
+                                // fabric-menu-api-v1 `Networking.OpenScreenPayload.write`.
+                                let written = payload
+                                    .write_string(&menu_type)
+                                    .and_then(|()| payload.write_u8(sync_id))
+                                    .and_then(|()| payload.write_component(&open.title, &version));
+                                ("fabric-menu-api-v1:open_screen", written)
+                            }
                         };
                         if let Err(error) = written {
                             tracing::error!(%error, "Failed to write a modded menu open packet");
