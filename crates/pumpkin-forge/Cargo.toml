@@ -1,0 +1,13 @@
+[package]
+name = "pumpkin-forge"
+description = "MinecraftForge client support for Pumpkin: the forge:handshake configuration tasks"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+pumpkin-fabric.workspace = true
+
+[lints]
+workspace = true

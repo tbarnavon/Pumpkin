@@ -1,1 +1,1 @@
-doc-valid-idents = ["NeoForge", ".."]
+doc-valid-idents = ["NeoForge", "MinecraftForge", ".."]

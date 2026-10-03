@@ -22,6 +22,8 @@ impl PendingConnection {
                     .unwrap_or_default(),
                 fabric: modded.fabric_handshake,
                 neoforge: modded.neoforge_handshake,
+                forge: modded.forge_handshake,
+                forge_client: pumpkin_forge::wire::forge_marker(&self.server_address).is_some(),
             })
         {
             let start = handshake.start();

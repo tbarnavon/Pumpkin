@@ -3362,6 +3362,7 @@ dependencies = [
  "pumpkin-config",
  "pumpkin-data",
  "pumpkin-fabric",
+ "pumpkin-forge",
  "pumpkin-gametest",
  "pumpkin-host-bindings",
  "pumpkin-inventory",
@@ -3511,6 +3512,13 @@ dependencies = [
  "pumpkin-registry-ext",
  "serde_json",
  "thiserror 2.0.21",
+]
+
+[[package]]
+name = "pumpkin-forge"
+version = "0.2.0+26.3-26.51"
+dependencies = [
+ "pumpkin-fabric",
 ]
 
 [[package]]

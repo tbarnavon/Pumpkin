@@ -16,8 +16,8 @@ loader's source for Minecraft 26.3 and cites the classes.
 |:--|:--|:--|
 | Fabric | 🟡 what Storage Drawers 26.3.0.1 needs, tested with a real client; the rest is ordered in the file | [fabric.md](fabric.md) |
 | Quilt | 🟡 expected to work through the Fabric handshake (Quilt Loader 0.31 runs Fabric API on 26.3; no QSL for 26.x); not tested | [quilt.md](quilt.md) |
-| NeoForge | ❌ not started: next loader (`../ROADMAP.md`, item 7) | [neoforge.md](neoforge.md) |
-| Forge (MinecraftForge) | ❌ not started: after NeoForge; handshake on `forge:handshake` in configuration | [forge.md](forge.md) |
+| NeoForge | 🟡 handshake, registry sync and NeoForge's config done; a plain NeoForge client joins (2026-10-03); no mods tested yet | [neoforge.md](neoforge.md) |
+| Forge (MinecraftForge) | 🟡 `forge:handshake` tasks implemented, waiting for a real-client test | [forge.md](forge.md) |
 
 Others considered: Sinytra Connector runs Fabric mods on NeoForge, so its clients use the
 NeoForge handshake with Fabric API's channels on top; it needs nothing beyond those two files.

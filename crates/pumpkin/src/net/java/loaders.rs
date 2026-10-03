@@ -1,11 +1,13 @@
 //! Which mod loader a client runs, found during the configuration phase, and its handshake.
 //!
-//! The server announces both loaders' channels and pings. A NeoForge client answers the
+//! A Forge client says so in the handshake's server address, before login. For the others the
+//! server announces Fabric's and NeoForge's channels and pings: a NeoForge client answers the
 //! `neoforge:register` query, a Fabric client only `minecraft:register`, a vanilla client
 //! neither; all of them answer before the pong, so the pong decides.
 
 use pumpkin_fabric::handshake::{FabricHandshake, Outgoing, PING_ID, Step};
 use pumpkin_fabric::wire::{register, registry_sync};
+use pumpkin_forge::handshake::ForgeHandshake;
 use pumpkin_neoforge::handshake::NeoForgeHandshake;
 
 /// What the configuration phase does with each loader, from the `[modded]` config.
@@ -14,6 +16,9 @@ pub struct LoaderOptions {
     pub mod_namespaces: Vec<String>,
     pub fabric: bool,
     pub neoforge: bool,
+    pub forge: bool,
+    /// Whether the handshake's server address carried Forge's marker.
+    pub forge_client: bool,
 }
 
 pub enum LoaderHandshake {
@@ -25,6 +30,7 @@ pub enum LoaderHandshake {
     },
     Fabric(FabricHandshake),
     NeoForge(NeoForgeHandshake),
+    Forge(ForgeHandshake),
     /// A vanilla client on a server without mods, or a loader whose handshake is off.
     Vanilla,
 }
@@ -33,6 +39,19 @@ impl LoaderHandshake {
     /// The handshake to run after login, or none when neither loader's handshake can apply.
     #[must_use]
     pub fn new(options: LoaderOptions) -> Option<Self> {
+        if options.forge_client && options.forge {
+            let mods = options
+                .mod_namespaces
+                .iter()
+                .map(|id| (id.clone(), id.clone(), String::from("0")))
+                .collect();
+            let (name, contents) = pumpkin_forge::wire::FORGE_SERVER_CONFIG;
+            return Some(Self::Forge(ForgeHandshake::new(
+                mods,
+                pumpkin_fabric::sync_map::build(),
+                vec![(name.to_string(), contents.as_bytes().to_vec())],
+            )));
+        }
         let fabric = options.fabric && !options.mod_namespaces.is_empty();
         (fabric || options.neoforge).then_some(Self::Detecting {
             options,
@@ -44,6 +63,9 @@ impl LoaderHandshake {
     /// Packets to send right after login acknowledgement, before anything vanilla.
     #[must_use]
     pub fn start(&self) -> Vec<Outgoing> {
+        if let Self::Forge(handshake) = self {
+            return handshake.start();
+        }
         let mut channels: Vec<&str> = pumpkin_fabric::handshake::SERVER_CONFIG_CHANNELS.to_vec();
         channels.extend(pumpkin_neoforge::wire::BUILTIN_CHANNELS);
         channels.sort_unstable();
@@ -81,6 +103,7 @@ impl LoaderHandshake {
             },
             Self::Fabric(handshake) => handshake.on_payload(channel, data),
             Self::NeoForge(handshake) => handshake.on_payload(channel, data),
+            Self::Forge(handshake) => handshake.on_payload(channel, data),
             Self::Vanilla => Step::NotHandled,
         }
     }
@@ -104,6 +127,8 @@ impl LoaderHandshake {
                 mod_namespaces: Vec::new(),
                 fabric: false,
                 neoforge: false,
+                forge: false,
+                forge_client: false,
             },
         );
         let registers = std::mem::take(registers);
@@ -169,6 +194,8 @@ mod tests {
             mod_namespaces: mods.iter().map(|m| (*m).to_string()).collect(),
             fabric: true,
             neoforge,
+            forge: true,
+            forge_client: false,
         })
         .unwrap()
     }
@@ -203,12 +230,26 @@ mod tests {
     }
 
     #[test]
+    fn the_forge_marker_skips_detection() {
+        let handshake = LoaderHandshake::new(LoaderOptions {
+            mod_namespaces: Vec::new(),
+            fabric: true,
+            neoforge: true,
+            forge: true,
+            forge_client: true,
+        });
+        assert!(matches!(handshake, Some(LoaderHandshake::Forge(_))));
+    }
+
+    #[test]
     fn no_handshake_without_mods_unless_neoforge_is_on() {
         assert!(
             LoaderHandshake::new(LoaderOptions {
                 mod_namespaces: Vec::new(),
                 fabric: true,
                 neoforge: false,
+                forge: true,
+                forge_client: false,
             })
             .is_none()
         );

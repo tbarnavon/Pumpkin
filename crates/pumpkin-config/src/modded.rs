@@ -17,6 +17,9 @@ pub struct ModdedConfig {
     /// Unlike Fabric's, it also runs without mod data, so plain NeoForge clients join as
     /// NeoForge connections.
     pub neoforge_handshake: bool,
+    /// Whether to run Forge's `forge:handshake` tasks with clients whose handshake carries
+    /// Forge's marker. Also runs without mod data.
+    pub forge_handshake: bool,
     /// Keep the Bedrock listener on while modded content is enabled. Bedrock clients cannot see
     /// modded blocks or items, so it is turned off unless this is set.
     pub force_bedrock: bool,

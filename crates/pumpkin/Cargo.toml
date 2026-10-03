@@ -32,6 +32,7 @@ pumpkin-data = { workspace = true, features = ["default"] }
 pumpkin-registry-ext.workspace = true
 pumpkin-fabric.workspace = true
 pumpkin-neoforge.workspace = true
+pumpkin-forge.workspace = true
 pumpkin-protocol = { workspace = true, features = ["default"] }
 pumpkin-macros.workspace = true
 pumpkin-plugin-runtime.workspace = true

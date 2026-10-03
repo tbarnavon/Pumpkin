@@ -4,8 +4,8 @@ Status: ✅ done, 🟡 partial, ❌ missing, ➖ not needed. The pieces are expl
 [README.md](README.md).
 
 Audited against the MinecraftForge source for Minecraft 26.3 (branch `26.3`): the
-`net.minecraftforge.network` package. Nothing is implemented; Forge comes after NeoForge
-(`../ROADMAP.md`, item 7).
+`net.minecraftforge.network` package. The configuration tasks are implemented (`FORGEHS`,
+`pumpkin-forge` crate, `[modded] forge_handshake`), not yet tested with a real client.
 
 Unlike NeoForge, the modern Forge handshake runs in the **configuration** phase on one
 channel, `forge:handshake` (a `SimpleChannel`: a VarInt discriminator, then the message), not in
@@ -20,12 +20,12 @@ login queries. The login channel `forge:login` only carries `LoginWrapper` from 
 
 | Task | Channel / message | Source | Status | Left |
 |:--|:--|:--|:--|:--|
-| Detection | `\0FORGE` in the handshake's server address | `NetworkContext.MARKER` | ❌ | Strip the marker before using the address; mark the connection |
-| Vanilla channel list | `minecraft:register` with every known channel | `RegisterChannelsTask`, `ChannelListManager` | ✅ wire format shared with Fabric | Send it for Forge connections |
-| Mod list | `forge:handshake` `ModVersions` (mod id to name and version), both ways | `ModVersionsTask`, `ForgePacketHandler.handleModVersions` | ❌ | Mod list from the dump |
-| Channel versions | `forge:handshake` `ChannelVersions` (channel to version), both ways; `MismatchData` and a disconnect when they don't match | `ChannelVersionsTask`, `NetworkRegistry.validateChannels` | ❌ | Channel list with versions from the dump and plugins |
-| Registry sync | `forge:handshake` `RegistryList` (token), then one `RegistryData` (token, registry name, snapshot) per registry, each answered by `Acknowledge` (token) | `SyncRegistriesTask`, `RegistryManager.takeSnapshot(false)` | ❌ | Snapshot of every synced registry |
-| Config sync | `forge:handshake` `ConfigData` (file name, raw bytes) for each `SERVER` config | `SyncConfigTask` | ❌ | Plugins provide the config bytes |
+| Detection | `\0FORGE` in the handshake's server address | `NetworkContext.MARKER` | 🟡 `pumpkin-forge` `wire::forge_marker`, read in `login_acknowledged.rs` | Real-client test |
+| Vanilla channel list | `minecraft:register` with every known channel | `RegisterChannelsTask`, `ChannelListManager` | 🟡 `forge:handshake`, `forge:login` | Mods' channels |
+| Mod list | `forge:handshake` `ModVersions` (mod id to name and version), both ways | `ModVersionsTask`, `ForgePacketHandler.handleModVersions` | 🟡 installed mod ids, version `0` | Real names and versions from the dump |
+| Channel versions | `forge:handshake` `ChannelVersions` (channel to version), both ways; `MismatchData` and a disconnect when they don't match | `ChannelVersionsTask`, `NetworkRegistry.validateChannels` | 🟡 Forge's three channels at version 0; another version on the client disconnects | Mods' channels with versions; `MismatchData` (the reasons go in the disconnect message instead) |
+| Registry sync | `forge:handshake` `RegistryList` (token), then one `RegistryData` (token, registry name, snapshot) per registry, each answered by `Acknowledge` (token) | `SyncRegistriesTask`, `RegistryManager.takeSnapshot(false)` | 🟡 registries mods added to, with all entries (as for Fabric and NeoForge) | Forge's own registries need a Forge dump |
+| Config sync | `forge:handshake` `ConfigData` (file name, raw bytes) for each `SERVER` config | `SyncConfigTask` | 🟡 Forge's own `forge-server.toml` with its defaults | Mods' server configs from plugins |
 
 ## Play
 
