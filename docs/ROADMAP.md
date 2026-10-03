@@ -72,8 +72,8 @@ ticking block entity now costs ~0.4 µs, so ~100,000 of them fit in a 50 ms tick
    - **Quilt:** one real-client test of Storage Drawers on Quilt Loader 0.31 (it runs Fabric API
      on 26.3; no QSL exists for 26.x).
    - **Forge:** `\0FORGE` detection and the `forge:handshake` tasks (mod list, channel
-     versions, registry sync, config sync) are implemented (`b708340f8`), waiting for a plain
-     Forge client test; then `OpenContainer`, `SpawnEntity` (`modloaders/forge.md`).
+     versions, registry sync, config sync) are done (`b708340f8`) and a plain
+     Forge client joins (2026-10-04); next `OpenContainer`, `SpawnEntity` (`modloaders/forge.md`).
 8. ~~**Bump `PLUGIN_API_VERSION`**~~ done (2026-10-03): 2 to 3, since `StorageSlot`,
    `PluginSignals` and `set_plugin_redstone_output` changed for native plugins.
 

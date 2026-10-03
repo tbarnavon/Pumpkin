@@ -5,7 +5,8 @@ Status: ✅ done, 🟡 partial, ❌ missing, ➖ not needed. The pieces are expl
 
 Audited against the MinecraftForge source for Minecraft 26.3 (branch `26.3`): the
 `net.minecraftforge.network` package. The configuration tasks are implemented (`b708340f8`,
-`pumpkin-forge` crate, `[modded] forge_handshake`), not yet tested with a real client.
+`pumpkin-forge` crate, `[modded] forge_handshake`). Tested 2026-10-04: a plain Forge 26.3
+client joins (mod list, channel versions and an empty registry sync exchanged).
 
 Unlike NeoForge, the modern Forge handshake runs in the **configuration** phase on one
 channel, `forge:handshake` (a `SimpleChannel`: a VarInt discriminator, then the message), not in
@@ -20,7 +21,7 @@ login queries. The login channel `forge:login` only carries `LoginWrapper` from 
 
 | Task | Channel / message | Source | Status | Left |
 |:--|:--|:--|:--|:--|
-| Detection | `\0FORGE` in the handshake's server address | `NetworkContext.MARKER` | 🟡 `pumpkin-forge` `wire::forge_marker`, read in `login_acknowledged.rs` | Real-client test |
+| Detection | `\0FORGE` in the handshake's server address | `NetworkContext.MARKER` | ✅ `pumpkin-forge` `wire::forge_marker`, read in `login_acknowledged.rs` | |
 | Vanilla channel list | `minecraft:register` with every known channel | `RegisterChannelsTask`, `ChannelListManager` | 🟡 `forge:handshake`, `forge:login` | Mods' channels |
 | Mod list | `forge:handshake` `ModVersions` (mod id to name and version), both ways | `ModVersionsTask`, `ForgePacketHandler.handleModVersions` | 🟡 installed mod ids, version `0` | Real names and versions from the dump |
 | Channel versions | `forge:handshake` `ChannelVersions` (channel to version), both ways; `MismatchData` and a disconnect when they don't match | `ChannelVersionsTask`, `NetworkRegistry.validateChannels` | 🟡 Forge's three channels at version 0; another version on the client disconnects | Mods' channels with versions; `MismatchData` (the reasons go in the disconnect message instead) |
@@ -44,7 +45,7 @@ login queries. The login channel `forge:login` only carries `LoginWrapper` from 
 | Tags | 🟡 | Vanilla packet; Forge's registry sync runs first |
 | Component codecs | ✅ | Loader-independent |
 | Data dump | ❌ | Needs a Forge build of the Extractor |
-| Real client tested | ❌ | |
+| Real client tested | 🟡 | Plain Forge 26.3 joins (2026-10-04); no mods yet |
 
 ## Order of work
 
