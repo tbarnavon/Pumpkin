@@ -107,7 +107,7 @@ functions it needs. Each one is listed in `HOOKS.md`.
 - Events: `b9be9ddc0`, `defeddb36`, `d719b608c`, `9bf64aded`, `729862d48`, `ada7f58d6`,
   `c19760f9c`, `e8ceb3e1e`, `d75320470`, `fcad77c09`
 - Host functions: `bd7f4c35e`, `8c64bfb06`, `4c0cc6ae9`, `786ca3cd8`, `1d73c14ae`, `907bef135`
-- Bulk world access: `BULKWORLD`
+- Bulk world access: `5d96d025f`
 - Reorganisation (general functions out of `modded.wit` into core interfaces): `25b0b7b63`,
   `fb5343e2e`
 
@@ -143,7 +143,7 @@ under hidden keys (`PumpkinItemStorage`, `PumpkinSignals`, `PumpkinCollision`).
 **Why:** a trapped plugin (a panic in WASM) shouldn't take its mod down until restart.
 
 - `76482ef0b` restart a WASM plugin after it traps
-- `WORKERJOBS` worker jobs (`scheduler.spawn-job`): `wasm_host/jobs.rs` (new),
+- `81f35ff24` worker jobs (`scheduler.spawn-job`): `wasm_host/jobs.rs` (new),
   `wasm_host/mod.rs`, `WH/scheduler.rs`, `pumpkin/src/server/scheduler.rs`,
   `pumpkin-plugin-wit/v0.1/{scheduler,plugin}.wit`, `pumpkin-plugin-api/src/{lib,scheduler}.rs`
 - `2d0f6aa31` drop an unused helper

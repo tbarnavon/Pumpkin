@@ -35,11 +35,11 @@ ticking block entity now costs ~0.4 µs, so ~100,000 of them fit in a 50 ms tick
 1. ~~**Batched per-tick hooks.**~~ done (2026-10-03, `1fa249829`): `ticker`, `entity-inside`,
    `step-on` and `inventory-tick` are queued during the tick and sent as one
    `handle-tick-batch` call per plugin and world. Target (~1 µs per block entity) met: 0.43 µs.
-2. ~~**Bulk world access.**~~ done (2026-10-03, `BULKWORLD`): `world.get-block-state-ids`,
+2. ~~**Bulk world access.**~~ done (2026-10-03, `5d96d025f`): `world.get-block-state-ids`,
    `get-block-states-in-box` (up to 32,768 blocks), `set-block-states` and
    `get-block-entity-data-list`. Whole inventories were already one call upstream
    (`inventory.get-all-items` / `set-all-items`).
-3. ~~**Worker jobs.**~~ done (2026-10-03, `WORKERJOBS`): `scheduler.spawn-job(kind, input)` runs
+3. ~~**Worker jobs.**~~ done (2026-10-03, `81f35ff24`): `scheduler.spawn-job(kind, input)` runs
    the plugin's `run-job` export on a worker instance (same `InstancePre`, own store, no
    server) on a dedicated pool of a quarter of the cores; up to 2 idle workers per plugin are
    kept. The output reaches the `handle-job-result` export on a later tick (an export rather
