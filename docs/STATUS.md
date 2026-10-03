@@ -173,7 +173,7 @@ Implemented, each from the 26.3.0.1 source:
   retrim / repartition with sneak-use.
 - Conversion upgrade: `itemEquivalenceGroups`.
 
-Blocked on a missing host API (rows marked in `FABRIC_API_PARITY.md`):
+Blocked on a missing host API:
 - **Hopper and magnet upgrades.** `BlockEntityDrawers.addItemEntity` (from `BlockDrawers.tick` /
   `pushItemsTick` / `suckInItems`, and `entityInside` for the hopper upgrade) reads an
   `ItemEntity`'s stack, puts it into the drawer, then shrinks or discards the entity. The plugin
@@ -243,7 +243,7 @@ Real-client tests to run:
 
 ## Phase 4: host APIs for the rest of Storage Drawers (2026-09-30, HANDOFF-2)
 
-Host (branch `modded`), each with its parity row:
+Host (branch `modded`), each listed in `HOOKS.md`:
 - `modded.register-component-stream-codec`: a plugin describes a modded component's
   `networkSynchronized` stream codec once (composite, primitives, item stacks, lists, optionals);
   the item stack serializer writes and reads the mod's bytes with it. Tested in

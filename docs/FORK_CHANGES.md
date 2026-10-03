@@ -1,0 +1,177 @@
+# Fork changes
+
+What branch `modded` changes on top of upstream Pumpkin, by area: the commits, the files, and
+why each change exists. The upstream sync (`ROADMAP.md`, item 11) reads this file to sort each
+upstream merge into "drop ours", "adapt ours" or "unrelated".
+
+- **Upstream:** `https://github.com/Pumpkin-MC/Pumpkin`, branch `master`.
+- **Last sync:** merge base `4426d1113` (2026-09-28).
+- **Fork commits since then:** 76 (2026-10-03).
+
+When you commit to `modded`, add the commit to its area here (or add an area). Hooks and host
+functions also get a row in `HOOKS.md`. Paths below drop the `crates/` prefix; `WH` is
+`pumpkin/src/plugin/loader/wasm/wasm_host/wit/v0_1`.
+
+## 1. Modded registries at runtime
+
+**Why:** mod blocks, block states, items, block-entity types and tags come from the mod data
+dump at startup; Pumpkin's registries are generated at compile time, so the fork adds a runtime
+overlay after the vanilla ids.
+
+- `7c587960c` runtime overlay for modded registry entries
+- `c61ef77d5` skip tag lookups for ids no mod added to a tag (perf)
+- `c649d737e` send the block-entity type of `block_entity_data` components
+
+**Files:** `pumpkin-data/src/dynamic/*` (new), `pumpkin-data/src/{blocks,block_state,lib}.rs`,
+`pumpkin-data/src/generated/{block,item,tag,fluid,screen,flower_pot_transformations}.rs`,
+`tools/pumpkin-codegen/src/{block,item,tag,screen,flower_pot_transformations}.rs`,
+`pumpkin/src/block/registry.rs`, `pumpkin-world/src/block/mod.rs`.
+
+**Rebase note:** the `generated/` files come from codegen. On conflict, take upstream's codegen
+inputs, keep the fork's codegen changes, and regenerate; don't merge generated files by hand.
+
+## 2. Mod data dump
+
+**Why:** the Extractor (a Fabric mod run once) dumps a mod's registries, tags, recipes and loot
+tables; the server loads them at startup instead of running Java.
+
+- `b2fdccf44` load Extractor mod dumps at startup
+- `04df1ec41` refresh the Storage Drawers dump fixture
+
+**Files:** `pumpkin-registry-ext/` (new crate), `pumpkin/src/main.rs`,
+`pumpkin/src/data/datapack/mod.rs`, `pumpkin/src/block/mod.rs`.
+
+## 3. Saving modded blocks and items
+
+**Why:** worlds must keep modded blocks and items across restarts, and keep unknown ones rather
+than delete them.
+
+- `0c5b875f4` save modded blocks by namespaced name, keep unknown blocks
+- `ab6df3493` save modded item ids, keep stacks with unknown components
+- `b45e6363d` keep modded item components as raw NBT
+
+**Files:** `pumpkin-world/src/chunk/{format/mod.rs,format/unknown_blocks.rs,mod.rs,palette.rs}`,
+`pumpkin-world/src/chunk_system/chunk_state.rs`, `pumpkin-data/src/item_stack/mod.rs`,
+`pumpkin-protocol/src/codec/item_stack_seralizer.rs`.
+
+## 4. Fabric client networking
+
+**Why:** a Fabric client checks the server's registries and channels during configuration, and
+reads modded components with the mod's own stream codecs. This is the per-loader part the
+project must support.
+
+- `4843eeb1c` Fabric configuration handshake and registry sync
+- `728d5c4e5` stream codecs for modded component types
+
+**Files:** `pumpkin-fabric/` (new crate), `pumpkin-protocol/src/codec/modded_component.rs`,
+`pumpkin-protocol/src/java/client/{config,play}/update_tags.rs`,
+`pumpkin/src/net/java/login/login_acknowledged.rs`, `pumpkin/src/net/java/pending.rs`,
+`pumpkin/src/net/java/chunk_data/v1_18.rs`.
+
+## 5. Recipes
+
+**Why:** mod recipes come from the dump, and plugins look up and define recipes.
+
+- `cfe0d95f9` parse tag ingredients written as `#tag` strings
+- `b504d3619` match modded items in plugin and datapack recipe ingredients
+- `2717a2ac3` Fabric custom ingredients (`fabric:all_of` and others)
+- `981c23443` crafting handlers for recipes defined in code
+- `f86ab3824` match crafting and cooking recipes from plugins
+- `a490d007e` list crafting recipes by result
+
+**Files:** `pumpkin/src/data/datapack/recipe_loader.rs`, `pumpkin-protocol/src/codec/recipe.rs`,
+`pumpkin-protocol/src/java/client/play/recipe_book_add.rs`,
+`pumpkin-inventory/src/crafting/{crafting_screen_handler,recipe_provider}.rs`,
+`pumpkin/src/server/recipe.rs`, `WH/recipe.rs`.
+
+## 6. Config
+
+**Why:** modded content can be switched on and off; Bedrock clients can't show it.
+
+- `7fbd403c3` `[modded]` config section
+- `6ac0809a6` turn Bedrock off while modded content is enabled
+
+**Files:** `pumpkin-config/src/modded.rs` (new), `pumpkin-config/src/lib.rs`,
+`pumpkin/src/main.rs`.
+
+## 7. Plugin API: hooks, events, host functions
+
+**Why:** a mod's server side is rewritten as a WASM plugin; these are the hook points and
+functions it needs. Each one is listed in `HOOKS.md`.
+
+- Block and item hooks: `add68fe15`, `0084f1557`, `e51c7666c`, `95105a9ab`, `342715c3c`,
+  `044588b3a`, `c3b1024a1`, `dfe6c259c`, `13b9d100c`
+- Menus: `cddec52a8`, `31377bbf9`
+- Events: `b9be9ddc0`, `defeddb36`, `d719b608c`, `9bf64aded`, `729862d48`, `ada7f58d6`,
+  `c19760f9c`, `e8ceb3e1e`, `d75320470`, `fcad77c09`
+- Host functions: `bd7f4c35e`, `8c64bfb06`, `4c0cc6ae9`, `786ca3cd8`, `1d73c14ae`, `907bef135`
+- Reorganisation (general functions out of `modded.wit` into core interfaces): `25b0b7b63`,
+  `fb5343e2e`
+
+**Files:** `pumpkin-plugin-wit/v0.1/*.wit` (`modded.wit` and `menu.wit` new),
+`pumpkin-plugin-api/src/{modded,menu,crafting,lib}.rs` and `src/events/*`, `WH/*`,
+`pumpkin-host-bindings/src/lib.rs`, `pumpkin/src/plugin/api/events/*`,
+`pumpkin/src/plugin/login_queries.rs` (new), and the call sites the hooks and events fire from:
+`pumpkin/src/block/{mod,registry}.rs`, `pumpkin/src/item/registry.rs`,
+`pumpkin/src/entity/{player,item}.rs`, `pumpkin/src/net/java/play/{player_action,pick_item}.rs`,
+`pumpkin/src/net/java/login/{encryption_response,plugin_response}.rs`,
+`pumpkin/src/world/{mod,entity_tracker}.rs`, `pumpkin/src/block/blocks/{bed,straw_bed,shulker_box}.rs`,
+`pumpkin/src/block/blocks/fire/fire.rs`, `pumpkin/src/block/fluid/lava.rs`,
+`pumpkin/src/block/flammability.rs` (new), `pumpkin/src/lib.rs`,
+`pumpkin-inventory/src/{screen_handler,generic_container_screen_handler}.rs`,
+`pumpkin-data/src/data_component_impl/utility.rs`.
+
+## 8. Host-held block data
+
+**Why:** data first: hoppers, redstone and collisions run every tick and must not call the
+plugin, so the host keeps the data and the plugin pushes changes. Saved in the block-entity NBT
+under hidden keys (`PumpkinItemStorage`, `PumpkinSignals`, `PumpkinCollision`).
+
+- `b9be9ddc0` item storages (hoppers), `acdbb3c6a` pooled slots
+- `a6f9674ba` redstone and comparator output, `7b1acc125` per side
+- `d36eaec65` per-position collision shapes
+
+**Files:** `pumpkin/src/world/{item_storage,plugin_signals,plugin_shapes}.rs` (new),
+`pumpkin/src/world/mod.rs`, `pumpkin/src/block/entities/hopper.rs`, `WH/world.rs`,
+`WH/modded.rs`.
+
+## 9. Plugin runtime
+
+**Why:** a trapped plugin (a panic in WASM) shouldn't take its mod down until restart.
+
+- `76482ef0b` restart a WASM plugin after it traps
+
+**Files:** `pumpkin/src/plugin/loader/wasm/wasm_host/{mod,restart}.rs`, every `WH/*` resource
+module, `pumpkin/src/plugin/mod.rs`, `pumpkin/src/server/scheduler.rs`.
+
+## 10. Upstream bug fixes
+
+**Why:** bugs found while testing that also affect upstream Pumpkin. These are candidates to
+send upstream (`ROADMAP.md`, item 12); once merged there, drop them here.
+
+- `6078f6e29` hoppers loaded from disk pushed down instead of their facing
+  (`pumpkin/src/block/entities/hopper.rs`)
+- `c0f42ce91` forced chunks never loaded (`pumpkin/src/world/{active_chunks,mod}.rs`)
+- `f0b482006` player inventory slots synced by the wrong index (`WH/{modded,player}.rs`)
+- `53edcddab` WIT sounds mapped to the wrong vanilla sounds (`WH/{modded,player,world}.rs`,
+  `pumpkin-plugin-runtime/src/executor.rs`)
+- `cfe0d95f9` tag ingredients written as `#tag` strings (also in area 5)
+
+## 11. Docs
+
+Fork-only: `docs/DESIGN.md`, `docs/STATUS.md`, `docs/ROADMAP.md`, `docs/HOOKS.md`,
+`docs/MODLOADERS.md`, this file.
+`docs/FABRIC_API_PARITY.md` was removed on 2026-10-03; its open rows are in `HOOKS.md` under
+"Known gaps".
+
+## Where rebases conflict
+
+Files that both upstream and the fork edit often. Check these first after a sync:
+
+- `pumpkin/src/world/mod.rs`: ticking, block entities, active chunks, collisions.
+- `pumpkin/src/block/registry.rs`, `pumpkin/src/item/registry.rs`: hook dispatch.
+- `pumpkin/src/entity/player.rs`: inventory tick, menus.
+- `pumpkin/src/net/java/login/*`, `pending.rs`: the Fabric handshake.
+- `pumpkin-data/src/generated/*`: regenerate, don't merge.
+- `pumpkin-plugin-wit/v0.1/*.wit`: upstream mirrors the WIT to its own repo; keep fork additions
+  additive.

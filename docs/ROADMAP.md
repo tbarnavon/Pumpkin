@@ -48,14 +48,16 @@ lock, resources, call record). Limit today: ~1,250 ticking plugin block entities
 6. **Hook catalog.** One pass over what mods hook into: Fabric API events, NeoForge events,
    common Mixin targets, Paper events, and what Pumpkin has. Mark existing hooks and gaps, then
    implement the gaps in batches, so an LLM can write a server-side mod against the WIT alone.
-7. **NeoForge networking adapter**, next to `pumpkin-fabric`.
+   Added hooks and known gaps are tracked in `HOOKS.md`.
+7. **NeoForge networking adapter**, next to `pumpkin-fabric`. Per-loader status and what's
+   left (Fabric, Quilt, NeoForge, Forge) is in `MODLOADERS.md`.
 8. **Bump `PLUGIN_API_VERSION`** (`plugin/mod.rs`): `StorageSlot`, `PluginSignals` and
    `set_plugin_redstone_output` changed, so old native plugins would pass the check and break.
 
 ## Keeping up with upstream
 
-9. **`FORK_CHANGES.md`:** each fork change, its files, and why it exists, built from the
-   `modded` history.
+9. ~~**`FORK_CHANGES.md`**~~ done (2026-10-03): each fork change by area, its commits, files
+   and why, plus the files where rebases conflict. Keep it updated with every fork commit.
 10. **Headless tests for Storage Drawers:** place a drawer, insert, move items with a hopper,
     restart, check the NBT. Lets an LLM verify a rebase without a real client.
 11. **Scheduled upstream sync:** fetch upstream `master`, list PRs merged since the last sync tag,
