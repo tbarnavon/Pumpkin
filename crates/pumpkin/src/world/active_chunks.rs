@@ -114,12 +114,14 @@ impl ActiveChunkTracker {
         }
     }
 
+    /// Returns the chunks that became forced and those that stopped being forced, so the
+    /// caller can hold or release their load tickets.
     pub fn sync_forced_chunks(
         &mut self,
         forced_chunks: &FxHashSet<Vector2<i32>>,
         active_chunks: &mut FxHashSet<Vector2<i32>>,
         newly_active: &mut Vec<Vector2<i32>>,
-    ) {
+    ) -> (Vec<Vector2<i32>>, Vec<Vector2<i32>>) {
         let removed: Vec<_> = self
             .forced_chunks
             .difference(forced_chunks)
@@ -129,13 +131,14 @@ impl ActiveChunkTracker {
             .difference(&self.forced_chunks)
             .copied()
             .collect();
-        for pos in removed {
+        for &pos in &removed {
             self.remove_chunk(pos, active_chunks);
         }
-        for pos in added {
+        for &pos in &added {
             self.add_chunk(pos, active_chunks, newly_active);
         }
         self.forced_chunks.clone_from(forced_chunks);
+        (added, removed)
     }
 }
 

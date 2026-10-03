@@ -449,6 +449,26 @@ impl World {
         }
     }
 
+    /// Holds a load ticket on each forced chunk, as vanilla's `ForcedChunksSavedData` does.
+    /// Without one a forced chunk is active but never loads, so nothing in it ticks.
+    fn update_force_tickets(&self, forced: Vec<Vector2<i32>>, unforced: Vec<Vector2<i32>>) {
+        if forced.is_empty() && unforced.is_empty() {
+            return;
+        }
+        let mut loading = self
+            .level
+            .chunk_loading
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        for pos in forced {
+            loading.add_force_ticket(pos);
+        }
+        for pos in unforced {
+            loading.remove_force_ticket(pos);
+        }
+        loading.send_change();
+    }
+
     pub fn update_active_chunks(&self) {
         let sim_dist = self.server.upgrade().map_or(10, |s| {
             s.advanced_config.networking.java.simulation_distance.get()
@@ -498,7 +518,9 @@ impl World {
         for id in removed_players {
             tracker.remove_player(id, &mut active_chunks);
         }
-        tracker.sync_forced_chunks(&forced_chunks, &mut active_chunks, &mut newly_active);
+        let (forced, unforced) =
+            tracker.sync_forced_chunks(&forced_chunks, &mut active_chunks, &mut newly_active);
+        self.update_force_tickets(forced, unforced);
 
         // Block entities that stay NBT (a mod's), read from a chunk that just loaded: their load
         // event fires once the locks are released.
