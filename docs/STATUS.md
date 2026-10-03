@@ -297,3 +297,6 @@ drawers and detached drawers kept out of bundles and shulker boxes, conversion u
   network layout; the first hopper move compared it slot by slot with the new layout and moved
   items between drawers (seen by the user: a compacting drawer's items split into two normal
   drawers). The old storage is now kept only if it still matches the drawers.
+
+Real-client result (2026-10-03): the user reports items 7 to 10, the controller storage fix and
+the hopper facing fix (`6078f6e29`) work in game.
