@@ -3,6 +3,7 @@ use pumpkin_macros::java_packet;
 
 use crate::ClientPacket;
 use crate::ser::NetworkWriteExt;
+use pumpkin_util::text::TextComponent;
 use pumpkin_util::version::JavaMinecraftVersion;
 
 #[java_packet(DISCONNECT)]
@@ -21,9 +22,10 @@ impl ClientPacket for CConfigDisconnect<'_> {
     fn write_packet_data(
         &self,
         mut write: impl std::io::Write,
-        _version: &JavaMinecraftVersion,
+        version: &JavaMinecraftVersion,
     ) -> Result<(), crate::ser::WritingError> {
-        write.write_string(self.reason)?;
-        Ok(())
+        // `ClientboundDisconnectPacket` is shared with play: the reason is a text component
+        // (`ComponentSerialization.TRUSTED_CONTEXT_FREE_STREAM_CODEC`), not a string.
+        write.write_component(&TextComponent::text(self.reason.to_string()), version)
     }
 }
