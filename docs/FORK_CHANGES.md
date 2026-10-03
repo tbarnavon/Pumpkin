@@ -143,6 +143,8 @@ under hidden keys (`PumpkinItemStorage`, `PumpkinSignals`, `PumpkinCollision`).
 
 - `76482ef0b` restart a WASM plugin after it traps
 - `2d0f6aa31` drop an unused helper
+- `APIBUMP` `PLUGIN_API_VERSION` 2 to 3: native plugins see changed `StorageSlot`,
+  `PluginSignals` and `set_plugin_redstone_output` (`pumpkin/src/plugin/mod.rs`)
 
 **Files:** `pumpkin/src/plugin/loader/wasm/wasm_host/{mod,restart}.rs`, every `WH/*` resource
 module, `pumpkin/src/plugin/mod.rs`, `pumpkin/src/server/scheduler.rs`.

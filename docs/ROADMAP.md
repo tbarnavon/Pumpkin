@@ -52,8 +52,8 @@ lock, resources, call record). Limit today: ~1,250 ticking plugin block entities
    Added hooks and known gaps are tracked in `HOOKS.md`.
 7. **NeoForge networking adapter**, next to `pumpkin-fabric`. Per-loader status and what's
    left (Fabric, Quilt, NeoForge, Forge) is in `modloaders/`, one file per loader.
-8. **Bump `PLUGIN_API_VERSION`** (`plugin/mod.rs`): `StorageSlot`, `PluginSignals` and
-   `set_plugin_redstone_output` changed, so old native plugins would pass the check and break.
+8. ~~**Bump `PLUGIN_API_VERSION`**~~ done (2026-10-03): 2 to 3, since `StorageSlot`,
+   `PluginSignals` and `set_plugin_redstone_output` changed for native plugins.
 
 ## Keeping up with upstream
 
