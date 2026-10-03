@@ -474,15 +474,19 @@ mod tests {
 
     /// A compacting chain: iron block (81), ingot (9), nugget (1), sharing pool 1.
     fn iron_pool(units: u32, max_blocks: u32) -> Vec<StorageSlot> {
-        [(&Item::IRON_BLOCK, 81), (&Item::IRON_INGOT, 9), (&Item::IRON_NUGGET, 1)]
-            .into_iter()
-            .map(|(item, rate)| StorageSlot {
-                pool: 1,
-                rate,
-                max_stacks: max_blocks * 81 / rate / 64,
-                ..slot(item, units, 0)
-            })
-            .collect()
+        [
+            (&Item::IRON_BLOCK, 81),
+            (&Item::IRON_INGOT, 9),
+            (&Item::IRON_NUGGET, 1),
+        ]
+        .into_iter()
+        .map(|(item, rate)| StorageSlot {
+            pool: 1,
+            rate,
+            max_stacks: max_blocks * 81 / rate / 64,
+            ..slot(item, units, 0)
+        })
+        .collect()
     }
 
     #[test]

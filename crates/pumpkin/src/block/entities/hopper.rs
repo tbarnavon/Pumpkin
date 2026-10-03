@@ -373,8 +373,7 @@ impl HopperBlockEntity {
     fn eject_items(&self, world: &Arc<World>, facing: FacingHopper) -> bool {
         // TODO getEntityContainer
 
-        if let Some(container) = world.get_inventory_at(&self.position.offset(to_offset(&facing)))
-        {
+        if let Some(container) = world.get_inventory_at(&self.position.offset(to_offset(&facing))) {
             // TODO check WorldlyContainer
             let mut is_full = true;
             for i in 0..container.size() {

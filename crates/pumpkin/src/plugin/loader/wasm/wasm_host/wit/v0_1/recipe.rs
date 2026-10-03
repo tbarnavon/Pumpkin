@@ -1,8 +1,8 @@
 use crate::plugin::loader::wasm::wasm_host::state::PluginHostState;
 use crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::recipe::{
     CookingRecipe as WitCookingRecipe, CookingType as WitCookingType,
-    CraftingRecipeInfo as WitCraftingRecipeInfo, Host as RecipeHost,
-    HostRecipeManager, Ingredient as WitIngredient, RecipeCategory as WitRecipeCategory,
+    CraftingRecipeInfo as WitCraftingRecipeInfo, Host as RecipeHost, HostRecipeManager,
+    Ingredient as WitIngredient, RecipeCategory as WitRecipeCategory,
     RecipeManager as WitRecipeManager, ShapedRecipe as WitShapedRecipe,
     ShapelessRecipe as WitShapelessRecipe,
 };
@@ -217,16 +217,15 @@ fn crafting_recipes_for(
             wanted.strip_prefix("minecraft:") == Some(id)
         }
     };
-    let info = |shaped, (width, height, ingredients), result: &str, result_count| {
-        WitCraftingRecipeInfo {
+    let info =
+        |shaped, (width, height, ingredients), result: &str, result_count| WitCraftingRecipeInfo {
             shaped,
             width,
             height,
             ingredients,
             output: result.to_string(),
             output_count: result_count,
-        }
-    };
+        };
     let mut out = Vec::new();
     for recipe in RECIPES_CRAFTING {
         match recipe {
