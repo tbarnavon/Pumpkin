@@ -124,7 +124,7 @@ by one. Upstream declares about 290 Bukkit-style events; 56 of them are never fi
 | Recipes and recipe types | `RecipeSerializer` | same | Dump; `register-crafting-handler` for code-defined crafting | 🟡 | B | no custom recipe types the host matches |
 | Entity types | `EntityType.Builder` | same | none | ❌ | A |  |
 | Default entity attributes | `FabricDefaultAttributeRegistry` | `EntityAttributeCreationEvent`, `EntityAttributeModificationEvent` | none | ❌ | A | with entity types |
-| Loot table changes | `LootTableEvents.MODIFY`, `REPLACE`, `MODIFY_DROPS` | `LootTableLoadEvent`, global loot modifiers | `drops` block hook; `loot-generate-event` can only cancel | 🟡 | A |  |
+| Loot table changes | `LootTableEvents.MODIFY`, `REPLACE`, `MODIFY_DROPS` | `LootTableLoadEvent`, global loot modifiers | `drops` block hook; `block-drop-item-event` replaces any block's drops; `loot-generate-event` can only cancel | 🟡 | A | tables themselves can't be changed |
 | Biome and feature changes (ores, plants) | `BiomeModifications` | `BiomeModifier` | `set-chunk-generator` replaces the whole generator | ❌ | A |  |
 | Structures | datapack + `StructureModifier` | same | none | ❌ | B |  |
 | Mob effects, potions, brewing | `Registry.register`; brewing through Mixins | `PotionBrewEvent`, `MobEffectEvent` | `player.add-effect` with vanilla effects | ❌ | B | for modded ones |
@@ -173,8 +173,8 @@ by one. Upstream declares about 290 Bukkit-style events; 56 of them are never fi
 |:--|:--|:--|:--|:--|:--|:--|
 | Damage: allow, change, after | `ServerLivingEntityEvents.ALLOW_DAMAGE`, `AFTER_DAMAGE` | `LivingIncomingDamageEvent`, `LivingDamageEvent` | `entity-damage-event`, `entity-damage-by-entity-event` | ✅ | A |  |
 | Death and kills | `ALLOW_DEATH`, `AFTER_DEATH`, `AFTER_KILLED_OTHER_ENTITY` | `LivingDeathEvent`, `LivingDropsEvent`, `LivingExperienceDropEvent` | `entity-death-event` (id and xp only), `player-death-event` | 🟡 | A | no killer, no drops |
-| Per-entity data | data attachments | attachments | `set/get-custom-data` on entities, worlds, chunks | 🟡 | A | no sync, no copy on respawn |
-| Copy data on respawn or dimension change | `ServerPlayerEvents.COPY_FROM`, `AFTER_RESPAWN` | `PlayerEvent.Clone` | `player-respawn-event` | 🟡 | B |  |
+| Per-entity data | data attachments | attachments | `set/get-custom-data` on entities, worlds, chunks | 🟡 | A | no sync to clients |
+| Copy data on respawn or dimension change | `ServerPlayerEvents.COPY_FROM`, `AFTER_RESPAWN` | `PlayerEvent.Clone` | `player-respawn-event` | ✅ | B | not needed: Pumpkin keeps the same player, with its custom data, across respawn |
 | Join, leave, respawn, change world | `ServerPlayConnectionEvents`, `ServerEntityLevelChangeEvents` | `PlayerEvent.PlayerLoggedIn` and others | player events | ✅ | A |  |
 | Entity load and unload | `ServerEntityEvents.ENTITY_LOAD`, `ENTITY_UNLOAD` | `EntityJoinLevelEvent`, `EntityLeaveLevelEvent` | `entity-spawn-event`, `entities-load-event`, `entities-unload-event` | ✅ | B |  |
 | Equipment change | `ServerEntityEvents.EQUIPMENT_CHANGE` | `LivingEquipmentChangeEvent` | none | ❌ | B |  |
@@ -193,7 +193,7 @@ by one. Upstream declares about 290 Bukkit-style events; 56 of them are never fi
 | What mods do | Fabric API | NeoForge | Pumpkin | Status | Need | Notes |
 |:--|:--|:--|:--|:--|:--|:--|
 | Server start, stop, tick | `ServerLifecycleEvents`, `ServerTickEvents` | `ServerStartingEvent` and others, `ServerTickEvent` | `server-load-event`, `server-stopping-event`, `server-tick-start/end-event` | ✅ | A |  |
-| Per-world tick | `START_LEVEL_TICK`, `END_LEVEL_TICK` | `LevelTickEvent` | none | ❌ | B |  |
+| Per-world tick | `START_LEVEL_TICK`, `END_LEVEL_TICK` | `LevelTickEvent` | `server-tick-start/end-event` (all worlds at once) | 🟡 | B | no event per world |
 | Datapack reload, tags loaded, data sync | `START/END_DATA_PACK_RELOAD`, `SYNC_DATA_PACK_CONTENTS`, `CommonLifecycleEvents.TAGS_LOADED` | `AddServerReloadListenersEvent`, `TagsUpdatedEvent`, `OnDatapackSyncEvent` | none | ❌ | B |  |
 | World load, unload, save | `ServerLevelEvents` | `LevelEvent` | `world-load/unload/save-event` | ✅ | B |  |
 | Chunk load, unload, generate | `ServerChunkEvents` | `ChunkEvent`, `ChunkDataEvent` | `chunk-load/unload/save-event`, `chunk-populate-event` | ✅ | B |  |
@@ -425,7 +425,7 @@ Every `Event` field in the Fabric API 0.161.0 main sources (client sources left 
 | `ServerLifecycleEvents`: `SYNC_DATA_PACK_CONTENTS`, `START_DATA_PACK_RELOAD`, `END_DATA_PACK_RELOAD` | none | ❌ | B |  |
 | `ServerLifecycleEvents`: `BEFORE_SAVE`, `AFTER_SAVE` | `world-save-event` | 🟡 | C |  |
 | `ServerTickEvents`: `START_SERVER_TICK`, `END_SERVER_TICK` | `server-tick-start-event`, `server-tick-end-event` | ✅ | A |  |
-| `ServerTickEvents`: `START_LEVEL_TICK`, `END_LEVEL_TICK` | none | ❌ | B |  |
+| `ServerTickEvents`: `START_LEVEL_TICK`, `END_LEVEL_TICK` | `server-tick-start/end-event` (all worlds at once) | 🟡 | B | No event per world |
 | `CommonLifecycleEvents.TAGS_LOADED` | none | ❌ | C |  |
 | `ServerLevelEvents`: `LOAD`, `UNLOAD` | `world-load-event`, `world-unload-event` | ✅ | B |  |
 | `ServerChunkEvents`: `CHUNK_LOAD`, `CHUNK_UNLOAD`, `CHUNK_GENERATE` | `chunk-load-event`, `chunk-unload-event`, `chunk-populate-event` | ✅ | B |  |
@@ -441,7 +441,7 @@ Every `Event` field in the Fabric API 0.161.0 main sources (client sources left 
 | `ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY` | none | ❌ | B |  |
 | `ServerMobEffectEvents`: `ALLOW_ADD`, `BEFORE_ADD`, `AFTER_ADD`, `ALLOW_EARLY_REMOVE`, `BEFORE_REMOVE`, `AFTER_REMOVE` | `entity-potion-effect-event` | 🟡 | B | One event for add and remove |
 | `ServerPlayerEvents`: `JOIN`, `LEAVE`, `AFTER_RESPAWN` | `player-join-event`, `player-leave-event`, `player-respawn-event` | ✅ | A |  |
-| `ServerPlayerEvents.COPY_FROM` | none | ❌ | B | Copy data to the respawned player |
+| `ServerPlayerEvents.COPY_FROM` | respawn keeps the same player and its custom data | ✅ | B | Nothing to copy |
 | `ServerPlayerEvents.ALLOW_DEATH` | `player-death-event` (cancellable) | ✅ | B |  |
 | `EntitySleepEvents` (10 events) | `player-sleep-check-event`, `player-bed-enter/leave-event` | 🟡 | C | No bed direction, occupation or wake-up position |
 | `EntityElytraEvents`: `ALLOW`, `CUSTOM` | `entity-toggle-glide-event` | 🟡 | C |  |
@@ -456,12 +456,12 @@ Every `Event` field in the Fabric API 0.161.0 main sources (client sources left 
 | `BlockTransformerEvents.MODIFY` | none | ❌ | B | Strip, till, flatten |
 | `DefaultItemComponentEvents.MODIFY` | none | ❌ | B | Change vanilla items' default components |
 | `EnchantmentEvents`: `ALLOW_ENCHANTING`, `MODIFY`, `MODIFY_WITH_LOOKUP` | `prepare-item-enchant-event`, `enchant-item-event` | 🟡 | C | No enchantment definition changes |
-| `LootTableEvents`: `REPLACE`, `MODIFY`, `ALL_LOADED`, `MODIFY_DROPS` | `loot-generate-event` (cancel only) | 🟡 | A |  |
+| `LootTableEvents`: `REPLACE`, `MODIFY`, `ALL_LOADED`, `MODIFY_DROPS` | `block-drop-item-event` (block drops); `loot-generate-event` (cancel only) | 🟡 | A | Tables can't be changed |
 | `AdvancementEvents`: `REPLACE`, `MODIFY`, `ALL_LOADED` | none | ❌ | C |  |
 | `FabricDefaultAttributeRegistry.MODIFY` | none | ❌ | B |  |
 | `FluidFlowEvents.ALLOW` | `block-from-to-event` | ✅ | C |  |
 | `DimensionEvents.MODIFY_ATTRIBUTES` | none | ❌ | C |  |
-| `ServerMessageEvents` (6 events), `ServerMessageDecoratorEvent` | `player-chat-event`, `server-broadcast-event`, `player-command-send-event` | 🟡 | C | No decorator |
+| `ServerMessageEvents` (6 events), `ServerMessageDecoratorEvent` | `player-chat-event`, `server-broadcast-event`, `player-command-send-event` | 🟡 | C | `player-chat-event` can rewrite the message; no decorator for other messages |
 | `CommandRegistrationCallback` | `context.register-command` | ✅ | A |  |
 | `PermissionEvents`: `ON_REQUEST`, `PREPARE_OFFLINE_PLAYER` | `player-permission-check-event` | 🟡 | C |  |
 | `EntityTrackingEvents`: `START_TRACKING`, `STOP_TRACKING` | `player-start/stop-tracking-event` | ✅ | B |  |
@@ -514,7 +514,7 @@ Every event class in NeoForge 26.3.x outside its client package (267 classes, ne
 |:--|:--|:--|:--|:--|
 | `ServerAboutToStartEvent`, `ServerStartingEvent`, `ServerStartedEvent`, `ServerStoppingEvent`, `ServerStoppedEvent` | `server-load-event`, `server-stopping-event` | 🟡 | A |  |
 | `ServerTickEvent.Pre/Post` | `server-tick-start/end-event` | ✅ | A |  |
-| `LevelTickEvent.Pre/Post` | none | ❌ | B |  |
+| `LevelTickEvent.Pre/Post` | `server-tick-start/end-event` (all worlds at once) | 🟡 | B |  |
 | `PlayerTickEvent.Pre/Post` | none | ❌ | B |  |
 | `EntityTickEvent.Pre/Post` | none | ❌ | C |  |
 | `LevelEvent.Load/Unload/Save` | `world-load/unload/save-event` | ✅ | B |  |
@@ -528,7 +528,7 @@ Every event class in NeoForge 26.3.x outside its client package (267 classes, ne
 | `BlockEvent.FarmlandTrampleEvent` | none | ❌ | C |  |
 | `BlockEvent.PortalSpawnEvent` | `portal-create-event` | ✅ | C |  |
 | `BlockEvent.BlockToolModificationEvent` | none | ❌ | B |  |
-| `BlockDropsEvent` | none | ❌ | B | Change drops of any block |
+| `BlockDropsEvent` | `block-drop-item-event` | ✅ | B | No experience in it |
 | `BlockGrowFeatureEvent` | `structure-grow-event` | ✅ | C |  |
 | `CropGrowEvent.Pre/Post` | `block-grow-event` | ✅ | C |  |
 | `CreateFluidSourceEvent` | none | ❌ | C |  |
@@ -581,7 +581,7 @@ Every event class in NeoForge 26.3.x outside its client package (267 classes, ne
 | `CriticalHitEvent`, `SweepAttackEvent` | none | ❌ | C |  |
 | `PlayerInteractEvent.RightClickBlock/RightClickItem/RightClickEmpty/LeftClickBlock/LeftClickEmpty/EntityInteract`, `UseItemOnBlockEvent` | `player-interact-event`, `player-interact-entity-event` | ✅ | A |  |
 | `PlayerEvent.BreakSpeed`, `HarvestCheck` | none | ❌ | B |  |
-| `PlayerEvent.Clone` | none | ❌ | B |  |
+| `PlayerEvent.Clone` | respawn keeps the same player | ✅ | B |  |
 | `PlayerEvent.StartTracking/StopTracking` | `player-start/stop-tracking-event` | ✅ | B |  |
 | `PlayerEvent.LoadFromFile/SaveToFile` | none | ❌ | C | Per-player mod data files |
 | `PlayerEvent.ItemCraftedEvent/ItemSmeltedEvent` | `craft-item-event`, `furnace-extract-event` | ✅ | C |  |
@@ -672,13 +672,13 @@ Implementation order for `ROADMAP.md` item 6, most needed first. Items in one li
 Every ❌ and 🟡 row in the tables above falls in one of these batches.
 
 1. **A, items and drops:** item use over time for plugin items (`finish-using`, `release-using`,
-   use ticks, stop using); a drops event for any block (`BlockDropsEvent`) and for entities
-   (`LivingDropsEvent`, experience), and killer and damage source in the death event.
+   use ticks, stop using); a drops event for entities (`LivingDropsEvent`, experience), and
+   killer and damage source in the death event.
 2. **A, menus and storage:** menu data slots (progress bars) and menu buttons
    (`clickMenuButton`); sided item storage with transactions, a fluid storage, and a generic
    lookup so plugins can expose and find each other's storages (energy included).
-3. **A, data and loot:** loot table changes (add pools or entries by id); entity and player
-   attachments that copy on respawn (`COPY_FROM`, `PlayerEvent.Clone`); per-player data files.
+3. **A, data and loot:** loot table changes (add pools or entries by id); attachment sync to
+   clients; per-player data files.
 4. **A, world generation:** biome feature additions (ores, plants) and spawn entries.
 5. **A, entities:** modded entity types with default attributes, custom synced entity data,
    projectiles and AI (large: entity registry overlay, spawning, tracking).
