@@ -13,7 +13,8 @@
 //!    registry, `frozen_registry_sync_completed`, answered by the client's completion.
 //! 4. `CommonVersionTask` and `CommonRegisterTask` (`c:version`, `c:register`), when the client
 //!    listens on them, each waiting for the client's answer.
-//! 5. The vanilla configuration continues.
+//! 5. `SyncConfig`: each synced config file as `neoforge:config_file`, without an answer.
+//! 6. The vanilla configuration continues.
 
 use pumpkin_fabric::handshake::{Outgoing, Step};
 use pumpkin_fabric::wire::{common, register, registry_sync::SyncedRegistry};
@@ -46,12 +47,16 @@ pub fn server_channels() -> Vec<(Protocol, Vec<Component>)> {
         (
             Protocol::Configuration,
             vec![
+                channel(wire::CONFIG_FILE_CHANNEL, Some(Flow::Clientbound)),
                 channel(wire::SYNC_START_CHANNEL, Some(Flow::Clientbound)),
                 channel(wire::SYNC_CHANNEL, Some(Flow::Clientbound)),
                 channel(wire::SYNC_COMPLETED_CHANNEL, None),
             ],
         ),
-        (Protocol::Play, Vec::new()),
+        (
+            Protocol::Play,
+            vec![channel(wire::CONFIG_FILE_CHANNEL, Some(Flow::Clientbound))],
+        ),
     ]
 }
 
@@ -61,6 +66,9 @@ pub struct NeoForgeHandshake {
     state: State,
     server_channels: Vec<(Protocol, Vec<Component>)>,
     registries: Vec<SyncedRegistry>,
+    /// Synced config files (name, TOML contents), sent when the client has `config_file`.
+    config_files: Vec<(String, Vec<u8>)>,
+    sync_config: bool,
     /// Whether the client listens on the `c:` channels (from its `minecraft:register`).
     common_channels: bool,
     common_version: Option<i32>,
@@ -69,16 +77,19 @@ pub struct NeoForgeHandshake {
 
 impl NeoForgeHandshake {
     /// `registries` are the ones to sync: every registry a mod added entries to, with all of
-    /// its entries.
+    /// its entries. `config_files` are the synced configs, NeoForge's own included.
     #[must_use]
     pub const fn new(
         server_channels: Vec<(Protocol, Vec<Component>)>,
         registries: Vec<SyncedRegistry>,
+        config_files: Vec<(String, Vec<u8>)>,
     ) -> Self {
         Self {
             state: State::AwaitingSyncCompleted,
             server_channels,
             registries,
+            config_files,
+            sync_config: false,
             common_channels: false,
             common_version: None,
             client_play_channels: Vec::new(),
@@ -127,6 +138,12 @@ impl NeoForgeHandshake {
             ));
         }
 
+        self.sync_config = setup.iter().any(|(protocol, channels)| {
+            *protocol == Protocol::Configuration
+                && channels
+                    .iter()
+                    .any(|(id, _)| id == wire::CONFIG_FILE_CHANNEL)
+        });
         self.common_channels = client_listens_on
             .iter()
             .any(|c| c == common::VERSION_CHANNEL);
@@ -165,13 +182,27 @@ impl NeoForgeHandshake {
         Step::Send(out)
     }
 
+    /// Step 5: the synced config files, if the client agreed to `config_file`.
+    fn config_payloads(&self) -> Vec<Outgoing> {
+        if !self.sync_config {
+            return Vec::new();
+        }
+        self.config_files
+            .iter()
+            .map(|(name, contents)| Outgoing::Payload {
+                channel: wire::CONFIG_FILE_CHANNEL,
+                data: wire::encode_config_file(name, contents),
+            })
+            .collect()
+    }
+
     /// Feed a configuration-phase custom payload from the client, after `on_detected`.
     pub fn on_payload(&mut self, channel: &str, data: &[u8]) -> Step {
         match (self.state, channel) {
             (State::AwaitingSyncCompleted, wire::SYNC_COMPLETED_CHANNEL) => {
                 if !self.common_channels {
                     self.state = State::Done;
-                    return Step::Done(Vec::new());
+                    return Step::Done(self.config_payloads());
                 }
                 self.state = State::AwaitingVersion;
                 Step::Send(vec![Outgoing::Payload {
@@ -204,7 +235,7 @@ impl NeoForgeHandshake {
                     self.client_play_channels = payload.channels;
                 }
                 self.state = State::Done;
-                Step::Done(Vec::new())
+                Step::Done(self.config_payloads())
             }
             // The client's answer to the server's `minecraft:register`.
             (_, register::REGISTER_CHANNEL) => Step::Wait,
@@ -239,7 +270,7 @@ mod tests {
 
     #[test]
     fn a_plain_client_negotiates_and_syncs() {
-        let mut handshake = NeoForgeHandshake::new(server_channels(), Vec::new());
+        let mut handshake = NeoForgeHandshake::new(server_channels(), Vec::new(), Vec::new());
         let Step::Send(out) =
             handshake.on_detected(&plain_client_query(), &["c:version".to_string()])
         else {
@@ -273,7 +304,7 @@ mod tests {
         write_string(&mut query, "somemod:data");
         write_string(&mut query, "1");
         query.extend([0, 0]);
-        let mut handshake = NeoForgeHandshake::new(server_channels(), Vec::new());
+        let mut handshake = NeoForgeHandshake::new(server_channels(), Vec::new(), Vec::new());
         assert!(matches!(
             handshake.on_detected(&query, &[]),
             Step::Disconnect(_)

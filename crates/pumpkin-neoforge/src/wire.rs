@@ -17,6 +17,23 @@ pub const SYNC_CHANNEL: &str = "neoforge:frozen_registry";
 /// `FrozenRegistrySyncCompletedPayload.TYPE`, sent by both sides.
 pub const SYNC_COMPLETED_CHANNEL: &str = "neoforge:frozen_registry_sync_completed";
 
+/// `ConfigFilePayload.TYPE`: a synced config file, in configuration and play.
+pub const CONFIG_FILE_CHANNEL: &str = "neoforge:config_file";
+
+/// NeoForge's own synced config, with every value at its default for a production server.
+///
+/// `NeoForgeSyncedConfig`, registered as `ModConfig.Type.SYNCED`, so `FancyModLoader` names it
+/// `neoforge-synced.toml`. A NeoForge client reads these values (for example in
+/// `Level.guardEntityTick`) and crashes if the server never sends the file.
+pub const NEOFORGE_SYNCED_CONFIG: (&str, &str) = (
+    "neoforge-synced.toml",
+    "removeErroringBlockEntities = false\n\
+     removeErroringEntities = false\n\
+     fullBoundingBoxLadders = false\n\
+     permissionHandler = \"neoforge:default_handler\"\n\
+     advertiseDedicatedServerToLan = false\n",
+);
+
 /// `NetworkRegistry.BUILTIN_PAYLOADS`: channels both sides listen on before negotiation
 /// (`getInitialListeningChannels`).
 pub const BUILTIN_CHANNELS: [&str; 7] = [
@@ -129,6 +146,16 @@ pub fn encode_setup(setup: &[(Protocol, Vec<(String, String)>)]) -> Vec<u8> {
             write_string(&mut out, version);
         }
     }
+    out
+}
+
+/// `ConfigFilePayload`: the file name, then its contents as a byte array.
+#[must_use]
+pub fn encode_config_file(name: &str, contents: &[u8]) -> Vec<u8> {
+    let mut out = Vec::new();
+    write_string(&mut out, name);
+    write_var_int(&mut out, contents.len() as i32);
+    out.extend_from_slice(contents);
     out
 }
 

@@ -506,6 +506,7 @@ impl PendingConnection {
             }
             id if id == SPluginMessage::to_id(version) => {
                 let message = SPluginMessage::read(&mut payload, &version)?;
+                debug!(channel = message.channel, "Configuration payload");
                 if let Some(step) = self
                     .loader
                     .as_mut()

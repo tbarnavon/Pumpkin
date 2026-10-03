@@ -108,6 +108,7 @@ impl LoaderHandshake {
         );
         let registers = std::mem::take(registers);
         let neoforge_query = neoforge_query.take();
+        let neoforge_query_seen = neoforge_query.is_some();
         let mods = !options.mod_namespaces.is_empty();
 
         if let Some(query) = neoforge_query
@@ -118,8 +119,13 @@ impl LoaderHandshake {
             let mut handshake = NeoForgeHandshake::new(
                 pumpkin_neoforge::handshake::server_channels(),
                 pumpkin_fabric::sync_map::build(),
+                {
+                    let (name, contents) = pumpkin_neoforge::wire::NEOFORGE_SYNCED_CONFIG;
+                    vec![(name.to_string(), contents.as_bytes().to_vec())]
+                },
             );
             let step = handshake.on_detected(&query, &listens_on);
+            tracing::debug!("NeoForge client");
             *self = Self::NeoForge(handshake);
             return step;
         }
@@ -133,9 +139,15 @@ impl LoaderHandshake {
             // `minecraft:register` lists channels separated by NUL bytes.
             let joined = registers.join(&0u8);
             let step = handshake.on_payload(register::REGISTER_CHANNEL, &joined);
+            tracing::debug!("Fabric client");
             *self = Self::Fabric(handshake);
             return step;
         }
+        tracing::debug!(
+            neoforge_query = neoforge_query_seen,
+            registers = registers.len(),
+            "Vanilla client, or a loader whose handshake is off"
+        );
         if mods {
             return Step::Disconnect(format!(
                 "This server requires these mods on your client: {}\n\
