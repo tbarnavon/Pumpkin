@@ -15,24 +15,26 @@ to-do list. Update both when an item lands.
 ## Performance
 
 Benchmark (release build, 10,000 plugin block entities with a ticker hook, measured with a test
-plugin on a fresh world):
+plugin on a fresh world). Before: one guest call per block entity. After: the tick batch, one
+guest call per plugin and tick (2026-10-03).
 
-| Case | Tick time | Per block entity | Inside the plugin |
-|:--|:--|:--|:--|
-| Empty world | 0.37 ms | - | - |
-| 10,000 idle vanilla hoppers | 0.37 ms | ~0 | - |
-| Ticker doing nothing | 395 ms | 39 µs | 0.8 µs |
-| + 10 `get-block-state-id` | 404 ms | 40 µs | 6.2 µs |
-| + 1 `get-block-entity-data` | 457 ms | 46 µs | 7.3 µs |
-| + 1,000-step WASM loop | 365 ms | 36 µs | 0.9 µs |
+| Case | Tick time before | Per block entity before | Tick time after | Per block entity after |
+|:--|:--|:--|:--|:--|
+| Empty world | 0.37 ms | - | 0.16 ms | - |
+| 10,000 idle vanilla hoppers | 0.37 ms | ~0 | 0.16 ms | ~0 |
+| Ticker doing nothing | 395 ms | 39 µs | 4.5 ms | 0.43 µs |
+| + 10 `get-block-state-id` | 404 ms | 40 µs | 39.2 ms | 3.9 µs |
+| + 1 `get-block-entity-data` | 457 ms | 46 µs | 19.6 ms | 1.9 µs |
+| + 1,000-step WASM loop | 365 ms | 36 µs | 5.6 ms | 0.54 µs |
 
-WASM code and host reads are cheap; ~35 µs per hook call is host plumbing (`block_on`, store
-lock, resources, call record). Limit today: ~1,250 ticking plugin block entities per 50 ms tick.
+The batch removed the per-call plumbing (`block_on`, store lock, resources, call record): a
+ticking block entity now costs ~0.4 µs, so ~100,000 of them fit in a 50 ms tick instead of
+~1,250. What remains is the plugin's own work, mostly host calls (~0.35 µs per
+`get-block-state-id`, ~1.5 µs per `get-block-entity-data`), which bulk access (item 2) reduces.
 
-1. **Batched ticker hook.** Implemented (2026-10-03): `ticker`, `entity-inside`, `step-on`
-   and `inventory-tick` are queued during the tick and sent as one `handle-tick-batch` call per
-   plugin and world, so the async setup is paid once per plugin per tick. Benchmark rerun
-   pending; target ~1 µs per block entity.
+1. ~~**Batched per-tick hooks.**~~ done (2026-10-03, `1fa249829`): `ticker`, `entity-inside`,
+   `step-on` and `inventory-tick` are queued during the tick and sent as one
+   `handle-tick-batch` call per plugin and world. Target (~1 µs per block entity) met: 0.43 µs.
 2. **Bulk world access.** Read or change a whole inventory (and other bulk data) in one call,
    not slot by slot.
 3. **Worker jobs.** `scheduler.spawn-job(handler, bytes)` runs the plugin's `run-job` export in
