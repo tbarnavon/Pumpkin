@@ -160,7 +160,7 @@ send upstream (`ROADMAP.md`, item 12); once merged there, drop them here.
 ## 11. Docs
 
 Fork-only: `docs/DESIGN.md`, `docs/STATUS.md`, `docs/ROADMAP.md`, `docs/HOOKS.md`,
-`docs/MODLOADERS.md`, this file.
+`docs/modloaders/` (one file per loader), this file.
 `docs/FABRIC_API_PARITY.md` was removed on 2026-10-03; its open rows are in `HOOKS.md` under
 "Known gaps".
 

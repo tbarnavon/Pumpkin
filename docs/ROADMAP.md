@@ -50,7 +50,7 @@ lock, resources, call record). Limit today: ~1,250 ticking plugin block entities
    implement the gaps in batches, so an LLM can write a server-side mod against the WIT alone.
    Added hooks and known gaps are tracked in `HOOKS.md`.
 7. **NeoForge networking adapter**, next to `pumpkin-fabric`. Per-loader status and what's
-   left (Fabric, Quilt, NeoForge, Forge) is in `MODLOADERS.md`.
+   left (Fabric, Quilt, NeoForge, Forge) is in `modloaders/`, one file per loader.
 8. **Bump `PLUGIN_API_VERSION`** (`plugin/mod.rs`): `StorageSlot`, `PluginSignals` and
    `set_plugin_redstone_output` changed, so old native plugins would pass the check and break.
 
