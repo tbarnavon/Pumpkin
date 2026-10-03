@@ -101,7 +101,7 @@ functions it needs. Each one is listed in `HOOKS.md`.
 
 - Block and item hooks: `add68fe15`, `0084f1557`, `e51c7666c`, `95105a9ab`, `342715c3c`,
   `044588b3a`, `c3b1024a1`, `dfe6c259c`, `13b9d100c`
-- Per-tick hooks batched into one `handle-tick-batch` call per plugin and tick: `TICKBATCH`
+- Per-tick hooks batched into one `handle-tick-batch` call per plugin and tick: `1fa249829`
   (`WH/modded.rs` `PluginTickQueue`, flushed from `World::tick`; `entity/player.rs`)
 - Menus: `cddec52a8`, `31377bbf9`
 - Events: `b9be9ddc0`, `defeddb36`, `d719b608c`, `9bf64aded`, `729862d48`, `ada7f58d6`,
@@ -143,7 +143,8 @@ under hidden keys (`PumpkinItemStorage`, `PumpkinSignals`, `PumpkinCollision`).
 
 - `76482ef0b` restart a WASM plugin after it traps
 - `2d0f6aa31` drop an unused helper
-- `APIBUMP` `PLUGIN_API_VERSION` 2 to 3: native plugins see changed `StorageSlot`,
+- `38ea03a66` format fork-changed files
+- `80a6603ee` `PLUGIN_API_VERSION` 2 to 3: native plugins see changed `StorageSlot`,
   `PluginSignals` and `set_plugin_redstone_output` (`pumpkin/src/plugin/mod.rs`)
 
 **Files:** `pumpkin/src/plugin/loader/wasm/wasm_host/{mod,restart}.rs`, every `WH/*` resource
