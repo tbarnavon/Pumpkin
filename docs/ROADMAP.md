@@ -50,8 +50,21 @@ lock, resources, call record). Limit today: ~1,250 ticking plugin block entities
    common Mixin targets, Paper events, and what Pumpkin has. Mark existing hooks and gaps, then
    implement the gaps in batches, so an LLM can write a server-side mod against the WIT alone.
    Added hooks and known gaps are tracked in `HOOKS.md`.
-7. **NeoForge networking adapter**, next to `pumpkin-fabric`. Per-loader status and what's
-   left (Fabric, Quilt, NeoForge, Forge) is in `modloaders/`, one file per loader.
+7. **Loader networking.** Each loader's pieces, with channels and source classes, are in
+   `modloaders/`. In order:
+   - **Fabric (finish):** configuration tasks that wait for a reply; registry sync for the
+     other 22 `SYNCED` registries; custom ingredient sync; attachment sync; `fabric:split`;
+     recipe sync; synced dynamic and mod-created registries; modded argument types and entity
+     data serializers (`modloaders/fabric.md`, "Order of work").
+   - **NeoForge adapter**, next to `pumpkin-fabric`: detection and `neoforge:register`
+     negotiation; frozen registry sync; a NeoForge build of the Extractor and a test mod;
+     `advanced_open_screen`; config sync, data maps, extensible enum and feature flag checks;
+     recipe content, attachments, `neoforge:split`, custom ingredients
+     (`modloaders/neoforge.md`).
+   - **Quilt:** one real-client test of a Fabric mod; no QSL exists for 26.x.
+   - **Forge:** `\0FORGE` detection, then the `forge:handshake` tasks (mod list, channel
+     versions, registry sync, config sync), `OpenContainer`, `SpawnEntity`
+     (`modloaders/forge.md`).
 8. ~~**Bump `PLUGIN_API_VERSION`**~~ done (2026-10-03): 2 to 3, since `StorageSlot`,
    `PluginSignals` and `set_plugin_redstone_output` changed for native plugins.
 

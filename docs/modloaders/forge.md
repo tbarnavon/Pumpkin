@@ -1,20 +1,52 @@
 # Forge (MinecraftForge)
 
-Status: ✅ done, 🟡 partial, ❌ not started, ➖ not needed for this loader. "To verify" marks
-protocol details written from memory, to be checked against the loader's source before
-implementing.
-The pieces are explained in [README.md](README.md).
+Status: ✅ done, 🟡 partial, ❌ missing, ➖ not needed. The pieces are explained in
+[README.md](README.md).
 
-Forge's modern handshake runs in the login phase through login queries (FML handshake: mod list,
-channel versions, registry snapshot), to verify for the current version. The fork's
-`context.register-login-query` is the starting point.
+Audited against the MinecraftForge source for Minecraft 26.3 (branch `26.3`): the
+`net.minecraftforge.network` package. Nothing is implemented; Forge comes after NeoForge
+(`../ROADMAP.md`, item 7).
+
+Unlike NeoForge, the modern Forge handshake runs in the **configuration** phase on one
+channel, `forge:handshake` (a `SimpleChannel`: a VarInt discriminator, then the message), not in
+login queries. The login channel `forge:login` only carries `LoginWrapper` from the client.
+
+## Handshake
+
+1. **Detection:** the client appends `\0FORGE` (optionally followed by a network version, `0`
+   today) to the server address in the vanilla handshake packet (`NetworkContext`).
+2. For a modded connection, `ForgeNetworkConfigurationHandler.gatherInit` adds these
+   configuration tasks, in order:
+
+| Task | Channel / message | Source | Status | Left |
+|:--|:--|:--|:--|:--|
+| Detection | `\0FORGE` in the handshake's server address | `NetworkContext.MARKER` | ❌ | Strip the marker before using the address; mark the connection |
+| Vanilla channel list | `minecraft:register` with every known channel | `RegisterChannelsTask`, `ChannelListManager` | ✅ wire format shared with Fabric | Send it for Forge connections |
+| Mod list | `forge:handshake` `ModVersions` (mod id to name and version), both ways | `ModVersionsTask`, `ForgePacketHandler.handleModVersions` | ❌ | Mod list from the dump |
+| Channel versions | `forge:handshake` `ChannelVersions` (channel to version), both ways; `MismatchData` and a disconnect when they don't match | `ChannelVersionsTask`, `NetworkRegistry.validateChannels` | ❌ | Channel list with versions from the dump and plugins |
+| Registry sync | `forge:handshake` `RegistryList` (token), then one `RegistryData` (token, registry name, snapshot) per registry, each answered by `Acknowledge` (token) | `SyncRegistriesTask`, `RegistryManager.takeSnapshot(false)` | ❌ | Snapshot of every synced registry |
+| Config sync | `forge:handshake` `ConfigData` (file name, raw bytes) for each `SERVER` config | `SyncConfigTask` | ❌ | Plugins provide the config bytes |
+
+## Play
+
+| Piece | Channel / message | Source | Status | Left |
+|:--|:--|:--|:--|:--|
+| Entities with spawn data | `forge:handshake` `SpawnEntity` | `network/packets/SpawnEntity` | ❌ | With modded entities |
+| Menus with extra data | `forge:handshake` `OpenContainer` | `network/packets/OpenContainer` | ❌ | Same shape as Fabric's `open_screen`; reuse `modded.open-menu` |
+| Channel registration changes | `forge:channel_registration` | `ChannelListManager` | ❌ | |
+| Split payloads | `forge:split` (parts of 1 MiB) | `filters/VanillaPacketSplitter` | ❌ | Check whether it is still wired in this version |
+| Server list | `forgeData` (mods, channels) in the status JSON | `ServerStatusPing` | ➖ | Only changes the client's server list icon |
+
+## Other pieces
 
 | Piece | Status | Notes |
 |:--|:--|:--|
-| Detection | ❌ | |
-| FML login handshake | ❌ | Mod list, channels, registries in login queries |
-| Tags | 🟡 | As NeoForge |
+| Tags | 🟡 | Vanilla packet; Forge's registry sync runs first |
 | Component codecs | ✅ | Loader-independent |
-| Config sync | ❌ | |
 | Data dump | ❌ | Needs a Forge build of the Extractor |
 | Real client tested | ❌ | |
+
+## Order of work
+
+After NeoForge: detection, then the five configuration tasks in the order above (they share
+`forge:handshake`), then `OpenContainer`, `SpawnEntity` and `forge:split`.

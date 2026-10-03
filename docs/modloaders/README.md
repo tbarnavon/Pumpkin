@@ -7,18 +7,20 @@ match the loader is only what crosses the network, plus a data dump of the mod's
 One file per loader, each listing every client-facing network piece with its channel ids, the
 loader's source class, the fork's status and what's left.
 
-Status: ✅ done, 🟡 partial, ❌ not started, ➖ not needed for this loader. "To verify" marks
-protocol details written from memory, to be checked against the loader's source before
-implementing.
+Status: ✅ done, 🟡 partial, ❌ missing, ➖ not needed. Each file was audited against the
+loader's source for Minecraft 26.3 and cites the classes.
 
 ## Summary
 
 | Loader | Status | File |
 |:--|:--|:--|
-| Fabric | 🟡 minimal: what Storage Drawers 26.3.0.1 needs, tested with a real client | [fabric.md](fabric.md) |
-| Quilt | ❌ not tested: runs Fabric mods; may need its own registry sync | [quilt.md](quilt.md) |
-| NeoForge | ❌ not started: next loader to add (`../ROADMAP.md`, item 7) | [neoforge.md](neoforge.md) |
-| Forge (MinecraftForge) | ❌ not started: after NeoForge; login-phase handshake | [forge.md](forge.md) |
+| Fabric | 🟡 what Storage Drawers 26.3.0.1 needs, tested with a real client; the rest is ordered in the file | [fabric.md](fabric.md) |
+| Quilt | ❌ not tested: no QSL for 26.x, so Quilt clients use Fabric's protocol | [quilt.md](quilt.md) |
+| NeoForge | ❌ not started: next loader (`../ROADMAP.md`, item 7) | [neoforge.md](neoforge.md) |
+| Forge (MinecraftForge) | ❌ not started: after NeoForge; handshake on `forge:handshake` in configuration | [forge.md](forge.md) |
+
+Others considered: Sinytra Connector runs Fabric mods on NeoForge, so its clients use the
+NeoForge handshake with Fabric API's channels on top; it needs nothing beyond those two files.
 
 ## What every loader needs
 
