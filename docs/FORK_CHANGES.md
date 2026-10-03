@@ -181,6 +181,8 @@ send upstream (`ROADMAP.md`, item 12); once merged there, drop them here.
 - `53edcddab` WIT sounds mapped to the wrong vanilla sounds (`WH/{modded,player,world}.rs`,
   `pumpkin-plugin-runtime/src/executor.rs`)
 - `cfe0d95f9` tag ingredients written as `#tag` strings (also in area 5)
+- `07ab1095f` configuration-phase kicks sent the reason as a string, not a text component, so the
+  client couldn't read them (`pumpkin-protocol/src/java/client/config/config_disconnect.rs`)
 
 ## 11. Docs
 
