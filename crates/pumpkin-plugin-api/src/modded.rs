@@ -22,6 +22,9 @@ pub use crate::wit::pumpkin::plugin::modded::{
     InteractionResult, InventoryTick, Placement, Removal, ShapeBox, StreamCodecNode, Tick,
     TickBatch, open_menu, register_component_stream_codec, set_block_collision_shape,
 };
+pub use crate::wit::pumpkin::plugin::modded::{
+    ChannelFlow, Loader, LoaderChannel, register_loader_channels,
+};
 use crate::wit::pumpkin::plugin::player::Player;
 use crate::wit::pumpkin::plugin::server::Server;
 use crate::wit::pumpkin::plugin::world::World;

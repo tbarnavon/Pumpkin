@@ -48,22 +48,33 @@ pub struct ForgeHandshake {
     registries: Vec<SyncedRegistry>,
     next_registry: usize,
     config_files: Vec<(String, Vec<u8>)>,
+    /// Forge's own channels and the mods' (name, network protocol version), for
+    /// `ChannelVersions`.
+    channels: Vec<(String, i32)>,
     client_mods: Vec<String>,
 }
 
 impl ForgeHandshake {
+    /// `mod_channels` are the mods' Forge channels as (name, network protocol version).
     #[must_use]
-    pub const fn new(
+    pub fn new(
         mods: Vec<(String, String, String)>,
         registries: Vec<SyncedRegistry>,
         config_files: Vec<(String, Vec<u8>)>,
+        mod_channels: Vec<(String, i32)>,
     ) -> Self {
+        let mut channels: Vec<(String, i32)> = FORGE_CHANNELS
+            .iter()
+            .map(|(name, version)| ((*name).to_string(), *version))
+            .collect();
+        channels.extend(mod_channels);
         Self {
             state: State::AwaitingModVersions,
             mods,
             registries,
             next_registry: 0,
             config_files,
+            channels,
             client_mods: Vec::new(),
         }
     }
@@ -134,17 +145,23 @@ impl ForgeHandshake {
                 // `handleModVersions` only records the list on the server.
                 self.client_mods = wire::decode_mod_versions(body).unwrap_or_default();
                 self.state = State::AwaitingChannelVersions;
+                let channels: Vec<(&str, i32)> = self
+                    .channels
+                    .iter()
+                    .map(|(name, version)| (name.as_str(), *version))
+                    .collect();
                 Step::Send(vec![Self::payload(wire::encode_channel_versions(
-                    &FORGE_CHANNELS,
+                    &channels,
                 ))])
             }
             (State::AwaitingChannelVersions, Some(Message::ChannelVersions)) => {
-                // `NetworkRegistry.validateChannels`: the server's own channels accept a missing
-                // channel (they are optional) but not another version.
+                // `NetworkRegistry.validateChannels`: a channel the client lacks is accepted (the
+                // client's own check rejects it if it isn't optional) but not another version.
                 let Ok(client) = wire::decode_channel_versions(body) else {
                     return Step::Disconnect(String::from("Malformed ChannelVersions"));
                 };
-                let mismatched: Vec<String> = FORGE_CHANNELS
+                let mismatched: Vec<String> = self
+                    .channels
                     .iter()
                     .filter_map(|(name, version)| {
                         client
@@ -201,7 +218,7 @@ mod tests {
             entries: vec![("minecraft:air".into(), 0)],
         };
         let config = vec![("forge-server.toml".to_string(), b"[server]\n".to_vec())];
-        let mut handshake = ForgeHandshake::new(Vec::new(), vec![registry], config);
+        let mut handshake = ForgeHandshake::new(Vec::new(), vec![registry], config, Vec::new());
         assert_eq!(handshake.start().len(), 2);
 
         let mods = client_message(Message::ModVersions, &[0]);
@@ -229,7 +246,7 @@ mod tests {
 
     #[test]
     fn a_wrong_token_disconnects() {
-        let mut handshake = ForgeHandshake::new(Vec::new(), Vec::new(), Vec::new());
+        let mut handshake = ForgeHandshake::new(Vec::new(), Vec::new(), Vec::new(), Vec::new());
         handshake.on_payload(
             wire::HANDSHAKE_CHANNEL,
             &client_message(Message::ModVersions, &[0]),

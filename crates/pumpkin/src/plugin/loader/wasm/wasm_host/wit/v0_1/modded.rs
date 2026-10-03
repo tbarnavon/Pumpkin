@@ -1292,6 +1292,45 @@ impl wit::Host for PluginHostState {
         Ok(())
     }
 
+    async fn register_loader_channels(
+        &mut self,
+        loader: wit::Loader,
+        channels: Vec<wit::LoaderChannel>,
+    ) -> wasmtime::Result<Result<(), String>> {
+        use crate::net::java::loaders::{ModChannel, ModLoader};
+
+        if !self
+            .server
+            .as_ref()
+            .is_some_and(|server| server.advanced_config.modded.enabled)
+        {
+            return Ok(Err(DISABLED.to_string()));
+        }
+        let loader = match loader {
+            wit::Loader::Fabric => ModLoader::Fabric,
+            wit::Loader::Neoforge => ModLoader::NeoForge,
+            wit::Loader::Forge => ModLoader::Forge,
+        };
+        let mut parsed = Vec::with_capacity(channels.len());
+        for channel in channels {
+            if loader == ModLoader::Forge && channel.version.parse::<i32>().is_err() {
+                return Ok(Err(format!(
+                    "Forge channel {} needs a numeric version, not {}",
+                    channel.id, channel.version
+                )));
+            }
+            parsed.push(ModChannel {
+                id: channel.id,
+                version: channel.version,
+                to_client: !matches!(channel.flow, wit::ChannelFlow::ToServer),
+                to_server: !matches!(channel.flow, wit::ChannelFlow::ToClient),
+                optional: channel.optional,
+            });
+        }
+        crate::net::java::loaders::register_mod_channels(loader, parsed);
+        Ok(Ok(()))
+    }
+
     async fn register_component_stream_codec(
         &mut self,
         component: String,

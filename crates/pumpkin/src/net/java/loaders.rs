@@ -10,6 +10,73 @@ use pumpkin_fabric::wire::{register, registry_sync};
 use pumpkin_forge::handshake::ForgeHandshake;
 use pumpkin_neoforge::handshake::NeoForgeHandshake;
 
+/// A loader plugins declare their mods' network channels for.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ModLoader {
+    Fabric,
+    NeoForge,
+    Forge,
+}
+
+/// One of a mod's play channels on a loader (`modded.register-loader-channels`).
+#[derive(Debug, Clone)]
+pub struct ModChannel {
+    pub id: String,
+    pub version: String,
+    pub to_client: bool,
+    pub to_server: bool,
+    pub optional: bool,
+}
+
+static MOD_CHANNELS: std::sync::RwLock<Vec<(ModLoader, ModChannel)>> =
+    std::sync::RwLock::new(Vec::new());
+
+/// Adds a mod's channels for `loader`; a channel declared again replaces the earlier one.
+pub fn register_mod_channels(loader: ModLoader, channels: Vec<ModChannel>) {
+    let mut registered = MOD_CHANNELS
+        .write()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    for channel in channels {
+        registered.retain(|(l, c)| !(*l == loader && c.id == channel.id));
+        registered.push((loader, channel));
+    }
+}
+
+fn mod_channels(loader: ModLoader) -> Vec<ModChannel> {
+    MOD_CHANNELS
+        .read()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .iter()
+        .filter(|(l, _)| *l == loader)
+        .map(|(_, channel)| channel.clone())
+        .collect()
+}
+
+/// NeoForge's own channels plus the mods' play channels.
+fn neoforge_channels() -> Vec<(
+    pumpkin_neoforge::wire::Protocol,
+    Vec<pumpkin_neoforge::wire::Component>,
+)> {
+    use pumpkin_neoforge::wire::{Component, Flow, Protocol};
+    let mut channels = pumpkin_neoforge::handshake::server_channels();
+    let mods = mod_channels(ModLoader::NeoForge)
+        .into_iter()
+        .map(|c| Component {
+            flow: match (c.to_client, c.to_server) {
+                (true, false) => Some(Flow::Clientbound),
+                (false, true) => Some(Flow::Serverbound),
+                _ => None,
+            },
+            id: c.id,
+            version: c.version,
+            optional: c.optional,
+        });
+    if let Some((_, play)) = channels.iter_mut().find(|(p, _)| *p == Protocol::Play) {
+        play.extend(mods);
+    }
+    channels
+}
+
 /// What the configuration phase does with each loader, from the `[modded]` config.
 pub struct LoaderOptions {
     /// Namespaces of the installed mods; empty without mod data.
@@ -46,10 +113,15 @@ impl LoaderHandshake {
                 .map(|id| (id.clone(), id.clone(), String::from("0")))
                 .collect();
             let (name, contents) = pumpkin_forge::wire::FORGE_SERVER_CONFIG;
+            let channels = mod_channels(ModLoader::Forge)
+                .into_iter()
+                .filter_map(|c| c.version.parse().ok().map(|version| (c.id, version)))
+                .collect();
             return Some(Self::Forge(ForgeHandshake::new(
                 mods,
                 pumpkin_fabric::sync_map::build(),
                 vec![(name.to_string(), contents.as_bytes().to_vec())],
+                channels,
             )));
         }
         let fabric = options.fabric && !options.mod_namespaces.is_empty();
@@ -142,7 +214,7 @@ impl LoaderHandshake {
             let listens_on: Vec<String> =
                 registers.iter().flat_map(|r| register::decode(r)).collect();
             let mut handshake = NeoForgeHandshake::new(
-                pumpkin_neoforge::handshake::server_channels(),
+                neoforge_channels(),
                 pumpkin_fabric::sync_map::build(),
                 pumpkin_neoforge::wire::NEOFORGE_CONFIG_FILES
                     .iter()
@@ -163,7 +235,13 @@ impl LoaderHandshake {
                 .any(|c| c == registry_sync::SYNC_CHANNEL)
         });
         if fabric_client && options.fabric && mods {
-            let mut handshake = FabricHandshake::new(options.mod_namespaces, Vec::new());
+            // `c:register` lists the play channels the server receives.
+            let play_channels = mod_channels(ModLoader::Fabric)
+                .into_iter()
+                .filter(|c| c.to_server)
+                .map(|c| c.id)
+                .collect();
+            let mut handshake = FabricHandshake::new(options.mod_namespaces, play_channels);
             // `minecraft:register` lists channels separated by NUL bytes.
             let joined = registers.join(&0u8);
             let step = handshake.on_payload(register::REGISTER_CHANNEL, &joined);

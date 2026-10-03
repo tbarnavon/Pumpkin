@@ -353,4 +353,38 @@ interface modded {
     /// registered with `networkSynchronized(...)`. Without one, the host sends the value as a
     /// network NBT tag, vanilla's default stream codec. Replaces an earlier codec for the type.
     register-component-stream-codec: func(component: string, nodes: list<stream-codec-node>) -> result<_, string>;
+
+    /// A mod loader whose clients the server talks to.
+    enum loader {
+        fabric,
+        neoforge,
+        forge,
+    }
+
+    /// Which way a mod's channel carries packets.
+    enum channel-flow {
+        to-client,
+        to-server,
+        both,
+    }
+
+    /// One of a mod's play network channels, as the mod registers it on a loader.
+    record loader-channel {
+        /// NeoForge and Fabric: the payload id, like `storagedrawers:count_update`. Forge: the
+        /// channel name, like `storagedrawers:main`.
+        id: string,
+        /// NeoForge: the payload registrar's version string. Forge: the channel's network protocol
+        /// version, a number. Fabric: unused.
+        version: string,
+        flow: channel-flow,
+        /// Whether a client without the channel may still join (`optional()` in NeoForge and
+        /// Forge).
+        optional: bool,
+    }
+
+    /// Declares a mod's play network channels on one loader, so that loader's handshake lists
+    /// them: NeoForge's channel negotiation (a client's required channels must be on the
+    /// server, with the same version), Forge's `ChannelVersions`, and the channels the server
+    /// receives in Fabric's `c:register`. A channel declared again replaces the earlier one.
+    register-loader-channels: func(loader: loader, channels: list<loader-channel>) -> result<_, string>;
 }
