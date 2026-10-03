@@ -144,10 +144,13 @@ impl LoaderHandshake {
             let mut handshake = NeoForgeHandshake::new(
                 pumpkin_neoforge::handshake::server_channels(),
                 pumpkin_fabric::sync_map::build(),
-                {
-                    let (name, contents) = pumpkin_neoforge::wire::NEOFORGE_SYNCED_CONFIG;
-                    vec![(name.to_string(), contents.as_bytes().to_vec())]
-                },
+                pumpkin_neoforge::wire::NEOFORGE_CONFIG_FILES
+                    .iter()
+                    .map(|name| {
+                        let contents = pumpkin_neoforge::wire::NEOFORGE_CONFIG_DEFAULTS;
+                        ((*name).to_string(), contents.as_bytes().to_vec())
+                    })
+                    .collect(),
             );
             let step = handshake.on_detected(&query, &listens_on);
             tracing::debug!("NeoForge client");

@@ -20,19 +20,23 @@ pub const SYNC_COMPLETED_CHANNEL: &str = "neoforge:frozen_registry_sync_complete
 /// `ConfigFilePayload.TYPE`: a synced config file, in configuration and play.
 pub const CONFIG_FILE_CHANNEL: &str = "neoforge:config_file";
 
+/// The file names of NeoForge's own synced config, old and new.
+///
+/// `neoforge-synced.toml` since NeoForge 26.3.0.37-beta (`NeoForgeSyncedConfig`,
+/// `ModConfig.Type.SYNCED`, `FancyModLoader` 12.0.8), `neoforge-server.toml` before
+/// (`NeoForgeServerConfig`, `ModConfig.Type.SERVER`). Both are sent; a client ignores a file
+/// name it doesn't have (`ConfigSync.receiveSyncedConfig`).
+pub const NEOFORGE_CONFIG_FILES: [&str; 2] = ["neoforge-synced.toml", "neoforge-server.toml"];
+
 /// NeoForge's own synced config, with every value at its default for a production server.
 ///
-/// `NeoForgeSyncedConfig`, registered as `ModConfig.Type.SYNCED`, so `FancyModLoader` names it
-/// `neoforge-synced.toml`. A NeoForge client reads these values (for example in
+/// The same five values under both file names. A NeoForge client reads them (for example in
 /// `Level.guardEntityTick`) and crashes if the server never sends the file.
-pub const NEOFORGE_SYNCED_CONFIG: (&str, &str) = (
-    "neoforge-synced.toml",
-    "removeErroringBlockEntities = false\n\
+pub const NEOFORGE_CONFIG_DEFAULTS: &str = "removeErroringBlockEntities = false\n\
      removeErroringEntities = false\n\
      fullBoundingBoxLadders = false\n\
      permissionHandler = \"neoforge:default_handler\"\n\
-     advertiseDedicatedServerToLan = false\n",
-);
+     advertiseDedicatedServerToLan = false\n";
 
 /// `NetworkRegistry.BUILTIN_PAYLOADS`: channels both sides listen on before negotiation
 /// (`getInitialListeningChannels`).
