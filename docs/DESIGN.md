@@ -24,7 +24,7 @@ these pinned revisions:
 | Fabric Loader | 0.19.5 | newest stable for 26.3 on meta.fabricmc.net, and what the Extractor and Storage Drawers require (`fabric.mod.json`: `fabricloader >=0.19.5`) |
 | Fabric API | 0.161.0+26.3 | newest 26.3 build on maven.fabricmc.net, same as the `26.3` branch we read |
 | Storage Drawers | 26.3.0.1+fabric (Modrinth `wE2d96Vp`) | the only required dependency is Fabric API; needs Java ≥ 25 |
-| Java | Temurin 25.0.4.1 (portable, in `tools/`) | needed for the Extractor, decompiling and the test client |
+| Java | Temurin 25.0.4.1 (portable) | needed for the Extractor, decompiling and the test client |
 
 Storage Drawers' GitHub repository has no `26.3` branch (the newest is `26.2`), so the decompiled
 release jar is the source of truth for the mod's formats.

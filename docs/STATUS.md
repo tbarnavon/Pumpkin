@@ -28,7 +28,7 @@ Storage Drawers 26.3.0.1+fabric.
 
 ## Phase 2
 
-- Dump: `source tools/gradle-env.sh && cd extractor && ./gradlew runModDump -PmodDumpNamespaces=storagedrawers`.
+- Dump: in the Extractor checkout, with JDK 25, `./gradlew runModDump -PmodDumpNamespaces=storagedrawers`.
   It writes `run-moddump/pumpkin_extractor_output/mods/<ns>.json` and `fabric_registry_sync.json`,
   the exact map a real Fabric server sends.
 - Install: copy `mods/<ns>.json` into `<server>/mod-data/`. On startup Pumpkin checks that every
