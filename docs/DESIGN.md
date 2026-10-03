@@ -8,13 +8,13 @@ dump.
 This document is the Phase 0 recon. Every claim below was checked against source. Citations use
 these pinned revisions:
 
-| Source | Revision | Local path (project root) |
-|:--|:--|:--|
-| Pumpkin (fork base) | `4426d1113` | `pumpkin/` |
-| fabric-api, branch `26.3` | `ba0d6c0dc` (version 0.161.0) | `refs/fabric-api/` |
-| Extractor | `master` of 2026-09-26 | `refs/Extractor/` |
-| PumpkinVoice | `0f9edf338` | `refs/PumpkinVoice/` |
-| Storage Drawers | jar `26.3.0.1+fabric` decompiled with Vineflower | `refs/StorageDrawers-26.3-decomp/` |
+| Source | Revision |
+|:--|:--|
+| Pumpkin (fork base) | `4426d1113` |
+| fabric-api, branch `26.3` | `ba0d6c0dc` (version 0.161.0) |
+| Extractor | `master` of 2026-09-26 |
+| PumpkinVoice | `0f9edf338` |
+| Storage Drawers | jar `26.3.0.1+fabric` decompiled with Vineflower |
 
 ## 1. Version pins
 
@@ -125,7 +125,7 @@ Pumpkin has no concept of configuration "tasks". Finish-config is sent unconditi
 
 ### 2.6 Precedent: PumpkinVoice
 
-PumpkinVoice (`refs/PumpkinVoice/src/lib.rs`) is a Simple Voice Chat backend written as a v0.1
+PumpkinVoice (`src/lib.rs`) is a Simple Voice Chat backend written as a v0.1
 plugin:
 - It listens to `PlayerCustomPayloadEvent` and filters on its `voicechat:*` channels
   (`src/handlers/custom_payload.rs`).
@@ -435,10 +435,8 @@ and `modded.open-menu` return an error. Each mod loader's handshake gets its own
 | 4 | WIT for block/item/BE behaviour, payloads and extended menus; Storage Drawers plugin | 1x1 drawer insert/extract/count sync, then 2x2, compacting, controller |
 | 5 | `docs/PORTING_A_MOD.md`, plugin template, version-bump checklist | port dry run |
 
-Tooling, all inside the project:
-- a portable JDK 25 and Vineflower under `tools/`;
-- reference repos and the jar under `refs/`;
-- a real Fabric server and client for packet captures, set up under `tools/`, in Phase 3.
+Tooling: a portable JDK 25 and Vineflower to decompile the mod and Minecraft, the reference
+sources at the revisions pinned above, and a real Fabric server and client for packet captures.
 
 ## 8. Phase 1 implementation notes
 
@@ -457,8 +455,9 @@ Tooling, all inside the project:
   `ceillog2(total)`.
 - Windows: `rustfmt` overflows its 1 MiB main-thread stack on `generated/block.rs`, and codegen
   then silently writes the file unformatted. That happens upstream too, not only with our
-  changes. Run codegen through `tools/codegen.sh` at the project root. It uses a copy of rustfmt
-  with a 256 MiB stack.
+  changes. Run codegen with a copy of rustfmt that has a 256 MiB stack, first on `PATH`: copy the
+  toolchain's `rustfmt.exe` and run `editbin /STACK:268435456` on the copy (again after each
+  toolchain update).
 - Known gap for Phase 3: the chunk packet resolves block-entity type IDs by the last path segment
   of the NBT `id` (`net/java/chunk_data/v1_18.rs`), so modded block entities get ID 0.
 

@@ -16,10 +16,10 @@ The pieces are explained in [README.md](README.md).
 | Login queries | ✅ | `context.register-login-query` | |
 | Mod list check | ➖ | | Fabric doesn't check mods on join |
 | Config sync | ➖ | | Not part of Fabric API |
-| Data dump | ✅ | `extractor/` (Fabric mod), `pumpkin-registry-ext` | Run once per mod |
+| Data dump | ✅ | the Extractor (a Fabric mod), `pumpkin-registry-ext` | Run once per mod |
 | Real client tested | ✅ | `STATUS.md` | Storage Drawers 26.3.0.1 |
 
-Fabric API channels found in `refs/fabric-api` but not handled yet (to audit module by module):
+Fabric API channels found in the Fabric API 0.161.0+26.3 source but not handled yet (to audit module by module):
 `fabric:recipe_sync` and `fabric:recipe_sync/supported_serializers`,
 `fabric:custom_ingredient_sync`, `fabric:extended_block_particle_option_sync`, data attachment
 sync, extended menu opening data, modded command argument types.

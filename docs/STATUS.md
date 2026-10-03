@@ -7,7 +7,7 @@ Storage Drawers 26.3.0.1+fabric.
 |:--|:--|:--|
 | 0 Recon | done, see `DESIGN.md` | n/a (no code) |
 | 1 Dynamic registries | done: overlay for blocks/states/items/tags/BE, entity, menu and component types; namespaced Anvil palettes; unknown blocks kept | not run (needs Phase 3 handshake) |
-| 2 Data import | done: Extractor mod dump (`extractor/`, branch `modded-dump`) + `pumpkin-registry-ext` loader; recipes and loot tables merged into datapacks | server boots with Storage Drawers data; client join not expected to work before Phase 3 |
+| 2 Data import | done: the Extractor's mod dump (Extractor fork, branch `modded-dump`) + `pumpkin-registry-ext` loader; recipes and loot tables merged into datapacks | server boots with Storage Drawers data; client join not expected to work before Phase 3 |
 | 3 Fabric handshake | done: `pumpkin-fabric` (channel registration, `c:version`/`c:register`, registry sync byte-identical to Fabric's) | 2026-09-29: Fabric 26.3 client + Storage Drawers joins, crafts, places and breaks drawers (details below) |
 | 4 Plugin API + Storage Drawers plugin | not started | not run |
 | 5 Porting kit | not started | not run |
@@ -71,7 +71,7 @@ Open:
 
 ## Phase 4, stage 1: standard drawers
 
-The Storage Drawers server logic lives in `../storagedrawers-plugin` (WASM, `wasm32-wasip2`),
+The Storage Drawers server logic lives in its own plugin repository (WASM, `wasm32-wasip2`),
 ported from the decompiled 26.3.0.1 jar. The plugin loads on the release build and registers all
 78 standard drawer blocks (13 woods including framed, full or half, 1/2/4 slots).
 
@@ -241,7 +241,7 @@ Real-client tests to run:
 10. Conversion upgrade with an `itemEquivalenceGroups` entry.
 
 
-## Phase 4: host APIs for the rest of Storage Drawers (2026-09-30, HANDOFF-2)
+## Phase 4: host APIs for the rest of Storage Drawers (2026-09-30)
 
 Host (branch `modded`), each listed in `HOOKS.md`:
 - `modded.register-component-stream-codec`: a plugin describes a modded component's
@@ -273,7 +273,7 @@ inventory), remote upgrade (bind, reach, unbind when the controller breaks), hop
 magnet upgrade, keyring keys added and taken out in the inventory, keyring keys spilled in lava,
 drawers and detached drawers kept out of bundles and shulker boxes, conversion upgrade tags.
 
-## Phase 4: Storage Drawers limits 7 to 10 (2026-09-30, HANDOFF-3)
+## Phase 4: Storage Drawers limits 7 to 10 (2026-09-30)
 
 - 7. `recipe-manager.crafting-recipes-for`: the crafting recipes of a result item, shaped with
   width, height and cells, shapeless with ingredients, each ingredient as item ids (tags

@@ -1,4 +1,4 @@
-//! The JSON written by the Extractor's mod dump (`extractor/.../ModDump.kt`), one file per mod.
+//! The JSON written by the Extractor's mod dump (`ModDump.kt`), one file per mod.
 
 use std::collections::BTreeMap;
 

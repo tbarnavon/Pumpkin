@@ -14,8 +14,8 @@ to-do list. Update both when an item lands.
 
 ## Performance
 
-Benchmark (release build, 10,000 plugin block entities with a ticker hook, `bench-plugin/` on
-`run-bench/`):
+Benchmark (release build, 10,000 plugin block entities with a ticker hook, measured with a test
+plugin on a fresh world):
 
 | Case | Tick time | Per block entity | Inside the plugin |
 |:--|:--|:--|:--|
@@ -68,6 +68,4 @@ lock, resources, call record). Limit today: ~1,250 ticking plugin block entities
 
 ## Open
 
-- Real-client tests of HANDOFF-3 items 7 to 10 and the hopper fix, then record them in
-  `STATUS.md`.
-- Host bug 12: a `/stop` hang, not reproduced.
+- A `/stop` hang reported once, not reproduced.
