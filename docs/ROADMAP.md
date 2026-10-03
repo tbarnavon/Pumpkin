@@ -46,10 +46,10 @@ lock, resources, call record). Limit today: ~1,250 ticking plugin block entities
 
 ## Hooks and APIs
 
-6. **Hook catalog.** One pass over what mods hook into: Fabric API events, NeoForge events,
-   common Mixin targets, Paper events, and what Pumpkin has. Mark existing hooks and gaps, then
-   implement the gaps in batches, so an LLM can write a server-side mod against the WIT alone.
-   Added hooks and known gaps are tracked in `HOOKS.md`.
+6. **Hook catalog.** Research done (2026-10-03): `HOOKS.md`, "Hook catalog", compares Fabric
+   API, NeoForge, Paper/Bukkit events and common Mixin targets with what Pumpkin offers, and
+   orders the gaps by need ("Gaps by need"). Next: implement them in batches, most needed
+   first.
 7. **Loader networking.** Each loader's pieces, with channels and source classes, are in
    `modloaders/`. In order:
    - **Fabric (finish):** configuration tasks that wait for a reply; registry sync for the
