@@ -12,7 +12,7 @@ before implementing.
 
 | Loader | Status | Notes |
 |:--|:--|:--|
-| Fabric | ✅ works | Storage Drawers 26.3.0.1 tested with a real client |
+| Fabric | 🟡 minimal | What Storage Drawers 26.3.0.1 needs, tested with a real client; Fabric API has more channels (below) |
 | Quilt | ❌ not tested | Runs Fabric mods; may need its own registry sync (to verify) |
 | NeoForge | ❌ not started | Next loader to add (`ROADMAP.md`, item 7) |
 | Forge (MinecraftForge) | ❌ not started | After NeoForge; login-phase handshake |
@@ -47,6 +47,11 @@ before implementing.
 | Config sync | ➖ | | Not part of Fabric API |
 | Data dump | ✅ | `extractor/` (Fabric mod), `pumpkin-registry-ext` | Run once per mod |
 | Real client tested | ✅ | `STATUS.md` | Storage Drawers 26.3.0.1 |
+
+Fabric API channels found in `refs/fabric-api` but not handled yet (to audit module by module):
+`fabric:recipe_sync` and `fabric:recipe_sync/supported_serializers`,
+`fabric:custom_ingredient_sync`, `fabric:extended_block_particle_option_sync`, data attachment
+sync, extended menu opening data, modded command argument types.
 
 Still to do for Fabric:
 - **Synced dynamic registries** (`DynamicRegistries.registerSynced`): mod datapack registries sent
