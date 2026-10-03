@@ -1,6 +1,7 @@
 #[allow(clippy::wildcard_imports)]
 use super::*;
-use pumpkin_fabric::handshake::{FabricHandshake, Outgoing, Step};
+use crate::net::java::loaders::{LoaderHandshake, LoaderOptions};
+use pumpkin_fabric::handshake::{Outgoing, Step};
 use pumpkin_protocol::java::client::config::{CConfigPing, CPluginMessage};
 
 impl PendingConnection {
@@ -11,15 +12,21 @@ impl PendingConnection {
         debug!("Handling login acknowledgement");
         self.connection_state.store(ConnectionState::Config);
 
-        // With mods installed, Fabric's handshake runs first; `continue_configuration` follows
-        // once it is done (see `handle_fabric_step`).
-        if let Some(mods) = pumpkin_registry_ext::installed()
-            && server.advanced_config.modded.fabric_handshake
+        // A mod loader's handshake runs first; `continue_configuration` follows once it is
+        // done (see `handle_loader_step`).
+        let modded = &server.advanced_config.modded;
+        if modded.enabled
+            && let Some(handshake) = LoaderHandshake::new(LoaderOptions {
+                mod_namespaces: pumpkin_registry_ext::installed()
+                    .map(|mods| mods.namespaces.clone())
+                    .unwrap_or_default(),
+                fabric: modded.fabric_handshake,
+                neoforge: modded.neoforge_handshake,
+            })
         {
-            let handshake = FabricHandshake::new(mods.namespaces.clone(), Vec::new());
             let start = handshake.start();
-            self.fabric = Some(handshake);
-            self.send_fabric_packets(start).await;
+            self.loader = Some(handshake);
+            self.send_loader_packets(start).await;
             return None;
         }
         self.continue_configuration(server).await;
@@ -118,7 +125,7 @@ impl PendingConnection {
         debug!("login acknowledged");
     }
 
-    pub async fn send_fabric_packets(&mut self, packets: Vec<Outgoing>) {
+    pub async fn send_loader_packets(&mut self, packets: Vec<Outgoing>) {
         for packet in packets {
             match packet {
                 Outgoing::Payload { channel, data } => {
@@ -131,13 +138,13 @@ impl PendingConnection {
     }
 
     /// Acts on a handshake step. Returns `false` if the packet was not part of the handshake.
-    pub async fn handle_fabric_step(&mut self, server: &Server, step: Step) -> bool {
+    pub async fn handle_loader_step(&mut self, server: &Server, step: Step) -> bool {
         match step {
             Step::NotHandled => return false,
             Step::Wait => {}
-            Step::Send(packets) => self.send_fabric_packets(packets).await,
+            Step::Send(packets) => self.send_loader_packets(packets).await,
             Step::Done(packets) => {
-                self.send_fabric_packets(packets).await;
+                self.send_loader_packets(packets).await;
                 self.continue_configuration(server).await;
             }
             Step::Disconnect(message) => self.kick(TextComponent::text(message)).await,

@@ -2,7 +2,8 @@
 //!
 //! Everything version-sensitive about Fabric's protocol lives in this module, one file per
 //! payload, each citing the Java it mirrors (fabric-api, branch 26.3, 0.161.0). Updating to a new
-//! Fabric API means re-reading those files.
+//! Fabric API means re-reading those files. The `FriendlyByteBuf` helpers here are shared with
+//! the other loaders' crates; `minecraft:register` and the `c:` channels are common to them.
 
 pub mod common;
 pub mod register;
@@ -22,9 +23,9 @@ pub enum ReadError {
 }
 
 /// Longest string `FriendlyByteBuf.readUtf()` accepts by default (`Utf8String.MAX_LENGTH`).
-pub(crate) const MAX_STRING_CHARS: usize = 32767;
+pub const MAX_STRING_CHARS: usize = 32767;
 
-pub(crate) fn write_var_int(out: &mut Vec<u8>, value: i32) {
+pub fn write_var_int(out: &mut Vec<u8>, value: i32) {
     let mut value = value as u32;
     loop {
         let byte = (value & 0x7F) as u8;
@@ -38,32 +39,34 @@ pub(crate) fn write_var_int(out: &mut Vec<u8>, value: i32) {
 }
 
 /// `FriendlyByteBuf.writeUtf`: `VarInt` byte length, then UTF-8.
-pub(crate) fn write_string(out: &mut Vec<u8>, value: &str) {
+pub fn write_string(out: &mut Vec<u8>, value: &str) {
     write_var_int(out, value.len() as i32);
     out.extend_from_slice(value.as_bytes());
 }
 
 /// Bounded reader over a payload body.
-pub(crate) struct Reader<'a> {
+pub struct Reader<'a> {
     data: &'a [u8],
 }
 
 impl<'a> Reader<'a> {
-    pub(crate) const fn new(data: &'a [u8]) -> Self {
+    #[must_use]
+    pub const fn new(data: &'a [u8]) -> Self {
         Self { data }
     }
 
-    pub(crate) const fn is_empty(&self) -> bool {
+    #[must_use]
+    pub const fn is_empty(&self) -> bool {
         self.data.is_empty()
     }
 
-    pub(crate) fn byte(&mut self) -> Result<u8, ReadError> {
+    pub fn byte(&mut self) -> Result<u8, ReadError> {
         let (&first, rest) = self.data.split_first().ok_or(ReadError::UnexpectedEnd)?;
         self.data = rest;
         Ok(first)
     }
 
-    pub(crate) fn var_int(&mut self) -> Result<i32, ReadError> {
+    pub fn var_int(&mut self) -> Result<i32, ReadError> {
         let mut value = 0u32;
         for shift in (0..35).step_by(7) {
             let byte = self.byte()?;
@@ -76,7 +79,7 @@ impl<'a> Reader<'a> {
     }
 
     /// A `VarInt` length or count, rejected if negative or above `max`.
-    pub(crate) fn length(&mut self, max: usize) -> Result<usize, ReadError> {
+    pub fn length(&mut self, max: usize) -> Result<usize, ReadError> {
         let raw = self.var_int()?;
         usize::try_from(raw)
             .ok()
@@ -84,7 +87,7 @@ impl<'a> Reader<'a> {
             .ok_or(ReadError::BadLength(raw))
     }
 
-    pub(crate) const fn bytes(&mut self, len: usize) -> Result<&'a [u8], ReadError> {
+    pub const fn bytes(&mut self, len: usize) -> Result<&'a [u8], ReadError> {
         if len > self.data.len() {
             return Err(ReadError::UnexpectedEnd);
         }
@@ -94,12 +97,13 @@ impl<'a> Reader<'a> {
     }
 
     /// `FriendlyByteBuf.readUtf()`: at most 32767 characters, so at most 3 bytes per char.
-    pub(crate) fn string(&mut self) -> Result<&'a str, ReadError> {
+    pub fn string(&mut self) -> Result<&'a str, ReadError> {
         let len = self.length(MAX_STRING_CHARS * 3)?;
         std::str::from_utf8(self.bytes(len)?).map_err(|_| ReadError::InvalidUtf8)
     }
 
-    pub(crate) const fn rest(&self) -> &'a [u8] {
+    #[must_use]
+    pub const fn rest(&self) -> &'a [u8] {
         self.data
     }
 }

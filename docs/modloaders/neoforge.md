@@ -5,7 +5,9 @@ Status: ✅ done, 🟡 partial, ❌ missing, ➖ not needed. The pieces are expl
 
 Audited against the NeoForge source for Minecraft 26.3 (branch `26.3.x`): the
 `net.neoforged.neoforge.network` package and the patches to `ServerConfigurationPacketListenerImpl`
-and `ClientConfigurationPacketListenerImpl`. Nothing is implemented yet; this is the work list
+and `ClientConfigurationPacketListenerImpl`. Implemented so far (`NEOHANDSHAKE`, `pumpkin-neoforge`
+crate, `[modded] neoforge_handshake`): detection, channel negotiation, registry sync of the
+registries mods add to, and the `c:` tasks; not yet tested with a real client. The rest is the work list
 for the NeoForge adapter (`../ROADMAP.md`, item 7).
 
 ## Handshake (configuration phase)
@@ -30,10 +32,10 @@ From the `ServerConfigurationPacketListenerImpl` patch and `NetworkRegistry`:
 
 | Piece | Channel / packet | Source | Status | Left |
 |:--|:--|:--|:--|:--|
-| Detection | Client's `neoforge:register` reply before the ping `0` pong | `ServerConfigurationPacketListenerImpl` patch | ❌ | |
-| Channel negotiation | `neoforge:register`, `neoforge:network`, `neoforge:modded_network_setup_failed` | `NetworkRegistry.initializeNeoForgeConnection`, `NetworkComponentNegotiator` | ❌ | Channel list from the mod dump and plugins, with versions and optional flags |
+| Detection | Client's `neoforge:register` reply before the ping `0` pong | `ServerConfigurationPacketListenerImpl` patch | 🟡 `pumpkin/src/net/java/loaders.rs` (one ping for Fabric and NeoForge) | Real-client test |
+| Channel negotiation | `neoforge:register`, `neoforge:network`, `neoforge:modded_network_setup_failed` | `NetworkRegistry.initializeNeoForgeConnection`, `NetworkComponentNegotiator` | 🟡 `pumpkin-neoforge/src/{negotiation,handshake}.rs` | The server lists only its registry sync channels; mods' channels from the dump and plugins; `modded_network_setup_failed` (the reasons go in the disconnect message instead) |
 | Channel registration | `minecraft:register`, `minecraft:unregister` | `MinecraftRegisterPayload`, `NetworkRegistry.onMinecraftRegister` | ✅ shared with Fabric (`pumpkin-fabric/src/wire/register.rs`) | |
-| Common packets | `c:version`, `c:register` (same as Fabric) | `CommonVersionTask`, `CommonRegisterTask` | ✅ wire format shared with Fabric | Run them as NeoForge tasks |
+| Common packets | `c:version`, `c:register` (same as Fabric) | `CommonVersionTask`, `CommonRegisterTask` | 🟡 run when the client listens on them | The server's play channel list is empty |
 | Split payloads | `neoforge:split` | `GenericPacketSplitter`, `SplitPacketPayload` | ❌ | For payloads above the vanilla limit |
 
 ## Configuration tasks
@@ -43,7 +45,7 @@ Then `RegisterConfigurationTasksEvent`: `configureModdedClient`.
 
 | Task | Channel / packet | Source | Status | Left |
 |:--|:--|:--|:--|:--|
-| Registry sync | `neoforge:frozen_registry_sync_start` (registry names), one `neoforge:frozen_registry` per registry (`RegistrySnapshot`: id map and aliases), `neoforge:frozen_registry_sync_completed` (both ways) | `SyncRegistries`, `RegistryManager.generateRegistryPackets` | ❌ | Every registry with `doesSync()`, vanilla entries included (list below) |
+| Registry sync | `neoforge:frozen_registry_sync_start` (registry names), one `neoforge:frozen_registry` per registry (`RegistrySnapshot`: id map and aliases), `neoforge:frozen_registry_sync_completed` (both ways) | `SyncRegistries`, `RegistryManager.generateRegistryPackets` | 🟡 registries mods added to, with all entries (as for Fabric) | The client accepts a subset (`ClientPayloadHandler`: it only fails on entries it doesn't know); NeoForge's own registries need a NeoForge dump |
 | Config sync | `neoforge:config_file` (file name, raw bytes) for each `SYNCED` mod config | `SyncConfig`, `ConfigSync.syncAllConfigs` | ❌ | Plugins provide the config file bytes |
 | Data maps | `neoforge:known_registry_data_maps`, reply `neoforge:known_registry_data_maps_reply`; then `neoforge:registry_data_map_sync` in play | `RegistryDataMapNegotiation`, `RegistryDataMapSyncPayload` | ❌ | Data maps from the mod's datapack in the dump |
 | Extensible enums | `neoforge:extensible_enum_data`, reply `neoforge:extensible_enum_ack` | `CheckExtensibleEnums` | ❌ | Enum extensions from the dump (mods that extend networked enums) |

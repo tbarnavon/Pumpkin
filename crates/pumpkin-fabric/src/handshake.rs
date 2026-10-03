@@ -20,7 +20,7 @@ use crate::wire::{common, register, registry_sync};
 pub const PING_ID: i32 = 0x00FA_B71C;
 
 /// Configuration channels this server can receive, announced in step 1.
-const SERVER_CONFIG_CHANNELS: &[&str] = &[
+pub const SERVER_CONFIG_CHANNELS: &[&str] = &[
     common::VERSION_CHANNEL,
     common::REGISTER_CHANNEL,
     registry_sync::SYNC_COMPLETE_CHANNEL,

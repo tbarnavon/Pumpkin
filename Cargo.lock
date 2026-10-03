@@ -3367,6 +3367,7 @@ dependencies = [
  "pumpkin-inventory",
  "pumpkin-macros",
  "pumpkin-nbt",
+ "pumpkin-neoforge",
  "pumpkin-plugin-runtime",
  "pumpkin-protocol",
  "pumpkin-registry-ext",
@@ -3582,6 +3583,13 @@ dependencies = [
  "thiserror 2.0.21",
  "tracing",
  "uuid",
+]
+
+[[package]]
+name = "pumpkin-neoforge"
+version = "0.2.0+26.3-26.51"
+dependencies = [
+ "pumpkin-fabric",
 ]
 
 [[package]]

@@ -58,14 +58,17 @@ than delete them.
 `pumpkin-protocol/src/codec/item_stack_seralizer.rs`. Tests:
 `pumpkin-world/tests/modded_chunk_roundtrip.rs`, `pumpkin-protocol/tests/modded_item_components.rs`.
 
-## 4. Fabric client networking
+## 4. Mod loader client networking
 
-**Why:** a Fabric client checks the server's registries and channels during configuration, and
+**Why:** a modded client checks the server's registries and channels during configuration, and
 reads modded components with the mod's own stream codecs. This is the per-loader part the
 project must support.
 
 - `4843eeb1c` Fabric configuration handshake and registry sync
 - `728d5c4e5` stream codecs for modded component types
+- `NEOHANDSHAKE` NeoForge detection, channel negotiation and registry sync; one detection step
+  for both loaders (`pumpkin-neoforge/` new crate, `pumpkin/src/net/java/loaders.rs` new,
+  `pumpkin-config/src/modded.rs`, `clippy.toml` new, for the `NeoForge` doc word)
 
 **Files:** `pumpkin-fabric/` (new crate, tested against a payload a real Fabric server sent),
 `pumpkin-protocol/src/codec/{modded_component,data_component}.rs`,

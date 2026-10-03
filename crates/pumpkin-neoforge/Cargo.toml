@@ -1,0 +1,13 @@
+[package]
+name = "pumpkin-neoforge"
+description = "NeoForge client support for Pumpkin: channel negotiation and registry sync"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+pumpkin-fabric.workspace = true
+
+[lints]
+workspace = true

@@ -9,6 +9,7 @@ members = [
     "crates/pumpkin-config",
     "crates/pumpkin-data",
     "crates/pumpkin-fabric",
+    "crates/pumpkin-neoforge",
     "crates/pumpkin-scheduler",
     "crates/pumpkin-gametest",
     "crates/pumpkin-inventory",
@@ -192,6 +193,7 @@ pumpkin-macros = { path = "crates/pumpkin-macros", default-features = false }
 pumpkin-nbt = { path = "crates/pumpkin-nbt", default-features = false }
 pumpkin-registry-ext = { path = "crates/pumpkin-registry-ext", default-features = false }
 pumpkin-fabric = { path = "crates/pumpkin-fabric", default-features = false }
+pumpkin-neoforge = { path = "crates/pumpkin-neoforge", default-features = false }
 pumpkin-plugin-api = { path = "crates/pumpkin-plugin-api", default-features = false }
 pumpkin-plugin-runtime = { path = "crates/pumpkin-plugin-runtime", default-features = false }
 pumpkin-plugin-utils = { path = "crates/pumpkin-plugin-utils", default-features = false }

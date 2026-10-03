@@ -77,8 +77,8 @@ pub struct PendingConnection {
     pub vine_challenge: Option<[u8; 16]>,
     /// Plugin login queries still waiting for an answer: message id and channel.
     pub login_queries: Vec<(i32, String)>,
-    /// Fabric configuration handshake, only when mods are installed.
-    pub fabric: Option<pumpkin_fabric::handshake::FabricHandshake>,
+    /// The mod loader handshake (Fabric or NeoForge), while it runs.
+    pub loader: Option<super::loaders::LoaderHandshake>,
     /// For the connection packet events.
     server: Weak<Server>,
 }
@@ -109,7 +109,7 @@ impl PendingConnection {
             verify_token: None,
             vine_challenge: None,
             login_queries: Vec::new(),
-            fabric: None,
+            loader: None,
             server,
         }
     }
@@ -507,10 +507,10 @@ impl PendingConnection {
             id if id == SPluginMessage::to_id(version) => {
                 let message = SPluginMessage::read(&mut payload, &version)?;
                 if let Some(step) = self
-                    .fabric
+                    .loader
                     .as_mut()
                     .map(|handshake| handshake.on_payload(message.channel, message.data))
-                    && self.handle_fabric_step(server, step).await
+                    && self.handle_loader_step(server, step).await
                 {
                     return Ok(None);
                 }
@@ -552,11 +552,11 @@ impl PendingConnection {
             id if id == SConfigPong::to_id(version) => {
                 let pong = SConfigPong::read(&mut payload, &version)?;
                 if let Some(step) = self
-                    .fabric
+                    .loader
                     .as_mut()
                     .map(|handshake| handshake.on_pong(pong.id))
                 {
-                    self.handle_fabric_step(server, step).await;
+                    self.handle_loader_step(server, step).await;
                 }
                 Ok(None)
             }

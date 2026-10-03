@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-/// Content from Fabric mods, served to modded clients (see `docs/DESIGN.md`).
+/// Content from mods, served to modded clients (see `docs/DESIGN.md`).
 ///
 /// Off by default, so a vanilla server never reads mod data or lets plugins use the `modded` API.
 #[derive(Deserialize, Serialize, Default)]
@@ -13,6 +13,10 @@ pub struct ModdedConfig {
     /// data is loaded. Fabric clients with the mods installed need it to join. Other loaders'
     /// handshakes get their own switch.
     pub fabric_handshake: bool,
+    /// Whether to run NeoForge's channel negotiation and registry sync with NeoForge clients.
+    /// Unlike Fabric's, it also runs without mod data, so plain NeoForge clients join as
+    /// NeoForge connections.
+    pub neoforge_handshake: bool,
     /// Keep the Bedrock listener on while modded content is enabled. Bedrock clients cannot see
     /// modded blocks or items, so it is turned off unless this is set.
     pub force_bedrock: bool,
