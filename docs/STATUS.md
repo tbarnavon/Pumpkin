@@ -288,3 +288,12 @@ drawers and detached drawers kept out of bundles and shulker boxes, conversion u
   moves `rate` units, capped at the pool's capacity, and every slot of the pool sees it.
   Compacting drawers (alone and through a controller, one pool per drawer) use it, so several
   hoppers in one tick move exactly what the pool holds and no insert overflows it.
+- 10. `block-entity-load-event` now fires for a mod's block entities (chunk NBT only) once each
+  time their chunk loads and becomes active, after the chunk locks are released. The plugin
+  runs `onEntityLoad`: controllers schedule their first tick (cache, hopper storage), drawers
+  re-push their hopper storage, redstone and collision shape, flag a controller binding for
+  validation, and restart their tick (magnet).
+- Fix (plugin): after a restart, a controller's saved hopper storage could come from another
+  network layout; the first hopper move compared it slot by slot with the new layout and moved
+  items between drawers (seen by the user: a compacting drawer's items split into two normal
+  drawers). The old storage is now kept only if it still matches the drawers.

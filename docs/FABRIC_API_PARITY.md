@@ -91,7 +91,7 @@ for a mod's, whose data only lives in the chunk as NBT:
 | `ServerLevelEvents` LOAD / UNLOAD | ✅ | core | `world-load-event`, `world-unload-event` | |
 | `ServerChunkEvents` LOAD / UNLOAD | ✅ | core | `chunk-load-event`, `chunk-unload-event` | |
 | `ServerEntityEvents` LOAD / UNLOAD | ✅ | core | `entity-spawn-event`, `entities-load-event`, `entity-remove-event` | |
-| `ServerBlockEntityEvents` LOAD / UNLOAD | 🟡 | core | `block-entity-load-event`, `block-entity-unload-event` for block entities Pumpkin implements; they load the first time they are used, not with the chunk. A mod's block entities (chunk NBT only) fire none | |
+| `ServerBlockEntityEvents` LOAD / UNLOAD | 🟡 | core | `block-entity-load-event`, `block-entity-unload-event` for block entities Pumpkin implements; they load the first time they are used, not with the chunk. A mod's block entities (chunk NBT only) fire the load event once each time their chunk loads and ticks | ✅ drawers and controllers (`onEntityLoad`) |
 | `CommonLifecycleEvents` TAGS_LOADED | ➖ | - | tags are fixed after load | |
 
 ### fabric-entity-events-v1

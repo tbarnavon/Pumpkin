@@ -500,9 +500,12 @@ impl World {
         }
         tracker.sync_forced_chunks(&forced_chunks, &mut active_chunks, &mut newly_active);
 
+        // Block entities that stay NBT (a mod's), read from a chunk that just loaded: their load
+        // event fires once the locks are released.
+        let mut loaded_nbt_block_entities = Vec::new();
         for pos in newly_active {
             if self.level.is_chunk_loaded(&pos) && tracker.loaded_active_chunks.insert(pos) {
-                self.migrate_pending_block_entities(pos);
+                loaded_nbt_block_entities.extend(self.migrate_pending_block_entities(pos));
             }
         }
         for change in self.level.loaded_chunk_changes() {
@@ -512,7 +515,7 @@ impl World {
                         && self.level.is_chunk_loaded(&pos)
                         && tracker.loaded_active_chunks.insert(pos)
                     {
-                        self.migrate_pending_block_entities(pos);
+                        loaded_nbt_block_entities.extend(self.migrate_pending_block_entities(pos));
                     }
                 }
                 pumpkin_world::level::LoadedChunkChange::Unloaded(pos) => {
@@ -528,12 +531,16 @@ impl World {
         }
         for pos in pending_migrations {
             if active_chunks.contains(&pos) && self.level.is_chunk_loaded(&pos) {
-                self.migrate_pending_block_entities(pos);
+                // Already announced when their chunk loaded or when they were set.
+                let _ = self.migrate_pending_block_entities(pos);
             }
         }
         let spawnable_chunks = tracker.loaded_active_chunks.len() as i32;
         drop(active_chunks);
         drop(tracker);
+        for (pos, block_entity_type) in loaded_nbt_block_entities {
+            self.fire_block_entity_lifecycle(pos, &block_entity_type, true);
+        }
 
         self.spawn_state.store(Arc::new(SpawnState::new(
             spawnable_chunks,
@@ -6503,7 +6510,10 @@ impl World {
         }
     }
 
-    fn migrate_pending_block_entities(&self, chunk_pos: Vector2<i32>) {
+    /// Creates the block entities Pumpkin implements from the chunk's stored NBT. Returns the
+    /// others (a mod's, which live only as NBT), with their type, for their load event.
+    #[must_use]
+    fn migrate_pending_block_entities(&self, chunk_pos: Vector2<i32>) -> Vec<(BlockPos, String)> {
         let positions: Vec<BlockPos> = self
             .level
             .read_chunk_sync(&chunk_pos, |chunk| {
@@ -6516,15 +6526,25 @@ impl World {
                     .collect()
             })
             .unwrap_or_default();
+        let mut nbt_only = Vec::new();
         for pos in positions {
             let already_loaded = self
                 .block_entities
                 .get(&chunk_pos)
                 .is_some_and(|m| m.contains_key(&pos));
-            if !already_loaded && let Some(entity) = self.get_block_entity(&pos) {
+            if already_loaded {
+                continue;
+            }
+            if let Some(entity) = self.get_block_entity(&pos) {
                 self.update_block_entity(&entity);
+            } else if let Some(id) = self
+                .pending_block_entity_nbt(&pos)
+                .and_then(|nbt| nbt.get_string("id").map(str::to_string))
+            {
+                nbt_only.push((pos, id));
             }
         }
+        nbt_only
     }
 
     pub fn update_block_entity(&self, block_entity: &Arc<dyn BlockEntity>) {
