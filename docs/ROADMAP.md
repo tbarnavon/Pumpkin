@@ -29,9 +29,10 @@ plugin on a fresh world):
 WASM code and host reads are cheap; ~35 µs per hook call is host plumbing (`block_on`, store
 lock, resources, call record). Limit today: ~1,250 ticking plugin block entities per 50 ms tick.
 
-1. **Batched ticker hook.** One guest call per plugin per tick with every ticking block entity,
-   and a call path without per-call async setup. Rerun the benchmark; target ~1 µs per block
-   entity.
+1. **Batched ticker hook.** Implemented (2026-10-03): `ticker`, `entity-inside`, `step-on`
+   and `inventory-tick` are queued during the tick and sent as one `handle-tick-batch` call per
+   plugin and world, so the async setup is paid once per plugin per tick. Benchmark rerun
+   pending; target ~1 µs per block entity.
 2. **Bulk world access.** Read or change a whole inventory (and other bulk data) in one call,
    not slot by slot.
 3. **Worker jobs.** `scheduler.spawn-job(handler, bytes)` runs the plugin's `run-job` export in

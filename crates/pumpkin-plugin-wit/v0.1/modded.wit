@@ -41,15 +41,15 @@ interface modded {
         /// `Block.hasAnalogOutputSignal`: comparators read the value set with
         /// `world.set-comparator-output`. No call is made.
         analog-output,
-        /// `Block.entityInside`: every tick an entity's box is inside the block. Opt in only
-        /// for blocks that need it; it is called every tick.
+        /// `Block.entityInside`: every tick an entity's box is inside the block. Delivered in
+        /// `tick-batch.entity-contacts`. Opt in only for blocks that need it.
         entity-inside,
-        /// `Block.stepOn`: every tick an entity walks on top of the block. Opt in only for
-        /// blocks that need it; it is called every tick.
+        /// `Block.stepOn`: every tick an entity walks on top of the block. Delivered in
+        /// `tick-batch.entity-contacts`. Opt in only for blocks that need it.
         step-on,
         /// A block entity ticker (`EntityBlock.getTicker`): every tick for each block of this
-        /// kind that has block-entity data, in chunks that tick. Opt in only for blocks that
-        /// need it; it is called every tick.
+        /// kind that has block-entity data, in chunks that tick. Delivered in
+        /// `tick-batch.block-entities`. Opt in only for blocks that need it.
         ticker,
     }
 
@@ -105,8 +105,11 @@ interface modded {
         state: u16,
     }
 
+    /// An entity inside (`entity-inside`) or on top of (`step-on`) a block this tick.
     record entity-contact {
-        %world: %world,
+        handler-id: u32,
+        /// `step-on` rather than `entity-inside`.
+        step: bool,
         pos: block-pos,
         state: u16,
         entity-id: s32,
@@ -145,9 +148,6 @@ interface modded {
         neighbor-changed(neighbor-change),
         random-tick(tick),
         update-shape(shape-update),
-        entity-inside(entity-contact),
-        step-on(entity-contact),
-        block-entity-tick(tick),
     }
 
     /// `InteractionResult`.
@@ -178,7 +178,7 @@ interface modded {
         /// `Item.use`: right click in the air.
         %use,
         /// `Item.inventoryTick`: every tick for each stack of the item in a player's
-        /// inventory. Opt in only for items that need it; it is called every tick.
+        /// inventory. Delivered in `tick-batch.inventories`. Opt in only for items that need it.
         inventory-tick,
         /// `Item.overrideOtherStackedOnMe`: a stack is clicked onto this item in a menu slot
         /// (pickup click). Reply `stacked` to take the click over.
@@ -213,9 +213,9 @@ interface modded {
         stack: item-stack,
     }
 
-    record item-inventory-tick {
-        %world: %world,
-        player: player,
+    /// One stack of an item with the `inventory-tick` hook.
+    record inventory-tick {
+        handler-id: u32,
         /// Inventory slot: 0-8 hotbar, 9-35 main, 36-39 armor, 40 offhand.
         slot: u32,
         /// Whether the slot is the selected hotbar slot.
@@ -257,10 +257,34 @@ interface modded {
     variant item-call {
         use-on-block(item-use-on-block),
         %use(item-use),
-        inventory-tick(item-inventory-tick),
         stacked-on-me(item-stacked-click),
         stacked-on-other(item-stacked-click),
         destroyed(item-destroyed),
+    }
+
+    /// One block entity of a block with the `ticker` hook.
+    record block-entity-tick {
+        handler-id: u32,
+        pos: block-pos,
+        state: u16,
+    }
+
+    /// A player's stacks of items with the `inventory-tick` hook.
+    record player-inventory-ticks {
+        player: player,
+        ticks: list<inventory-tick>,
+    }
+
+    /// A plugin's per-tick hooks (`ticker`, `entity-inside`, `step-on`, `inventory-tick`) for
+    /// one world and one tick, sent to the `handle-tick-batch` export in a single call after
+    /// the world's block entities ticked. Each list is in the order the host met them; handle
+    /// them in vanilla's tick order: inventories (players), then entity contacts (entities),
+    /// then block entities.
+    record tick-batch {
+        %world: %world,
+        inventories: list<player-inventory-ticks>,
+        entity-contacts: list<entity-contact>,
+        block-entities: list<block-entity-tick>,
     }
 
     /// Opens a menu of a modded menu type, like Fabric's `ExtendedMenuProvider`: the client gets

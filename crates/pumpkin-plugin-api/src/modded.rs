@@ -16,18 +16,28 @@
 use std::collections::BTreeMap;
 use std::sync::{Arc, Mutex};
 
+use crate::wit::pumpkin::plugin::common::BlockPos;
 pub use crate::wit::pumpkin::plugin::modded::{
-    BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, Interaction, InteractionResult,
-    Placement, Removal, ShapeBox, StreamCodecNode, Tick, open_menu,
-    register_component_stream_codec, set_block_collision_shape,
+    BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, EntityContact, Interaction,
+    InteractionResult, InventoryTick, Placement, Removal, ShapeBox, StreamCodecNode, Tick,
+    TickBatch, open_menu, register_component_stream_codec, set_block_collision_shape,
 };
+use crate::wit::pumpkin::plugin::player::Player;
 use crate::wit::pumpkin::plugin::server::Server;
+use crate::wit::pumpkin::plugin::world::World;
 
 /// Handles the hooks of the blocks it was registered for.
 pub trait BlockHookHandler: Send + Sync + 'static {
     /// Called at the hook points in [`BlockHooks`]. Return [`BlockReply::None`] to keep the
     /// host's default for that hook.
     fn handle(&self, server: Server, call: BlockCall) -> BlockReply;
+
+    /// [`BlockHooks::TICKER`]: one block entity, every tick (`EntityBlock.getTicker`).
+    fn block_entity_tick(&self, _server: &Server, _world: &World, _pos: BlockPos, _state: u16) {}
+
+    /// [`BlockHooks::ENTITY_INSIDE`] and [`BlockHooks::STEP_ON`] (`contact.step`): an entity
+    /// touches the block this tick.
+    fn entity_contact(&self, _server: &Server, _world: &World, _contact: EntityContact) {}
 }
 
 pub(crate) static BLOCK_HOOK_HANDLERS: Mutex<BTreeMap<u32, Arc<dyn BlockHookHandler>>> =
@@ -82,6 +92,17 @@ pub trait ItemHookHandler: Send + Sync + 'static {
     /// Called at the hook points in [`ItemHooks`]. Reply with [`BlockReply::Interaction`] to
     /// report a result, or [`BlockReply::None`] to pass.
     fn handle(&self, server: Server, call: ItemCall) -> BlockReply;
+
+    /// [`ItemHooks::INVENTORY_TICK`]: one stack in `player`'s inventory, every tick
+    /// (`Item.inventoryTick`).
+    fn inventory_tick(
+        &self,
+        _server: &Server,
+        _world: &World,
+        _player: &Player,
+        _tick: InventoryTick,
+    ) {
+    }
 }
 
 pub(crate) static ITEM_HOOK_HANDLERS: Mutex<BTreeMap<u32, Arc<dyn ItemHookHandler>>> =
@@ -118,5 +139,36 @@ impl crate::Context {
             .insert(id, Arc::new(handler));
         let items: Vec<String> = items.iter().map(|i| (*i).to_string()).collect();
         self.register_item_hooks(id, &items, hooks)
+    }
+}
+
+/// Runs a tick batch in vanilla's tick order: inventories (players), entity contacts
+/// (entities), then block entities.
+pub(crate) fn dispatch_tick_batch(server: Server, batch: TickBatch) {
+    let blocks = BLOCK_HOOK_HANDLERS
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .clone();
+    let items = ITEM_HOOK_HANDLERS
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .clone();
+    let world = &batch.world;
+    for inventory in batch.inventories {
+        for tick in inventory.ticks {
+            if let Some(handler) = items.get(&tick.handler_id) {
+                handler.inventory_tick(&server, world, &inventory.player, tick);
+            }
+        }
+    }
+    for contact in batch.entity_contacts {
+        if let Some(handler) = blocks.get(&contact.handler_id) {
+            handler.entity_contact(&server, world, contact);
+        }
+    }
+    for tick in batch.block_entities {
+        if let Some(handler) = blocks.get(&tick.handler_id) {
+            handler.block_entity_tick(&server, world, tick.pos, tick.state);
+        }
     }
 }

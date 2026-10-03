@@ -28,9 +28,10 @@ use super::pumpkin::plugin::common::{BlockPos as WitBlockPos, Hand as WitHand};
 use super::pumpkin::plugin::item_stack::ItemStack as WitItemStack;
 use super::pumpkin::plugin::menu::MenuDefinition;
 use super::pumpkin::plugin::modded::{
-    self as wit, BlockCall, BlockHit, BlockHooks, BlockReply, Breaking, EntityContact, Interaction,
-    InteractionResult, ItemCall, ItemDestroyed, ItemHooks, ItemInventoryTick, ItemStackedClick,
-    ItemUse, ItemUseOnBlock, NeighborChange, Placement, Removal, ShapeUpdate, Tick,
+    self as wit, BlockCall, BlockEntityTick, BlockHit, BlockHooks, BlockReply, Breaking,
+    EntityContact, Interaction, InteractionResult, InventoryTick, ItemCall, ItemDestroyed,
+    ItemHooks, ItemStackedClick, ItemUse, ItemUseOnBlock, NeighborChange, Placement,
+    PlayerInventoryTicks, Removal, ShapeUpdate, Tick, TickBatch,
 };
 use super::pumpkin::plugin::player::Player as WitPlayer;
 use super::pumpkin::plugin::world::World as WitWorld;
@@ -94,15 +95,6 @@ enum CallData {
         state: BlockStateId,
         kind: TickKind,
     },
-    EntityContact {
-        world: Arc<World>,
-        pos: BlockPos,
-        state: BlockStateId,
-        entity_id: i32,
-        entity_type: String,
-        entity: Arc<dyn EntityBase>,
-        step: bool,
-    },
     ShapeUpdate {
         world: Arc<World>,
         pos: BlockPos,
@@ -123,12 +115,175 @@ enum CallData {
 enum TickKind {
     Scheduled,
     Random,
-    BlockEntity,
 }
 
 /// Whether any plugin block asked for the `ticker` hook, so worlds only look for plugin block
 /// entities to tick when one did.
 pub static ANY_TICKER: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// A queued `entity-inside` or `step-on` call.
+struct QueuedContact {
+    handler_id: u32,
+    step: bool,
+    pos: BlockPos,
+    state: BlockStateId,
+    entity: Arc<dyn EntityBase>,
+}
+
+/// A queued `inventory-tick` call, made by [`PluginItem::inventory_tick`].
+pub struct QueuedInventoryTick {
+    handler_id: u32,
+    slot: u32,
+    selected: bool,
+    stack: pumpkin_data::item_stack::ItemStack,
+}
+
+/// One plugin's per-tick hook calls for one world and tick.
+#[derive(Default)]
+struct QueuedBatch {
+    inventories: Vec<(Arc<Player>, Vec<QueuedInventoryTick>)>,
+    entity_contacts: Vec<QueuedContact>,
+    block_entities: Vec<(u32, BlockPos, BlockStateId)>,
+}
+
+/// A world's per-tick plugin hooks, sent as one `handle-tick-batch` call per plugin.
+///
+/// `ticker`, `entity-inside`, `step-on` and `inventory-tick` are queued while the world ticks
+/// and sent by [`Self::flush`]; a guest call costs ~35 µs of host plumbing, a queued hook far
+/// less.
+#[derive(Default)]
+pub struct PluginTickQueue {
+    batches: std::sync::Mutex<Vec<(Arc<WasmPlugin>, QueuedBatch)>>,
+}
+
+impl PluginTickQueue {
+    fn push(&self, plugin: &Arc<WasmPlugin>, add: impl FnOnce(&mut QueuedBatch)) {
+        let mut batches = self
+            .batches
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        if let Some((_, batch)) = batches.iter_mut().find(|(p, _)| Arc::ptr_eq(p, plugin)) {
+            add(batch);
+        } else {
+            let mut batch = QueuedBatch::default();
+            add(&mut batch);
+            batches.push((plugin.clone(), batch));
+        }
+    }
+
+    /// Queues a player's `inventory-tick` calls for one plugin.
+    pub fn push_inventory(
+        &self,
+        plugin: &Arc<WasmPlugin>,
+        player: Arc<Player>,
+        ticks: Vec<QueuedInventoryTick>,
+    ) {
+        self.push(plugin, |batch| batch.inventories.push((player, ticks)));
+    }
+
+    /// Sends each plugin its batch for this tick, one guest call per plugin.
+    pub fn flush(&self, server: &Server, world: &Arc<World>) {
+        let batches = std::mem::take(
+            &mut *self
+                .batches
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner),
+        );
+        for (plugin, batch) in batches {
+            let run = Self::call(plugin, world.clone(), batch);
+            let result = if tokio::runtime::Handle::try_current().is_ok() {
+                tokio::task::block_in_place(|| server.runtime.block_on(run))
+            } else {
+                server.runtime.block_on(run)
+            };
+            if let Err(error) = result {
+                tracing::error!(error = ?error, "Wasm tick batch failed");
+            }
+        }
+    }
+
+    async fn call(
+        plugin: Arc<WasmPlugin>,
+        world: Arc<World>,
+        batch: QueuedBatch,
+    ) -> wasmtime::Result<()> {
+        let generation = plugin.current();
+        let PluginInstance::V0_1(instance) = &generation.plugin_instance;
+        let function = instance.func_handle_tick_batch();
+        generation
+            .store
+            .call_guest(move |mut guest| {
+                Box::pin(async move {
+                    let (server_resource, batch) = guest.with(|mut store| {
+                        let state = store.data_mut();
+                        let server = state.server.clone().ok_or_else(|| {
+                            wasmtime::Error::msg("Wasm plugin server is not available")
+                        })?;
+                        let server_resource: Resource<super::pumpkin::plugin::server::Server> =
+                            state.add(server)?;
+                        let batch = build_tick_batch(state, world, batch)?;
+                        Ok::<_, wasmtime::Error>((server_resource, batch))
+                    })?;
+                    guest.call(function, (server_resource, batch)).await?;
+                    Ok(())
+                })
+            })
+            .await
+    }
+}
+
+fn build_tick_batch(
+    state: &mut PluginHostState,
+    world: Arc<World>,
+    batch: QueuedBatch,
+) -> wasmtime::Result<TickBatch> {
+    let mut inventories = Vec::with_capacity(batch.inventories.len());
+    for (player, ticks) in batch.inventories {
+        let mut wit_ticks = Vec::with_capacity(ticks.len());
+        for tick in ticks {
+            wit_ticks.push(InventoryTick {
+                handler_id: tick.handler_id,
+                slot: tick.slot,
+                selected: tick.selected,
+                stack: state.add::<WitItemStack>(Arc::new(Mutex::new(tick.stack)))?,
+            });
+        }
+        inventories.push(PlayerInventoryTicks {
+            player: state.add::<WitPlayer>(player)?,
+            ticks: wit_ticks,
+        });
+    }
+    let mut entity_contacts = Vec::with_capacity(batch.entity_contacts.len());
+    for contact in batch.entity_contacts {
+        let entity = contact.entity.get_entity();
+        let entity_id = entity.entity_id;
+        let entity_type = format!("minecraft:{}", entity.entity_type.resource_name);
+        entity_contacts.push(EntityContact {
+            handler_id: contact.handler_id,
+            step: contact.step,
+            pos: to_wit_pos(contact.pos),
+            state: contact.state.as_u16(),
+            entity_id,
+            entity_type,
+            entity: state.add::<super::pumpkin::plugin::world::Entity>(contact.entity)?,
+        });
+    }
+    let block_entities = batch
+        .block_entities
+        .into_iter()
+        .map(|(handler_id, pos, block_state)| BlockEntityTick {
+            handler_id,
+            pos: to_wit_pos(pos),
+            state: block_state.as_u16(),
+        })
+        .collect();
+    Ok(TickBatch {
+        world: state.add::<WitWorld>(world)?,
+        inventories,
+        entity_contacts,
+        block_entities,
+    })
+}
 
 /// What a hook call returned, with item-stack resources already resolved.
 pub enum HookReply {
@@ -237,23 +392,34 @@ impl PluginBlock {
         self.hooks.contains(BlockHooks::TICKER)
     }
 
-    /// The block entity ticker, for a block that opted in with `ticker`.
-    pub fn block_entity_tick(
+    /// Queues the block entity ticker, for a block that opted in with `ticker`.
+    pub fn block_entity_tick(&self, world: &World, pos: BlockPos, state: BlockStateId) {
+        world.plugin_ticks.push(&self.plugin, |batch| {
+            batch.block_entities.push((self.handler_id, pos, state));
+        });
+    }
+
+    /// Queues `entity-inside` or `step-on` for this tick's batch.
+    fn entity_contact(
         &self,
-        server: &Server,
-        world: &Arc<World>,
+        world: &World,
         pos: BlockPos,
         state: BlockStateId,
+        entity: &dyn EntityBase,
+        step: bool,
     ) {
-        self.invoke(
-            server,
-            CallData::Tick {
-                world: world.clone(),
+        let Some(handle) = world.get_entity_by_id(entity.get_entity().entity_id) else {
+            return;
+        };
+        world.plugin_ticks.push(&self.plugin, |batch| {
+            batch.entity_contacts.push(QueuedContact {
+                handler_id: self.handler_id,
+                step,
                 pos,
                 state,
-                kind: TickKind::BlockEntity,
-            },
-        );
+                entity: handle,
+            });
+        });
     }
 
     /// `Block.attack`. Returns `true` when the plugin handled the click; the caller then keeps a
@@ -425,30 +591,6 @@ fn build_call(
             match kind {
                 TickKind::Scheduled => BlockCall::ScheduledTick(tick),
                 TickKind::Random => BlockCall::RandomTick(tick),
-                TickKind::BlockEntity => BlockCall::BlockEntityTick(tick),
-            }
-        }
-        CallData::EntityContact {
-            world,
-            pos,
-            state: block_state,
-            entity_id,
-            entity_type,
-            entity,
-            step,
-        } => {
-            let contact = EntityContact {
-                world: state.add::<WitWorld>(world)?,
-                pos: to_wit_pos(pos),
-                state: block_state.as_u16(),
-                entity_id,
-                entity_type,
-                entity: state.add::<super::pumpkin::plugin::world::Entity>(entity)?,
-            };
-            if step {
-                BlockCall::StepOn(contact)
-            } else {
-                BlockCall::EntityInside(contact)
             }
         }
         CallData::ShapeUpdate {
@@ -608,14 +750,18 @@ impl BlockBehaviour for PluginBlock {
         if !self.hooks.contains(BlockHooks::SIGNAL_SOURCE) {
             return 0;
         }
-        args.world.plugin_signals(args.position).weak(args.direction)
+        args.world
+            .plugin_signals(args.position)
+            .weak(args.direction)
     }
 
     fn get_strong_redstone_power(&self, args: GetRedstonePowerArgs<'_>) -> u8 {
         if !self.hooks.contains(BlockHooks::SIGNAL_SOURCE) {
             return 0;
         }
-        args.world.plugin_signals(args.position).strong(args.direction)
+        args.world
+            .plugin_signals(args.position)
+            .strong(args.direction)
     }
 
     fn get_comparator_output(&self, args: GetComparatorOutputArgs<'_>) -> Option<u8> {
@@ -625,50 +771,21 @@ impl BlockBehaviour for PluginBlock {
     }
 
     fn on_entity_collision(&self, args: OnEntityCollisionArgs<'_>) {
-        if !self.hooks.contains(BlockHooks::ENTITY_INSIDE) {
-            return;
+        if self.hooks.contains(BlockHooks::ENTITY_INSIDE) {
+            self.entity_contact(
+                args.world,
+                *args.position,
+                args.state.id,
+                args.entity,
+                false,
+            );
         }
-        let entity = args.entity.get_entity();
-        let Some(handle) = args.world.get_entity_by_id(entity.entity_id) else {
-            return;
-        };
-        self.invoke(
-            args.server,
-            CallData::EntityContact {
-                world: args.world.clone(),
-                pos: *args.position,
-                state: args.state.id,
-                entity_id: entity.entity_id,
-                entity_type: format!("minecraft:{}", entity.entity_type.resource_name),
-                entity: handle,
-                step: false,
-            },
-        );
     }
 
     fn on_entity_step(&self, args: OnEntityStepArgs<'_>) {
-        if !self.hooks.contains(BlockHooks::STEP_ON) {
-            return;
+        if self.hooks.contains(BlockHooks::STEP_ON) {
+            self.entity_contact(args.world, *args.position, args.state.id, args.entity, true);
         }
-        let Some(server) = args.world.server.upgrade() else {
-            return;
-        };
-        let entity = args.entity.get_entity();
-        let Some(handle) = args.world.get_entity_by_id(entity.entity_id) else {
-            return;
-        };
-        self.invoke(
-            &server,
-            CallData::EntityContact {
-                world: args.world.clone(),
-                pos: *args.position,
-                state: args.state.id,
-                entity_id: entity.entity_id,
-                entity_type: format!("minecraft:{}", entity.entity_type.resource_name),
-                entity: handle,
-                step: true,
-            },
-        );
     }
 
     fn random_tick(&self, args: RandomTickArgs<'_>) {
@@ -786,13 +903,6 @@ enum ItemCallData {
         hand: WitHand,
         stack: pumpkin_data::item_stack::ItemStack,
     },
-    InventoryTick {
-        world: Arc<World>,
-        player: Arc<Player>,
-        slot: u32,
-        selected: bool,
-        stack: pumpkin_data::item_stack::ItemStack,
-    },
     Stacked {
         player: Arc<Player>,
         on_me: bool,
@@ -862,19 +972,6 @@ fn build_item_call(state: &mut PluginHostState, data: ItemCallData) -> wasmtime:
             hand,
             stack: state.add::<WitItemStack>(Arc::new(Mutex::new(stack)))?,
         }),
-        ItemCallData::InventoryTick {
-            world,
-            player,
-            slot,
-            selected,
-            stack,
-        } => ItemCall::InventoryTick(ItemInventoryTick {
-            world: state.add::<WitWorld>(world)?,
-            player: state.add::<WitPlayer>(player)?,
-            slot,
-            selected,
-            stack: state.add::<WitItemStack>(Arc::new(Mutex::new(stack)))?,
-        }),
         ItemCallData::Stacked {
             player,
             on_me,
@@ -924,28 +1021,20 @@ impl PluginItem {
         }
     }
 
-    /// `Item.inventoryTick` for a stack in `player`'s inventory, when the plugin opted in.
-    pub fn inventory_tick(
+    /// `Item.inventoryTick` for a stack, to queue with [`PluginTickQueue::push_inventory`].
+    #[must_use]
+    pub const fn inventory_tick(
         &self,
-        server: &Server,
-        player: &Arc<Player>,
         slot: usize,
         selected: bool,
         stack: pumpkin_data::item_stack::ItemStack,
-    ) {
-        if !self.hooks.contains(ItemHooks::INVENTORY_TICK) {
-            return;
+    ) -> QueuedInventoryTick {
+        QueuedInventoryTick {
+            handler_id: self.handler_id,
+            slot: slot as u32,
+            selected,
+            stack,
         }
-        self.invoke(
-            server,
-            ItemCallData::InventoryTick {
-                world: player.world(),
-                player: player.clone(),
-                slot: slot as u32,
-                selected,
-                stack,
-            },
-        );
     }
 
     /// Whether the plugin asked for `inventory-tick` calls.

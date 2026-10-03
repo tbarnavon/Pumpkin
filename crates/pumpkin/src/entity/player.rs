@@ -4468,12 +4468,12 @@ impl Player {
         }
     }
 
-    /// `Item.inventoryTick` for the plugin items that opted in; nothing else is looked at.
+    /// Queues `Item.inventoryTick` for the plugin items that opted in; nothing else is looked at.
     fn tick_plugin_items(&self, server: &Server) {
         use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginItem;
         let inventory = self.inventory();
         let selected = usize::from(inventory.get_selected_slot());
-        let mut player = None;
+        let mut ticks: Vec<(&Arc<_>, Vec<_>)> = Vec::new();
         for slot in 0..pumpkin_inventory::inventory::Inventory::size(inventory.as_ref()) {
             let stack =
                 pumpkin_inventory::inventory::Inventory::get_stack(inventory.as_ref(), slot);
@@ -4488,13 +4488,26 @@ impl Player {
             else {
                 continue;
             };
-            let Some(player) = player
-                .get_or_insert_with(|| self.world().get_player_by_id(self.entity_id()))
-                .clone()
-            else {
-                return;
-            };
-            item.inventory_tick(server, &player, slot, slot == selected, stack);
+            let tick = item.inventory_tick(slot, slot == selected, stack);
+            if let Some((_, plugin_ticks)) =
+                ticks.iter_mut().find(|(p, _)| Arc::ptr_eq(p, &item.plugin))
+            {
+                plugin_ticks.push(tick);
+            } else {
+                ticks.push((&item.plugin, vec![tick]));
+            }
+        }
+        if ticks.is_empty() {
+            return;
+        }
+        let world = self.world();
+        let Some(player) = world.get_player_by_id(self.entity_id()) else {
+            return;
+        };
+        for (plugin, plugin_ticks) in ticks {
+            world
+                .plugin_ticks
+                .push_inventory(plugin, player.clone(), plugin_ticks);
         }
     }
 

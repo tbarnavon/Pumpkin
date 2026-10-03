@@ -415,6 +415,10 @@ impl wit::Guest for Component {
         crate::modded::dispatch_item(handler_id, server, call)
     }
 
+    fn handle_tick_batch(server: Server, batch: wit::pumpkin::plugin::modded::TickBatch) {
+        crate::modded::dispatch_tick_batch(server, batch);
+    }
+
     fn handle_crafting(
         handler_id: u32,
         width: u32,

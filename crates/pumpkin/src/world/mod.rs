@@ -1,4 +1,5 @@
 use crate::block::entities::{BlockEntity, block_entity_from_nbt};
+use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::PluginTickQueue;
 use dashmap::DashMap;
 use pumpkin_data::chunk::Biome;
 use pumpkin_data::item::{BedrockItem, BedrockItemVersion};
@@ -307,6 +308,8 @@ pub struct World {
     plugin_signals: DashMap<BlockPos, plugin_signals::PluginSignals>,
     /// Collision shapes plugins set on their blocks (`None`: the block has none).
     plugin_shapes: DashMap<BlockPos, Option<Arc<[BoundingBox]>>>,
+    /// Per-tick plugin hook calls, sent once per plugin at the end of the tick.
+    pub plugin_ticks: PluginTickQueue,
     /// Entity tracker responsible for tracking entity visibility and sending delta/status packets to watchers.
     pub entity_tracker: entity_tracker::EntityTracker,
 }
@@ -445,6 +448,7 @@ impl World {
             item_storage_changes: std::sync::Mutex::new(Vec::new()),
             plugin_signals: DashMap::new(),
             plugin_shapes: DashMap::new(),
+            plugin_ticks: PluginTickQueue::default(),
             entity_tracker: entity_tracker::EntityTracker::new(),
         }
     }
@@ -1707,7 +1711,8 @@ impl World {
                 be.tick(self);
             }
         });
-        self.tick_plugin_block_entities(server, &active_chunks);
+        self.tick_plugin_block_entities(&active_chunks);
+        self.plugin_ticks.flush(server, self);
         // Drained after all ticks, so changes (hopper -> chest) land in the same tick.
         let guard = be_handle.enter();
         self.flush_comparator_updates(&block_entities);
@@ -6448,13 +6453,9 @@ impl World {
             });
     }
 
-    /// Runs the `ticker` hook of plugin blocks that asked for it, for their block entities in
+    /// Queues the `ticker` hook of plugin blocks that asked for it, for their block entities in
     /// ticking chunks. Does nothing unless a plugin registered one.
-    fn tick_plugin_block_entities(
-        self: &Arc<Self>,
-        server: &Arc<Server>,
-        active_chunks: &FxHashSet<Vector2<i32>>,
-    ) {
+    fn tick_plugin_block_entities(&self, active_chunks: &FxHashSet<Vector2<i32>>) {
         use crate::plugin::loader::wasm::wasm_host::wit::v0_1::modded::ANY_TICKER;
         if !ANY_TICKER.load(std::sync::atomic::Ordering::Relaxed) {
             return;
@@ -6477,7 +6478,7 @@ impl World {
                 if let Some(plugin) = self.block_registry.plugin_block(state.to_block().id)
                     && plugin.ticks_block_entities()
                 {
-                    plugin.block_entity_tick(server, self, pos, state);
+                    plugin.block_entity_tick(self, pos, state);
                 }
             }
         }

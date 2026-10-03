@@ -101,6 +101,8 @@ functions it needs. Each one is listed in `HOOKS.md`.
 
 - Block and item hooks: `add68fe15`, `0084f1557`, `e51c7666c`, `95105a9ab`, `342715c3c`,
   `044588b3a`, `c3b1024a1`, `dfe6c259c`, `13b9d100c`
+- Per-tick hooks batched into one `handle-tick-batch` call per plugin and tick: `TICKBATCH`
+  (`WH/modded.rs` `PluginTickQueue`, flushed from `World::tick`; `entity/player.rs`)
 - Menus: `cddec52a8`, `31377bbf9`
 - Events: `b9be9ddc0`, `defeddb36`, `d719b608c`, `9bf64aded`, `729862d48`, `ada7f58d6`,
   `c19760f9c`, `e8ceb3e1e`, `d75320470`, `fcad77c09`
@@ -140,6 +142,7 @@ under hidden keys (`PumpkinItemStorage`, `PumpkinSignals`, `PumpkinCollision`).
 **Why:** a trapped plugin (a panic in WASM) shouldn't take its mod down until restart.
 
 - `76482ef0b` restart a WASM plugin after it traps
+- `2d0f6aa31` drop an unused helper
 
 **Files:** `pumpkin/src/plugin/loader/wasm/wasm_host/{mod,restart}.rs`, every `WH/*` resource
 module, `pumpkin/src/plugin/mod.rs`, `pumpkin/src/server/scheduler.rs`.

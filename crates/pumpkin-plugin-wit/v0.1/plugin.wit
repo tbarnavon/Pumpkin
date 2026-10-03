@@ -10,7 +10,7 @@ world plugin {
     use command.{command-sender, consumed-args, command-error, command-suggestions, suggestion-request};
     use %world.{entity, chunk-buffer, generation-phase};
     use ipc.{plugin-id, ipc-message};
-    use modded.{block-call, block-reply, item-call};
+    use modded.{block-call, block-reply, item-call, tick-batch};
     use menu.{menu-call, menu-reply};
     use player.{player as player-instance};
     use item-stack.{item-stack};
@@ -121,6 +121,10 @@ world plugin {
     /// Dispatches an item hook registered with `context.register-item-hooks`. Only the
     /// `interaction` and `none` replies are meaningful.
     export handle-item-hook: func(handler-id: u32, server: server-instance, call: item-call) -> block-reply;
+
+    /// Runs a plugin's per-tick block and item hooks for one world, once per tick, when there
+    /// is at least one.
+    export handle-tick-batch: func(server: server-instance, batch: tick-batch);
 
     /// Answers a crafting grid for a handler registered with `context.register-crafting-handler`:
     /// the result, or none when the grid is not this handler's recipe. `grid` is row by row,

@@ -26,9 +26,9 @@ answers from data the plugin set.
 | `update-shape` | `Block.updateShape` | `342715c3c` |
 | `signal-source` (no call) | `Block.isSignalSource`, `getSignal`, `getDirectSignal` | `a6f9674ba` |
 | `analog-output` (no call) | `Block.hasAnalogOutputSignal`, `getAnalogOutputSignal` | `a6f9674ba` |
-| `entity-inside` (opt-in, every tick) | `Block.entityInside` | `044588b3a` |
-| `step-on` (opt-in, every tick) | `Block.stepOn` | `044588b3a` |
-| `ticker` (opt-in, every tick) | `EntityBlock.getTicker` | `dfe6c259c` |
+| `entity-inside` (opt-in, batched) | `Block.entityInside` | `044588b3a`, batched in `TICKBATCH` |
+| `step-on` (opt-in, batched) | `Block.stepOn` | `044588b3a`, batched in `TICKBATCH` |
+| `ticker` (opt-in, batched) | `EntityBlock.getTicker` | `dfe6c259c`, batched in `TICKBATCH` |
 
 ## Item hooks (`modded.item-hooks`, `context.register-item-hooks`)
 
@@ -38,16 +38,20 @@ Called through the plugin export `handle-item-hook`.
 |:--|:--|:--|
 | `use-on-block` | `Item.useOn` | `0084f1557` |
 | `use` | `Item.use` | `0084f1557` |
-| `inventory-tick` (opt-in, every tick) | `Item.inventoryTick` | `c3b1024a1` |
+| `inventory-tick` (opt-in, batched) | `Item.inventoryTick` | `c3b1024a1`, batched in `TICKBATCH` |
 | `stacked-on-me` | `Item.overrideOtherStackedOnMe` | `13b9d100c` |
 | `stacked-on-other` | `Item.overrideStackedOnOther` | `13b9d100c` |
 | `destroyed` | `Item.onDestroyed` | `13b9d100c` |
 | `not-in-containers` (no call) | `Item.canFitInsideContainerItems` | `13b9d100c` |
 
+Hooks marked *batched* run every tick. The host queues them while the world ticks and sends
+each plugin one `handle-tick-batch` call per world after block entities tick (see below).
+
 ## Other plugin exports and registrations
 
 | API | What it does | Commit |
 |:--|:--|:--|
+| export `handle-tick-batch` (`modded.tick-batch`) | One call per plugin, world and tick with all its batched per-tick hooks, in vanilla order: inventories, entity contacts, block entities | `TICKBATCH` |
 | `context.register-crafting-handler` + export `handle-crafting` | Crafts a grid for recipes defined in code (a mod's `CustomRecipe`) | `981c23443` |
 | `menu.open` / `update-slot` / `close` + export `handle-menu-call` | Menus whose slots the plugin defines, held by the host | `cddec52a8`, `31377bbf9` |
 | `modded.open-menu` | Opens a mod's own menu type | `cddec52a8` |
