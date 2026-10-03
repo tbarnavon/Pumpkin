@@ -59,7 +59,7 @@ each plugin one `handle-tick-batch` call per world after block entities tick (se
 | `context.register-login-query` | Login-phase custom query to each client | `c19760f9c` |
 | `context.register-configuration-payload` | Configuration-phase payload to each client | `d75320470` |
 | `modded.register-component-stream-codec` | A modded component's network codec, described once | `728d5c4e5` |
-| `modded.register-loader-channels` | A mod's play channels per loader (id, version, direction, optional), listed in NeoForge's negotiation, Forge's `ChannelVersions` and Fabric's `c:register` | `LOADERCH` |
+| `modded.register-loader-channels` | A mod's play channels per loader (id, version, direction, optional), listed in NeoForge's negotiation, Forge's `ChannelVersions` and Fabric's `c:register` | `45dfd1177` |
 
 ## Events
 

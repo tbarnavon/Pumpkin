@@ -74,6 +74,8 @@ project must support.
   new crate, `pumpkin/src/net/java/loaders.rs`, `login/login_acknowledged.rs`,
   `pumpkin-config/src/modded.rs`)
 - `a839b7299` modded menus on Forge clients (`WH/modded.rs`)
+- `45dfd1177` mods' network channels per loader (`modded.register-loader-channels`; `WH/modded.rs`,
+  `pumpkin/src/net/java/loaders.rs`, `pumpkin-forge/src/handshake.rs`)
 
 **Files:** `pumpkin-fabric/` (new crate, tested against a payload a real Fabric server sent),
 `pumpkin-protocol/src/codec/{modded_component,data_component}.rs`,
