@@ -106,105 +106,105 @@ its block and item extension methods; the Bukkit/Paper event set upstream Pumpki
 `event.wit`; and the vanilla methods content mods most often reach with Mixins when no loader
 hook exists.
 
-Status: **exists** (a plugin can do it), **partial**, **gap**, **not needed** (client side, or
+Status: ✅ done (a plugin can do it), 🟡 partial, ❌ missing, ➖ not needed (client side, or
 covered by the mod data dump). Need: **A** most content mods, **B** many, **C** few. The need
 column is a judgement from what each kind of mod does (machines, storage, worldgen, mobs,
 magic, food, tools), not a count over a mod corpus.
 
 Upstream declares about 290 Bukkit-style events; 56 of them are never fired by the server yet
-(below). Fired ones are counted as **exists**.
+(below). Fired ones are counted as ✅.
 
 ### Content and registries
 
-| What mods do | Fabric API | NeoForge | Pumpkin | Status | Need |
-|:--|:--|:--|:--|:--|:--|
-| Blocks, items, block-entity types, tags, components | `Registry.register` | `DeferredRegister` | Mod data dump, runtime overlay | exists | A |
-| Menus | `ExtendedMenuType` | `IMenuTypeExtension` | `menu`, `modded.open-menu` | exists | A |
-| Recipes and recipe types | `RecipeSerializer` | same | Dump; `register-crafting-handler` for code-defined crafting | partial: no custom recipe types the host matches | B |
-| Entity types | `EntityType.Builder` | same | none | gap | A |
-| Default entity attributes | `FabricDefaultAttributeRegistry` | `EntityAttributeCreationEvent`, `EntityAttributeModificationEvent` | none | gap (with entity types) | A |
-| Loot table changes | `LootTableEvents.MODIFY`, `REPLACE`, `MODIFY_DROPS` | `LootTableLoadEvent`, global loot modifiers | `drops` block hook; `loot-generate-event` can only cancel | partial | A |
-| Biome and feature changes (ores, plants) | `BiomeModifications` | `BiomeModifier` | `set-chunk-generator` replaces the whole generator | gap | A |
-| Structures | datapack + `StructureModifier` | same | none | gap | B |
-| Mob effects, potions, brewing | `Registry.register`; brewing through Mixins | `PotionBrewEvent`, `MobEffectEvent` | `player.add-effect` with vanilla effects | gap for modded ones | B |
-| Fuel | no API in 26.3 | no API in 26.3 | none | gap: check how 26.3 defines fuel before designing | B |
-| Strip, till, flatten, wax | `BlockTransformerEvents` | `BlockEvent.BlockToolModificationEvent`, data maps `TRANSFORMABLES`, `WAXABLES` | none | gap | B |
-| Flammability | `FlammableBlockRegistry` | `IBlockExtension.getFlammability` | `server.set-flammable` | exists | B |
-| Oxidation, path types, vibration frequencies, villager interactions | `OxidizableBlocksRegistry`, `LandPathTypeRegistry`, `VibrationFrequencyRegistry`, `VillagerInteractionRegistries` | data maps `OXIDIZABLES`, `VIBRATION_FREQUENCIES`, `VILLAGER_COMPOSTABLES` | none | gap | C |
-| Particles and sounds | `FabricParticleTypes`, `SoundEvent` | same | `play-custom-sound`, `spawn-particle` (vanilla particle types) | partial: modded particle types | B |
-| Game rules | `GameRuleBuilder` | `RegisterGameRuleCategoryEvent`, `GameRuleChangedEvent` | `get/set-game-rule` for vanilla rules | gap for modded rules | C |
-| Commands | `CommandRegistrationCallback`, `ArgumentTypeRegistry` | `RegisterCommandsEvent` | `register-command` | partial: modded argument types | B |
-| Enchantments and other datapack registries | `DynamicRegistries` | `NewDatapackRegistryEvent` | none for modded entries | gap | B |
-| Creative tabs, tooltips, models | client side | client side | | not needed | |
+| What mods do | Fabric API | NeoForge | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|:--|:--|
+| Blocks, items, block-entity types, tags, components | `Registry.register` | `DeferredRegister` | Mod data dump, runtime overlay | ✅ | A |  |
+| Menus | `ExtendedMenuType` | `IMenuTypeExtension` | `menu`, `modded.open-menu` | ✅ | A |  |
+| Recipes and recipe types | `RecipeSerializer` | same | Dump; `register-crafting-handler` for code-defined crafting | 🟡 | B | no custom recipe types the host matches |
+| Entity types | `EntityType.Builder` | same | none | ❌ | A |  |
+| Default entity attributes | `FabricDefaultAttributeRegistry` | `EntityAttributeCreationEvent`, `EntityAttributeModificationEvent` | none | ❌ | A | with entity types |
+| Loot table changes | `LootTableEvents.MODIFY`, `REPLACE`, `MODIFY_DROPS` | `LootTableLoadEvent`, global loot modifiers | `drops` block hook; `loot-generate-event` can only cancel | 🟡 | A |  |
+| Biome and feature changes (ores, plants) | `BiomeModifications` | `BiomeModifier` | `set-chunk-generator` replaces the whole generator | ❌ | A |  |
+| Structures | datapack + `StructureModifier` | same | none | ❌ | B |  |
+| Mob effects, potions, brewing | `Registry.register`; brewing through Mixins | `PotionBrewEvent`, `MobEffectEvent` | `player.add-effect` with vanilla effects | ❌ | B | for modded ones |
+| Fuel | no API in 26.3 | no API in 26.3 | none | ❌ | B | check how 26.3 defines fuel before designing |
+| Strip, till, flatten, wax | `BlockTransformerEvents` | `BlockEvent.BlockToolModificationEvent`, data maps `TRANSFORMABLES`, `WAXABLES` | none | ❌ | B |  |
+| Flammability | `FlammableBlockRegistry` | `IBlockExtension.getFlammability` | `server.set-flammable` | ✅ | B |  |
+| Oxidation, path types, vibration frequencies, villager interactions | `OxidizableBlocksRegistry`, `LandPathTypeRegistry`, `VibrationFrequencyRegistry`, `VillagerInteractionRegistries` | data maps `OXIDIZABLES`, `VIBRATION_FREQUENCIES`, `VILLAGER_COMPOSTABLES` | none | ❌ | C |  |
+| Particles and sounds | `FabricParticleTypes`, `SoundEvent` | same | `play-custom-sound`, `spawn-particle` (vanilla particle types) | 🟡 | B | modded particle types |
+| Game rules | `GameRuleBuilder` | `RegisterGameRuleCategoryEvent`, `GameRuleChangedEvent` | `get/set-game-rule` for vanilla rules | ❌ | C | for modded rules |
+| Commands | `CommandRegistrationCallback`, `ArgumentTypeRegistry` | `RegisterCommandsEvent` | `register-command` | 🟡 | B | modded argument types |
+| Enchantments and other datapack registries | `DynamicRegistries` | `NewDatapackRegistryEvent` | none for modded entries | ❌ | B |  |
+| Creative tabs, tooltips, models | client side | client side | | ➖ | |  |
 
 ### Block behaviour
 
-| Hook | Java | Pumpkin | Status | Need |
-|:--|:--|:--|:--|:--|
-| Place, use, attack, drops, removed, neighbour and shape updates, scheduled and random ticks, block-entity ticker, entity inside, step on, redstone and comparator output, collision shape | `Block.*`, `EntityBlock.getTicker` | `modded.block-hooks` (above) | exists | A |
-| Projectile hits the block | `Block.onProjectileHit` | `projectile-hit-event` (global) | partial | B |
-| Can survive / can be placed | `BlockBehaviour.canSurvive` | none | gap | B |
-| Player will destroy | `Block.playerWillDestroy`, `IBlockExtension.onDestroyedByPlayer` | `block-break-event` | exists | B |
-| Destroy speed, harvest check | `BlockBehaviour.getDestroyProgress`, `PlayerEvent.BreakSpeed`, `PlayerEvent.HarvestCheck` | none | gap | B |
-| Fall on, bounce | `Block.fallOn`, `updateEntityMovementAfterFallOn` | none | gap | C |
-| Explosion resistance and reaction | `IBlockExtension.getExplosionResistance`, `onBlockExploded` | static resistance from the dump | partial | C |
-| Light emission from state or data | `IBlockExtension.getLightEmission` | static from the dump | partial | C |
-| Ladder, piston reaction, enchant power, redstone connection | `IBlockExtension.isLadder`, `getPistonPushReaction`, `getEnchantPowerBonus`, `canConnectRedstone` | none | gap | C |
-| Hooks for vanilla blocks | Mixins into vanilla block classes | `register-block-hooks` refuses vanilla blocks | gap | B |
-| Animate tick, render shape | client side | | not needed | |
+| Hook | Java | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|:--|
+| Place, use, attack, drops, removed, neighbour and shape updates, scheduled and random ticks, block-entity ticker, entity inside, step on, redstone and comparator output, collision shape | `Block.*`, `EntityBlock.getTicker` | `modded.block-hooks` (above) | ✅ | A |  |
+| Projectile hits the block | `Block.onProjectileHit` | `projectile-hit-event` (global) | 🟡 | B |  |
+| Can survive / can be placed | `BlockBehaviour.canSurvive` | none | ❌ | B |  |
+| Player will destroy | `Block.playerWillDestroy`, `IBlockExtension.onDestroyedByPlayer` | `block-break-event` | ✅ | B |  |
+| Destroy speed, harvest check | `BlockBehaviour.getDestroyProgress`, `PlayerEvent.BreakSpeed`, `PlayerEvent.HarvestCheck` | none | ❌ | B |  |
+| Fall on, bounce | `Block.fallOn`, `updateEntityMovementAfterFallOn` | none | ❌ | C |  |
+| Explosion resistance and reaction | `IBlockExtension.getExplosionResistance`, `onBlockExploded` | static resistance from the dump | 🟡 | C |  |
+| Light emission from state or data | `IBlockExtension.getLightEmission` | static from the dump | 🟡 | C |  |
+| Ladder, piston reaction, enchant power, redstone connection | `IBlockExtension.isLadder`, `getPistonPushReaction`, `getEnchantPowerBonus`, `canConnectRedstone` | none | ❌ | C |  |
+| Hooks for vanilla blocks | Mixins into vanilla block classes | `register-block-hooks` refuses vanilla blocks | ❌ | B |  |
+| Animate tick, render shape | client side | | ➖ | |  |
 
 ### Item behaviour
 
-| Hook | Java | Pumpkin | Status | Need |
-|:--|:--|:--|:--|:--|
-| Use on block, use, inventory tick, stacked clicks, destroyed, container rules | `Item.*` | `modded.item-hooks` (above) | exists | A |
-| Use over time: finish, release, use duration | `Item.finishUsingItem`, `releaseUsing`, `getUseDuration`, `LivingEntityUseItemEvent` | `player-item-consume-event` | partial: no hooks for plugin items | A |
-| Use on entity | `Item.interactLivingEntity`, `UseEntityCallback` | `player-interact-entity-event` | partial: no item hook | B |
-| Hit and mine with the item | `Item.hurtEnemy`, `postHurtEnemy`, `mineBlock` | none | gap | B |
-| Recipe remainder, enchantability, attribute modifiers | `FabricItem`, `IItemExtension` | components from the dump | partial | C |
-| Item entity tick | `IItemExtension.onEntityItemUpdate` | none | gap | C |
-| Crafted by | `Item.onCraftedBy` | `craft-item-event` | exists | C |
-| Tooltips, foil | client side | | not needed | |
+| Hook | Java | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|:--|
+| Use on block, use, inventory tick, stacked clicks, destroyed, container rules | `Item.*` | `modded.item-hooks` (above) | ✅ | A |  |
+| Use over time: finish, release, use duration | `Item.finishUsingItem`, `releaseUsing`, `getUseDuration`, `LivingEntityUseItemEvent` | `player-item-consume-event` | 🟡 | A | no hooks for plugin items |
+| Use on entity | `Item.interactLivingEntity`, `UseEntityCallback` | `player-interact-entity-event` | 🟡 | B | no item hook |
+| Hit and mine with the item | `Item.hurtEnemy`, `postHurtEnemy`, `mineBlock` | none | ❌ | B |  |
+| Recipe remainder, enchantability, attribute modifiers | `FabricItem`, `IItemExtension` | components from the dump | 🟡 | C |  |
+| Item entity tick | `IItemExtension.onEntityItemUpdate` | none | ❌ | C |  |
+| Crafted by | `Item.onCraftedBy` | `craft-item-event` | ✅ | C |  |
+| Tooltips, foil | client side | | ➖ | |  |
 
 ### Entities and players
 
-| What mods do | Fabric API | NeoForge | Pumpkin | Status | Need |
-|:--|:--|:--|:--|:--|:--|
-| Damage: allow, change, after | `ServerLivingEntityEvents.ALLOW_DAMAGE`, `AFTER_DAMAGE` | `LivingIncomingDamageEvent`, `LivingDamageEvent` | `entity-damage-event`, `entity-damage-by-entity-event` | exists | A |
-| Death and kills | `ALLOW_DEATH`, `AFTER_DEATH`, `AFTER_KILLED_OTHER_ENTITY` | `LivingDeathEvent`, `LivingDropsEvent`, `LivingExperienceDropEvent` | `entity-death-event` (id and xp only), `player-death-event` | partial: no killer, no drops | A |
-| Per-entity data | data attachments | attachments | `set/get-custom-data` on entities, worlds, chunks | partial: no sync, no copy on respawn | A |
-| Copy data on respawn or dimension change | `ServerPlayerEvents.COPY_FROM`, `AFTER_RESPAWN` | `PlayerEvent.Clone` | `player-respawn-event` | partial | B |
-| Join, leave, respawn, change world | `ServerPlayConnectionEvents`, `ServerEntityLevelChangeEvents` | `PlayerEvent.PlayerLoggedIn` and others | player events | exists | A |
-| Entity load and unload | `ServerEntityEvents.ENTITY_LOAD`, `ENTITY_UNLOAD` | `EntityJoinLevelEvent`, `EntityLeaveLevelEvent` | `entity-spawn-event`, `entities-load-event`, `entities-unload-event` | exists | B |
-| Equipment change | `ServerEntityEvents.EQUIPMENT_CHANGE` | `LivingEquipmentChangeEvent` | none | gap | B |
-| Player tick | `END_SERVER_TICK` loops | `PlayerTickEvent` | `server-tick-*` events, scheduler | partial | B |
-| Mob spawning rules and finalize | `BiomeModifications.addSpawn` | `MobSpawnEvent`, `FinalizeSpawnEvent`, `RegisterSpawnPlacementsEvent` | `creature-spawn-event` | partial: no modded spawn entries | B |
-| Sleep | `EntitySleepEvents` (11 events) | `CanPlayerSleepEvent`, `PlayerWakeUpEvent`, `SleepFinishedTimeEvent` | `player-sleep-check-event`, `player-bed-enter/leave-event`, `time-skip-event` | partial: no bed direction or wake-up position | C |
-| Elytra | `EntityElytraEvents` | none | `entity-toggle-glide-event` | partial | C |
-| Knockback, fall, breathe, heal, totem | none | `LivingKnockBackEvent`, `LivingFallEvent`, `LivingBreatheEvent`, `LivingHealEvent`, `LivingUseTotemEvent` | `entity-regain-health-event`, `entity-resurrect-event`, `entity-air-change-event`; knockback declared, not fired | partial | C |
-| Attack, critical hits, sweep | `AttackEntityCallback` | `AttackEntityEvent`, `CriticalHitEvent`, `SweepAttackEvent` | `entity-damage-by-entity-event` | partial | C |
-| Mob conversion | `MOB_CONVERSION` | `LivingConversionEvent` | `entity-transform-event` | exists | C |
-| AI goals | Mixins | Mixins | `add-ai-goal`, `add-custom-ai-goal` | exists | B |
-| Custom synced entity data | `FabricEntityDataRegistry` | `NeoForgeRegistries.ENTITY_DATA_SERIALIZERS` | none | gap (with entity types) | B |
+| What mods do | Fabric API | NeoForge | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|:--|:--|
+| Damage: allow, change, after | `ServerLivingEntityEvents.ALLOW_DAMAGE`, `AFTER_DAMAGE` | `LivingIncomingDamageEvent`, `LivingDamageEvent` | `entity-damage-event`, `entity-damage-by-entity-event` | ✅ | A |  |
+| Death and kills | `ALLOW_DEATH`, `AFTER_DEATH`, `AFTER_KILLED_OTHER_ENTITY` | `LivingDeathEvent`, `LivingDropsEvent`, `LivingExperienceDropEvent` | `entity-death-event` (id and xp only), `player-death-event` | 🟡 | A | no killer, no drops |
+| Per-entity data | data attachments | attachments | `set/get-custom-data` on entities, worlds, chunks | 🟡 | A | no sync, no copy on respawn |
+| Copy data on respawn or dimension change | `ServerPlayerEvents.COPY_FROM`, `AFTER_RESPAWN` | `PlayerEvent.Clone` | `player-respawn-event` | 🟡 | B |  |
+| Join, leave, respawn, change world | `ServerPlayConnectionEvents`, `ServerEntityLevelChangeEvents` | `PlayerEvent.PlayerLoggedIn` and others | player events | ✅ | A |  |
+| Entity load and unload | `ServerEntityEvents.ENTITY_LOAD`, `ENTITY_UNLOAD` | `EntityJoinLevelEvent`, `EntityLeaveLevelEvent` | `entity-spawn-event`, `entities-load-event`, `entities-unload-event` | ✅ | B |  |
+| Equipment change | `ServerEntityEvents.EQUIPMENT_CHANGE` | `LivingEquipmentChangeEvent` | none | ❌ | B |  |
+| Player tick | `END_SERVER_TICK` loops | `PlayerTickEvent` | `server-tick-*` events, scheduler | 🟡 | B |  |
+| Mob spawning rules and finalize | `BiomeModifications.addSpawn` | `MobSpawnEvent`, `FinalizeSpawnEvent`, `RegisterSpawnPlacementsEvent` | `creature-spawn-event` | 🟡 | B | no modded spawn entries |
+| Sleep | `EntitySleepEvents` (11 events) | `CanPlayerSleepEvent`, `PlayerWakeUpEvent`, `SleepFinishedTimeEvent` | `player-sleep-check-event`, `player-bed-enter/leave-event`, `time-skip-event` | 🟡 | C | no bed direction or wake-up position |
+| Elytra | `EntityElytraEvents` | none | `entity-toggle-glide-event` | 🟡 | C |  |
+| Knockback, fall, breathe, heal, totem | none | `LivingKnockBackEvent`, `LivingFallEvent`, `LivingBreatheEvent`, `LivingHealEvent`, `LivingUseTotemEvent` | `entity-regain-health-event`, `entity-resurrect-event`, `entity-air-change-event`; knockback declared, not fired | 🟡 | C |  |
+| Attack, critical hits, sweep | `AttackEntityCallback` | `AttackEntityEvent`, `CriticalHitEvent`, `SweepAttackEvent` | `entity-damage-by-entity-event` | 🟡 | C |  |
+| Mob conversion | `MOB_CONVERSION` | `LivingConversionEvent` | `entity-transform-event` | ✅ | C |  |
+| AI goals | Mixins | Mixins | `add-ai-goal`, `add-custom-ai-goal` | ✅ | B |  |
+| Custom synced entity data | `FabricEntityDataRegistry` | `NeoForgeRegistries.ENTITY_DATA_SERIALIZERS` | none | ❌ | B | with entity types |
 
 ### World, server and data
 
-| What mods do | Fabric API | NeoForge | Pumpkin | Status | Need |
-|:--|:--|:--|:--|:--|:--|
-| Server start, stop, tick | `ServerLifecycleEvents`, `ServerTickEvents` | `ServerStartingEvent` and others, `ServerTickEvent` | `server-load-event`, `server-stopping-event`, `server-tick-start/end-event` | exists | A |
-| Per-world tick | `START_LEVEL_TICK`, `END_LEVEL_TICK` | `LevelTickEvent` | none | gap | B |
-| Datapack reload, tags loaded, data sync | `START/END_DATA_PACK_RELOAD`, `SYNC_DATA_PACK_CONTENTS`, `CommonLifecycleEvents.TAGS_LOADED` | `AddServerReloadListenersEvent`, `TagsUpdatedEvent`, `OnDatapackSyncEvent` | none | gap | B |
-| World load, unload, save | `ServerLevelEvents` | `LevelEvent` | `world-load/unload/save-event` | exists | B |
-| Chunk load, unload, generate | `ServerChunkEvents` | `ChunkEvent`, `ChunkDataEvent` | `chunk-load/unload/save-event`, `chunk-populate-event` | exists | B |
-| Block-entity load and unload | `ServerBlockEntityEvents` | `ChunkEvent` + `onLoad` | `block-entity-load/unload-event` | exists | A |
-| Block break and place | `PlayerBlockBreakEvents`, `UseBlockCallback` | `BlockEvent.BreakEvent`, `EntityPlaceEvent` | `block-break-event`, `block-broken-event`, `block-place-event` | exists | A |
-| Explosions, pistons, crops, note blocks, bonemeal | none | `ExplosionEvent`, `PistonEvent`, `CropGrowEvent`, `NoteBlockEvent`, `BonemealEvent` | matching Bukkit events | exists | B |
-| Fluid source creation, fluid behaviour | `FluidStorage` | `CreateFluidSourceEvent`, `FluidType` | none | gap | B |
-| Item, fluid and energy access from neighbours (pipes, hoppers) | `ItemStorage.SIDED`, `FluidStorage.SIDED`, `BlockApiLookup` | `Capabilities.ItemHandler`, `FluidHandler`, `EnergyStorage` | `world.set-item-storage` (hoppers, no sides, no transactions) | partial | A |
-| Chat and messages | `ServerMessageEvents` | `ServerChatEvent` | `player-chat-event`, `server-broadcast-event` | exists | C |
-| Permissions | `PermissionEvents.ON_REQUEST` | `PermissionGatherEvent` | `player-permission-check-event` | exists | C |
-| Advancements | `fabric-advancement-api-v1` | `AdvancementEvent` | `player-advancement-done-event` | exists | C |
-| Background work (autocrafting, pathfinding) | threads | threads | none | gap (`ROADMAP.md`, item 3) | B |
+| What mods do | Fabric API | NeoForge | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|:--|:--|
+| Server start, stop, tick | `ServerLifecycleEvents`, `ServerTickEvents` | `ServerStartingEvent` and others, `ServerTickEvent` | `server-load-event`, `server-stopping-event`, `server-tick-start/end-event` | ✅ | A |  |
+| Per-world tick | `START_LEVEL_TICK`, `END_LEVEL_TICK` | `LevelTickEvent` | none | ❌ | B |  |
+| Datapack reload, tags loaded, data sync | `START/END_DATA_PACK_RELOAD`, `SYNC_DATA_PACK_CONTENTS`, `CommonLifecycleEvents.TAGS_LOADED` | `AddServerReloadListenersEvent`, `TagsUpdatedEvent`, `OnDatapackSyncEvent` | none | ❌ | B |  |
+| World load, unload, save | `ServerLevelEvents` | `LevelEvent` | `world-load/unload/save-event` | ✅ | B |  |
+| Chunk load, unload, generate | `ServerChunkEvents` | `ChunkEvent`, `ChunkDataEvent` | `chunk-load/unload/save-event`, `chunk-populate-event` | ✅ | B |  |
+| Block-entity load and unload | `ServerBlockEntityEvents` | `ChunkEvent` + `onLoad` | `block-entity-load/unload-event` | ✅ | A |  |
+| Block break and place | `PlayerBlockBreakEvents`, `UseBlockCallback` | `BlockEvent.BreakEvent`, `EntityPlaceEvent` | `block-break-event`, `block-broken-event`, `block-place-event` | ✅ | A |  |
+| Explosions, pistons, crops, note blocks, bonemeal | none | `ExplosionEvent`, `PistonEvent`, `CropGrowEvent`, `NoteBlockEvent`, `BonemealEvent` | matching Bukkit events | ✅ | B |  |
+| Fluid source creation, fluid behaviour | `FluidStorage` | `CreateFluidSourceEvent`, `FluidType` | none | ❌ | B |  |
+| Item, fluid and energy access from neighbours (pipes, hoppers) | `ItemStorage.SIDED`, `FluidStorage.SIDED`, `BlockApiLookup` | `Capabilities.ItemHandler`, `FluidHandler`, `EnergyStorage` | `world.set-item-storage` (hoppers, no sides, no transactions) | 🟡 | A |  |
+| Chat and messages | `ServerMessageEvents` | `ServerChatEvent` | `player-chat-event`, `server-broadcast-event` | ✅ | C |  |
+| Permissions | `PermissionEvents.ON_REQUEST` | `PermissionGatherEvent` | `player-permission-check-event` | ✅ | C |  |
+| Advancements | `fabric-advancement-api-v1` | `AdvancementEvent` | `player-advancement-done-event` | ✅ | C |  |
+| Background work (autocrafting, pathfinding) | threads | threads | none | ❌ | B | `ROADMAP.md`, item 3 |
 
 ### Upstream events declared but never fired
 
