@@ -954,12 +954,6 @@ impl PluginItem {
         self.hooks.contains(ItemHooks::INVENTORY_TICK)
     }
 
-    /// `Item.canFitInsideContainerItems`.
-    #[must_use]
-    pub fn fits_in_containers(&self) -> bool {
-        !self.hooks.contains(ItemHooks::NOT_IN_CONTAINERS)
-    }
-
     /// `Item.overrideOtherStackedOnMe` (`on_me`, this item is in the slot) or
     /// `Item.overrideStackedOnOther` (this item is carried). The new slot and cursor stacks when
     /// the plugin took the click over.
