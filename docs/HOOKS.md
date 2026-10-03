@@ -111,7 +111,8 @@ covered by the mod data dump). Need: **A** most content mods, **B** many, **C** 
 column is a judgement from what each kind of mod does (machines, storage, worldgen, mobs,
 magic, food, tools), not a count over a mod corpus.
 
-Upstream declares about 290 Bukkit-style events; 56 of them are never fired by the server yet
+The tables below summarise by topic; "Full lists" goes through every hook of every source one
+by one. Upstream declares about 290 Bukkit-style events; 56 of them are never fired by the server yet
 (below). Fired ones are counted as ✅.
 
 ### Content and registries
@@ -119,7 +120,7 @@ Upstream declares about 290 Bukkit-style events; 56 of them are never fired by t
 | What mods do | Fabric API | NeoForge | Pumpkin | Status | Need | Notes |
 |:--|:--|:--|:--|:--|:--|:--|
 | Blocks, items, block-entity types, tags, components | `Registry.register` | `DeferredRegister` | Mod data dump, runtime overlay | ✅ | A |  |
-| Menus | `ExtendedMenuType` | `IMenuTypeExtension` | `menu`, `modded.open-menu` | ✅ | A |  |
+| Menus | `ExtendedMenuType` | `IMenuTypeExtension` | `menu`, `modded.open-menu` | 🟡 | A | no data slots (progress bars), no menu buttons |
 | Recipes and recipe types | `RecipeSerializer` | same | Dump; `register-crafting-handler` for code-defined crafting | 🟡 | B | no custom recipe types the host matches |
 | Entity types | `EntityType.Builder` | same | none | ❌ | A |  |
 | Default entity attributes | `FabricDefaultAttributeRegistry` | `EntityAttributeCreationEvent`, `EntityAttributeModificationEvent` | none | ❌ | A | with entity types |
@@ -206,6 +207,445 @@ Upstream declares about 290 Bukkit-style events; 56 of them are never fired by t
 | Advancements | `fabric-advancement-api-v1` | `AdvancementEvent` | `player-advancement-done-event` | ✅ | C |  |
 | Background work (autocrafting, pathfinding) | threads | threads | none | ❌ | B | `ROADMAP.md`, item 3 |
 
+### Full lists
+
+Every server-side hook in each source, one row per method or event (or per group of
+events that map to the same Pumpkin hook). Client-only ones (rendering, particles shown
+by the client, tooltips, creative tabs, sounds played locally) are left out.
+
+#### Vanilla `Block` and `BlockBehaviour` methods
+
+Methods a mod's block overrides (60 in `BlockBehaviour`, 33 in `Block`, from the 26.3 jar). Getters for registry data (`asItem`, `getName`, `properties`, state definition) are covered by the mod data dump.
+
+| Method | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|
+| `getStateForPlacement` | `placement-state` block hook | ✅ | A |  |
+| `setPlacedBy` | `placed` block hook | ✅ | A |  |
+| `useItemOn`, `useWithoutItem` | `use` block hook | ✅ | A |  |
+| `attack` | `attack` block hook | ✅ | B |  |
+| `getDrops` | `drops` block hook | ✅ | A |  |
+| `tick` | `scheduled-tick` block hook, `world.schedule-block-tick` | ✅ | A |  |
+| `randomTick`, `isRandomlyTicking` | `random-tick` block hook; random ticking from the mod data dump | ✅ | B |  |
+| `neighborChanged` | `neighbor-changed` block hook | ✅ | A |  |
+| `updateShape` | `update-shape` block hook | ✅ | A |  |
+| `isSignalSource`, `getSignal`, `getDirectSignal` | `signal-source` flag, `world.set-redstone-output(-sides)` | ✅ | B | Host-held values, no call |
+| `hasAnalogOutputSignal`, `getAnalogOutputSignal` | `analog-output` flag, `world.set-comparator-output` | ✅ | B | Host-held value, no call |
+| `entityInside` | `entity-inside` block hook (batched) | ✅ | B |  |
+| `stepOn` | `step-on` block hook (batched) | ✅ | C |  |
+| `getCollisionShape`, `getShape`, `getInteractionShape`, `getBlockSupportShape`, `isCollisionShapeFullBlock` | shapes from the mod data dump; `modded.set-block-collision-shape` per position | 🟡 | B | Collision only; outline, interaction and support shapes are per state |
+| `getEntityInsideCollisionShape` | none | ❌ | C |  |
+| `affectNeighborsAfterRemoval` | `removed` block hook | 🟡 | B | Called before removal, as `BlockEntity.preRemoveSideEffects`; no hook for blocks without a block entity |
+| `onPlace` | none | ❌ | B | Any placement (commands, pistons, worldgen), unlike `setPlacedBy` |
+| `playerWillDestroy`, `playerDestroy`, `destroy` | `block-break-event`, `block-broken-event` | 🟡 | B | Global events, no per-block hook |
+| `spawnAfterBreak`, `popExperience`, `tryDropExperience` | experience from the mod data dump | 🟡 | B | No hook for drops after break (silk touch checks, bonus items) |
+| `onExplosionHit`, `wasExploded`, `dropFromExplosion` | none | ❌ | C |  |
+| `onProjectileHit` | `projectile-hit-event` (global) | 🟡 | B |  |
+| `canSurvive` | none | ❌ | B |  |
+| `canBeReplaced` | replaceable from the dump's state flags | 🟡 | C | No per-context answer |
+| `getDestroyProgress`, `defaultDestroyTime` | hardness from the mod data dump | 🟡 | B | No per-player override |
+| `getExplosionResistance` | blast resistance from the mod data dump | ✅ | C |  |
+| `getFriction`, `getSpeedFactor`, `getJumpFactor` | from the mod data dump | ✅ | C |  |
+| `fallOn`, `bounceOn`, `getFallDistanceReduction`, `getBounceRestitution` | none | ❌ | C | Slime-like and hay-like blocks |
+| `getLightDampening`, `propagatesSkylightDown`, `getOcclusionShape`, `useShapeForLightOcclusion` | opacity and shapes from the mod data dump | ✅ | C |  |
+| `getCloneItemStack` | `player-pick-item-block-event` | ✅ | C |  |
+| `getMenuProvider` | `menu.open`, `modded.open-menu` from `use` | ✅ | A |  |
+| `triggerEvent` | none | ❌ | C | Block events (chest lid, note block) sent to clients |
+| `isPathfindable` | none | ❌ | C |  |
+| `rotate`, `mirror` | none | ❌ | C | Structure placement |
+| `shouldChangedStateKeepBlockEntity` | none | ❌ | C |  |
+| `handlePrecipitation` | none | ❌ | C | Cauldron-like filling in rain |
+| `isPossibleToRespawnInThis` | none | ❌ | C |  |
+| `shouldRedstoneWireConnectTo` | none | ❌ | C |  |
+| `defaultMapColor` | from the mod data dump | ✅ | C |  |
+| `getSoundType` | from the mod data dump (block sounds are vanilla packets) | ✅ | C |  |
+| `getFluidState` | none | ❌ | B | Waterlogged modded blocks, modded fluids |
+| `getMaxHorizontalOffset`, `getMaxVerticalOffset` | none | ❌ | C | Offset shapes (like flowers) |
+| `showAsInteractableInSpectatorMode` | none | ❌ | C |  |
+
+#### Vanilla `Item` methods
+
+Overridable methods of `Item` (39). Tooltip and bar display methods are client-only.
+
+| Method | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|
+| `useOn` | `use-on-block` item hook | ✅ | A |  |
+| `use` | `use` item hook | ✅ | A |  |
+| `inventoryTick` | `inventory-tick` item hook (batched) | ✅ | B |  |
+| `overrideOtherStackedOnMe`, `overrideStackedOnOther` | `stacked-on-me`, `stacked-on-other` item hooks | ✅ | B |  |
+| `onDestroyed` | `destroyed` item hook | ✅ | C |  |
+| `canFitInsideContainerItems` | `not-in-containers` flag | ✅ | C |  |
+| `finishUsingItem` | `player-item-consume-event` | 🟡 | A | No hook for plugin items (food, potions, custom use) |
+| `releaseUsing` | none | ❌ | A | Bows, tridents, charged items |
+| `onUseTick` | none | ❌ | B |  |
+| `getUseDuration`, `getUseAnimation` | the `consumable` component | 🟡 | B | No code-defined duration |
+| `useOnRelease` | none | ❌ | C |  |
+| `interactLivingEntity` | `player-interact-entity-event` | 🟡 | B | No item hook |
+| `hurtEnemy`, `postHurtEnemy` | none | ❌ | B | Weapons with on-hit effects |
+| `mineBlock` | none | ❌ | B | Tools with on-break effects |
+| `getDestroySpeed`, `isCorrectToolForDrops`, `canDestroyBlock` | the `tool` component | 🟡 | B | No code-defined answer |
+| `getAttackDamageBonus`, `getItemDamageSource` | none | ❌ | C |  |
+| `onCraftedBy`, `onCraftedPostProcess` | `craft-item-event` | 🟡 | C | No item hook |
+| `getDefaultMaxStackSize`, `components`, `getDefaultInstance` | from the mod data dump | ✅ | B |  |
+| `shouldPrintOpWarning` | none | ➖ |  | Tooltip |
+
+#### Vanilla block entities
+
+`BlockEntity` (33 overridable methods) and the block-entity side of `EntityBlock`.
+
+| Method | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|
+| `EntityBlock.getTicker` | `ticker` block hook (batched) | ✅ | A |  |
+| `loadAdditional`, `saveAdditional` | `world.get/set-block-entity-data` (kept as chunk NBT) | ✅ | A |  |
+| `preRemoveSideEffects` | `removed` block hook | ✅ | A |  |
+| `setChanged` | `world.set-block-entity-data` | ✅ | A |  |
+| `getUpdateTag`, `getUpdatePacket` | `world.set-block-entity-data` sends the data | 🟡 | B | Sends all data; no client-only subset |
+| `applyImplicitComponents`, `collectImplicitComponents`, `removeComponentsFromTag` | none | ❌ | B | Item components copied into and out of the block entity; plugins do it in `placed` and `drops` |
+| `triggerEvent` | none | ❌ | C |  |
+| `isValidBlockState` | none | ❌ | C |  |
+| `onLoad`, `onChunkUnloaded` (NeoForge) | `block-entity-load-event`, `block-entity-unload-event` | ✅ | A |  |
+| Container block entities (`BaseContainerBlockEntity`, `WorldlyContainer`) | `world.set-item-storage` (hopper slots) | 🟡 | A | No sides, no transactions |
+
+#### Vanilla menus
+
+`AbstractContainerMenu` (43 overridable methods) and `Slot`.
+
+| Method | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|
+| `quickMoveStack` | `quick-move` menu call | ✅ | A |  |
+| `Slot.mayPlace`, `mayPickup`, `getMaxStackSize`, `set` | menu calls | ✅ | A |  |
+| `removed` | `closed` menu call | ✅ | A |  |
+| `stillValid` | menu anchor | ✅ | A |  |
+| `addDataSlot`, `setData` (progress bars, furnace-like data) | none | ❌ | A | Machines show progress through data slots |
+| `clickMenuButton` | none | ❌ | B | Buttons in menus (enchanting, stonecutter, mod GUIs) |
+| `clicked` (all click types) | host handles clicks; `stacked-on-*` item hooks | 🟡 | C |  |
+| `slotsChanged` | `set-item` menu call | ✅ | B |  |
+| `canTakeItemForPickAll`, `canDragTo` | none | ❌ | C |  |
+
+#### Vanilla entities and other content classes
+
+A mod adding an entity, effect, fluid or recipe type overrides these; none of these types can be added yet, so each class is one row.
+
+| Class | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|
+| `Entity` (tick, hurt, interact, save/load, collision, passengers, portals: 408 overridable methods) | none for modded entity types | ❌ | A | Vanilla entities: upstream entity API and events |
+| `LivingEntity` (damage, death loot, effects, equipment, travel: 311 methods) | none for modded types | ❌ | A |  |
+| `Mob` (`registerGoals`, `mobInteract`, `finalizeSpawn`, `checkSpawnRules`, `removeWhenFarAway`: 131 methods) | `add-ai-goal`, `add-custom-ai-goal` on vanilla mobs | 🟡 | A | No modded mob types |
+| `Projectile` (`onHitBlock`, `onHitEntity`, `shoot`, `canHitEntity`: 40 methods) | `projectile-hit-event`, `projectile-launch-event` | 🟡 | B | No modded projectiles |
+| `Player` overrides (`attack`, `interactOn`, `getDestroySpeed`, `hasCorrectToolForDrops`) | player events | 🟡 | B | Through events only |
+| `MobEffect` (`applyEffectTick`, `onEffectStarted`, `onEffectAdded`, `onMobHurt`, `onMobRemoved`, attribute modifiers) | `player.add-effect` (vanilla effects) | ❌ | B | No modded effects |
+| `Fluid` / `FlowingFluid` (`tick`, `randomTick`, `entityInside`, spread, `canBeReplacedWith`) | none | ❌ | B | No modded fluids |
+| `Enchantment` effects | datapack enchantments (vanilla effect components) | 🟡 | B | No modded enchantment effect types |
+| `Recipe` / `RecipeSerializer` (custom matching and assembly) | `register-crafting-handler` (crafting grid only) | 🟡 | B | No custom recipe types for other stations |
+
+#### NeoForge `IBlockExtension` methods
+
+Default methods NeoForge adds to every block (`common/extensions/IBlockExtension`). Client-only ones (`addLandingEffects`, `addRunningEffects`, `getAppearance`, `hidesNeighborFace`, `shouldDisplayFluidOverlay`, `shouldHideAdjacentFluidFace`, `supportsExternalFaceHiding`, `getStateAtViewpoint`, `getMapColor` on the client) are left out.
+
+| Method | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|
+| `canHarvestBlock` | none | ❌ | B |  |
+| `onDestroyedByPlayer` | `block-break-event` | 🟡 | B |  |
+| `getExpDrop` | experience from the mod data dump | 🟡 | B |  |
+| `getCloneItemStack` | `player-pick-item-block-event` | ✅ | C |  |
+| `getExplosionResistance` (per position) | static value | 🟡 | C |  |
+| `onBlockExploded`, `canDropFromExplosion` | none | ❌ | C |  |
+| `getLightEmission`, `hasDynamicLightEmission` | static per state | 🟡 | C |  |
+| `getFriction` (per position) | static value | 🟡 | C |  |
+| `isLadder`, `isScaffolding`, `makesOpenTrapdoorAboveClimbable` | none | ❌ | C |  |
+| `getFlammability`, `getFireSpreadSpeed`, `isFlammable`, `onCaughtFire`, `isFireSource`, `isBurning`, `ignitedByLava` | `server.set-flammable` | 🟡 | C | Static values only |
+| `canSustainPlant`, `isFertile`, `canBeHydrated`, `onTreeGrow` | none | ❌ | C |  |
+| `getToolModifiedState` | none | ❌ | B | Strip, till, flatten |
+| `getEnchantPowerBonus` | none | ❌ | C |  |
+| `getRespawnPosition` | none | ❌ | C |  |
+| `isStickyBlock`, `canStickTo`, `getPistonPushReaction` | piston behaviour from the mod data dump | 🟡 | C |  |
+| `getBlockPathType`, `getAdjacentBlockPathType` | none | ❌ | C |  |
+| `onNeighborChange`, `getWeakChanges`, `shouldCheckWeakPower` | `neighbor-changed` block hook | 🟡 | C | Comparator-style neighbour reads |
+| `onBlockStateChange` | none | ❌ | C |  |
+| `canEntityDestroy` | none | ❌ | C |  |
+| `isSlimeBlock`, `getBounceRestitution` | none | ❌ | C |  |
+| `getBeaconColorMultiplier` | none | ❌ | C |  |
+| `playFallSound`, `playStepSound`, `getSoundType` | sound type from the dump | 🟡 | C |  |
+| `getBubbleColumnDirection` | none | ❌ | C |  |
+| `collisionExtendsVertically` | none | ❌ | C |  |
+| `getRelocability` | none | ❌ | C |  |
+| `rotate` | none | ❌ | C |  |
+
+#### NeoForge `IItemExtension` methods
+
+Client-only ones (`getHighlightTip`, `shouldCauseReequipAnimation`, `shouldCauseBlockBreakReset`, `getCreatorModId`) are left out.
+
+| Method | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|
+| `onItemUseFirst` | none | ❌ | B | Before the block is used |
+| `onLeftClickEntity`, `onEntitySwing` | none | ❌ | B |  |
+| `onDroppedByPlayer` | `player-drop-item-event` | ✅ | C |  |
+| `onEntityItemUpdate`, `getEntityLifespan`, `hasCustomEntity`, `createEntity` | none | ❌ | C | Item entities |
+| `canPerformAction` (item abilities) | none | ❌ | B |  |
+| `getCraftingRemainder` | from the mod data dump | 🟡 | C | No code-defined remainder |
+| `damageItem`, `isDamageable`, `getMaxDamage`, `setDamage`, `canBeHurtBy` | components | 🟡 | C |  |
+| `getDefaultAttributeModifiers` | components | ✅ | C |  |
+| `canEquip`, `getEquipmentSlot` | the `equippable` component | ✅ | C |  |
+| `isPiglinCurrency`, `makesPiglinsNeutral`, `isGazeDisguise`, `canWalkOnPowderedSnow` | none | ❌ | C |  |
+| `onStopUsing`, `canContinueUsing` | none | ❌ | B |  |
+| `supportsEnchantment`, `applyEnchantments`, `getEnchantmentLevel`, `getAllEnchantments` | enchantment tags | 🟡 | C |  |
+| `canGrindstoneRepair`, `getXpRepairRatio` | none | ❌ | C |  |
+| `onAnimalArmorTick` | none | ❌ | C |  |
+| `onGlideDamage` | none | ❌ | C |  |
+| `doesSneakBypassUse` | none | ❌ | C |  |
+| `isPrimaryItemFor` | enchantment tags | ✅ | C |  |
+| `getSweepHitBox` | none | ❌ | C |  |
+| `isNotReplaceableByPickAction` | none | ❌ | C |  |
+
+#### Other NeoForge extensions, capabilities and data maps
+
+
+
+| Extension | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|
+| `IEntityExtension`: fluid interaction, multipart entities, `sendPairingData` | none | ❌ | B | With modded entities |
+| `ILivingEntityExtension`: `onDamageTaken`, swimming in modded fluids | none | ❌ | C |  |
+| `IPlayerExtension`: `mayFly`, `openMenu` with extra data, `isFakePlayer` | `modded.open-menu` | 🟡 | B | No fake players |
+| `IFluidExtension` / `FluidType`: density, viscosity, drowning, extinguishing, boats, placement | none | ❌ | B | Modded fluids |
+| `IBaseRailBlockExtension`: `canMakeSlopes`, `isValidRailShape` | none | ❌ | C |  |
+| `IFallableExtension.fallingTick` | none | ❌ | C |  |
+| `IBucketPickupExtension`, `IDispensibleContainerItemExtension` | none | ❌ | C | Modded buckets |
+| `IAbstractBoatExtension.canBoatInFluid` | none | ❌ | C |  |
+| `IMobEffectExtension` | none | ❌ | C |  |
+| `IMenuProviderExtension.writeClientSideData` | `modded.open-menu` data | ✅ | A |  |
+| Capabilities: `Capabilities.Item`, `Fluid`, `Energy` for blocks, entities and items, plus `ENTITY_AUTOMATION` | `world.set-item-storage` (block items only) | 🟡 | A | No fluid, energy, entity or item capabilities; no sides |
+| Data maps (`NeoForgeDataMaps`: compostables, oxidizables, waxables, transformables, vibration frequencies, villager types, parrot imitations, raid hero gifts, monster room mobs) | none | ❌ | C |  |
+
+#### Fabric API events
+
+Every `Event` field in the Fabric API 0.161.0 main sources (client sources left out), by class.
+
+| Event | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|
+| `ServerLifecycleEvents`: `SERVER_STARTING`, `SERVER_STARTED`, `SERVER_STOPPING`, `SERVER_STOPPED` | `server-load-event`, `server-stopping-event` | 🟡 | A | No separate starting and stopped events |
+| `ServerLifecycleEvents`: `SYNC_DATA_PACK_CONTENTS`, `START_DATA_PACK_RELOAD`, `END_DATA_PACK_RELOAD` | none | ❌ | B |  |
+| `ServerLifecycleEvents`: `BEFORE_SAVE`, `AFTER_SAVE` | `world-save-event` | 🟡 | C |  |
+| `ServerTickEvents`: `START_SERVER_TICK`, `END_SERVER_TICK` | `server-tick-start-event`, `server-tick-end-event` | ✅ | A |  |
+| `ServerTickEvents`: `START_LEVEL_TICK`, `END_LEVEL_TICK` | none | ❌ | B |  |
+| `CommonLifecycleEvents.TAGS_LOADED` | none | ❌ | C |  |
+| `ServerLevelEvents`: `LOAD`, `UNLOAD` | `world-load-event`, `world-unload-event` | ✅ | B |  |
+| `ServerChunkEvents`: `CHUNK_LOAD`, `CHUNK_UNLOAD`, `CHUNK_GENERATE` | `chunk-load-event`, `chunk-unload-event`, `chunk-populate-event` | ✅ | B |  |
+| `ServerChunkEvents.FULL_CHUNK_STATUS_CHANGE` | none | ❌ | C |  |
+| `ServerBlockEntityEvents`: `BLOCK_ENTITY_LOAD`, `BLOCK_ENTITY_UNLOAD` | `block-entity-load-event`, `block-entity-unload-event` | ✅ | A |  |
+| `ServerEntityEvents`: `ENTITY_LOAD`, `ENTITY_UNLOAD` | `entity-spawn-event`, `entities-load-event`, `entities-unload-event` | ✅ | B |  |
+| `ServerEntityEvents.ALLOW_LOAD` | none | ❌ | C | Refuse an entity loaded from disk |
+| `ServerEntityEvents.EQUIPMENT_CHANGE` | none | ❌ | B |  |
+| `ServerEntityLevelChangeEvents`: `AFTER_ENTITY_CHANGE_LEVEL`, `AFTER_PLAYER_CHANGE_LEVEL` | `player-change-world-event`; `entity-portal-event` | 🟡 | C | Non-player entities: before, not after |
+| `ServerLivingEntityEvents`: `ALLOW_DAMAGE`, `AFTER_DAMAGE` | `entity-damage-event` | ✅ | A |  |
+| `ServerLivingEntityEvents`: `ALLOW_DEATH`, `AFTER_DEATH` | `entity-death-event`, `player-death-event` | 🟡 | A | Death can't be cancelled for non-players; no damage source |
+| `ServerLivingEntityEvents.MOB_CONVERSION` | `entity-transform-event` | ✅ | C |  |
+| `ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY` | none | ❌ | B |  |
+| `ServerMobEffectEvents`: `ALLOW_ADD`, `BEFORE_ADD`, `AFTER_ADD`, `ALLOW_EARLY_REMOVE`, `BEFORE_REMOVE`, `AFTER_REMOVE` | `entity-potion-effect-event` | 🟡 | B | One event for add and remove |
+| `ServerPlayerEvents`: `JOIN`, `LEAVE`, `AFTER_RESPAWN` | `player-join-event`, `player-leave-event`, `player-respawn-event` | ✅ | A |  |
+| `ServerPlayerEvents.COPY_FROM` | none | ❌ | B | Copy data to the respawned player |
+| `ServerPlayerEvents.ALLOW_DEATH` | `player-death-event` (cancellable) | ✅ | B |  |
+| `EntitySleepEvents` (10 events) | `player-sleep-check-event`, `player-bed-enter/leave-event` | 🟡 | C | No bed direction, occupation or wake-up position |
+| `EntityElytraEvents`: `ALLOW`, `CUSTOM` | `entity-toggle-glide-event` | 🟡 | C |  |
+| `AttackBlockCallback` | `attack` block hook; `block-damage-event` | ✅ | B |  |
+| `AttackEntityCallback` | `entity-damage-by-entity-event` | 🟡 | B | After damage starts, not before the attack |
+| `UseBlockCallback`, `BlockEvents.USE_ITEM_ON`, `USE_WITHOUT_ITEM` | `player-interact-event` | ✅ | A |  |
+| `UseItemCallback`, `ItemEvents.USE`, `USE_ON` | `player-interact-event` | ✅ | A |  |
+| `UseEntityCallback` | `player-interact-entity-event` | ✅ | B |  |
+| `PlayerBlockBreakEvents`: `BEFORE`, `AFTER`, `CANCELED` | `block-break-event`, `block-broken-event`, `block-break-canceled-event` | ✅ | A |  |
+| `PlayerPickItemEvents`: `BLOCK`, `ENTITY` | `player-pick-item-block/entity-event` | ✅ | C |  |
+| `ItemClickBehaviorCallback` | `stacked-on-*` item hooks | 🟡 | C | Only for plugin items |
+| `BlockTransformerEvents.MODIFY` | none | ❌ | B | Strip, till, flatten |
+| `DefaultItemComponentEvents.MODIFY` | none | ❌ | B | Change vanilla items' default components |
+| `EnchantmentEvents`: `ALLOW_ENCHANTING`, `MODIFY`, `MODIFY_WITH_LOOKUP` | `prepare-item-enchant-event`, `enchant-item-event` | 🟡 | C | No enchantment definition changes |
+| `LootTableEvents`: `REPLACE`, `MODIFY`, `ALL_LOADED`, `MODIFY_DROPS` | `loot-generate-event` (cancel only) | 🟡 | A |  |
+| `AdvancementEvents`: `REPLACE`, `MODIFY`, `ALL_LOADED` | none | ❌ | C |  |
+| `FabricDefaultAttributeRegistry.MODIFY` | none | ❌ | B |  |
+| `FluidFlowEvents.ALLOW` | `block-from-to-event` | ✅ | C |  |
+| `DimensionEvents.MODIFY_ATTRIBUTES` | none | ❌ | C |  |
+| `ServerMessageEvents` (6 events), `ServerMessageDecoratorEvent` | `player-chat-event`, `server-broadcast-event`, `player-command-send-event` | 🟡 | C | No decorator |
+| `CommandRegistrationCallback` | `context.register-command` | ✅ | A |  |
+| `PermissionEvents`: `ON_REQUEST`, `PREPARE_OFFLINE_PLAYER` | `player-permission-check-event` | 🟡 | C |  |
+| `EntityTrackingEvents`: `START_TRACKING`, `STOP_TRACKING` | `player-start/stop-tracking-event` | ✅ | B |  |
+| `ServerPlayConnectionEvents`: `INIT`, `JOIN`, `DISCONNECT` | `player-login-event`, `player-join-event`, `player-leave-event` | ✅ | A |  |
+| `ServerConfigurationConnectionEvents`: `BEFORE_CONFIGURE`, `CONFIGURE`, `DISCONNECT` | `register-configuration-payload` | 🟡 | B | No configuration tasks that wait |
+| `ServerLoginConnectionEvents`: `INIT`, `QUERY_START`, `DISCONNECT` | `register-login-query` | 🟡 | C |  |
+| `DynamicRegistrySetupCallback` | none | ❌ | C |  |
+| `CreativeModeTabEvents.MODIFY_OUTPUT_ALL` | none | ➖ |  | Client display |
+
+#### Fabric API interfaces, registries and helpers
+
+The non-event API of each server-side Fabric API module.
+
+| API | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|
+| `FabricItem`: `getCraftingRemainder`, `canBeEnchantedWith`, `allowContinuingBlockBreaking`, `allowComponentsUpdateAnimation` | none | ❌ | C |  |
+| `FabricBlock`: `getProvidedEnchantmentPower` | none | ❌ | C |  |
+| `FabricMobEffect`: `onEffectAdded`, `onEffectStarted`, `onEffectRemoved` | none | ❌ | B | Modded effects |
+| `CustomDamageHandler.hurtAndBreak` | none | ❌ | C |  |
+| `EquipmentSlotProvider` | the `equippable` component | ✅ | C |  |
+| `BlockAttackInteractionAware.onAttackInteraction` | `attack` block hook | ✅ | C |  |
+| `MinecartComparatorLogic` | none | ❌ | C |  |
+| `FluidBehavior`, `EntityFluidInteractionRegistry` | none | ❌ | B | Modded fluids |
+| Transfer API: `ItemStorage.SIDED`, `FluidStorage.SIDED`, `ITEM`, `Transaction`, `SidedStorageBlockEntity`, `ContainerItemContext`, `PlayerInventoryStorage` | `world.set-item-storage` | 🟡 | A | Block items only, no sides, no transactions, no fluids |
+| API lookup: `BlockApiLookup`, `ItemApiLookup`, `EntityApiLookup` | none | ❌ | A | Generic lookups other mods expose (energy, fluids) |
+| Data attachments: `AttachmentRegistry`, `AttachmentType`, `GlobalAttachments`, `AttachmentSyncPredicate` | `set/get-custom-data` on entities, worlds, chunks, block entities | 🟡 | A | No copy rules, no sync |
+| `BiomeModifications`, `BiomeSelectors`, `NetherBiomes`, `TheEndBiomes` | none | ❌ | A |  |
+| `FabricBlockEntityTypeBuilder`, `FabricEntityType`, `BlockSetTypeBuilder`, `WoodTypeBuilder`, `PoiHelper` | block entities and blocks from the mod data dump | 🟡 | B | No entity types, no POI types |
+| `FabricEntityDataRegistry` | none | ❌ | B |  |
+| `FabricParticleTypes`, `FabricBlockParticleOption` | none | ❌ | C |  |
+| `ArgumentTypeRegistry`, `EntitySelectorOptionRegistry` | none | ❌ | C |  |
+| `GameRuleBuilder`, `GameRuleEvents` | none | ❌ | C |  |
+| `FlammableBlockRegistry` | `server.set-flammable` | ✅ | B |  |
+| `OxidizableBlocksRegistry`, `LandPathTypeRegistry`, `VibrationFrequencyRegistry`, `VillagerInteractionRegistries` | none | ❌ | C |  |
+| `CustomIngredient`, `DefaultCustomIngredients` | Fabric custom ingredients load (`2717a2ac3`) | ✅ | B |  |
+| `FabricRecipeManager`, `RecipeSynchronization` | `recipe-manager.match-*` | 🟡 | B | No recipe sync |
+| `ResourceConditions` | none | ❌ | C | Datapack conditions |
+| `ResourceLoader`, `SimpleReloadListener`, `DataResourceLoader` | none | ❌ | B | Mod data files reloaded with datapacks |
+| `FabricLootTableBuilder`, `FabricLootPoolBuilder` | none | ❌ | A | With loot table changes |
+| `DynamicRegistries`, `FabricRegistryBuilder`, `RegistryEntryAddedCallback` | mod data dump | 🟡 | B | No modded datapack registries |
+| `PlayerLookup` | `server.get-players-tracking-*` | ✅ | B |  |
+| `FakePlayer` | none | ❌ | B | Machines that act as a player |
+| `MoreCodecs`, `FabricValueInput/Output` | none | ➖ |  | Java-side serialization helpers |
+
+#### NeoForge events
+
+Every event class in NeoForge 26.3.x outside its client package (267 classes, nested ones included; abstract bases folded into their subclasses).
+
+| Event | Pumpkin | Status | Need | Notes |
+|:--|:--|:--|:--|:--|
+| `ServerAboutToStartEvent`, `ServerStartingEvent`, `ServerStartedEvent`, `ServerStoppingEvent`, `ServerStoppedEvent` | `server-load-event`, `server-stopping-event` | 🟡 | A |  |
+| `ServerTickEvent.Pre/Post` | `server-tick-start/end-event` | ✅ | A |  |
+| `LevelTickEvent.Pre/Post` | none | ❌ | B |  |
+| `PlayerTickEvent.Pre/Post` | none | ❌ | B |  |
+| `EntityTickEvent.Pre/Post` | none | ❌ | C |  |
+| `LevelEvent.Load/Unload/Save` | `world-load/unload/save-event` | ✅ | B |  |
+| `LevelEvent.CreateSpawnPosition`, `PotentialSpawns` | `spawn-change-event` | 🟡 | C |  |
+| `ChunkEvent.Load/Unload`, `ChunkDataEvent.Load/Save` | `chunk-load/unload/save-event` | ✅ | B |  |
+| `ChunkWatchEvent.Watch/Sent/UnWatch` | `chunk-send-event` | 🟡 | C |  |
+| `ChunkTicketLevelUpdatedEvent`, `RegisterTicketControllersEvent` | none | ❌ | C | Chunk loaders |
+| `BlockEvent.BreakEvent` (`BreakBlockEvent`), `EntityPlaceEvent`, `EntityMultiPlaceEvent` | `block-break-event`, `block-place-event` | 🟡 | A | Multi-place not fired |
+| `BlockEvent.NeighborNotifyEvent` | `block-physics-event` | ✅ | C |  |
+| `BlockEvent.FluidPlaceBlockEvent` | `block-form-event` | ✅ | C |  |
+| `BlockEvent.FarmlandTrampleEvent` | none | ❌ | C |  |
+| `BlockEvent.PortalSpawnEvent` | `portal-create-event` | ✅ | C |  |
+| `BlockEvent.BlockToolModificationEvent` | none | ❌ | B |  |
+| `BlockDropsEvent` | none | ❌ | B | Change drops of any block |
+| `BlockGrowFeatureEvent` | `structure-grow-event` | ✅ | C |  |
+| `CropGrowEvent.Pre/Post` | `block-grow-event` | ✅ | C |  |
+| `CreateFluidSourceEvent` | none | ❌ | C |  |
+| `AlterGroundEvent` | none | ❌ | C |  |
+| `ExplosionEvent.Start/Detonate`, `ExplosionKnockbackEvent` | `entity-explode-event`, `block-explode-event` | 🟡 | B | No knockback event |
+| `PistonEvent.Pre/Post` | `block-piston-extend/retract-event` | ✅ | C |  |
+| `NoteBlockEvent.Play/Change` | `note-play-event` | 🟡 | C | No change event |
+| `SleepFinishedTimeEvent` | `time-skip-event` | ✅ | C |  |
+| `GameRuleChangedEvent` | none | ❌ | C |  |
+| `ModifyCustomSpawnersEvent` | none | ❌ | C |  |
+| `VillageSiegeEvent` | none | ❌ | C |  |
+| `EntityJoinLevelEvent`, `EntityLeaveLevelEvent` | `entity-spawn-event`, `entities-unload-event` | ✅ | B |  |
+| `EntityEvent.EntityConstructing`, `EnteringSection`, `Size` | none | ❌ | C |  |
+| `EntityInvulnerabilityCheckEvent` | none | ❌ | C |  |
+| `EntityMobGriefingEvent` | none | ❌ | C |  |
+| `EntityMountEvent` | `entity-mount-event`, `entity-dismount-event` | ✅ | C |  |
+| `EntityStruckByLightningEvent` | `lightning-strike-event` | 🟡 | C | Per world, not per entity |
+| `EntityTeleportEvent` (+ `TeleportCommand`, `SpreadPlayersCommand`, `EnderEntity`, `EnderPearl`, `ItemConsumption`) | `entity-teleport-event`, `player-teleport-event` | ✅ | C |  |
+| `EntityTravelToDimensionEvent` | `entity-portal-event` | ✅ | C |  |
+| `ItemExpireEvent`, `ItemTossEvent` | `item-despawn-event`, `player-drop-item-event` | ✅ | C |  |
+| `XpOrbTargetingEvent` | none | ❌ | C |  |
+| `ProjectileImpactEvent` | `projectile-hit-event` | ✅ | B |  |
+| `LivingIncomingDamageEvent`, `LivingDamageEvent.Pre/Post`, `ArmorHurtEvent` | `entity-damage-event` | 🟡 | A | No separate after-armor step |
+| `LivingDeathEvent` | `entity-death-event` | 🟡 | A |  |
+| `LivingDropsEvent`, `LivingExperienceDropEvent` | none | ❌ | A |  |
+| `LivingHealEvent` | `entity-regain-health-event` | ✅ | C |  |
+| `LivingKnockBackEvent` | `entity-knockback-event` (declared, not fired) | ❌ | C |  |
+| `LivingFallEvent`, `PlayerFlyableFallEvent` | none | ❌ | C |  |
+| `LivingEvent.LivingJumpEvent` | none | ❌ | C |  |
+| `LivingEvent.LivingVisibilityEvent` | none | ❌ | C |  |
+| `LivingBreatheEvent`, `LivingDrownEvent` | `entity-air-change-event` | 🟡 | C |  |
+| `LivingChangeTargetEvent` | `entity-target-event` | ✅ | C |  |
+| `LivingConversionEvent.Pre/Post` | `entity-transform-event` | ✅ | C |  |
+| `LivingDestroyBlockEvent` | `entity-change-block-event` | ✅ | C |  |
+| `LivingEntityUseItemEvent.Start/Tick/Stop/Finish` | `player-item-consume-event` | 🟡 | A | Finish only |
+| `LivingEquipmentChangeEvent` | none | ❌ | B |  |
+| `LivingGetProjectileEvent` | none | ❌ | C |  |
+| `LivingShieldBlockEvent` | none | ❌ | C |  |
+| `LivingSwapItemsEvent.Hands` | `player-swap-hands-event` | ✅ | C |  |
+| `LivingUseTotemEvent` | `entity-resurrect-event` | ✅ | C |  |
+| `MobEffectEvent.Added/Applicable/Remove/Expired` | `entity-potion-effect-event` | 🟡 | B |  |
+| `MobSpawnEvent.SpawnPlacementCheck/PositionCheck`, `FinalizeSpawnEvent`, `SpawnClusterSizeEvent` | `creature-spawn-event` | 🟡 | B |  |
+| `MobDespawnEvent` | none | ❌ | C |  |
+| `MobSplitEvent` | `slime-split-event` (declared, not fired) | ❌ | C |  |
+| `BabyEntitySpawnEvent` | `entity-breed-event` | ✅ | C |  |
+| `AnimalTameEvent` | `entity-tame-event` | ✅ | C |  |
+| `EndermanAngerEvent` | none | ❌ | C |  |
+| `EffectParticleModificationEvent` | none | ❌ | C |  |
+| `AttackEntityEvent` | `entity-damage-by-entity-event` | 🟡 | B |  |
+| `CriticalHitEvent`, `SweepAttackEvent` | none | ❌ | C |  |
+| `PlayerInteractEvent.RightClickBlock/RightClickItem/RightClickEmpty/LeftClickBlock/LeftClickEmpty/EntityInteract`, `UseItemOnBlockEvent` | `player-interact-event`, `player-interact-entity-event` | ✅ | A |  |
+| `PlayerEvent.BreakSpeed`, `HarvestCheck` | none | ❌ | B |  |
+| `PlayerEvent.Clone` | none | ❌ | B |  |
+| `PlayerEvent.StartTracking/StopTracking` | `player-start/stop-tracking-event` | ✅ | B |  |
+| `PlayerEvent.LoadFromFile/SaveToFile` | none | ❌ | C | Per-player mod data files |
+| `PlayerEvent.ItemCraftedEvent/ItemSmeltedEvent` | `craft-item-event`, `furnace-extract-event` | ✅ | C |  |
+| `PlayerEvent.PlayerLoggedIn/LoggedOut/Respawn/ChangedDimension/ChangeGameMode` | player events | ✅ | A |  |
+| `PlayerEvent.NameFormat`, `TabListNameFormat` | none | ❌ | C |  |
+| `PlayerContainerEvent.Open/Close` | `inventory-open/close-event` | ✅ | B |  |
+| `PlayerDestroyItemEvent` | `player-item-break-event` | ✅ | C |  |
+| `PlayerEnchantItemEvent`, `EnchantmentLevelSetEvent`, `GetEnchantmentLevelEvent` | `enchant-item-event`, `prepare-item-enchant-event` | 🟡 | C |  |
+| `PlayerRespawnPositionEvent`, `PlayerSetSpawnEvent` | `player-spawn-change-event` | 🟡 | C |  |
+| `PlayerSpawnPhantomsEvent` | none | ❌ | C |  |
+| `PlayerSwitchHotbarSlotEvent.Pre/Post` | `player-item-held-event` | ✅ | C |  |
+| `PlayerWakeUpEvent`, `CanPlayerSleepEvent`, `CanContinueSleepingEvent` | `player-bed-leave-event`, `player-sleep-check-event` | 🟡 | C |  |
+| `PlayerXpEvent.PickupXp/XpChange/LevelChange` | `player-exp-change-event`, `player-level-change-event` | ✅ | C |  |
+| `ArrowLooseEvent`, `ArrowNockEvent` | `entity-shoot-bow-event` | 🟡 | C |  |
+| `BonemealEvent` | `block-fertilize-event` | ✅ | C |  |
+| `ItemEntityPickupEvent.Pre/Post` | `entity-pickup-item-event` | ✅ | B |  |
+| `ItemFishedEvent` | `player-fish-event` | ✅ | C |  |
+| `TradeWithVillagerEvent` | `trade-select-event` | 🟡 | C |  |
+| `AdvancementEvent.AdvancementEarnEvent/AdvancementProgressEvent` | `player-advancement-done-event` | 🟡 | C |  |
+| `AnvilUpdateEvent`, `AnvilCraftEvent.Pre/Post` | `prepare-anvil-event` | 🟡 | C |  |
+| `GrindstoneEvent.OnPlaceItem/OnTakeItem` | `prepare-grindstone-event` | 🟡 | C |  |
+| `PotionBrewEvent.Pre/Post`, `PlayerBrewedPotionEvent` | `brew-event` | 🟡 | C |  |
+| `ItemStackedOnOtherEvent` | `stacked-on-*` item hooks | 🟡 | C |  |
+| `ItemAttributeModifierEvent` | none | ❌ | C |  |
+| `EnchantedBlockLootEvent`, `EnchantedEntityLootEvent` | none | ❌ | C |  |
+| `StatAwardEvent` | `player-statistic-increment-event` | ✅ | C |  |
+| `CommandEvent`, `ServerChatEvent` | `server-command-event`, `player-chat-event` | ✅ | C |  |
+| `DifficultyChangeEvent` | none | ❌ | C |  |
+| `PlayLevelSoundEvent.AtEntity/AtPosition` | none | ❌ | C |  |
+| `VanillaGameEvent` | `generic-game-event` | ✅ | C |  |
+| `CustomClickActionEvent` | `dialog-click-action-event` | ✅ | C |  |
+| `PermissionsChangedEvent`, `PermissionGatherEvent.Handler/Nodes` | `register-permission` | 🟡 | C |  |
+| `PlayerNegotiationEvent`, `ClientInformationUpdatedEvent` | `player-locale-change-event` | 🟡 | C |  |
+| `TagsUpdatedEvent.ServerDataLoad`, `OnDatapackSyncEvent`, `AddServerReloadListenersEvent`, `SortedReloadListenerEvent` | none | ❌ | B |  |
+| `LootTableLoadEvent` | `loot-generate-event` (cancel only) | 🟡 | A |  |
+| `RegisterCommandsEvent` | `context.register-command` | ✅ | A |  |
+| `RegisterEvent`, `NewRegistryEvent`, `NewDatapackRegistryEvent`, `ModifyRegistriesEvent`, `RegisterDataMapTypesEvent`, `DataMapsUpdatedEvent` | mod data dump | 🟡 | B | Static content only |
+| `EntityAttributeCreationEvent`, `EntityAttributeModificationEvent` | none | ❌ | A |  |
+| `RegisterSpawnPlacementsEvent` | none | ❌ | B |  |
+| `ModifyDefaultComponentsEvent`, `DefaultDataComponentsBoundEvent` | none | ❌ | B |  |
+| `BlockEntityTypeAddBlocksEvent` | none | ❌ | C |  |
+| `RegisterCapabilitiesEvent` | `world.set-item-storage` | 🟡 | A |  |
+| `RegisterCauldronInteractionEvent`, `RegisterCauldronFluidContentEvent` | none | ❌ | C |  |
+| `RegisterRecipePropertiesEvent` | none | ❌ | C |  |
+| `RegisterStructureConversionsEvent`, `ExtendPoiTypesEvent` | none | ❌ | C |  |
+| `RegisterGameRuleCategoryEvent` | none | ❌ | C |  |
+| `RegisterPayloadHandlersEvent`, `RegisterConfigurationTasksEvent` | `player-custom-payload-event`, `register-configuration-payload` | 🟡 | B |  |
+| `ModMismatchEvent`, `GameShuttingDownEvent`, `RegisterGameTestsEvent`, `GatherDataEvent`, `AddPackFindersEvent` | none | ➖ |  | Loader, data generation or test tooling |
+| `RegisterRpcSchemaEvent` | none | ➖ |  | Management protocol |
+| `BuildCreativeModeTabContentsEvent`, `AddAttributeTooltipsEvent`, `GatherSkippedAttributeTooltipsEvent`, `RegisterTooltipAppendersEvent`, `ItemTooltipEvent`, `FluidTooltipEvent`, `TagsUpdatedEvent.ClientPacketReceived` |  | ➖ |  | Client display |
+
+#### Paper events Pumpkin doesn't declare
+
+Paper (26.3, `paper-api`) has 465 event classes; Pumpkin's WIT declares the Bukkit set and some of Paper's. These 199 are not declared at all (abstract bases left out), all ❌, need C for content mods (they matter for server plugins more than for mods). Some have a Pumpkin equivalent under another name: `PlayerQuitEvent` is `player-leave-event`, `PlayerGameModeChangeEvent` is `player-gamemode-change-event`, `PlayerPickItemEvent` is `player-pick-item-block/entity-event`, `PlayerTrackEntityEvent` and `PlayerUntrackEntityEvent` are `player-start/stop-tracking-event`, `ChunkLoadEvent` is `chunk-load-event`.
+
+| Group | Events |
+|:--|:--|
+| block | `AnvilDamagedEvent`, `BeaconActivatedEvent`, `BeaconDeactivatedEvent`, `BeaconEffectEvent`, `BellRevealRaiderEvent`, `BlockBreakBlockEvent`, `BlockBreakProgressUpdateEvent`, `BlockDestroyEvent`, `BlockFailedDispenseEvent`, `BlockLockCheckEvent`, `BlockPreDispenseEvent`, `CompostItemEvent`, `DragonEggFormEvent`, `PlayerShearBlockEvent`, `TargetHitEvent`, `VaultChangeStateEvent` |
+| entity | `CreeperIgniteEvent`, `ElderGuardianAppearanceEvent`, `EnderDragonFireballHitEvent`, `EnderDragonFlameEvent`, `EnderDragonShootFireballEvent`, `EndermanAttackPlayerEvent`, `EndermanEscapeEvent`, `EntityAddToWorldEvent`, `EntityAttemptSmashAttackEvent`, `EntityAttemptSpinAttackEvent`, `EntityBreakByEntityEvent`, `EntityBreakEvent`, `EntityCollideWithEntityEvent`, `EntityCompostItemEvent`, `EntityConstructEvent`, `EntityCreatePortalEvent`, `EntityDamageItemEvent`, `EntityEffectTickEvent`, `EntityEquipmentChangedEvent`, `EntityFertilizeEggEvent`, `EntityIgniteEvent`, `EntityInsideBlockEvent`, `EntityJumpEvent`, `EntityLoadCrossbowEvent`, `EntityLungeEvent`, `EntityMoveEvent`, `EntityPathfindEvent`, `EntityPortalReadyEvent`, `EntityPushedByEntityAttackEvent`, `EntityRemoveFromWorldEvent`, `EntityTeleportEndGatewayEvent`, `EntityToggleSitEvent`, `EntityZapEvent`, `ExperienceOrbMergeEvent`, `FishHookStateChangeEvent`, `ItemTransportingEntityValidateTargetEvent`, `PhantomPreSpawnEvent`, `PlayerNaturallySpawnCreaturesEvent`, `PreCreatureSpawnEvent`, `PreSpawnerSpawnEvent`, `ProjectileCollideEvent`, `PufferFishStateChangeEvent`, `ShulkerDuplicateEvent`, `SkeletonHorseTrapEvent`, `SlimeChangeDirectionEvent`, `SlimePathfindEvent`, `SlimeSwimEvent`, `SlimeTargetLivingEntityEvent`, `SlimeWanderEvent`, `SulfurCubeSwallowItemEvent`, `TameableDeathMessageEvent`, `ThrownEggHatchEvent`, `TurtleGoHomeEvent`, `TurtleLayEggEvent`, `TurtleStartDiggingEvent`, `WaterBottleSplashEvent`, `WitchConsumePotionEvent`, `WitchReadyPotionEvent`, `WitchThrowPotionEvent` |
+| player | `AsyncChatEvent`, `AsyncChatDecorateEvent`, `AsyncChatCommandDecorateEvent`, `AsyncPlayerSpawnLocationEvent`, `CartographyItemEvent`, `IllegalPacketEvent`, `PlayerAdvancementCriterionGrantEvent`, `PlayerArmSwingEvent`, `PlayerArmorChangeEvent`, `PlayerAttackEntityCooldownResetEvent`, `PlayerAttemptPickupItemEvent`, `PlayerBedFailEnterEvent`, `PlayerBucketFishEvent`, `PlayerChangeBeaconEffectEvent`, `PlayerClientLoadedWorldEvent`, `PlayerClientOptionsChangeEvent`, `PlayerConnectionCloseEvent`, `PlayerCustomClickEvent`, `PlayerDeepSleepEvent`, `PlayerFailMoveEvent`, `PlayerFlowerPotManipulateEvent`, `PlayerHandshakeEvent`, `PlayerInsertLecternBookEvent`, `PlayerInventorySlotChangeEvent`, `PlayerItemCooldownEvent`, `PlayerItemFrameChangeEvent`, `PlayerItemGroupCooldownEvent`, `PlayerJumpEvent`, `PlayerLaunchProjectileEvent`, `PlayerLecternPageChangeEvent`, `PlayerLoomPatternSelectEvent`, `PlayerMapFilledEvent`, `PlayerPickupExperienceEvent`, `PlayerPostRespawnEvent`, `PlayerPurchaseEvent`, `PlayerReadyArrowEvent`, `PlayerServerFullCheckEvent`, `PlayerSetSpawnEvent`, `PlayerShieldDisableEvent`, `PlayerSignCommandPreprocessEvent`, `PlayerStartSpectatingEntityEvent`, `PlayerStonecutterRecipeSelectEvent`, `PlayerStopSpectatingEntityEvent`, `PlayerStopUsingItemEvent`, `PlayerSwapWithEquipmentSlotEvent`, `PlayerTeleportEndGatewayEvent`, `PlayerToggleEntityAgeLockEvent`, `PlayerTradeEvent`, `PlayerUseUnknownEntityEvent`, `PrePlayerAttackEntityEvent` |
+| connection and configuration | `AsyncPlayerConnectionConfigureEvent`, `PlayerCodeOfConductSendEvent`, `PlayerConnectionInitialConfigureEvent`, `PlayerConnectionReconfigureEvent`, `PlayerConnectionValidateLoginEvent`, `PlayerChunkLoadEvent`, `PlayerChunkUnloadEvent`, `ClientTickEndEvent`, `UncheckedSignChangeEvent` |
+| server, world and commands | `AsyncPlayerSendCommandsEvent`, `AsyncPlayerSendSuggestionsEvent`, `CommandRegisteredEvent`, `UnknownCommandEvent`, `AsyncTabCompleteEvent`, `AsyncServerDataFixerRemoveBlockEntityEvent`, `GS4QueryEvent`, `ServerExceptionEvent`, `ServerResourcesReloadedEvent`, `WhitelistStateUpdateEvent`, `WhitelistToggleEvent`, `ClockTimeSkipEvent`, `StructuresLocateEvent`, `WorldDifficultyChangeEvent`, `WorldGameRuleChangeEvent`, `WorldBorderBoundsChangeEvent`, `WorldBorderBoundsChangeFinishEvent`, `WorldBorderCenterChangeEvent`, `ItemCraftedEvent` |
+| profiles and registries | `FillProfileEvent`, `LookupProfileEvent`, `PreFillProfileEvent`, `PreLookupProfileEvent`, `ProfileWhitelistVerifyEvent`, `RegistryComposeEvent`, `RegistryEntryAddEvent` |
+
 ### Upstream events declared but never fired
 
 A plugin can register for these, but nothing fires them yet: `area-effect-cloud-apply`,
@@ -229,18 +669,29 @@ upstream's to fire; listed so a mod port doesn't count on them.
 ### Gaps by need
 
 Implementation order for `ROADMAP.md` item 6, most needed first. Items in one line ship together.
+Every ❌ and 🟡 row in the tables above falls in one of these batches.
 
-1. **A:** item use over time (`finish-using`, `release-using`, use duration) for plugin items;
-   death and kill details (killer, drops, xp) in an event; sided item storage with
-   transactions, and a fluid storage next to it.
-2. **A:** loot table changes (add pools or entries to a table by id, like `LootTableEvents.MODIFY`);
-   biome feature additions (ores and plants placed by the generator).
-3. **A:** modded entity types with default attributes and custom synced entity data (large:
-   needs the entity registry overlay, spawning, tracking and AI).
-4. **B:** per-world tick events; datapack reload and tags loaded events; equipment change
-   event; copy data on respawn; `can-survive` block hook; destroy speed and harvest check;
-   projectile hit on a plugin block; item hit and mine hooks; use on entity for plugin items.
-5. **B:** fuel, strip/till/flatten/wax and brewing; modded mob effects and particles;
-   modded spawn entries; hooks for vanilla blocks next to their own behaviour.
-6. **C:** the rest of the C rows (fall on, ladder, piston reaction, light emission from data,
-   oxidation and path-type registries, modded game rules, sleep details, knockback and fall).
+1. **A, items and drops:** item use over time for plugin items (`finish-using`, `release-using`,
+   use ticks, stop using); a drops event for any block (`BlockDropsEvent`) and for entities
+   (`LivingDropsEvent`, experience), and killer and damage source in the death event.
+2. **A, menus and storage:** menu data slots (progress bars) and menu buttons
+   (`clickMenuButton`); sided item storage with transactions, a fluid storage, and a generic
+   lookup so plugins can expose and find each other's storages (energy included).
+3. **A, data and loot:** loot table changes (add pools or entries by id); entity and player
+   attachments that copy on respawn (`COPY_FROM`, `PlayerEvent.Clone`); per-player data files.
+4. **A, world generation:** biome feature additions (ores, plants) and spawn entries.
+5. **A, entities:** modded entity types with default attributes, custom synced entity data,
+   projectiles and AI (large: entity registry overlay, spawning, tracking).
+6. **B, ticks and lifecycle:** per-world and per-player tick events; datapack reload, tags
+   loaded and data sync events, and reload listeners for mod data; separate server
+   starting/started/stopped events; equipment change event; mob effect add/remove events.
+7. **B, block and item hooks:** `on-place` (any placement), `can-survive`, destroy speed and
+   harvest check, projectile hit, after-break drops (`spawnAfterBreak`), explosion hooks;
+   `use-first` (`onItemUseFirst`), hit and mine hooks, left click on entity, use on entity, item
+   abilities (`canPerformAction`); hooks for vanilla blocks next to their own behaviour.
+8. **B, content registries:** default component changes for vanilla items; strip, till,
+   flatten and wax; fuel and brewing; modded mob effects, particles and fluids; fake players.
+9. **C:** everything else marked C (fall and bounce, ladders, pistons, light and friction per
+   position, path types, data maps, compost and oxidation, modded game rules and argument
+   types, sleep details, knockback, critical hits, the Paper events Pumpkin doesn't declare,
+   and upstream's never-fired events).
