@@ -846,6 +846,17 @@ interface %world {
         /// Sets the block state at the specified position.
         set-block-state: func(pos: block-pos, state: u16, update-flags: block-flags);
 
+        /// The block state ids at `positions`, in order, as one `get-block-state-id` call each
+        /// would return them.
+        get-block-state-ids: func(positions: list<block-pos>) -> list<u16>;
+
+        /// The block state ids of the box from `min` to `max` (both included), x fastest, then
+        /// z, then y. Fails above 32,768 blocks.
+        get-block-states-in-box: func(min: block-pos, max: block-pos) -> result<list<u16>, string>;
+
+        /// Sets each `(pos, state)` with the same flags, as one `set-block-state` call each would.
+        set-block-states: func(changes: list<tuple<block-pos, u16>>, update-flags: block-flags);
+
         /// Gets the block type at the specified position.
         get-block: func(pos: block-pos) -> block;
 
@@ -973,6 +984,9 @@ interface %world {
         /// vanilla's `BlockEntity.saveWithoutMetadata`. Also covers block entities Pumpkin has no
         /// implementation of (a mod's), whose data is only stored with the chunk.
         get-block-entity-data: func(pos: block-pos) -> option<nbt-tree>;
+
+        /// `get-block-entity-data` for each of `positions`, in order.
+        get-block-entity-data-list: func(positions: list<block-pos>) -> list<option<nbt-tree>>;
 
         /// Replaces the block entity at `pos` with one of `block-entity-type` (namespaced, for
         /// example `minecraft:chest`) holding `data`, saves it with the chunk, and sends it to

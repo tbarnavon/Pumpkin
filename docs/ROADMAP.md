@@ -35,8 +35,10 @@ ticking block entity now costs ~0.4 µs, so ~100,000 of them fit in a 50 ms tick
 1. ~~**Batched per-tick hooks.**~~ done (2026-10-03, `1fa249829`): `ticker`, `entity-inside`,
    `step-on` and `inventory-tick` are queued during the tick and sent as one
    `handle-tick-batch` call per plugin and world. Target (~1 µs per block entity) met: 0.43 µs.
-2. **Bulk world access.** Read or change a whole inventory (and other bulk data) in one call,
-   not slot by slot.
+2. ~~**Bulk world access.**~~ done (2026-10-03, `BULKWORLD`): `world.get-block-state-ids`,
+   `get-block-states-in-box` (up to 32,768 blocks), `set-block-states` and
+   `get-block-entity-data-list`. Whole inventories were already one call upstream
+   (`inventory.get-all-items` / `set-all-items`).
 3. **Worker jobs.** `scheduler.spawn-job(handler, bytes)` runs the plugin's `run-job` export in
    a worker instance (same `InstancePre`, own memory) on a thread pool; the result comes back as
    an event on a later tick. Workers get no world access. For autocrafting (AE2 calculates on a

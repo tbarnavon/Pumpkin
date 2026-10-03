@@ -84,6 +84,7 @@ each plugin one `handle-tick-batch` call per world after block entities tick (se
 | `world.set-redstone-output`, `set-comparator-output` | Redstone and comparator values held by the host | `a6f9674ba` |
 | `world.set-redstone-output-sides` | Weak and strong power per side | `7b1acc125` |
 | `world.get-entities-in-box` | Entities in a box | `4c0cc6ae9` |
+| `world.get-block-state-ids`, `get-block-states-in-box`, `set-block-states`, `get-block-entity-data-list` | Bulk block and block-entity reads and writes in one call (whole inventories already exist upstream: `inventory.get-all-items` / `set-all-items`) | `BULKWORLD` |
 | `modded.set-block-collision-shape` | Per-position collision boxes held by the host | `d36eaec65` |
 | `server.get-players-tracking-chunk`, `get-players-tracking-entity` | `PlayerLookup.tracking` | `4c0cc6ae9` |
 | `server.set-flammable` | `FlammableBlockRegistry.add` | `786ca3cd8` |

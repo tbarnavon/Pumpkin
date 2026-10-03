@@ -62,6 +62,7 @@ bindgen!({
         "pumpkin:plugin/world@0.1.0.[method]world.set-block-by-id": async | store | trappable,
         "pumpkin:plugin/world@0.1.0.[method]world.set-block-by-name": async | store | trappable,
         "pumpkin:plugin/world@0.1.0.[method]world.set-block-state": async | store | trappable,
+        "pumpkin:plugin/world@0.1.0.[method]world.set-block-states": async | store | trappable,
         "pumpkin:plugin/world@0.1.0.[method]world.set-raining": async | store | trappable,
         "pumpkin:plugin/world@0.1.0.[method]world.set-thundering": async | store | trappable,
         "pumpkin:plugin/world@0.1.0.[method]world.spawn-entity": async | store | trappable,

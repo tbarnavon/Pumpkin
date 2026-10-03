@@ -107,6 +107,7 @@ functions it needs. Each one is listed in `HOOKS.md`.
 - Events: `b9be9ddc0`, `defeddb36`, `d719b608c`, `9bf64aded`, `729862d48`, `ada7f58d6`,
   `c19760f9c`, `e8ceb3e1e`, `d75320470`, `fcad77c09`
 - Host functions: `bd7f4c35e`, `8c64bfb06`, `4c0cc6ae9`, `786ca3cd8`, `1d73c14ae`, `907bef135`
+- Bulk world access: `BULKWORLD`
 - Reorganisation (general functions out of `modded.wit` into core interfaces): `25b0b7b63`,
   `fb5343e2e`
 

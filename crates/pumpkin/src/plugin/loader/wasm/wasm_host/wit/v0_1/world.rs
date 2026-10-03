@@ -146,6 +146,52 @@ fn world_and_plugin(
     Ok((world, plugin))
 }
 
+/// Most blocks `world.get-block-states-in-box` reads at once (a 32x32x32 box).
+const MAX_BOX_BLOCKS: u64 = 32 * 32 * 32;
+
+/// `world.get-block-entity-data`: the block entity's data without its id, position and the
+/// host's hidden keys.
+fn block_entity_data(
+    world: &Arc<crate::world::World>,
+    pos: BlockPos,
+) -> Option<super::common::WitNbtTree> {
+    let nbt = world.get_block_entity(&pos).map_or_else(
+        || {
+            // A block entity Pumpkin has no implementation of lives only as chunk NBT.
+            world
+                .level
+                .read_chunk_sync(&pos.chunk_position(), |chunk| {
+                    chunk
+                        .pending_block_entities
+                        .lock()
+                        .unwrap_or_else(std::sync::PoisonError::into_inner)
+                        .get(&pos)
+                        .cloned()
+                })
+                .flatten()
+        },
+        |entity| {
+            let mut nbt = pumpkin_nbt::compound::NbtCompound::new();
+            entity.write_internal(&mut nbt);
+            Some(nbt)
+        },
+    );
+    nbt.map(|mut nbt| {
+        for key in [
+            "id",
+            "x",
+            "y",
+            "z",
+            crate::world::item_storage::NBT_KEY,
+            crate::world::plugin_signals::NBT_KEY,
+            crate::world::plugin_shapes::NBT_KEY,
+        ] {
+            nbt.child_tags.remove(key);
+        }
+        super::common::to_wit_nbt_tree(pumpkin_nbt::tag::NbtTag::Compound(nbt))
+    })
+}
+
 async fn set_block_state_with_store(
     mut host: Access<'_, PluginHostState, HasSelf<PluginHostState>>,
     world: Resource<World>,
@@ -686,6 +732,47 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
         Ok(world_ref.get_block_state_id(&internal_pos).as_u16())
     }
 
+    async fn get_block_state_ids(
+        &mut self,
+        world: Resource<World>,
+        positions: Vec<WitBlockPos>,
+    ) -> wasmtime::Result<Vec<u16>> {
+        let world = self.get(&world)?;
+        Ok(positions
+            .into_iter()
+            .map(|pos| {
+                world
+                    .get_block_state_id(&BlockPos::new(pos.x, pos.y, pos.z))
+                    .as_u16()
+            })
+            .collect())
+    }
+
+    async fn get_block_states_in_box(
+        &mut self,
+        world: Resource<World>,
+        min: WitBlockPos,
+        max: WitBlockPos,
+    ) -> wasmtime::Result<Result<Vec<u16>, String>> {
+        let world = self.get(&world)?;
+        let size = |a: i32, b: i32| u64::try_from(i64::from(b) - i64::from(a) + 1).unwrap_or(0);
+        let count = size(min.x, max.x) * size(min.y, max.y) * size(min.z, max.z);
+        if count > MAX_BOX_BLOCKS {
+            return Ok(Err(format!(
+                "the box has {count} blocks, more than {MAX_BOX_BLOCKS}"
+            )));
+        }
+        let mut states = Vec::with_capacity(count as usize);
+        for y in min.y..=max.y {
+            for z in min.z..=max.z {
+                for x in min.x..=max.x {
+                    states.push(world.get_block_state_id(&BlockPos::new(x, y, z)).as_u16());
+                }
+            }
+        }
+        Ok(Ok(states))
+    }
+
     async fn get_block_state(
         &mut self,
         world: Resource<World>,
@@ -1132,42 +1219,22 @@ impl pumpkin::plugin::world::HostWorld for PluginHostState {
         pos: WitBlockPos,
     ) -> wasmtime::Result<Option<super::common::WitNbtTree>> {
         let world = self.get(&world)?.clone();
-        let pos = BlockPos::new(pos.x, pos.y, pos.z);
-        let nbt = world.get_block_entity(&pos).map_or_else(
-            || {
-                // A block entity Pumpkin has no implementation of lives only as chunk NBT.
-                world
-                    .level
-                    .read_chunk_sync(&pos.chunk_position(), |chunk| {
-                        chunk
-                            .pending_block_entities
-                            .lock()
-                            .unwrap_or_else(std::sync::PoisonError::into_inner)
-                            .get(&pos)
-                            .cloned()
-                    })
-                    .flatten()
-            },
-            |entity| {
-                let mut nbt = pumpkin_nbt::compound::NbtCompound::new();
-                entity.write_internal(&mut nbt);
-                Some(nbt)
-            },
-        );
-        Ok(nbt.map(|mut nbt| {
-            for key in [
-                "id",
-                "x",
-                "y",
-                "z",
-                crate::world::item_storage::NBT_KEY,
-                crate::world::plugin_signals::NBT_KEY,
-                crate::world::plugin_shapes::NBT_KEY,
-            ] {
-                nbt.child_tags.remove(key);
-            }
-            super::common::to_wit_nbt_tree(pumpkin_nbt::tag::NbtTag::Compound(nbt))
-        }))
+        Ok(block_entity_data(
+            &world,
+            BlockPos::new(pos.x, pos.y, pos.z),
+        ))
+    }
+
+    async fn get_block_entity_data_list(
+        &mut self,
+        world: Resource<World>,
+        positions: Vec<WitBlockPos>,
+    ) -> wasmtime::Result<Vec<Option<super::common::WitNbtTree>>> {
+        let world = self.get(&world)?.clone();
+        Ok(positions
+            .into_iter()
+            .map(|pos| block_entity_data(&world, BlockPos::new(pos.x, pos.y, pos.z)))
+            .collect())
     }
 
     async fn set_block_entity_data(
@@ -1623,6 +1690,33 @@ impl pumpkin::plugin::world::HostWorldWithStore<PluginHostState> for HasSelf<Plu
         update_flags: WitBlockFlags,
     ) -> wasmtime::Result<()> {
         set_block_state_with_store(host, world, pos, state, update_flags).await
+    }
+
+    async fn set_block_states(
+        mut host: Access<'_, PluginHostState, Self>,
+        world: Resource<World>,
+        changes: Vec<(WitBlockPos, u16)>,
+        update_flags: WitBlockFlags,
+    ) -> wasmtime::Result<()> {
+        let changes = changes
+            .into_iter()
+            .map(|(pos, state)| {
+                BlockStateId::new(state)
+                    .map(|state| (BlockPos::new(pos.x, pos.y, pos.z), state))
+                    .ok_or_else(|| wasmtime::Error::msg("Invalid BlockStateId"))
+            })
+            .collect::<wasmtime::Result<Vec<_>>>()?;
+        let flags = from_wit_block_flags(update_flags);
+        let (world, plugin) = world_and_plugin(host.get(), &world)?;
+        plugin
+            .current()
+            .store
+            .pump_blocking(&mut host, move || {
+                for (pos, state) in changes {
+                    world.set_block_state(&pos, state, flags);
+                }
+            })
+            .await
     }
 }
 
