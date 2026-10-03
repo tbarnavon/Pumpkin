@@ -55,7 +55,7 @@ each plugin one `handle-tick-batch` call per world after block entities tick (se
 | export `handle-tick-batch` (`modded.tick-batch`) | One call per plugin, world and tick with all its batched per-tick hooks, in vanilla order: inventories, entity contacts, block entities | `1fa249829` |
 | `context.register-crafting-handler` + export `handle-crafting` | Crafts a grid for recipes defined in code (a mod's `CustomRecipe`) | `981c23443` |
 | `menu.open` / `update-slot` / `close` + export `handle-menu-call` | Menus whose slots the plugin defines, held by the host | `cddec52a8`, `31377bbf9` |
-| `modded.open-menu` | Opens a mod's own menu type: Fabric's `open_screen`, or Forge's `OpenContainer` for Forge clients | `cddec52a8`, Forge in `FORGEMENU` |
+| `modded.open-menu` | Opens a mod's own menu type: Fabric's `open_screen`, or Forge's `OpenContainer` for Forge clients | `cddec52a8`, Forge in `a839b7299` |
 | `context.register-login-query` | Login-phase custom query to each client | `c19760f9c` |
 | `context.register-configuration-payload` | Configuration-phase payload to each client | `d75320470` |
 | `modded.register-component-stream-codec` | A modded component's network codec, described once | `728d5c4e5` |

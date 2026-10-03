@@ -73,6 +73,7 @@ project must support.
 - `b708340f8` Forge detection and the `forge:handshake` configuration tasks (`pumpkin-forge/`
   new crate, `pumpkin/src/net/java/loaders.rs`, `login/login_acknowledged.rs`,
   `pumpkin-config/src/modded.rs`)
+- `a839b7299` modded menus on Forge clients (`WH/modded.rs`)
 
 **Files:** `pumpkin-fabric/` (new crate, tested against a payload a real Fabric server sent),
 `pumpkin-protocol/src/codec/{modded_component,data_component}.rs`,
