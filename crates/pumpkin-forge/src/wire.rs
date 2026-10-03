@@ -56,6 +56,10 @@ impl Message {
     }
 }
 
+/// `SimpleChannel` id of `OpenContainer` (play, clientbound): registered after the seven
+/// configuration messages and `SpawnEntity`.
+pub const OPEN_CONTAINER: i32 = 8;
+
 /// Most entries a client may send in one list.
 const MAX_ENTRIES: usize = 4096;
 /// `ModVersions.STRING_CODEC`: `ByteBufCodecs.stringUtf8(0x100)`.

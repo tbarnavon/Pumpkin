@@ -3,6 +3,7 @@
 use std::sync::Arc;
 
 use pumpkin_data::{Block, BlockDirection, BlockStateId, HorizontalFacingExt};
+use pumpkin_protocol::codec::var_int::VarInt;
 use pumpkin_protocol::java::client::play::CCustomPayload;
 use pumpkin_protocol::ser::NetworkWriteExt;
 use pumpkin_util::math::position::BlockPos;
@@ -35,6 +36,15 @@ use super::pumpkin::plugin::modded::{
 };
 use super::pumpkin::plugin::player::Player as WitPlayer;
 use super::pumpkin::plugin::world::World as WitWorld;
+
+/// Whether the player joined with Forge, whose handshake address carries Forge's marker.
+fn is_forge_client(player: &Player) -> bool {
+    matches!(
+        player.client.as_ref(),
+        crate::net::ClientPlatform::Java(client)
+            if pumpkin_forge::wire::forge_marker(&client.server_address).is_some()
+    )
+}
 
 const fn to_wit_pos(pos: BlockPos) -> WitBlockPos {
     WitBlockPos {
@@ -1346,14 +1356,12 @@ impl wit::HostWithStore<PluginHostState> for HasSelf<PluginHostState> {
         {
             return Ok(Err(DISABLED.to_string()));
         }
-        if pumpkin_data::dynamic::names::modded_id(
+        let Some(menu_raw_id) = pumpkin_data::dynamic::names::modded_id(
             pumpkin_data::dynamic::names::SyncedRegistry::Menu,
             &menu_type,
-        )
-        .is_none()
-        {
+        ) else {
             return Ok(Err(format!("unknown modded menu type {menu_type}")));
-        }
+        };
         let open = match super::menu::resolve(host.get(), &player, handler_id, menu).await? {
             Ok(open) => open,
             Err(error) => return Ok(Err(error)),
@@ -1367,26 +1375,33 @@ impl wit::HostWithStore<PluginHostState> for HasSelf<PluginHostState> {
                 player.open_custom_screen(
                     |sync_id| open.handler(sync_id),
                     |sync_id| {
-                        // fabric-menu-api-v1 `Networking.OpenScreenPayload.write`.
+                        let version = pumpkin_util::version::JavaMinecraftVersion::V_26_3;
                         let mut payload = Vec::new();
-                        let written = payload
-                            .write_string(&menu_type)
-                            .and_then(|()| payload.write_u8(sync_id))
-                            .and_then(|()| {
-                                payload.write_component(
-                                    &open.title,
-                                    &pumpkin_util::version::JavaMinecraftVersion::V_26_3,
-                                )
-                            });
+                        let (channel, written) = if is_forge_client(&player) {
+                            // Forge's `OpenContainer` (`IForgeServerPlayer.openMenu`): the message
+                            // id, the menu type's raw id, the window id, the title, then the
+                            // extra data as a byte array.
+                            let written = payload
+                                .write_var_int(&VarInt(pumpkin_forge::wire::OPEN_CONTAINER))
+                                .and_then(|()| payload.write_var_int(&VarInt(menu_raw_id.into())))
+                                .and_then(|()| payload.write_var_int(&VarInt(sync_id.into())))
+                                .and_then(|()| payload.write_component(&open.title, &version))
+                                .and_then(|()| payload.write_var_int(&VarInt(data.len() as i32)));
+                            (pumpkin_forge::wire::HANDSHAKE_CHANNEL, written)
+                        } else {
+                            // fabric-menu-api-v1 `Networking.OpenScreenPayload.write`.
+                            let written = payload
+                                .write_string(&menu_type)
+                                .and_then(|()| payload.write_u8(sync_id))
+                                .and_then(|()| payload.write_component(&open.title, &version));
+                            ("fabric-menu-api-v1:open_screen", written)
+                        };
                         if let Err(error) = written {
                             tracing::error!(%error, "Failed to write a modded menu open packet");
                             return;
                         }
                         payload.extend_from_slice(&data);
-                        player.try_send_client_packet(&CCustomPayload::new(
-                            "fabric-menu-api-v1:open_screen",
-                            &payload,
-                        ));
+                        player.try_send_client_packet(&CCustomPayload::new(channel, &payload));
                     },
                 );
             })

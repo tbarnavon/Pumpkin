@@ -33,7 +33,7 @@ login queries. The login channel `forge:login` only carries `LoginWrapper` from 
 | Piece | Channel / message | Source | Status | Left |
 |:--|:--|:--|:--|:--|
 | Entities with spawn data | `forge:handshake` `SpawnEntity` | `network/packets/SpawnEntity` | ❌ | With modded entities |
-| Menus with extra data | `forge:handshake` `OpenContainer` | `network/packets/OpenContainer` | ❌ | Same shape as Fabric's `open_screen`; reuse `modded.open-menu` |
+| Menus with extra data | `forge:handshake` `OpenContainer` (message 8) | `network/packets/OpenContainer`, `IForgeServerPlayer.openMenu` | 🟡 `modded.open-menu` sends it to Forge clients | Real-client test |
 | Channel registration changes | `forge:channel_registration` | `ChannelListManager` | ❌ | |
 | Split payloads | `forge:split` (parts of 1 MiB) | `filters/VanillaPacketSplitter` | ❌ | Check whether it is still wired in this version |
 | Server list | `forgeData` (mods, channels) in the status JSON | `ServerStatusPing` | ➖ | Only changes the client's server list icon |
