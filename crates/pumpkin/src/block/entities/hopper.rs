@@ -183,7 +183,9 @@ impl HopperBlockEntity {
             let mut success = if self.is_empty() {
                 false
             } else {
-                self.eject_items(world)
+                // The block state's facing, not `self.facing`: a hopper read from its chunk
+                // never gets `set_block_state`, so its field stays at the default (down).
+                self.eject_items(world, state.facing)
             };
             if !self.inventory_full() {
                 success |= self.suck_in_items(world);
@@ -368,11 +370,10 @@ impl HopperBlockEntity {
         Some(extraction.one_item)
     }
 
-    fn eject_items(&self, world: &Arc<World>) -> bool {
+    fn eject_items(&self, world: &Arc<World>, facing: FacingHopper) -> bool {
         // TODO getEntityContainer
 
-        if let Some(container) =
-            world.get_inventory_at(&self.position.offset(to_offset(&self.facing)))
+        if let Some(container) = world.get_inventory_at(&self.position.offset(to_offset(&facing)))
         {
             // TODO check WorldlyContainer
             let mut is_full = true;
@@ -386,7 +387,7 @@ impl HopperBlockEntity {
             if is_full {
                 return false;
             }
-            let target_pos = self.position.offset(to_offset(&self.facing));
+            let target_pos = self.position.offset(to_offset(&facing));
             for slot in 0..Self::INVENTORY_SIZE {
                 let item = self.get_stack(slot);
                 if item.is_empty() {
