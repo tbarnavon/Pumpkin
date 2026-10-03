@@ -325,3 +325,17 @@ remote upgrade and heavy drawer checks, which now run through the tick batch.
 Docs the same day: every loader's client networking audited against its 26.3 source
 (`modloaders/`), and the hook catalog in `HOOKS.md` with full lists from vanilla, NeoForge,
 Fabric API and Paper.
+
+## Loaders: NeoForge and Forge clients (2026-10-03 to 10-04)
+
+- One detection step for every loader (`pumpkin/src/net/java/loaders.rs`): Forge by the
+  `\0FORGE` marker in the handshake address; otherwise the server announces Fabric's and
+  NeoForge's channels and pings, and the client's answers before the pong decide.
+- NeoForge (`pumpkin-neoforge`): channel negotiation, frozen registry sync, `c:` tasks and
+  NeoForge's synced config. A plain NeoForge 26.3.0.46-beta client joins and plays. Storage
+  Drawers' NeoForge build crashed the user's client on its own; not investigated.
+- Forge (`pumpkin-forge`): the `forge:handshake` tasks (mod list, channel versions, registry
+  sync with acknowledgements, Forge's server config) and `OpenContainer` for modded menus.
+  With Storage Drawers 26.3.0.1 (Forge build, same version as the Fabric dump and plugin), a
+  Forge player and a Fabric player play on the same server: drawers, their GUI and the framing
+  table work. The plugin needed no change.
