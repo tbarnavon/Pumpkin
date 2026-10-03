@@ -61,7 +61,8 @@ lock, resources, call record). Limit today: ~1,250 ticking plugin block entities
      `advanced_open_screen`; config sync, data maps, extensible enum and feature flag checks;
      recipe content, attachments, `neoforge:split`, custom ingredients
      (`modloaders/neoforge.md`).
-   - **Quilt:** one real-client test of a Fabric mod; no QSL exists for 26.x.
+   - **Quilt:** one real-client test of Storage Drawers on Quilt Loader 0.31 (it runs Fabric API
+     on 26.3; no QSL exists for 26.x).
    - **Forge:** `\0FORGE` detection, then the `forge:handshake` tasks (mod list, channel
      versions, registry sync, config sync), `OpenContainer`, `SpawnEntity`
      (`modloaders/forge.md`).

@@ -15,7 +15,7 @@ loader's source for Minecraft 26.3 and cites the classes.
 | Loader | Status | File |
 |:--|:--|:--|
 | Fabric | 🟡 what Storage Drawers 26.3.0.1 needs, tested with a real client; the rest is ordered in the file | [fabric.md](fabric.md) |
-| Quilt | ❌ not tested: no QSL for 26.x, so Quilt clients use Fabric's protocol | [quilt.md](quilt.md) |
+| Quilt | 🟡 expected to work through the Fabric handshake (Quilt Loader 0.31 runs Fabric API on 26.3; no QSL for 26.x); not tested | [quilt.md](quilt.md) |
 | NeoForge | ❌ not started: next loader (`../ROADMAP.md`, item 7) | [neoforge.md](neoforge.md) |
 | Forge (MinecraftForge) | ❌ not started: after NeoForge; handshake on `forge:handshake` in configuration | [forge.md](forge.md) |
 
