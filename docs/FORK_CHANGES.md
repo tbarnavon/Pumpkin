@@ -70,7 +70,7 @@ project must support.
   for both loaders (`pumpkin-neoforge/` new crate, `pumpkin/src/net/java/loaders.rs` new,
   `pumpkin-config/src/modded.rs`, `clippy.toml` new, for the `NeoForge` doc word)
 - `3035bfca5` NeoForge's synced config
-- `FORGEHS` Forge detection and the `forge:handshake` configuration tasks (`pumpkin-forge/`
+- `b708340f8` Forge detection and the `forge:handshake` configuration tasks (`pumpkin-forge/`
   new crate, `pumpkin/src/net/java/loaders.rs`, `login/login_acknowledged.rs`,
   `pumpkin-config/src/modded.rs`)
 

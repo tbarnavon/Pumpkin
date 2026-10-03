@@ -4,7 +4,7 @@ Status: ✅ done, 🟡 partial, ❌ missing, ➖ not needed. The pieces are expl
 [README.md](README.md).
 
 Audited against the MinecraftForge source for Minecraft 26.3 (branch `26.3`): the
-`net.minecraftforge.network` package. The configuration tasks are implemented (`FORGEHS`,
+`net.minecraftforge.network` package. The configuration tasks are implemented (`b708340f8`,
 `pumpkin-forge` crate, `[modded] forge_handshake`), not yet tested with a real client.
 
 Unlike NeoForge, the modern Forge handshake runs in the **configuration** phase on one
