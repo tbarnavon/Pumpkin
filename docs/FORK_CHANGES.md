@@ -66,7 +66,7 @@ project must support.
 
 - `4843eeb1c` Fabric configuration handshake and registry sync
 - `728d5c4e5` stream codecs for modded component types
-- `NEOHANDSHAKE` NeoForge detection, channel negotiation and registry sync; one detection step
+- `a904c6276` NeoForge detection, channel negotiation and registry sync; one detection step
   for both loaders (`pumpkin-neoforge/` new crate, `pumpkin/src/net/java/loaders.rs` new,
   `pumpkin-config/src/modded.rs`, `clippy.toml` new, for the `NeoForge` doc word)
 

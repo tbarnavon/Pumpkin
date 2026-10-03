@@ -5,7 +5,7 @@ Status: ✅ done, 🟡 partial, ❌ missing, ➖ not needed. The pieces are expl
 
 Audited against the NeoForge source for Minecraft 26.3 (branch `26.3.x`): the
 `net.neoforged.neoforge.network` package and the patches to `ServerConfigurationPacketListenerImpl`
-and `ClientConfigurationPacketListenerImpl`. Implemented so far (`NEOHANDSHAKE`, `pumpkin-neoforge`
+and `ClientConfigurationPacketListenerImpl`. Implemented so far (`a904c6276`, `pumpkin-neoforge`
 crate, `[modded] neoforge_handshake`): detection, channel negotiation, registry sync of the
 registries mods add to, and the `c:` tasks; not yet tested with a real client. The rest is the work list
 for the NeoForge adapter (`../ROADMAP.md`, item 7).
