@@ -359,10 +359,18 @@ impl PlayerInventory {
             .main_inventory
             .read()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
+        // Vanilla's `Inventory.getSuitableHotbarSlot`: an empty slot, else one without
+        // enchantments, starting from the selected slot.
         let selected_slot = self.get_selected_slot() as usize;
         for i in 0..Self::HOTBAR_SIZE {
             let check_index = (i + selected_slot) % 9;
             if inv[check_index].is_empty() {
+                return check_index;
+            }
+        }
+        for i in 0..Self::HOTBAR_SIZE {
+            let check_index = (i + selected_slot) % 9;
+            if !inv[check_index].has_enchantments() {
                 return check_index;
             }
         }

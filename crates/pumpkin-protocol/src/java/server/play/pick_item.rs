@@ -1,4 +1,6 @@
-use pumpkin_data::packet::serverbound::play::{PICK_ITEM_FROM_BLOCK, PICK_ITEM_FROM_ENTITY};
+use pumpkin_data::packet::serverbound::play::{
+    PICK_ITEM, PICK_ITEM_FROM_BLOCK, PICK_ITEM_FROM_ENTITY,
+};
 use pumpkin_macros::java_packet;
 use pumpkin_util::math::position::BlockPos;
 
@@ -62,5 +64,20 @@ impl crate::ClientPacket for SPickItemFromEntity {
         write.write_var_int(&self.id)?;
         write.write_bool(self.include_data)?;
         Ok(())
+    }
+}
+
+/// Middle click on a block or entity before 1.21.2: the client found the item in its
+/// inventory and asks to move that slot to the hotbar (`ServerboundPickItemPacket`).
+#[java_packet(PICK_ITEM)]
+pub struct SPickItem {
+    pub slot: VarInt,
+}
+
+impl<'a> ServerPacket<'a> for SPickItem {
+    fn read(bytebuf: &mut &'a [u8], _version: &JavaMinecraftVersion) -> Result<Self, ReadingError> {
+        Ok(Self {
+            slot: bytebuf.get_var_int()?,
+        })
     }
 }

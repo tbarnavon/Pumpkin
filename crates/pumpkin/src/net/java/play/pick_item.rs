@@ -90,6 +90,39 @@ impl JavaClient {
         }
     }
 
+    /// 1.21.1's middle click: swaps an inventory slot into the hotbar
+    /// (`ServerGamePacketListenerImpl.handlePickItem`, `Inventory.pickSlot`).
+    pub fn handle_pick_item(
+        &self,
+        player: &Arc<Player>,
+        pick_item: &pumpkin_protocol::java::server::play::SPickItem,
+    ) {
+        // Vanilla trusts the slot; only main inventory slots can be picked.
+        let Ok(slot) = usize::try_from(pick_item.slot.0) else {
+            return;
+        };
+        if slot >= PlayerInventory::MAIN_SIZE {
+            return;
+        }
+        player.inventory.swap_slot_with_hotbar(slot);
+
+        let selected = player.inventory.get_selected_slot();
+        for changed in [usize::from(selected), slot] {
+            let stack = player.inventory.get_slot(changed);
+            player.try_send_client_packet(
+                &pumpkin_protocol::java::client::play::CSetContainerSlot::new(
+                    -2,
+                    0,
+                    changed as i16,
+                    &pumpkin_protocol::codec::item_stack_seralizer::ItemStackSerializer::from(
+                        stack,
+                    ),
+                ),
+            );
+        }
+        player.try_send_client_packet(&CSetSelectedSlot::new(selected as i8));
+    }
+
     /// Selects the picked stack if the player has it, or puts it in the hotbar in creative.
     fn pick(player: &Arc<Player>, stack: ItemStack) {
         let slot_with_stack = player.inventory().get_slot_with_stack(&stack);

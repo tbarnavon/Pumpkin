@@ -917,6 +917,12 @@ impl JavaClient {
             id if id == SSetPlayerGround::to_id(version) => {
                 self.handle_player_ground(player, &SSetPlayerGround::read(&mut payload, &version)?);
             }
+            id if id == pumpkin_protocol::java::server::play::SPickItem::to_id(version) => {
+                self.handle_pick_item(
+                    player,
+                    &pumpkin_protocol::java::server::play::SPickItem::read(&mut payload, &version)?,
+                );
+            }
             id if id == SPickItemFromBlock::to_id(version) => {
                 self.handle_pick_item_from_block(
                     player,
