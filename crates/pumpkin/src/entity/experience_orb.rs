@@ -102,6 +102,28 @@ impl EntityBase for ExperienceOrbEntity {
         &self.entity
     }
 
+    fn send_java_spawn_packet(&self, client: &crate::net::java::JavaClient) {
+        // 1.21.1 spawns an orb with its own packet, which carries its value
+        // (`ExperienceOrb.getAddEntityPacket`); the generic one would show the smallest orb.
+        let packet = pumpkin_protocol::java::client::play::CAddExperienceOrb::new(
+            self.entity.entity_id.into(),
+            self.entity.pos.load(),
+            self.amount.min(i16::MAX as u32) as i16,
+        );
+        if let Ok(data) = client.serialize_packet(&packet) {
+            client.try_enqueue_packet(data);
+        }
+        if let Some(meta) = self.java_spawn_metadata(pumpkin_data::packet::CURRENT_MC_VERSION) {
+            let meta_packet = pumpkin_protocol::java::client::play::CSetEntityMetadata::new(
+                self.entity.entity_id.into(),
+                meta,
+            );
+            if let Ok(data) = client.serialize_packet(&meta_packet) {
+                client.try_enqueue_packet(data);
+            }
+        }
+    }
+
     fn on_player_collision(&self, player: &Arc<Player>) {
         if player.living_entity.health.load() > 0.0 {
             let can_pickup = if let Ok(mut delay) = player.experience_pick_up_delay.try_lock()

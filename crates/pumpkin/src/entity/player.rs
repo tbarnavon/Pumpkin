@@ -1629,7 +1629,20 @@ impl Player {
     pub fn try_send_slot_set_packet(&self, packet: &CSetPlayerInventory) {
         match self.client.as_ref() {
             ClientPlatform::Java(java) => {
-                if let Ok(data) = java.serialize_packet(packet) {
+                // Before 1.21.2 an inventory slot is set with container id -2.
+                let data = if pumpkin_data::packet::CURRENT_MC_VERSION
+                    < pumpkin_util::version::JavaMinecraftVersion::V_1_21_2
+                {
+                    java.serialize_packet(&CSetContainerSlot::new(
+                        -2,
+                        0,
+                        packet.slot.0 as i16,
+                        packet.item,
+                    ))
+                } else {
+                    java.serialize_packet(packet)
+                };
+                if let Ok(data) = data {
                     java.try_enqueue_packet(data);
                 }
             }
@@ -7960,7 +7973,15 @@ impl InventoryPlayer for Player {
     fn enqueue_cursor_packet(&self, packet: &CSetCursorItem) {
         match self.client.as_ref() {
             ClientPlatform::Java(java) => {
-                if let Ok(data) = java.serialize_packet(packet) {
+                // Before 1.21.2 the carried item is container -1, slot -1.
+                let data = if pumpkin_data::packet::CURRENT_MC_VERSION
+                    < pumpkin_util::version::JavaMinecraftVersion::V_1_21_2
+                {
+                    java.serialize_packet(&CSetContainerSlot::new(-1, 0, -1, packet.stack))
+                } else {
+                    java.serialize_packet(packet)
+                };
+                if let Ok(data) = data {
                     java.try_enqueue_packet(data);
                 }
             }

@@ -2,6 +2,7 @@ mod award_stats;
 pub use award_stats::*;
 mod acknowledge_block;
 mod actionbar;
+mod add_experience_orb;
 mod add_resource_pack;
 pub use add_resource_pack::*;
 mod remove_resource_pack;
@@ -116,6 +117,7 @@ mod worldevent;
 
 pub use acknowledge_block::*;
 pub use actionbar::*;
+pub use add_experience_orb::*;
 pub use block_destroy_stage::*;
 pub use block_entity_data::*;
 pub use block_event::*;
