@@ -1,5 +1,6 @@
 use crate::VarInt;
 use crate::codec::data_component::{DataComponentCodec, deserialize, serialize};
+use crate::codec::data_component_v1_21;
 use crate::codec::modded_component::ComponentStreamCodec;
 use crate::ser::{NetworkReadExt, NetworkWriteExt, ReadingError, WritingError};
 use pumpkin_data::data_component::DataComponent;
@@ -43,7 +44,7 @@ fn item_component_counts(stack: &ItemStack) -> (u8, u8) {
 /// Writes the added unknown (modded) components: raw id, then the value in the stream format a
 /// plugin registered for the type ([`ComponentStreamCodec`]), or else as a network NBT tag, which
 /// is vanilla's default stream codec for a component (`ByteBufCodecs.fromCodecWithRegistries`).
-fn write_unknown_added(
+pub(crate) fn write_unknown_added(
     stack: &ItemStack,
     length_prefixed: bool,
     write: &mut impl NetworkWriteExt,
@@ -68,7 +69,7 @@ fn write_unknown_added(
     Ok(())
 }
 
-fn write_unknown_removed(
+pub(crate) fn write_unknown_removed(
     stack: &ItemStack,
     write: &mut impl NetworkWriteExt,
 ) -> Result<(), WritingError> {
@@ -100,6 +101,17 @@ fn read_any_component_id(read: &mut impl NetworkReadExt) -> Result<ComponentId, 
         .ok_or_else(|| ReadingError::Message(format!("Unknown component ID: {id_val}")))
 }
 
+/// Reads a modded component's value, or returns `None` when `id` isn't a modded component.
+pub(crate) fn read_unknown_component(
+    read: &mut impl NetworkReadExt,
+    id: u16,
+) -> Result<Option<NbtTag>, ReadingError> {
+    if pumpkin_data::item_stack::unknown_component_name(id).is_none() {
+        return Ok(None);
+    }
+    read_unknown_value(read, id).map(Some)
+}
+
 fn read_unknown_value(read: &mut impl NetworkReadExt, id: u16) -> Result<NbtTag, ReadingError> {
     if let Some(codec) = ComponentStreamCodec::get(id) {
         return codec.decode(read);
@@ -114,7 +126,9 @@ fn serialize_item_stack_with_id(
     version: JavaMinecraftVersion,
     write: &mut impl NetworkWriteExt,
 ) -> Result<(), WritingError> {
-    if version >= JavaMinecraftVersion::V_1_20_5 {
+    if version >= JavaMinecraftVersion::V_1_20_5 && version < JavaMinecraftVersion::V_1_21_2 {
+        data_component_v1_21::write_stack(stack, item_id, write)
+    } else if version >= JavaMinecraftVersion::V_1_20_5 {
         if stack.is_empty() {
             write.put_var_int(&VarInt(0))
         } else {
@@ -219,9 +233,14 @@ fn serialize_length_prefixed_item_stack_with_id(
 fn serialize_item_cost_with_id(
     stack: &ItemStack,
     item_id: u16,
-    _version: JavaMinecraftVersion,
+    version: JavaMinecraftVersion,
     write: &mut impl NetworkWriteExt,
 ) -> Result<(), WritingError> {
+    if version < JavaMinecraftVersion::V_1_21_2 {
+        write.put_var_int(&VarInt::from(item_id))?;
+        write.put_var_int(&VarInt::from(stack.item_count))?;
+        return data_component_v1_21::write_component_list(stack, write);
+    }
     let component_count = stack
         .patch
         .iter()
@@ -429,7 +448,11 @@ impl ItemStackSerializer<'_> {
         read: &mut impl NetworkReadExt,
         version: &JavaMinecraftVersion,
     ) -> Result<ItemStackSerializer<'static>, ReadingError> {
-        if *version >= JavaMinecraftVersion::V_1_20_5 {
+        if *version >= JavaMinecraftVersion::V_1_20_5 && *version < JavaMinecraftVersion::V_1_21_2 {
+            Ok(ItemStackSerializer(Cow::Owned(
+                data_component_v1_21::read_stack(read)?,
+            )))
+        } else if *version >= JavaMinecraftVersion::V_1_20_5 {
             let serializer = Self::read(read)?;
             if *version < JavaMinecraftVersion::V_26_3 {
                 Ok(ItemStackSerializer(Cow::Owned(

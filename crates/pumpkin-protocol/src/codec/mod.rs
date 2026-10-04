@@ -1,6 +1,7 @@
 pub mod bit_set;
 pub mod bitset;
 pub mod data_component;
+mod data_component_v1_21;
 pub mod item_stack_seralizer;
 pub mod little_endian;
 pub mod lp_vector_3d;

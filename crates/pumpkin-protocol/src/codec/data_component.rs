@@ -41,7 +41,7 @@ pub fn proto_to_data_sound(id_or: &crate::IdOr<crate::SoundEvent>) -> Option<IdO
     }
 }
 
-fn deserialize_idset<T: IDSetContent>(
+pub(crate) fn deserialize_idset<T: IDSetContent>(
     seq: &mut impl NetworkReadExt,
 ) -> Result<IDSet<T>, ReadingError> {
     let id_type = seq.get_var_int()?.0;
@@ -71,7 +71,7 @@ fn deserialize_idset<T: IDSetContent>(
     }
 }
 
-fn serialize_idset<C: IDSetContent>(
+pub(crate) fn serialize_idset<C: IDSetContent>(
     idset: &IDSet<C>,
     seq: &mut impl NetworkWriteExt,
 ) -> Result<(), WritingError> {
@@ -90,7 +90,7 @@ fn serialize_idset<C: IDSetContent>(
     }
 }
 
-fn deserialize_status_effects(
+pub(crate) fn deserialize_status_effects(
     seq: &mut impl NetworkReadExt,
 ) -> Result<Vec<StatusEffectInstance>, ReadingError> {
     let effects_len = seq.get_var_int()?.0 as usize;
@@ -132,7 +132,7 @@ fn deserialize_status_effects(
     Ok(custom_effects)
 }
 
-fn serialize_status_effects(
+pub(crate) fn serialize_status_effects(
     effects: &Vec<StatusEffectInstance>,
     seq: &mut impl NetworkWriteExt,
 ) -> Result<(), WritingError> {
