@@ -282,9 +282,9 @@ impl SurfaceTerrainBuilder {
             .sample(x as f64, 0.0, z as f64)
             * 4.0)
             .round() as i32;
-        let offset = y + offset;
-        self.terracotta_bands[((offset as u64 + self.terracotta_bands.len() as u64)
-            % self.terracotta_bands.len() as u64) as usize]
-            .to_state()
+        // Vanilla's `(y + offset + len) % len`, which stays signed below y = 0.
+        let len = self.terracotta_bands.len() as i64;
+        let index = (i64::from(y + offset) + len).rem_euclid(len) as usize;
+        self.terracotta_bands[index].to_state()
     }
 }

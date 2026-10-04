@@ -2385,10 +2385,10 @@ mod tests {
         let mut bytes = Vec::new();
 
         metadata
-            .write(&mut bytes, &JavaMinecraftVersion::V_26_3)
+            .write(&mut bytes, &JavaMinecraftVersion::V_1_21)
             .unwrap();
 
-        assert_eq!(bytes, [19, 18, 2, 9, 1]);
+        assert_eq!(bytes, [18, 19, 2, 9, 1]);
     }
 
     #[test]
@@ -2426,10 +2426,10 @@ mod tests {
         let mut bytes = Vec::new();
 
         metadata
-            .write(&mut bytes, &JavaMinecraftVersion::V_26_3)
+            .write(&mut bytes, &JavaMinecraftVersion::V_1_21)
             .unwrap();
 
-        assert_eq!(bytes, [18, 1, 40]);
+        assert_eq!(bytes, [17, 1, 40]);
     }
 
     #[test]

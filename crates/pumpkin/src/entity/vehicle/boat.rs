@@ -55,7 +55,7 @@ impl BoatEntity {
         boat
     }
 
-    fn is_chest_boat(&self) -> bool {
+    const fn is_chest_boat(&self) -> bool {
         self.vehicle.entity.entity_type.id == EntityType::CHEST_BOAT.id
     }
 

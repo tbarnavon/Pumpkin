@@ -6343,112 +6343,182 @@ pub mod end_compiled {
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        ctx.sample_end_islands(pos)
+        let _ = (pos, ctx);
+        100f32
     }
     #[inline(always)]
     pub fn eval_end_3<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
-        eval_end_2(&slice_pos, ctx)
+        let _ = ctx;
+        let dx = (pos.x - 0i32) as f32;
+        let dy = (pos.y - 0i32) as f32;
+        let dz = (pos.z - 0i32) as f32;
+        (dx * dx + dy * dy + dz * dz).sqrt()
     }
     #[inline(always)]
     pub fn eval_end_4<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        ctx.sample_interpolated_noise(pos)
+        eval_end_2(pos, ctx) - eval_end_3(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_end_5<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        eval_end_3(pos, ctx) + eval_end_4(pos, ctx)
+        eval_end_4(pos, ctx).clamp(-100f32, 80f32)
     }
     #[inline(always)]
     pub fn eval_end_6<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        eval_end_5(pos, ctx) + 23.4375f32
+        let _ = (pos, ctx);
+        8f32
     }
     #[inline(always)]
     pub fn eval_end_7<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        eval_end_1(pos, ctx) * eval_end_6(pos, ctx)
+        eval_end_5(pos, ctx) - eval_end_6(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_end_8<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        eval_end_7(pos, ctx) + -23.4375f32
+        eval_end_7(pos, ctx) * 0.0078125f32
     }
     #[inline(always)]
     pub fn eval_end_9<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        eval_end_8(pos, ctx) + 0.234375f32
+        let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
+        eval_end_8(&slice_pos, ctx)
     }
     #[inline(always)]
     pub fn eval_end_10<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        eval_end_0(pos, ctx) * eval_end_9(pos, ctx)
+        ctx.sample_end_islands(pos)
     }
     #[inline(always)]
     pub fn eval_end_11<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        eval_end_10(pos, ctx) + -0.234375f32
+        eval_end_9(pos, ctx).max(eval_end_10(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_end_12<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        let val = eval_end_11(pos, ctx);
-        ctx.sample_blend_density(val, pos)
+        let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
+        eval_end_11(&slice_pos, ctx)
     }
     #[inline(always)]
     pub fn eval_end_13<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        ctx.sample_wrapper(
-            13usize,
-            WrapperType::Interpolated {
-                cell_size_xz: 8i32,
-                cell_size_y: 4i32,
-            },
-            pos,
-            &eval_end_12,
-        )
+        ctx.sample_interpolated_noise(pos)
     }
     #[inline(always)]
     pub fn eval_end_14<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        eval_end_13(pos, ctx) * 0.64f32
+        eval_end_12(pos, ctx) + eval_end_13(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_end_15<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        let c = eval_end_14(pos, ctx).clamp(-1.0, 1.0);
-        c / 2.0 - c * c * c / 24.0
+        eval_end_14(pos, ctx) + 23.4375f32
     }
     #[inline(always)]
     pub fn eval_end_16<C: NoiseEvaluationContext>(
+        pos: &pumpkin_util::math::vector3::Vector3<i32>,
+        ctx: &mut C,
+    ) -> f32 {
+        eval_end_1(pos, ctx) * eval_end_15(pos, ctx)
+    }
+    #[inline(always)]
+    pub fn eval_end_17<C: NoiseEvaluationContext>(
+        pos: &pumpkin_util::math::vector3::Vector3<i32>,
+        ctx: &mut C,
+    ) -> f32 {
+        eval_end_16(pos, ctx) + -23.4375f32
+    }
+    #[inline(always)]
+    pub fn eval_end_18<C: NoiseEvaluationContext>(
+        pos: &pumpkin_util::math::vector3::Vector3<i32>,
+        ctx: &mut C,
+    ) -> f32 {
+        eval_end_17(pos, ctx) + 0.234375f32
+    }
+    #[inline(always)]
+    pub fn eval_end_19<C: NoiseEvaluationContext>(
+        pos: &pumpkin_util::math::vector3::Vector3<i32>,
+        ctx: &mut C,
+    ) -> f32 {
+        eval_end_0(pos, ctx) * eval_end_18(pos, ctx)
+    }
+    #[inline(always)]
+    pub fn eval_end_20<C: NoiseEvaluationContext>(
+        pos: &pumpkin_util::math::vector3::Vector3<i32>,
+        ctx: &mut C,
+    ) -> f32 {
+        eval_end_19(pos, ctx) + -0.234375f32
+    }
+    #[inline(always)]
+    pub fn eval_end_21<C: NoiseEvaluationContext>(
+        pos: &pumpkin_util::math::vector3::Vector3<i32>,
+        ctx: &mut C,
+    ) -> f32 {
+        let val = eval_end_20(pos, ctx);
+        ctx.sample_blend_density(val, pos)
+    }
+    #[inline(always)]
+    pub fn eval_end_22<C: NoiseEvaluationContext>(
+        pos: &pumpkin_util::math::vector3::Vector3<i32>,
+        ctx: &mut C,
+    ) -> f32 {
+        ctx.sample_wrapper(
+            22usize,
+            WrapperType::Interpolated {
+                cell_size_xz: 8i32,
+                cell_size_y: 4i32,
+            },
+            pos,
+            &eval_end_21,
+        )
+    }
+    #[inline(always)]
+    pub fn eval_end_23<C: NoiseEvaluationContext>(
+        pos: &pumpkin_util::math::vector3::Vector3<i32>,
+        ctx: &mut C,
+    ) -> f32 {
+        eval_end_22(pos, ctx) * 0.64f32
+    }
+    #[inline(always)]
+    pub fn eval_end_24<C: NoiseEvaluationContext>(
+        pos: &pumpkin_util::math::vector3::Vector3<i32>,
+        ctx: &mut C,
+    ) -> f32 {
+        let c = eval_end_23(pos, ctx).clamp(-1.0, 1.0);
+        c / 2.0 - c * c * c / 24.0
+    }
+    #[inline(always)]
+    pub fn eval_end_25<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
@@ -6456,19 +6526,19 @@ pub mod end_compiled {
         0f32
     }
     #[inline(always)]
-    pub fn eval_end_17<C: NoiseEvaluationContext>(
+    pub fn eval_end_26<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
-        ctx.sample_wrapper(17usize, WrapperType::Cache, pos, &eval_end_3)
+        ctx.sample_wrapper(26usize, WrapperType::Cache, pos, &eval_end_12)
     }
     #[inline(always)]
-    pub fn eval_end_18<C: NoiseEvaluationContext>(
+    pub fn eval_end_27<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
     ) -> f32 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
-        eval_end_17(&slice_pos, ctx)
+        eval_end_26(&slice_pos, ctx)
     }
 }
 pub struct NoiseData {
@@ -11120,7 +11190,2911 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
         vein_gap: 228usize,
     },
     surface_estimator: BaseSurfaceEstimator {
-        full_component_stack: &[BaseNoiseFunctionComponent::Constant { value: 0f32 }],
+        full_component_stack: &[
+            BaseNoiseFunctionComponent::Gradient {
+                data: &GradientData {
+                    axis: Axis::Y,
+                    tiling: Tiling::ClampToEdge,
+                    from_coordinate: -64i32,
+                    to_coordinate: -40i32,
+                    from_value: 0f32,
+                    to_value: 1f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Gradient {
+                data: &GradientData {
+                    axis: Axis::Y,
+                    tiling: Tiling::ClampToEdge,
+                    from_coordinate: 240i32,
+                    to_coordinate: 256i32,
+                    from_value: 1f32,
+                    to_value: 0f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Gradient {
+                data: &GradientData {
+                    axis: Axis::Y,
+                    tiling: Tiling::ClampToEdge,
+                    from_coordinate: -64i32,
+                    to_coordinate: 320i32,
+                    from_value: 1.5f32,
+                    to_value: -1.5f32,
+                },
+            },
+            BaseNoiseFunctionComponent::BlendOffset,
+            BaseNoiseFunctionComponent::BlendAlpha,
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 4usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 5usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 6usize,
+                data: &LinearData {
+                    operation: LinearOperation::Mul,
+                    argument: -1f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 7usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 1f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 3usize,
+                argument2_index: 8usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::ShiftA {
+                noise_id: DoublePerlinNoiseParameters::OFFSET,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 10usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 11usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 12usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 13usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::ShiftB {
+                noise_id: DoublePerlinNoiseParameters::OFFSET,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 16usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 17usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 18usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 19usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::ShiftedNoise {
+                shift_x_index: 14usize,
+                shift_y_index: 15usize,
+                shift_z_index: 20usize,
+                data: &ShiftedNoiseData {
+                    xz_scale: 0.25f64,
+                    y_scale: 0f64,
+                    noise_id: DoublePerlinNoiseParameters::CONTINENTALNESS,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 21usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 22usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::ShiftedNoise {
+                shift_x_index: 14usize,
+                shift_y_index: 15usize,
+                shift_z_index: 20usize,
+                data: &ShiftedNoiseData {
+                    xz_scale: 0.25f64,
+                    y_scale: 0f64,
+                    noise_id: DoublePerlinNoiseParameters::EROSION,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 24usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 25usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::ShiftedNoise {
+                shift_x_index: 14usize,
+                shift_y_index: 15usize,
+                shift_z_index: 20usize,
+                data: &ShiftedNoiseData {
+                    xz_scale: 0.25f64,
+                    y_scale: 0f64,
+                    noise_id: DoublePerlinNoiseParameters::RIDGE,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 27usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 28usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Unary {
+                input_index: 29usize,
+                data: &UnaryData {
+                    operation: UnaryOperation::Abs,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 30usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.6666667f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Unary {
+                input_index: 31usize,
+                data: &UnaryData {
+                    operation: UnaryOperation::Abs,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 32usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.33333334f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 33usize,
+                data: &LinearData {
+                    operation: LinearOperation::Mul,
+                    argument: -3f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Spline {
+                spline: &SplineRepr::Standard {
+                    location_function_index: 23usize,
+                    points: &[
+                        SplinePoint {
+                            location: -1.1f32,
+                            value: &SplineRepr::Fixed { value: 0.044f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -1.02f32,
+                            value: &SplineRepr::Fixed { value: -0.2222f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.51f32,
+                            value: &SplineRepr::Fixed { value: -0.2222f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.44f32,
+                            value: &SplineRepr::Fixed { value: -0.12f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.18f32,
+                            value: &SplineRepr::Fixed { value: -0.12f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.16f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.08880186f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.69000006f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.115760356f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6400001f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.75f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.65f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.5954547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000029802322f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.6054547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000029802322f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.100000024f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.3f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.060000002f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.15f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0.1f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.060000002f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.15f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0.06f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.15f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.08880186f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.69000006f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.115760356f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6400001f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.75f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.65f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.5954547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000029802322f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.6054547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000029802322f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.100000024f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.3f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.060000002f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.15f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0.1f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.060000002f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.15f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0.06f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.1f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.08880186f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.69000006f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.115760356f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6400001f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.75f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.65f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.5954547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000029802322f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.6054547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000029802322f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.100000024f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.25f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.060000002f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.001f32 },
+                                                    derivative: 0.01f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.003f32 },
+                                                    derivative: 0.01f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0.094000004f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.060000002f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.12f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: 0.25f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.20235021f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.7161751f32,
+                                                    },
+                                                    derivative: 0.5138249f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 1.23f32 },
+                                                    derivative: 0.5138249f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.44682026f32,
+                                                    },
+                                                    derivative: 0.43317974f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.88f32 },
+                                                    derivative: 0.43317974f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.30829495f32,
+                                                    },
+                                                    derivative: 0.3917051f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.70000005f32,
+                                                    },
+                                                    derivative: 0.3917051f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.25f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.35f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.35f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.35f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.42000002f32,
+                                                    },
+                                                    derivative: 0.049000014f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.0069999998f32,
+                                                    },
+                                                    derivative: 0.07f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.021f32 },
+                                                    derivative: 0.07f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.35f32 },
+                                                    derivative: 0.658f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.42000002f32,
+                                                    },
+                                                    derivative: 0.049000014f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 34usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: -0.1f32,
+                                                                },
+                                                                derivative: 0.5f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: -0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.03f32,
+                                                                },
+                                                                derivative: 0.04f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.1f32,
+                                                                },
+                                                                derivative: 0.049f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.17f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 34usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: -0.1f32,
+                                                                },
+                                                                derivative: 0.5f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: -0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.03f32,
+                                                                },
+                                                                derivative: 0.04f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.1f32,
+                                                                },
+                                                                derivative: 0.049f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.17f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.58f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.12f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: 1f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.34792626f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.9239631f32,
+                                                    },
+                                                    derivative: 0.5760369f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 1.5f32 },
+                                                    derivative: 0.5760369f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.5391705f32,
+                                                    },
+                                                    derivative: 0.4608295f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 1f32 },
+                                                    derivative: 0.4608295f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.5391705f32,
+                                                    },
+                                                    derivative: 0.4608295f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 1f32 },
+                                                    derivative: 0.4608295f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.5f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.5f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.5f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.6f32 },
+                                                    derivative: 0.070000015f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0.099999994f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.099999994f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.5f32 },
+                                                    derivative: 0.94f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.6f32 },
+                                                    derivative: 0.070000015f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 34usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: -0.05f32,
+                                                                },
+                                                                derivative: 0.5f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: -0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.03f32,
+                                                                },
+                                                                derivative: 0.04f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.1f32,
+                                                                },
+                                                                derivative: 0.049f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.17f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 34usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: -0.05f32,
+                                                                },
+                                                                derivative: 0.5f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: -0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.03f32,
+                                                                },
+                                                                derivative: 0.04f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.1f32,
+                                                                },
+                                                                derivative: 0.049f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.17f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.58f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0.015f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                    ],
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 35usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.50375f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 36usize,
+                argument2_index: 6usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 9usize,
+                argument2_index: 37usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Add,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 38usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 39usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 40usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 41usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 42usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 2usize,
+                argument2_index: 43usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Add,
+                },
+            },
+            BaseNoiseFunctionComponent::Spline {
+                spline: &SplineRepr::Standard {
+                    location_function_index: 23usize,
+                    points: &[
+                        SplinePoint {
+                            location: -0.19f32,
+                            value: &SplineRepr::Fixed { value: 3.95f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.15f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.6f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.5f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.25f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.03f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.35f32,
+                                        value: &SplineRepr::Fixed { value: 6.25f32 },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.25f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.25f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.62f32,
+                                        value: &SplineRepr::Fixed { value: 6.25f32 },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.1f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.6f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.47f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.5f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.47f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.25f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.47f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.03f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.47f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.35f32,
+                                        value: &SplineRepr::Fixed { value: 5.47f32 },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 5.47f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 5.47f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 5.47f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 5.47f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.62f32,
+                                        value: &SplineRepr::Fixed { value: 5.47f32 },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: 0.03f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.6f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.08f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.5f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.08f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.25f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.08f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.03f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.08f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.35f32,
+                                        value: &SplineRepr::Fixed { value: 5.08f32 },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 5.08f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 5.08f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 5.08f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 5.08f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.62f32,
+                                        value: &SplineRepr::Fixed { value: 5.08f32 },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: 0.06f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.6f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 4.69f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.5f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 4.69f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.25f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 4.69f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.03f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 4.69f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.05f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: 0.45f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.3f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 4.69f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.7f32,
+                                                    value: &SplineRepr::Fixed { value: 1.56f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: 0.45f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.3f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 4.69f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.7f32,
+                                                    value: &SplineRepr::Fixed { value: 1.56f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.7f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.3f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 4.69f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.15f32,
+                                                    value: &SplineRepr::Fixed { value: 1.37f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.7f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.3f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 4.69f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.15f32,
+                                                    value: &SplineRepr::Fixed { value: 1.37f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.58f32,
+                                        value: &SplineRepr::Fixed { value: 4.69f32 },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                    ],
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 45usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -10f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 4usize,
+                argument2_index: 46usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 47usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 10f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 48usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 49usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 50usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 51usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 52usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 53usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 54usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 44usize,
+                argument2_index: 55usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Unary {
+                input_index: 56usize,
+                data: &UnaryData {
+                    operation: UnaryOperation::QuarterNegative,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 57usize,
+                data: &LinearData {
+                    operation: LinearOperation::Mul,
+                    argument: 4f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 58usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.703125f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Clamp {
+                input_index: 59usize,
+                data: &ClampData {
+                    min_value: -64f32,
+                    max_value: 64f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 60usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 0.078125f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 1usize,
+                argument2_index: 61usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 62usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.078125f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 63usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.1171875f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 0usize,
+                argument2_index: 64usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 65usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 0.1171875f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 66usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.390625f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Constant { value: 320f32 },
+            BaseNoiseFunctionComponent::FindTopSurface {
+                density_index: 67usize,
+                upper_bound_index: 68usize,
+                data: &FindTopSurfaceData {
+                    lower_bound: -64i32,
+                    cell_height: 8i32,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 69usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+        ],
     },
     multi_noise: BaseMultiNoiseRouter {
         full_component_stack: &[
@@ -17405,7 +20379,3009 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
         vein_gap: 228usize,
     },
     surface_estimator: BaseSurfaceEstimator {
-        full_component_stack: &[BaseNoiseFunctionComponent::Constant { value: 0f32 }],
+        full_component_stack: &[
+            BaseNoiseFunctionComponent::Gradient {
+                data: &GradientData {
+                    axis: Axis::Y,
+                    tiling: Tiling::ClampToEdge,
+                    from_coordinate: -64i32,
+                    to_coordinate: -40i32,
+                    from_value: 0f32,
+                    to_value: 1f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Gradient {
+                data: &GradientData {
+                    axis: Axis::Y,
+                    tiling: Tiling::ClampToEdge,
+                    from_coordinate: 304i32,
+                    to_coordinate: 320i32,
+                    from_value: 1f32,
+                    to_value: 0f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Gradient {
+                data: &GradientData {
+                    axis: Axis::Y,
+                    tiling: Tiling::ClampToEdge,
+                    from_coordinate: -64i32,
+                    to_coordinate: 320i32,
+                    from_value: 1.5f32,
+                    to_value: -1.5f32,
+                },
+            },
+            BaseNoiseFunctionComponent::BlendOffset,
+            BaseNoiseFunctionComponent::BlendAlpha,
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 4usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 5usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 6usize,
+                data: &LinearData {
+                    operation: LinearOperation::Mul,
+                    argument: -1f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 7usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 1f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 3usize,
+                argument2_index: 8usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::ShiftA {
+                noise_id: DoublePerlinNoiseParameters::OFFSET,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 10usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 11usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 12usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 13usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::ShiftB {
+                noise_id: DoublePerlinNoiseParameters::OFFSET,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 16usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 17usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 18usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 19usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::ShiftedNoise {
+                shift_x_index: 14usize,
+                shift_y_index: 15usize,
+                shift_z_index: 20usize,
+                data: &ShiftedNoiseData {
+                    xz_scale: 0.25f64,
+                    y_scale: 0f64,
+                    noise_id: DoublePerlinNoiseParameters::CONTINENTALNESS,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 21usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 22usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::ShiftedNoise {
+                shift_x_index: 14usize,
+                shift_y_index: 15usize,
+                shift_z_index: 20usize,
+                data: &ShiftedNoiseData {
+                    xz_scale: 0.25f64,
+                    y_scale: 0f64,
+                    noise_id: DoublePerlinNoiseParameters::EROSION,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 24usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 25usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::ShiftedNoise {
+                shift_x_index: 14usize,
+                shift_y_index: 15usize,
+                shift_z_index: 20usize,
+                data: &ShiftedNoiseData {
+                    xz_scale: 0.25f64,
+                    y_scale: 0f64,
+                    noise_id: DoublePerlinNoiseParameters::RIDGE,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 27usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 28usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Unary {
+                input_index: 29usize,
+                data: &UnaryData {
+                    operation: UnaryOperation::Abs,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 30usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.6666667f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Unary {
+                input_index: 31usize,
+                data: &UnaryData {
+                    operation: UnaryOperation::Abs,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 32usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.33333334f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 33usize,
+                data: &LinearData {
+                    operation: LinearOperation::Mul,
+                    argument: -3f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Spline {
+                spline: &SplineRepr::Standard {
+                    location_function_index: 23usize,
+                    points: &[
+                        SplinePoint {
+                            location: -1.1f32,
+                            value: &SplineRepr::Fixed { value: 0.088f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -1.02f32,
+                            value: &SplineRepr::Fixed { value: -0.2222f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.51f32,
+                            value: &SplineRepr::Fixed { value: -0.2222f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.44f32,
+                            value: &SplineRepr::Fixed { value: -0.12f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.18f32,
+                            value: &SplineRepr::Fixed { value: -0.12f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.16f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.08880186f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 1.3800001f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.115760356f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 1.2800002f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.75f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.65f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.5954547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000059604645f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.6054547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000059604645f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.20000005f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.3f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.120000005f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.15f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.1f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.120000005f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.15f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0.06f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.15f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.08880186f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 1.3800001f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.115760356f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 1.2800002f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.75f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.65f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.5954547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000059604645f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.6054547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000059604645f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.20000005f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.3f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.120000005f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.15f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.1f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.120000005f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.15f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0.06f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.1f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.08880186f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 1.3800001f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.115760356f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 1.2800002f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.75f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.65f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.5954547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000059604645f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.6054547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000059604645f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.20000005f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.25f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.120000005f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.002f32 },
+                                                    derivative: 0.01f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.006f32 },
+                                                    derivative: 0.01f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.094000004f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.120000005f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.06f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.06f32 },
+                                                    derivative: 0.12f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: 0.25f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.40470043f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 1.4323502f32,
+                                                    },
+                                                    derivative: 0.5138249f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 2.46f32 },
+                                                    derivative: 0.5138249f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.4f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.8936405f32,
+                                                    },
+                                                    derivative: 0.43317974f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 1.76f32 },
+                                                    derivative: 0.43317974f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.4f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6165899f32,
+                                                    },
+                                                    derivative: 0.3917051f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 1.4000001f32,
+                                                    },
+                                                    derivative: 0.3917051f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.25f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.7f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.7f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.7f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.84000003f32,
+                                                    },
+                                                    derivative: 0.049000014f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.0139999995f32,
+                                                    },
+                                                    derivative: 0.07f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.042f32 },
+                                                    derivative: 0.07f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.7f32 },
+                                                    derivative: 0.658f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.84000003f32,
+                                                    },
+                                                    derivative: 0.049000014f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.06f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.06f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 34usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: -0.1f32,
+                                                                },
+                                                                derivative: 0.5f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: -0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.02f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.02f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.06f32,
+                                                                },
+                                                                derivative: 0.04f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.2f32,
+                                                                },
+                                                                derivative: 0.049f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.34f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 34usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: -0.1f32,
+                                                                },
+                                                                derivative: 0.5f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: -0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.02f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.02f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.06f32,
+                                                                },
+                                                                derivative: 0.04f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.2f32,
+                                                                },
+                                                                derivative: 0.049f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.34f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.58f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.06f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.06f32 },
+                                                    derivative: 0.12f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: 1f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6958525f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 1.8479263f32,
+                                                    },
+                                                    derivative: 0.5760369f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 3f32 },
+                                                    derivative: 0.5760369f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.4f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 1.078341f32,
+                                                    },
+                                                    derivative: 0.4608295f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 2f32 },
+                                                    derivative: 0.4608295f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.4f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 1.078341f32,
+                                                    },
+                                                    derivative: 0.4608295f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 2f32 },
+                                                    derivative: 0.4608295f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 1.2f32 },
+                                                    derivative: 0.070000015f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0.099999994f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.06f32 },
+                                                    derivative: 0.099999994f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 1f32 },
+                                                    derivative: 0.94f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 1.2f32 },
+                                                    derivative: 0.070000015f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.06f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.06f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 34usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: -0.05f32,
+                                                                },
+                                                                derivative: 0.5f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: -0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.02f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.02f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.06f32,
+                                                                },
+                                                                derivative: 0.04f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.2f32,
+                                                                },
+                                                                derivative: 0.049f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.34f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 34usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: -0.05f32,
+                                                                },
+                                                                derivative: 0.5f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: -0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.02f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.02f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.06f32,
+                                                                },
+                                                                derivative: 0.04f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.2f32,
+                                                                },
+                                                                derivative: 0.049f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.34f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.58f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.06f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0.015f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.06f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                    ],
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 35usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.50375f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 36usize,
+                argument2_index: 6usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 9usize,
+                argument2_index: 37usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Add,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 38usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 39usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 40usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 41usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 42usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 2usize,
+                argument2_index: 43usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Add,
+                },
+            },
+            BaseNoiseFunctionComponent::Spline {
+                spline: &SplineRepr::Standard {
+                    location_function_index: 23usize,
+                    points: &[
+                        SplinePoint {
+                            location: -0.19f32,
+                            value: &SplineRepr::Fixed { value: 3.95f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.15f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.6f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.5f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.25f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.03f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.35f32,
+                                        value: &SplineRepr::Fixed { value: 6.25f32 },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.25f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.25f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.62f32,
+                                        value: &SplineRepr::Fixed { value: 6.25f32 },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.1f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.6f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6530563f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.5f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.4351369f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6530563f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.25f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6530563f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.4351369f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.03f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6530563f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.35f32,
+                                        value: &SplineRepr::Fixed {
+                                            value: 0.6530563f32,
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6530563f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.6530563f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.13888884f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6530563f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.6530563f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.13888884f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.62f32,
+                                        value: &SplineRepr::Fixed {
+                                            value: 0.6530563f32,
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: 0.03f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.6f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6299603f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.5f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.4351369f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6299603f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.25f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6299603f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.4351369f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.03f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6299603f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.35f32,
+                                        value: &SplineRepr::Fixed {
+                                            value: 0.6299603f32,
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6299603f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.6299603f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.13888884f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6299603f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.6299603f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.13888884f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.62f32,
+                                        value: &SplineRepr::Fixed {
+                                            value: 0.6299603f32,
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: 0.06f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.6f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6050052f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.5f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.4351369f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6050052f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.25f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6050052f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.4351369f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.03f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6969027f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6050052f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.05f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: 0.45f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.6969027f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.6050052f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.7f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.2972561f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: 0.45f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.6969027f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.6050052f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.7f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.2972561f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.7f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.6969027f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.6050052f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.15f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.2688383f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.7f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.6969027f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.6050052f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.15f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.2688383f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.58f32,
+                                        value: &SplineRepr::Fixed {
+                                            value: 0.6050052f32,
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                    ],
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 45usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -10f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 4usize,
+                argument2_index: 46usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 47usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 10f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 48usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 49usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 50usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 51usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 52usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 53usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 54usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 44usize,
+                argument2_index: 55usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Unary {
+                input_index: 56usize,
+                data: &UnaryData {
+                    operation: UnaryOperation::QuarterNegative,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 57usize,
+                data: &LinearData {
+                    operation: LinearOperation::Mul,
+                    argument: 4f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 58usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.703125f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Clamp {
+                input_index: 59usize,
+                data: &ClampData {
+                    min_value: -64f32,
+                    max_value: 64f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 60usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 0.078125f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 1usize,
+                argument2_index: 61usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 62usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.078125f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 63usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.4f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 0usize,
+                argument2_index: 64usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 65usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 0.4f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 66usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.390625f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Constant { value: 320f32 },
+            BaseNoiseFunctionComponent::FindTopSurface {
+                density_index: 67usize,
+                upper_bound_index: 68usize,
+                data: &FindTopSurfaceData {
+                    lower_bound: -64i32,
+                    cell_height: 8i32,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 69usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+        ],
     },
     multi_noise: BaseMultiNoiseRouter {
         full_component_stack: &[
@@ -23592,7 +29568,2911 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
         vein_gap: 228usize,
     },
     surface_estimator: BaseSurfaceEstimator {
-        full_component_stack: &[BaseNoiseFunctionComponent::Constant { value: 0f32 }],
+        full_component_stack: &[
+            BaseNoiseFunctionComponent::Gradient {
+                data: &GradientData {
+                    axis: Axis::Y,
+                    tiling: Tiling::ClampToEdge,
+                    from_coordinate: -64i32,
+                    to_coordinate: -40i32,
+                    from_value: 0f32,
+                    to_value: 1f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Gradient {
+                data: &GradientData {
+                    axis: Axis::Y,
+                    tiling: Tiling::ClampToEdge,
+                    from_coordinate: 240i32,
+                    to_coordinate: 256i32,
+                    from_value: 1f32,
+                    to_value: 0f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Gradient {
+                data: &GradientData {
+                    axis: Axis::Y,
+                    tiling: Tiling::ClampToEdge,
+                    from_coordinate: -64i32,
+                    to_coordinate: 320i32,
+                    from_value: 1.5f32,
+                    to_value: -1.5f32,
+                },
+            },
+            BaseNoiseFunctionComponent::BlendOffset,
+            BaseNoiseFunctionComponent::BlendAlpha,
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 4usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 5usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 6usize,
+                data: &LinearData {
+                    operation: LinearOperation::Mul,
+                    argument: -1f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 7usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 1f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 3usize,
+                argument2_index: 8usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::ShiftA {
+                noise_id: DoublePerlinNoiseParameters::OFFSET,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 10usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 11usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 12usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 13usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::ShiftB {
+                noise_id: DoublePerlinNoiseParameters::OFFSET,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 16usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 17usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 18usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 19usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::ShiftedNoise {
+                shift_x_index: 14usize,
+                shift_y_index: 15usize,
+                shift_z_index: 20usize,
+                data: &ShiftedNoiseData {
+                    xz_scale: 0.25f64,
+                    y_scale: 0f64,
+                    noise_id: DoublePerlinNoiseParameters::CONTINENTALNESS_LARGE,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 21usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 22usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::ShiftedNoise {
+                shift_x_index: 14usize,
+                shift_y_index: 15usize,
+                shift_z_index: 20usize,
+                data: &ShiftedNoiseData {
+                    xz_scale: 0.25f64,
+                    y_scale: 0f64,
+                    noise_id: DoublePerlinNoiseParameters::EROSION_LARGE,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 24usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 25usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::ShiftedNoise {
+                shift_x_index: 14usize,
+                shift_y_index: 15usize,
+                shift_z_index: 20usize,
+                data: &ShiftedNoiseData {
+                    xz_scale: 0.25f64,
+                    y_scale: 0f64,
+                    noise_id: DoublePerlinNoiseParameters::RIDGE,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 27usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 28usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Unary {
+                input_index: 29usize,
+                data: &UnaryData {
+                    operation: UnaryOperation::Abs,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 30usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.6666667f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Unary {
+                input_index: 31usize,
+                data: &UnaryData {
+                    operation: UnaryOperation::Abs,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 32usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.33333334f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 33usize,
+                data: &LinearData {
+                    operation: LinearOperation::Mul,
+                    argument: -3f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Spline {
+                spline: &SplineRepr::Standard {
+                    location_function_index: 23usize,
+                    points: &[
+                        SplinePoint {
+                            location: -1.1f32,
+                            value: &SplineRepr::Fixed { value: 0.044f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -1.02f32,
+                            value: &SplineRepr::Fixed { value: -0.2222f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.51f32,
+                            value: &SplineRepr::Fixed { value: -0.2222f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.44f32,
+                            value: &SplineRepr::Fixed { value: -0.12f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.18f32,
+                            value: &SplineRepr::Fixed { value: -0.12f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.16f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.08880186f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.69000006f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.115760356f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6400001f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.75f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.65f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.5954547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000029802322f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.6054547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000029802322f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.100000024f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.3f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.060000002f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.15f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0.1f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.060000002f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.15f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0.06f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.15f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.08880186f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.69000006f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.115760356f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6400001f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.75f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.65f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.5954547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000029802322f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.6054547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000029802322f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.100000024f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.3f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.060000002f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.15f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0.1f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.060000002f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.15f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0.06f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.1f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.08880186f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.69000006f32,
+                                                    },
+                                                    derivative: 0.38940096f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: -0.115760356f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.6400001f32,
+                                                    },
+                                                    derivative: 0.37788022f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.75f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2222f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.65f32,
+                                                    value: &SplineRepr::Fixed { value: 0f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.5954547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000029802322f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.6054547f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.000000029802322f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.100000024f32,
+                                                    },
+                                                    derivative: 0.2534563f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.25f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.060000002f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.001f32 },
+                                                    derivative: 0.01f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.003f32 },
+                                                    derivative: 0.01f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.05f32 },
+                                                    derivative: 0.094000004f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.060000002f32,
+                                                    },
+                                                    derivative: 0.007000001f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.12f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: 0.25f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.20235021f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.7161751f32,
+                                                    },
+                                                    derivative: 0.5138249f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 1.23f32 },
+                                                    derivative: 0.5138249f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.44682026f32,
+                                                    },
+                                                    derivative: 0.43317974f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.88f32 },
+                                                    derivative: 0.43317974f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.30829495f32,
+                                                    },
+                                                    derivative: 0.3917051f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.70000005f32,
+                                                    },
+                                                    derivative: 0.3917051f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.25f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.35f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.35f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.35f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.42000002f32,
+                                                    },
+                                                    derivative: 0.049000014f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.0069999998f32,
+                                                    },
+                                                    derivative: 0.07f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.021f32 },
+                                                    derivative: 0.07f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.35f32 },
+                                                    derivative: 0.658f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.42000002f32,
+                                                    },
+                                                    derivative: 0.049000014f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 34usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: -0.1f32,
+                                                                },
+                                                                derivative: 0.5f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: -0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.03f32,
+                                                                },
+                                                                derivative: 0.04f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.1f32,
+                                                                },
+                                                                derivative: 0.049f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.17f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 34usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: -0.1f32,
+                                                                },
+                                                                derivative: 0.5f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: -0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.03f32,
+                                                                },
+                                                                derivative: 0.04f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.1f32,
+                                                                },
+                                                                derivative: 0.049f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.17f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.58f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.1f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: -0.03f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.12f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: 1f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.85f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.34792626f32,
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.9239631f32,
+                                                    },
+                                                    derivative: 0.5760369f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 1.5f32 },
+                                                    derivative: 0.5760369f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.5391705f32,
+                                                    },
+                                                    derivative: 0.4608295f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 1f32 },
+                                                    derivative: 0.4608295f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.2f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed {
+                                                        value: 0.5391705f32,
+                                                    },
+                                                    derivative: 0.4608295f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 1f32 },
+                                                    derivative: 0.4608295f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.2f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.5f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.5f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.5f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.6f32 },
+                                                    derivative: 0.070000015f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0.099999994f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.099999994f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.5f32 },
+                                                    derivative: 0.94f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.6f32 },
+                                                    derivative: 0.070000015f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.2f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 34usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: -0.05f32,
+                                                                },
+                                                                derivative: 0.5f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: -0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.03f32,
+                                                                },
+                                                                derivative: 0.04f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.1f32,
+                                                                },
+                                                                derivative: 0.049f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.17f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 34usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: -0.05f32,
+                                                                },
+                                                                derivative: 0.5f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: -0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.01f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.4f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.03f32,
+                                                                },
+                                                                derivative: 0.04f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.1f32,
+                                                                },
+                                                                derivative: 0.049f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.17f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.58f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.05f32 },
+                                                    derivative: 0.5f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.7f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -1f32,
+                                                    value: &SplineRepr::Fixed { value: -0.02f32 },
+                                                    derivative: 0.015f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0f32,
+                                                    value: &SplineRepr::Fixed { value: 0.01f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.4f32,
+                                                    value: &SplineRepr::Fixed { value: 0.03f32 },
+                                                    derivative: 0.04f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 1f32,
+                                                    value: &SplineRepr::Fixed { value: 0.1f32 },
+                                                    derivative: 0.049f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                    ],
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 35usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.50375f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 36usize,
+                argument2_index: 6usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 9usize,
+                argument2_index: 37usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Add,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 38usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 39usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 40usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 41usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 42usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 2usize,
+                argument2_index: 43usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Add,
+                },
+            },
+            BaseNoiseFunctionComponent::Spline {
+                spline: &SplineRepr::Standard {
+                    location_function_index: 23usize,
+                    points: &[
+                        SplinePoint {
+                            location: -0.19f32,
+                            value: &SplineRepr::Fixed { value: 3.95f32 },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.15f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.6f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.5f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.25f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.03f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.35f32,
+                                        value: &SplineRepr::Fixed { value: 6.25f32 },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.25f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 6.25f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.25f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.62f32,
+                                        value: &SplineRepr::Fixed { value: 6.25f32 },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: -0.1f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.6f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.47f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.5f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.47f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.25f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.47f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.03f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.47f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.35f32,
+                                        value: &SplineRepr::Fixed { value: 5.47f32 },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 5.47f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 5.47f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 5.47f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 5.47f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.62f32,
+                                        value: &SplineRepr::Fixed { value: 5.47f32 },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: 0.03f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.6f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.08f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.5f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.08f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.25f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.08f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.03f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 5.08f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.35f32,
+                                        value: &SplineRepr::Fixed { value: 5.08f32 },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 5.08f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 5.08f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.9f32,
+                                                    value: &SplineRepr::Fixed { value: 5.08f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.69f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: 0f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 5.08f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.1f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 0.625f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.62f32,
+                                        value: &SplineRepr::Fixed { value: 5.08f32 },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                        SplinePoint {
+                            location: 0.06f32,
+                            value: &SplineRepr::Standard {
+                                location_function_index: 26usize,
+                                points: &[
+                                    SplinePoint {
+                                        location: -0.6f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 4.69f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.5f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.35f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 4.69f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.25f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 4.69f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: -0.1f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 2.67f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.05f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.03f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 29usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 6.3f32 },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.2f32,
+                                                    value: &SplineRepr::Fixed { value: 4.69f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.05f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: 0.45f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.3f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 4.69f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.7f32,
+                                                    value: &SplineRepr::Fixed { value: 1.56f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.4f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: 0.45f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.3f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 4.69f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: 0.7f32,
+                                                    value: &SplineRepr::Fixed { value: 1.56f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.45f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.7f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.3f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 4.69f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.15f32,
+                                                    value: &SplineRepr::Fixed { value: 1.37f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.55f32,
+                                        value: &SplineRepr::Standard {
+                                            location_function_index: 34usize,
+                                            points: &[
+                                                SplinePoint {
+                                                    location: -0.7f32,
+                                                    value: &SplineRepr::Standard {
+                                                        location_function_index: 29usize,
+                                                        points: &[
+                                                            SplinePoint {
+                                                                location: -0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 6.3f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                            SplinePoint {
+                                                                location: 0.2f32,
+                                                                value: &SplineRepr::Fixed {
+                                                                    value: 4.69f32,
+                                                                },
+                                                                derivative: 0f32,
+                                                            },
+                                                        ],
+                                                    },
+                                                    derivative: 0f32,
+                                                },
+                                                SplinePoint {
+                                                    location: -0.15f32,
+                                                    value: &SplineRepr::Fixed { value: 1.37f32 },
+                                                    derivative: 0f32,
+                                                },
+                                            ],
+                                        },
+                                        derivative: 0f32,
+                                    },
+                                    SplinePoint {
+                                        location: 0.58f32,
+                                        value: &SplineRepr::Fixed { value: 4.69f32 },
+                                        derivative: 0f32,
+                                    },
+                                ],
+                            },
+                            derivative: 0f32,
+                        },
+                    ],
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 45usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -10f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 4usize,
+                argument2_index: 46usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 47usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 10f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 48usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 49usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 50usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 51usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 52usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 53usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 54usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 44usize,
+                argument2_index: 55usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Unary {
+                input_index: 56usize,
+                data: &UnaryData {
+                    operation: UnaryOperation::QuarterNegative,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 57usize,
+                data: &LinearData {
+                    operation: LinearOperation::Mul,
+                    argument: 4f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 58usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.703125f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Clamp {
+                input_index: 59usize,
+                data: &ClampData {
+                    min_value: -64f32,
+                    max_value: 64f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 60usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 0.078125f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 1usize,
+                argument2_index: 61usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 62usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.078125f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 63usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.1171875f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 0usize,
+                argument2_index: 64usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 65usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 0.1171875f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 66usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.390625f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Constant { value: 320f32 },
+            BaseNoiseFunctionComponent::FindTopSurface {
+                density_index: 67usize,
+                upper_bound_index: 68usize,
+                data: &FindTopSurfaceData {
+                    lower_bound: -64i32,
+                    cell_height: 8i32,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 69usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+        ],
     },
     multi_noise: BaseMultiNoiseRouter {
         full_component_stack: &[
@@ -25585,7 +34465,35 @@ pub const NETHER_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
         vein_gap: 13usize,
     },
     surface_estimator: BaseSurfaceEstimator {
-        full_component_stack: &[BaseNoiseFunctionComponent::Constant { value: 0f32 }],
+        full_component_stack: &[
+            BaseNoiseFunctionComponent::Constant {
+                value: -0.390625f32,
+            },
+            BaseNoiseFunctionComponent::Constant { value: 128f32 },
+            BaseNoiseFunctionComponent::FindTopSurface {
+                density_index: 0usize,
+                upper_bound_index: 1usize,
+                data: &FindTopSurfaceData {
+                    lower_bound: 0i32,
+                    cell_height: 8i32,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 2usize,
+                axis: Axis::X,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 3usize,
+                axis: Axis::Z,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 4usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+        ],
     },
     multi_noise: BaseMultiNoiseRouter {
         full_component_stack: &[
@@ -25694,9 +34602,57 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     to_value: 0f32,
                 },
             },
-            BaseNoiseFunctionComponent::EndIslands,
+            BaseNoiseFunctionComponent::Constant { value: 100f32 },
+            BaseNoiseFunctionComponent::DistanceToPoint {
+                data: &DistanceToPointData {
+                    point: [0i32, 0i32, 0i32],
+                    metric: DistanceMetric::Euclidean,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 2usize,
+                argument2_index: 3usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Sub,
+                },
+            },
+            BaseNoiseFunctionComponent::Clamp {
+                input_index: 4usize,
+                data: &ClampData {
+                    min_value: -100f32,
+                    max_value: 80f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Constant { value: 8f32 },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 5usize,
+                argument2_index: 6usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Sub,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 7usize,
+                data: &LinearData {
+                    operation: LinearOperation::Mul,
+                    argument: 0.0078125f32,
+                },
+            },
             BaseNoiseFunctionComponent::Slice {
-                input_index: 2usize,
+                input_index: 8usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::EndIslands,
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 9usize,
+                argument2_index: 10usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Max,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 11usize,
                 axis: Axis::Y,
                 coordinate: 0i32,
             },
@@ -25710,14 +34666,14 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 },
             },
             BaseNoiseFunctionComponent::Binary {
-                argument1_index: 3usize,
-                argument2_index: 4usize,
+                argument1_index: 12usize,
+                argument2_index: 13usize,
                 data: &BinaryData {
                     operation: BinaryOperation::Add,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
-                input_index: 5usize,
+                input_index: 14usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
                     argument: 23.4375f32,
@@ -25725,20 +34681,20 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
             },
             BaseNoiseFunctionComponent::Binary {
                 argument1_index: 1usize,
-                argument2_index: 6usize,
+                argument2_index: 15usize,
                 data: &BinaryData {
                     operation: BinaryOperation::Mul,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
-                input_index: 7usize,
+                input_index: 16usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
                     argument: -23.4375f32,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
-                input_index: 8usize,
+                input_index: 17usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
                     argument: 0.234375f32,
@@ -25746,81 +34702,283 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
             },
             BaseNoiseFunctionComponent::Binary {
                 argument1_index: 0usize,
-                argument2_index: 9usize,
+                argument2_index: 18usize,
                 data: &BinaryData {
                     operation: BinaryOperation::Mul,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
-                input_index: 10usize,
+                input_index: 19usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
                     argument: -0.234375f32,
                 },
             },
             BaseNoiseFunctionComponent::BlendDensity {
-                input_index: 11usize,
+                input_index: 20usize,
             },
             BaseNoiseFunctionComponent::Wrapper {
-                input_index: 12usize,
+                input_index: 21usize,
                 wrapper: WrapperType::Interpolated {
                     cell_size_xz: 8i32,
                     cell_size_y: 4i32,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
-                input_index: 13usize,
+                input_index: 22usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
                     argument: 0.64f32,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
-                input_index: 14usize,
+                input_index: 23usize,
                 data: &UnaryData {
                     operation: UnaryOperation::Squeeze,
                 },
             },
             BaseNoiseFunctionComponent::Constant { value: 0f32 },
             BaseNoiseFunctionComponent::Wrapper {
-                input_index: 3usize,
+                input_index: 12usize,
                 wrapper: WrapperType::Cache,
             },
             BaseNoiseFunctionComponent::Slice {
-                input_index: 17usize,
+                input_index: 26usize,
                 axis: Axis::Y,
                 coordinate: 0i32,
             },
         ],
-        barrier_noise: 16usize,
-        fluid_level_floodedness_noise: 16usize,
-        fluid_level_spread_noise: 16usize,
-        lava_noise: 16usize,
-        erosion: 18usize,
-        depth: 16usize,
-        final_density: 15usize,
-        vein_toggle: 16usize,
-        vein_ridged: 16usize,
-        vein_gap: 16usize,
+        barrier_noise: 25usize,
+        fluid_level_floodedness_noise: 25usize,
+        fluid_level_spread_noise: 25usize,
+        lava_noise: 25usize,
+        erosion: 27usize,
+        depth: 25usize,
+        final_density: 24usize,
+        vein_toggle: 25usize,
+        vein_ridged: 25usize,
+        vein_gap: 25usize,
     },
     surface_estimator: BaseSurfaceEstimator {
-        full_component_stack: &[BaseNoiseFunctionComponent::Constant { value: 0f32 }],
-    },
-    multi_noise: BaseMultiNoiseRouter {
         full_component_stack: &[
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
-            BaseNoiseFunctionComponent::EndIslands,
+            BaseNoiseFunctionComponent::Gradient {
+                data: &GradientData {
+                    axis: Axis::Y,
+                    tiling: Tiling::ClampToEdge,
+                    from_coordinate: 4i32,
+                    to_coordinate: 32i32,
+                    from_value: 0f32,
+                    to_value: 1f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Gradient {
+                data: &GradientData {
+                    axis: Axis::Y,
+                    tiling: Tiling::ClampToEdge,
+                    from_coordinate: 56i32,
+                    to_coordinate: 312i32,
+                    from_value: 1f32,
+                    to_value: 0f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Constant { value: 100f32 },
+            BaseNoiseFunctionComponent::DistanceToPoint {
+                data: &DistanceToPointData {
+                    point: [0i32, 0i32, 0i32],
+                    metric: DistanceMetric::Euclidean,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 2usize,
+                argument2_index: 3usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Sub,
+                },
+            },
+            BaseNoiseFunctionComponent::Clamp {
+                input_index: 4usize,
+                data: &ClampData {
+                    min_value: -100f32,
+                    max_value: 80f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Constant { value: 8f32 },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 5usize,
+                argument2_index: 6usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Sub,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 7usize,
+                data: &LinearData {
+                    operation: LinearOperation::Mul,
+                    argument: 0.0078125f32,
+                },
+            },
             BaseNoiseFunctionComponent::Slice {
-                input_index: 1usize,
+                input_index: 8usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::EndIslands,
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 9usize,
+                argument2_index: 10usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Max,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 11usize,
                 axis: Axis::Y,
                 coordinate: 0i32,
             },
             BaseNoiseFunctionComponent::Wrapper {
-                input_index: 2usize,
+                input_index: 12usize,
+                wrapper: WrapperType::Cache,
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 13usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.703125f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 14usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 23.4375f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 15usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 1usize,
+                argument2_index: 16usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 17usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -23.4375f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 18usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: 0.234375f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 0usize,
+                argument2_index: 19usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Mul,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 20usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.234375f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 21usize,
+                data: &LinearData {
+                    operation: LinearOperation::Add,
+                    argument: -0.390625f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Constant { value: 128f32 },
+            BaseNoiseFunctionComponent::FindTopSurface {
+                density_index: 22usize,
+                upper_bound_index: 23usize,
+                data: &FindTopSurfaceData {
+                    lower_bound: 0i32,
+                    cell_height: 4i32,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 24usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+        ],
+    },
+    multi_noise: BaseMultiNoiseRouter {
+        full_component_stack: &[
+            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 100f32 },
+            BaseNoiseFunctionComponent::DistanceToPoint {
+                data: &DistanceToPointData {
+                    point: [0i32, 0i32, 0i32],
+                    metric: DistanceMetric::Euclidean,
+                },
+            },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 1usize,
+                argument2_index: 2usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Sub,
+                },
+            },
+            BaseNoiseFunctionComponent::Clamp {
+                input_index: 3usize,
+                data: &ClampData {
+                    min_value: -100f32,
+                    max_value: 80f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Constant { value: 8f32 },
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 4usize,
+                argument2_index: 5usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Sub,
+                },
+            },
+            BaseNoiseFunctionComponent::Linear {
+                input_index: 6usize,
+                data: &LinearData {
+                    operation: LinearOperation::Mul,
+                    argument: 0.0078125f32,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 7usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::EndIslands,
+            BaseNoiseFunctionComponent::Binary {
+                argument1_index: 8usize,
+                argument2_index: 9usize,
+                data: &BinaryData {
+                    operation: BinaryOperation::Max,
+                },
+            },
+            BaseNoiseFunctionComponent::Slice {
+                input_index: 10usize,
+                axis: Axis::Y,
+                coordinate: 0i32,
+            },
+            BaseNoiseFunctionComponent::Wrapper {
+                input_index: 11usize,
                 wrapper: WrapperType::Cache,
             },
             BaseNoiseFunctionComponent::Slice {
-                input_index: 3usize,
+                input_index: 12usize,
                 axis: Axis::Y,
                 coordinate: 0i32,
             },
@@ -25828,7 +34986,7 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
         temperature: 0usize,
         vegetation: 0usize,
         continents: 0usize,
-        erosion: 4usize,
+        erosion: 13usize,
         depth: 0usize,
         ridges: 0usize,
     },

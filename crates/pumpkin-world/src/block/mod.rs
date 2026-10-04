@@ -65,18 +65,16 @@ impl BlockStateCodec {
 mod test {
     use pumpkin_data::BlockStateId;
 
-    use crate::chunk::palette::BLOCK_NETWORK_MAX_BITS;
+    use crate::chunk::palette::block_network_max_bits;
 
     #[test]
     fn proper_network_bits_per_entry() {
-        // The client sizes the direct palette as ceillog2(its block-state count). Vanilla alone
-        // already needs 16 bits, and modded states are capped below u16::MAX, so 16 stays right
-        // with any mod set.
-        let addressable = 1u32 << BLOCK_NETWORK_MAX_BITS;
-        assert!(
-            u32::from(BlockStateId::VANILLA_COUNT) > addressable / 2,
-            "vanilla fits in fewer bits; the direct palette width must follow the runtime count"
-        );
-        assert!(u32::from(u16::MAX) <= addressable);
+        // The client sizes the direct palette as ceillog2(its block-state count): the fewest
+        // bits that address every state, 15 for vanilla 1.21.1.
+        let addressable = 1u32 << block_network_max_bits();
+        let count = u32::from(BlockStateId::count());
+        assert!(count <= addressable);
+        assert!(count > addressable / 2);
+        assert_eq!(block_network_max_bits(), 15);
     }
 }

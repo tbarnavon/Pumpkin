@@ -174,7 +174,7 @@ mod test {
     use serde::Deserialize;
 
     use crate::{
-        ProtoChunk, chunk::palette::BIOME_NETWORK_MAX_BITS,
+        ProtoChunk, chunk::palette::biome_network_max_bits,
         generation::noise::router::multi_noise_sampler::MultiNoiseSampler,
     };
 
@@ -256,7 +256,7 @@ mod test {
 
     #[test]
     fn proper_network_bits_per_entry() {
-        let id_to_test = 1 << BIOME_NETWORK_MAX_BITS;
+        let id_to_test = 1 << biome_network_max_bits();
         assert!(
             Biome::from_id(id_to_test).is_none(),
             "We need to update our constants!"

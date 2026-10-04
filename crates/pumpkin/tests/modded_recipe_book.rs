@@ -13,6 +13,7 @@ use pumpkin_protocol::ClientPacket;
 use pumpkin_protocol::java::client::play::CRecipeBookAdd;
 
 #[test]
+#[ignore = "the Storage Drawers fixtures are 26.3 dumps; 1.21.1 needs its own"]
 fn modded_recipe_book_encodes() {
     let dumps = pumpkin_registry_ext::read_dumps(Path::new(
         "../pumpkin-registry-ext/tests/fixtures/mod-data",

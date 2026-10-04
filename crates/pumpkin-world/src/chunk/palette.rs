@@ -529,7 +529,7 @@ impl BiomePalette {
             Self::Heterogeneous(data) => {
                 let raw_bits_per_entry = encompassing_bits(data.counts.len());
                 if raw_bits_per_entry > BIOME_NETWORK_MAX_MAP_BITS {
-                    let bits_per_entry = BIOME_NETWORK_MAX_BITS;
+                    let bits_per_entry = biome_network_max_bits();
                     let values_per_i64 = 64 / bits_per_entry;
                     let mut packed_data =
                         Vec::with_capacity(Self::VOLUME.div_ceil(values_per_i64 as usize));
@@ -739,7 +739,7 @@ impl BlockPalette {
             Self::Heterogeneous(data) => {
                 let raw_bits_per_entry = encompassing_bits(data.counts.len());
                 if raw_bits_per_entry > BLOCK_NETWORK_MAX_MAP_BITS {
-                    let bits_per_entry = BLOCK_NETWORK_MAX_BITS;
+                    let bits_per_entry = block_network_max_bits();
                     let values_per_i64 = 64 / bits_per_entry;
                     let mut packed_data =
                         Vec::with_capacity(Self::VOLUME.div_ceil(values_per_i64 as usize));
@@ -999,13 +999,22 @@ pub type BlockPalette = PalettedContainer<BlockStateId, 16>;
 pub(crate) const BLOCK_DISK_MIN_BITS: u8 = 4;
 const BLOCK_NETWORK_MIN_MAP_BITS: u8 = 4;
 const BLOCK_NETWORK_MAX_MAP_BITS: u8 = 8;
-pub(crate) const BLOCK_NETWORK_MAX_BITS: u8 = 16;
+
+/// Bits per entry of a direct block palette. The client reads it as `ceillog2` of its block-state
+/// count (vanilla plus modded) whatever the packet says: 15 for vanilla 1.21.1.
+pub(crate) fn block_network_max_bits() -> u8 {
+    encompassing_bits(usize::from(BlockStateId::count()))
+}
 
 pub type BiomePalette = PalettedContainer<u8, 4>;
 const BIOME_DISK_MIN_BITS: u8 = 0;
 const BIOME_NETWORK_MIN_MAP_BITS: u8 = 1;
 const BIOME_NETWORK_MAX_MAP_BITS: u8 = 3;
-pub(crate) const BIOME_NETWORK_MAX_BITS: u8 = 7;
+
+/// Bits per entry of a direct biome palette: `ceillog2` of the biome count, 6 for 1.21.1.
+pub(crate) fn biome_network_max_bits() -> u8 {
+    encompassing_bits(pumpkin_data::chunk::Biome::ALL.len())
+}
 
 #[cfg(test)]
 mod tests {

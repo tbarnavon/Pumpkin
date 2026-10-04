@@ -533,7 +533,7 @@ mod tests {
     }
 
     #[test]
-    fn shape_offset_registry_matches_vanilla_26_2() {
+    fn shape_offset_registry_matches_vanilla() {
         let mut xz = 0;
         let mut xyz = 0;
 
@@ -548,8 +548,8 @@ mod tests {
             }
         }
 
-        assert_eq!(xz, 34);
-        assert_eq!(xyz, 5);
+        assert_eq!(xz, 30);
+        assert_eq!(xyz, 3);
     }
 
     #[test]

@@ -171,7 +171,7 @@ mod tests {
 
         assert_eq!(CustomStatistic::LeaveGame as u8, 0);
         assert_eq!(CustomStatistic::PlayTime as u8, 1);
-        assert_eq!(CustomStatistic::Deaths as u8, 32);
-        assert_eq!(CustomStatistic::PlayerKills as u8, 35);
+        assert_eq!(CustomStatistic::Deaths as u8, 30);
+        assert_eq!(CustomStatistic::PlayerKills as u8, 33);
     }
 }

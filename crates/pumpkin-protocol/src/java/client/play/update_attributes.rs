@@ -463,12 +463,12 @@ mod tests {
     }
 
     #[test]
-    fn update_attributes_packet_id_for_26_3() {
+    fn update_attributes_packet_id_for_1_21_1() {
         assert_eq!(
-            CUpdateAttributes::to_id(JavaMinecraftVersion::V_26_3),
-            UPDATE_ATTRIBUTES.to_id(JavaMinecraftVersion::V_26_3)
+            CUpdateAttributes::to_id(JavaMinecraftVersion::V_1_21),
+            UPDATE_ATTRIBUTES.to_id(JavaMinecraftVersion::V_1_21)
         );
-        assert_eq!(CUpdateAttributes::to_id(JavaMinecraftVersion::V_26_3), 134);
+        assert_eq!(CUpdateAttributes::to_id(JavaMinecraftVersion::V_1_21), 0x75);
     }
 
     #[test]

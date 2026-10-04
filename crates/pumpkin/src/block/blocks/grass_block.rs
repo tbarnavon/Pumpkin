@@ -3,7 +3,7 @@ use pumpkin_data::{Block, BlockId, BlockState, BlockStateId};
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_util::random::{RandomGenerator, RandomImpl, xoroshiro128::Xoroshiro};
 use pumpkin_world::generation::feature::{
-    configured_features::{BONE_MEAL_FEATURES, CONFIGURED_FEATURES, ConfiguredFeature},
+    configured_features::{BONE_MEAL_FEATURES, bonemeal_simple_block},
     placed_features::{Feature, PLACED_FEATURES},
 };
 use pumpkin_world::tick::TickPriority;
@@ -179,9 +179,7 @@ fn biome_bonemeal_state(
 
     let mut random = RandomGenerator::Xoroshiro(Xoroshiro::from_seed(rand::rng().random()));
     let key = features[random.next_bounded_i32(features.len() as i32) as usize];
-    let ConfiguredFeature::SimpleBlock(feature) = CONFIGURED_FEATURES.get(&key)? else {
-        return None;
-    };
+    let feature = bonemeal_simple_block(&key)?;
     feature
         .to_place
         .get_for_bonemeal(&mut random, position)

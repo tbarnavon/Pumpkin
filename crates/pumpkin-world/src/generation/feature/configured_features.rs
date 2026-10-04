@@ -93,6 +93,31 @@ pub static BONE_MEAL_FEATURES: LazyLock<
     .collect()
 });
 
+/// The simple block a bone meal feature places.
+///
+/// 1.21.1's flower features are patches of one, and `GrassBlock.performBonemeal` places the
+/// patch's inner feature; later versions' are the simple block itself.
+#[must_use]
+pub fn bonemeal_simple_block(
+    key: &pumpkin_data::configured_feature::ConfiguredFeature,
+) -> Option<&'static SimpleBlockFeature> {
+    let simple = |feature: &'static ConfiguredFeature| match feature {
+        ConfiguredFeature::SimpleBlock(feature) => Some(feature),
+        _ => None,
+    };
+    match CONFIGURED_FEATURES.get(key)? {
+        ConfiguredFeature::Flower(patch) | ConfiguredFeature::RandomPatch(patch) => {
+            match &patch.feature.feature {
+                super::placed_features::Feature::Inlined(inner) => simple(inner),
+                super::placed_features::Feature::Named(inner) => {
+                    simple(CONFIGURED_FEATURES.get(inner)?)
+                }
+            }
+        }
+        feature => simple(feature),
+    }
+}
+
 pub enum ConfiguredFeature {
     NoOp,
     Tree(Box<TreeFeature>),
@@ -498,7 +523,7 @@ include!("../../../../pumpkin-data/src/generated/configured_features_generated.r
 
 #[cfg(test)]
 mod tests {
-    use super::{BONE_MEAL_FEATURES, CONFIGURED_FEATURES, ConfiguredFeature};
+    use super::BONE_MEAL_FEATURES;
     use pumpkin_util::{
         math::position::BlockPos,
         random::{RandomGenerator, xoroshiro128::Xoroshiro},
@@ -506,10 +531,10 @@ mod tests {
 
     #[test]
     fn bonemeal_feature_tag_resolves_to_placeable_blocks() {
-        assert_eq!(BONE_MEAL_FEATURES.len(), 8);
+        assert_eq!(BONE_MEAL_FEATURES.len(), 6);
         let mut random = RandomGenerator::Xoroshiro(Xoroshiro::from_seed(0));
         for key in BONE_MEAL_FEATURES.iter() {
-            let Some(ConfiguredFeature::SimpleBlock(feature)) = CONFIGURED_FEATURES.get(key) else {
+            let Some(feature) = super::bonemeal_simple_block(key) else {
                 panic!("bonemeal feature {key:?} must place a block");
             };
             assert!(

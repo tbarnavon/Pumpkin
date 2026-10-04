@@ -177,16 +177,18 @@ mod tests {
         let mut bytes = Vec::new();
         packet.write_packet_data(&mut bytes, &version).unwrap();
 
+        // 1.21.1: position (24), radius (4), no blocks (1), knockback (12), block interaction (1)
+        // and the small explosion particle (1) come before the large one.
         let mut cursor = Cursor::new(bytes);
-        cursor.seek(SeekFrom::Start(33)).unwrap();
+        cursor.seek(SeekFrom::Start(43)).unwrap();
         VarInt::decode(&mut cursor).unwrap()
     }
 
     #[test]
-    fn explosion_particle_id_stays_latest_for_26_3() {
+    fn explosion_particle_id_for_1_21_1() {
         assert_eq!(
-            encoded_particle_id(JavaMinecraftVersion::V_26_3),
-            VarInt(29)
+            encoded_particle_id(JavaMinecraftVersion::V_1_21),
+            VarInt(21)
         );
     }
 }

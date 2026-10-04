@@ -116,9 +116,8 @@ pub const fn equipment_break_status(slot: &EquipmentSlot) -> EntityStatus {
         EquipmentSlot::Chest(_) => EntityStatus::ChestBreak,
         EquipmentSlot::Legs(_) => EntityStatus::LegsBreak,
         EquipmentSlot::Feet(_) => EntityStatus::FeetBreak,
-        EquipmentSlot::Body(_) => EntityStatus::BodyBreak,
         // 1.21.1 has no saddle slot.
-        EquipmentSlot::Saddle(_) => EntityStatus::BodyBreak,
+        EquipmentSlot::Body(_) | EquipmentSlot::Saddle(_) => EntityStatus::BodyBreak,
     }
 }
 

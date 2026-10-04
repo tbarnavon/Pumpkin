@@ -2760,7 +2760,44 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                         input: Box::new(input),
                     }
                 }
-                "end_islands" | "end_outer_islands" => DensityFunctionRepr::EndIslands,
+                "end_outer_islands" => DensityFunctionRepr::EndIslands,
+                // 1.21.1's `EndIslandDensityFunction` is the central island and the outer ones;
+                // later versions keep only the outer islands in code and write the central one
+                // as data (`end/islands`), which this becomes.
+                "end_islands" => parse_vanilla_df(
+                    base_df_dir,
+                    &serde_json::json!({
+                        "type": "minecraft:max",
+                        "left": {
+                            "type": "minecraft:slice",
+                            "axis": "y",
+                            "coordinate": 0,
+                            "input": {
+                                "type": "minecraft:mul",
+                                "left": {
+                                    "type": "minecraft:sub",
+                                    "left": {
+                                        "type": "minecraft:clamp",
+                                        "input": {
+                                            "type": "minecraft:sub",
+                                            "left": 100.0,
+                                            "right": {
+                                                "type": "minecraft:distance_to_point",
+                                                "metric": "euclidean",
+                                                "point": [0, 0, 0],
+                                            },
+                                        },
+                                        "max": 80.0,
+                                        "min": -100.0,
+                                    },
+                                    "right": 8.0,
+                                },
+                                "right": 0.0078125,
+                            },
+                        },
+                        "right": { "type": "minecraft:end_outer_islands" },
+                    }),
+                ),
                 "beardifier" => DensityFunctionRepr::Beardifier,
                 "cache" | "interpolated" | "flat_cache" | "cache_flat" | "cache_2d"
                 | "cache_once" | "cache_all_in_cell" => {
@@ -2952,10 +2989,33 @@ fn load_vanilla_noise_router(
         .get("lava")
         .or_else(|| aquifers.and_then(|a| a.get("lava")))
         .unwrap_or(&zero);
+    // 1.21.1 has no surface level function: `NoiseChunk.computePreliminarySurfaceLevel` walks
+    // down from the top of the world a cell at a time to the first point where
+    // `initial_density_without_jaggedness` exceeds 0.390625.
+    let computed_surface_level = nr.get("initial_density_without_jaggedness").map(|density| {
+        let noise = val.get("noise");
+        let min_y = noise
+            .and_then(|n| n.get("min_y"))
+            .and_then(serde_json::Value::as_i64)
+            .unwrap_or(0);
+        let height = noise
+            .and_then(|n| n.get("height"))
+            .and_then(serde_json::Value::as_i64)
+            .unwrap_or(0);
+        let (_, cell_height) = CELL_SIZE.with(std::cell::Cell::get);
+        serde_json::json!({
+            "type": "minecraft:find_top_surface",
+            "density": {"type": "minecraft:add", "argument1": density, "argument2": -0.390625},
+            "upper_bound": (min_y + height) as f64,
+            "lower_bound": min_y,
+            "cell_height": cell_height,
+        })
+    });
     let preliminary_surface_level = nr
         .get("preliminary_surface_level")
         .or_else(|| nr.get("chunk_surface_level"))
         .or_else(|| aquifers.and_then(|a| a.get("surface_level")))
+        .or(computed_surface_level.as_ref())
         .unwrap_or(&zero);
 
     let vein_toggle = nr.get("vein_toggle").cloned().unwrap_or_else(|| {

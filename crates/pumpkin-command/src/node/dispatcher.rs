@@ -1017,7 +1017,7 @@ mod test {
             let expected = "Unknown command: x. Please check that the command exists and that you have permission to use it.";
             assert_eq!(
                 error.message.clone().to_pretty_console(),
-                "Unknown or incomplete command. See below for error"
+                "Unknown or incomplete command, see below for error"
             );
             assert_eq!(error.message.0.to_bedrock_legacy(Locale::EnUs), expected);
             let java = serde_json::to_value(&error.message).expect("Java text component");

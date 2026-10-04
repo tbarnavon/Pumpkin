@@ -4,6 +4,55 @@ use serde_json::Value;
 use std::collections::BTreeMap;
 use std::fs;
 
+/// 1.21.1's configured carvers keep their settings under `config` and leave out what its carver
+/// code hard-codes (`CaveWorldCarver`, `NetherWorldCarver`), which later versions spell out as
+/// data. Returns the later form.
+fn normalize_carver(data: &Value) -> Value {
+    let Some(config) = data.get("config") else {
+        return data.clone();
+    };
+    let mut out = config.clone();
+    let fields = out.as_object_mut().expect("carver config is an object");
+    let y_scale = fields.remove("yScale");
+    let trapezoid = |max: f64, plateau: f64| serde_json::json!({"type": "minecraft:trapezoid", "min": 0.0, "max": max, "plateau": plateau});
+    let count = |max: i64| serde_json::json!({"type": "minecraft:very_biased_to_bottom", "min_inclusive": 0, "max_inclusive": max});
+    match data["type"].as_str().unwrap_or("") {
+        "minecraft:cave" => {
+            // getCaveBound() 15, getThickness() with its one-in-ten widening, getYScale() 1.
+            fields.insert("count".into(), count(14));
+            fields.insert("thickness".into(), trapezoid(3.0, 1.0));
+            fields.insert("weird_thickness_bias".into(), Value::Bool(true));
+            if let Some(y_scale) = y_scale {
+                fields.insert("room_vertical_radius_multiplier".into(), y_scale);
+            }
+        }
+        "minecraft:nether_cave" => {
+            // getCaveBound() 10, doubled thickness, getYScale() 5.
+            fields.insert("count".into(), count(9));
+            fields.insert("thickness".into(), trapezoid(6.0, 2.0));
+            fields.insert(
+                "start_vertical_radius_multiplier".into(),
+                serde_json::json!(5.0),
+            );
+            if let Some(y_scale) = y_scale {
+                fields.insert("room_vertical_radius_multiplier".into(), y_scale);
+            }
+        }
+        "minecraft:canyon" => {
+            if let (Some(y_scale), Some(shape)) = (y_scale, fields.get_mut("shape")) {
+                shape["y_scale"] = y_scale;
+            }
+        }
+        _ => {}
+    }
+    let carver_type = match data["type"].as_str() {
+        Some("minecraft:nether_cave") => "minecraft:cave",
+        other => other.unwrap_or(""),
+    };
+    fields.insert("type".into(), Value::String(carver_type.into()));
+    out
+}
+
 pub fn build() -> TokenStream {
     let dir =
         std::path::Path::new("../../assets/datapack/data/minecraft/worldgen/configured_carver");
@@ -26,6 +75,7 @@ pub fn build() -> TokenStream {
     let mut carver_instances = Vec::new();
 
     for (name, data) in carvers {
+        let data = normalize_carver(&data);
         let variant_name = format_ident!("{}", name.to_uppercase());
         let carver_type = data["type"].as_str().unwrap_or("");
 

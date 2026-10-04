@@ -4196,10 +4196,10 @@ mod tests {
         metadata
             .write(
                 &mut bytes,
-                &pumpkin_util::version::JavaMinecraftVersion::V_26_3,
+                &pumpkin_util::version::JavaMinecraftVersion::V_1_21,
             )
             .unwrap();
 
-        assert_eq!(bytes, [10, 17, 1, 28, 0xff, 0xcd, 0x5c, 0xab]);
+        assert_eq!(bytes, [10, 18, 1, 20, 0xff, 0xcd, 0x5c, 0xab]);
     }
 }
