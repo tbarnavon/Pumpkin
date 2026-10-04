@@ -203,6 +203,20 @@ impl<T> Metadata<T> {
             return Ok(());
         }
 
+        // Before 1.21.5 wolf and painting variants are `ByteBufCodecs.holder` values: the
+        // registry id plus one, as 0 means an inline variant.
+        if *version < JavaMinecraftVersion::V_1_21_5
+            && (self.r#type == MetaDataType::WOLF_VARIANT
+                || self.r#type == MetaDataType::PAINTING_VARIANT)
+        {
+            let mut serialized_value = Vec::new();
+            self.value.write_metadata(&mut serialized_value, version)?;
+            let id = VarInt::decode(&mut Cursor::new(serialized_value)).map_err(|e| {
+                WritingError::Message(format!("Failed to decode variant metadata: {e}"))
+            })?;
+            return writer.write_var_int(&VarInt(id.0 + 1));
+        }
+
         self.value.write_metadata(&mut writer, version)?;
 
         Ok(())
@@ -609,5 +623,17 @@ mod tests {
         pos.write_metadata(&mut buf_legacy, &JavaMinecraftVersion::V_1_8)
             .unwrap();
         assert_eq!(buf_legacy.len(), 12); // 3 * i32 (12 bytes)
+    }
+
+    #[test]
+    fn wolf_and_painting_variants_are_holders_for_1_21_1() {
+        for r#type in [MetaDataType::WOLF_VARIANT, MetaDataType::PAINTING_VARIANT] {
+            let mut bytes = Vec::new();
+            Metadata::new_raw(pumpkin_data::tracked_data::TrackedId(17), r#type, VarInt(0))
+                .write(&mut bytes, &JavaMinecraftVersion::V_1_21)
+                .unwrap();
+            // Index, serializer id, then the registry id plus one.
+            assert_eq!(bytes, vec![17, r#type.id as u8, 1]);
+        }
     }
 }

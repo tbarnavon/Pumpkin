@@ -93,7 +93,10 @@ impl ClientPacket for CPlayerChatMessage {
         mut write: impl Write,
         version: &JavaMinecraftVersion,
     ) -> Result<(), WritingError> {
-        write.write_var_int(&self.global_index)?;
+        // The global index was added in 1.21.5.
+        if *version >= JavaMinecraftVersion::V_1_21_5 {
+            write.write_var_int(&self.global_index)?;
+        }
         write.write_uuid(&self.sender)?;
         write.write_var_int(&self.index)?;
         write.write_option(&self.message_signature, |p, v| p.write_slice(v))?;

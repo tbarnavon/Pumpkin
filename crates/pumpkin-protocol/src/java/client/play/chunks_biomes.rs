@@ -30,8 +30,10 @@ impl ClientPacket for CChunksBiomes<'_> {
     ) -> Result<(), crate::ser::WritingError> {
         write.write_var_int(&VarInt(self.chunks.len() as i32))?;
         for chunk in self.chunks {
-            write.write_i32_be(chunk.chunk_x)?;
-            write.write_i32_be(chunk.chunk_z)?;
+            // `writeChunkPos`: one long, z in the high half.
+            write
+                .write_i64_be((i64::from(chunk.chunk_z) << 32) | i64::from(chunk.chunk_x as u32))?;
+            write.write_var_int(&VarInt(chunk.data.len() as i32))?;
             write.write_slice(chunk.data)?;
         }
         Ok(())

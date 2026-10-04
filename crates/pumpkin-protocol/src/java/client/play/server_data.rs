@@ -32,9 +32,11 @@ impl ClientPacket for CServerData<'_> {
                 if let Ok(bytes) =
                     base64::Engine::decode(&base64::engine::general_purpose::STANDARD, raw_b64)
                 {
+                    // `ByteBufCodecs.BYTE_ARRAY`: the icon is length prefixed.
+                    write.write_var_int(&crate::VarInt(bytes.len() as i32))?;
                     write.write_slice(&bytes)?;
                 } else {
-                    write.write_slice(&[])?;
+                    write.write_var_int(&crate::VarInt(0))?;
                 }
             } else {
                 write.write_bool(false)?;

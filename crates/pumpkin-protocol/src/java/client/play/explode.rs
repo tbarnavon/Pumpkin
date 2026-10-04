@@ -145,9 +145,6 @@ impl ClientPacket for CExplosion {
                     write.write_option(&range, |w, r| w.write_f32_be(*r))?;
                 }
             }
-
-            // Block count: 0
-            write.write_var_int(&VarInt(0))?;
         }
 
         Ok(())
@@ -182,6 +179,24 @@ mod tests {
         let mut cursor = Cursor::new(bytes);
         cursor.seek(SeekFrom::Start(43)).unwrap();
         VarInt::decode(&mut cursor).unwrap()
+    }
+
+    #[test]
+    fn explosion_has_no_trailing_bytes_for_1_21_1() {
+        let packet = CExplosion::new(
+            Vector3::new(0.0, 0.0, 0.0),
+            4.0,
+            0,
+            None,
+            VarInt(Particle::ExplosionEmitter as i32),
+            IdOr::Id(0),
+        );
+        let mut bytes = Vec::new();
+        packet
+            .write_packet_data(&mut bytes, &JavaMinecraftVersion::V_1_21)
+            .unwrap();
+        // Position, power, no blocks, knockback, block interaction, two particles, the sound.
+        assert_eq!(bytes.len(), 24 + 4 + 1 + 12 + 1 + 1 + 1 + 1);
     }
 
     #[test]

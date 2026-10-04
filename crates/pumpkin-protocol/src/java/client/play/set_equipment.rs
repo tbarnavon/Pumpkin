@@ -74,8 +74,17 @@ impl ClientPacket for CSetEquipment {
         }
 
         if *version >= JavaMinecraftVersion::V_1_16 {
-            let size = self.equipment.len();
-            for (i, equipment) in self.equipment.iter().enumerate() {
+            // The saddle slot (7) was added in 1.21.5; older clients index a 7-slot array.
+            let equipment: Vec<_> = self
+                .equipment
+                .iter()
+                .filter(|(slot, _)| *version >= JavaMinecraftVersion::V_1_21_5 || *slot < 7)
+                .collect();
+            if equipment.is_empty() {
+                return Err(WritingError::UnsupportedVersion(*version));
+            }
+            let size = equipment.len();
+            for (i, equipment) in equipment.into_iter().enumerate() {
                 let slot = equipment.0;
                 let last = i == size - 1;
                 let slot_byte = if last { slot } else { slot | -128 };
