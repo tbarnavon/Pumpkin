@@ -2016,6 +2016,42 @@ impl LivingEntity {
     /// `Death` (3) entity event, and hand out XP. Safe to call on every lethal
     /// damage event; only the first call has an effect.
     #[allow(clippy::too_many_lines)]
+    /// Fires `LivingDeathEvent` (NeoForge `LivingDeathEvent`, Fabric `ALLOW_DEATH`); false when a
+    /// handler cancelled it and raised the entity's health above 0.
+    fn allow_death(
+        &self,
+        world: &Arc<crate::world::World>,
+        damage_type: DamageType,
+        source: Option<&dyn EntityBase>,
+        cause: Option<&dyn EntityBase>,
+    ) -> bool {
+        let Some(server) = world.server.upgrade() else {
+            return true;
+        };
+        let killer = cause
+            .map(EntityBase::get_entity)
+            .or_else(|| source.map(EntityBase::get_entity))
+            .map(|e| (e.entity_id, entity_type_name(e)))
+            .or_else(|| {
+                self.get_kill_credit().map(|e| {
+                    let e = e.get_entity();
+                    (e.entity_id, entity_type_name(e))
+                })
+            });
+        let mut event = crate::plugin::api::events::entity::living_death::LivingDeathEvent {
+            entity_id: self.entity.entity_id,
+            entity_type: entity_type_name(&self.entity),
+            world: world.clone(),
+            position: self.entity.pos.load(),
+            damage_type,
+            direct_entity_id: source.map(|s| s.get_entity().entity_id),
+            killer,
+            cancelled: false,
+        };
+        server.plugin_manager.fire_blocking(&server, &mut event);
+        !(event.cancelled && self.health.load() > 0.0)
+    }
+
     pub fn on_death(
         &self,
         damage_type: DamageType,
@@ -2102,21 +2138,15 @@ impl LivingEntity {
                 ..Default::default()
             };
 
-            // Drop loot
-            self.drop_loot(&params);
-
-            // Award experience
-            if params.killed_by_player.unwrap_or(false)
-                && world.level_info.load().game_rules.mob_drops
-            {
-                let amount = dyn_self.get_experience_reward(killer);
-                if amount > 0 {
-                    ExperienceOrbEntity::spawn(&world, self.entity.pos.load(), amount);
-                }
-            }
+            self.drop_all_death_loot(
+                &world,
+                &*dyn_self,
+                &params,
+                killer,
+                damage_type,
+                looting_level,
+            );
             self.entity.pose.store(EntityPose::Dying);
-
-            self.drop_equipment(looting_level);
 
             // Broadcast death message if it's a player and the gamerule is enabled
             self.broadcast_death_message(&*dyn_self, damage_type, source, cause);
@@ -2142,10 +2172,62 @@ impl LivingEntity {
         }
     }
 
-    fn drop_equipment(&self, looting_level: u32) {
-        let world = self.entity.world.load();
-        let block_pos = self.entity.block_pos.load();
+    /// `LivingEntity.dropAllDeathLoot`: loot table, then equipment, then experience; plugins
+    /// see and may change them all first (NeoForge `LivingDropsEvent`).
+    fn drop_all_death_loot(
+        &self,
+        world: &Arc<crate::world::World>,
+        dyn_self: &dyn EntityBase,
+        params: &LootContextParameters,
+        killer: Option<&dyn EntityBase>,
+        damage_type: DamageType,
+        looting_level: u32,
+    ) {
+        let mut drops = self.generate_loot(params);
+        drops.extend(self.take_equipment_drops(looting_level));
+        let experience = if params.killed_by_player.unwrap_or(false)
+            && world.level_info.load().game_rules.mob_drops
+        {
+            i32::try_from(dyn_self.get_experience_reward(killer)).unwrap_or(i32::MAX)
+        } else {
+            0
+        };
+        let mut drops_event = crate::plugin::api::events::entity::living_drops::LivingDropsEvent {
+            entity_id: self.entity.entity_id,
+            entity_type: entity_type_name(&self.entity),
+            world: Arc::clone(world),
+            position: self.entity.pos.load(),
+            damage_type,
+            killer: killer.map(|k| {
+                let k = k.get_entity();
+                (k.entity_id, entity_type_name(k))
+            }),
+            recently_hit: params.killed_by_player.unwrap_or(false),
+            drops,
+            experience,
+            cancelled: false,
+        };
+        if let Some(server) = world.server.upgrade() {
+            server
+                .plugin_manager
+                .fire_blocking(&server, &mut drops_event);
+        }
+        if !drops_event.cancelled {
+            let block_pos = self.entity.block_pos.load();
+            for stack in drops_event.drops {
+                world.drop_stack(&block_pos, stack);
+            }
+        }
+        if let Ok(experience) = u32::try_from(drops_event.experience)
+            && experience > 0
+        {
+            ExperienceOrbEntity::spawn(world, self.entity.pos.load(), experience);
+        }
+    }
 
+    /// The equipment a dying entity drops, removed from its slots.
+    fn take_equipment_drops(&self, looting_level: u32) -> Vec<ItemStack> {
+        let mut drops = Vec::new();
         let drop_chances = self
             .equipment_drop_chances
             .lock()
@@ -2190,8 +2272,9 @@ impl LivingEntity {
                 let outer = rng.random_range(0..=inner);
                 item.set_damage((max_damage - outer).max(0));
             }
-            world.drop_stack(&block_pos, item);
+            drops.push(item);
         }
+        drops
     }
 
     fn broadcast_death_message(
@@ -2314,17 +2397,17 @@ impl LivingEntity {
         }
     }
 
-    fn drop_loot(&self, params: &LootContextParameters) {
+    /// The entity's loot table drops (`LivingEntity.dropFromLootTable`).
+    fn generate_loot(&self, params: &LootContextParameters) -> Vec<ItemStack> {
         let resource_name = self.get_entity().entity_type.resource_name;
         let key = format!("minecraft:entities/{resource_name}");
         let world = self.entity.world.load();
-        if let Some(loot_table) = world.get_loot_table(&key) {
-            let seed: i64 = rand::random();
-            let pos = self.entity.block_pos.load();
-            for stack in crate::world::loot::generate_loot_from_handle(&loot_table, seed, params) {
-                world.drop_stack(&pos, stack);
-            }
-        }
+        world
+            .get_loot_table(&key)
+            .map_or_else(Vec::new, |loot_table| {
+                let seed: i64 = rand::random();
+                crate::world::loot::generate_loot_from_handle(&loot_table, seed, params)
+            })
     }
 
     fn tick_effects(&self) {
@@ -3326,6 +3409,9 @@ impl LivingEntity {
         }
 
         if new_health <= 0.0 {
+            if !self.allow_death(&world, damage_type, source, cause) {
+                return true;
+            }
             let mut death_event =
                 crate::plugin::api::events::entity::entity_death::EntityDeathEvent::new(
                     self.entity.entity_id,
@@ -3969,6 +4055,11 @@ pub(crate) const fn bypasses_armor_durability(damage_type: &DamageType) -> bool 
         | (1u64 << DamageType::SONIC_BOOM.id)
         | (1u64 << DamageType::OUTSIDE_BORDER.id);
     (damage_type.id < 64) && ((BYPASS_MASK >> damage_type.id) & 1 == 1)
+}
+
+/// The entity's type as plugins see it, like `minecraft:zombie`.
+fn entity_type_name(entity: &Entity) -> String {
+    format!("minecraft:{}", entity.entity_type.resource_name)
 }
 
 #[cfg(test)]

@@ -2302,3 +2302,94 @@ impl ToFromWasmEvent for VillagerReputationChangeEvent {
         }
     }
 }
+
+impl ToFromWasmEvent for crate::plugin::api::events::entity::living_death::LivingDeathEvent {
+    fn to_wasm_event(&self, state: &mut PluginHostState) -> Event {
+        let target_world = state
+            .add(self.world.clone())
+            .expect("failed to add world resource");
+        Event::LivingDeathEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::LivingDeathEventData {
+                entity_id: self.entity_id,
+                entity_type: self.entity_type.clone(),
+                target_world,
+                position: to_wasm_position(self.position),
+                damage_type: to_wit_damage_type(&self.damage_type),
+                direct_entity_id: self.direct_entity_id,
+                killer_id: self.killer.as_ref().map(|(id, _)| *id),
+                killer_type: self.killer.as_ref().map(|(_, t)| t.clone()),
+                cancelled: self.cancelled,
+            },
+        )
+    }
+
+    fn apply_wasm_event(&mut self, event: Event, state: &mut PluginHostState) {
+        cleanup_event(&event, state);
+        if let Event::LivingDeathEvent(data) = event {
+            self.cancelled = data.cancelled;
+        }
+    }
+
+    fn from_wasm_event(_event: Event, _state: &mut PluginHostState) -> Self {
+        panic!("Cannot construct LivingDeathEvent from WASM")
+    }
+}
+
+impl ToFromWasmEvent for crate::plugin::api::events::entity::living_drops::LivingDropsEvent {
+    fn to_wasm_event(&self, state: &mut PluginHostState) -> Event {
+        let target_world = state
+            .add(self.world.clone())
+            .expect("failed to add world resource");
+        let drops = self
+            .drops
+            .iter()
+            .map(|stack| {
+                state
+                    .add(Arc::new(Mutex::new(stack.clone())))
+                    .expect("failed to add item stack resource")
+            })
+            .collect();
+        Event::LivingDropsEvent(
+            crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::event::LivingDropsEventData {
+                entity_id: self.entity_id,
+                entity_type: self.entity_type.clone(),
+                target_world,
+                position: to_wasm_position(self.position),
+                damage_type: to_wit_damage_type(&self.damage_type),
+                killer_id: self.killer.as_ref().map(|(id, _)| *id),
+                killer_type: self.killer.as_ref().map(|(_, t)| t.clone()),
+                recently_hit: self.recently_hit,
+                drops,
+                experience: self.experience,
+                cancelled: self.cancelled,
+            },
+        )
+    }
+
+    fn apply_wasm_event(&mut self, event: Event, state: &mut PluginHostState) {
+        if let Event::LivingDropsEvent(data) = &event {
+            self.cancelled = data.cancelled;
+            self.experience = data.experience;
+            // The list may hold the host's stacks or new ones; either way the host owns them now.
+            self.drops = data
+                .drops
+                .iter()
+                .filter_map(|stack| {
+                    state
+                        .resource_table
+                        .delete::<Arc<Mutex<pumpkin_data::item_stack::ItemStack>>>(
+                            wasmtime::component::Resource::new_own(stack.rep()),
+                        )
+                        .ok()
+                })
+                .filter_map(|stack| stack.try_lock().ok().map(|stack| stack.clone()))
+                .filter(|stack| !stack.is_empty())
+                .collect();
+        }
+        cleanup_event(&event, state);
+    }
+
+    fn from_wasm_event(_event: Event, _state: &mut PluginHostState) -> Self {
+        panic!("Cannot construct LivingDropsEvent from WASM")
+    }
+}

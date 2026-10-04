@@ -1469,6 +1469,16 @@ impl pumpkin::plugin::context::HostContext for PluginHostState {
             EventType::PlayerStartTrackingEvent => {
                 register_typed_event::<crate::plugin::api::events::player::player_start_tracking::PlayerStartTrackingEvent>(ctx, &handler, priority, blocking);
             }
+            EventType::LivingDeathEvent => {
+                register_typed_event::<
+                    crate::plugin::api::events::entity::living_death::LivingDeathEvent,
+                >(ctx, &handler, priority, blocking);
+            }
+            EventType::LivingDropsEvent => {
+                register_typed_event::<
+                    crate::plugin::api::events::entity::living_drops::LivingDropsEvent,
+                >(ctx, &handler, priority, blocking);
+            }
             EventType::PlayerStopTrackingEvent => {
                 register_typed_event::<crate::plugin::api::events::player::player_stop_tracking::PlayerStopTrackingEvent>(ctx, &handler, priority, blocking);
             }

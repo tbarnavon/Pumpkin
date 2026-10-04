@@ -346,6 +346,47 @@ interface event {
         cancelled: bool
     }
 
+    /// A living entity took fatal damage (NeoForge `LivingDeathEvent`, Fabric
+    /// `ServerLivingEntityEvents.ALLOW_DEATH` and `AFTER_DEATH`). Fires for players too, before
+    /// `player-death-event`. Cancelling keeps the entity alive only if a handler also raised its
+    /// health above 0; otherwise it dies anyway, as with Fabric's `ALLOW_DEATH`.
+    record living-death-event-data {
+        entity-id: s32,
+        /// Like `minecraft:zombie`.
+        entity-type: string,
+        target-world: %world,
+        position: position,
+        damage-type: damage-type,
+        /// `DamageSource.getDirectEntity`: the arrow, or the attacker in melee.
+        direct-entity-id: option<s32>,
+        /// `LivingEntity.getKillCredit`: the entity credited with the kill (an arrow's shooter).
+        killer-id: option<s32>,
+        killer-type: option<string>,
+        cancelled: bool,
+    }
+
+    /// What a dying living entity drops (NeoForge `LivingDropsEvent` and
+    /// `LivingExperienceDropEvent`; Fabric `LootTableEvents.MODIFY_DROPS` for entity loot).
+    /// `drops` holds the loot table's items and the dropped equipment, not a player's inventory;
+    /// replace the list to change them. Cancel to drop no items.
+    record living-drops-event-data {
+        entity-id: s32,
+        /// Like `minecraft:zombie`.
+        entity-type: string,
+        target-world: %world,
+        position: position,
+        damage-type: damage-type,
+        /// `LivingEntity.getKillCredit`: the entity credited with the kill.
+        killer-id: option<s32>,
+        killer-type: option<string>,
+        /// A player hit the entity recently (vanilla's `lastHurtByPlayerMemoryTime > 0`).
+        recently-hit: bool,
+        drops: list<item-stack>,
+        /// Experience points to drop as orbs; 0 for none.
+        experience: s32,
+        cancelled: bool,
+    }
+
     record block-break-event-data {
         player: option<player>,
         block: string,
@@ -2033,6 +2074,8 @@ interface event {
         server-stopping-event,
         block-entity-unload-event,
         block-entity-load-event,
+        living-drops-event,
+        living-death-event,
         player-stop-tracking-event,
         player-start-tracking-event,
         player-pick-item-entity-event,
@@ -2322,6 +2365,8 @@ interface event {
         server-stopping-event(server-stopping-event-data),
         block-entity-unload-event(block-entity-unload-event-data),
         block-entity-load-event(block-entity-load-event-data),
+        living-drops-event(living-drops-event-data),
+        living-death-event(living-death-event-data),
         player-stop-tracking-event(player-stop-tracking-event-data),
         player-start-tracking-event(player-start-tracking-event-data),
         player-pick-item-entity-event(player-pick-item-entity-event-data),

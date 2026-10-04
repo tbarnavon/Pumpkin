@@ -354,6 +354,13 @@ pub fn cleanup_event(event: &Event, state: &mut PluginHostState) {
         Event::ServerStoppingEvent(_) => {}
         Event::BlockEntityUnloadEvent(_) => {}
         Event::BlockEntityLoadEvent(_) => {}
+        Event::LivingDeathEvent(data) => {
+            cleanup_world(state, &data.target_world);
+        }
+        // The drops were taken back by `apply_wasm_event`.
+        Event::LivingDropsEvent(data) => {
+            cleanup_world(state, &data.target_world);
+        }
         Event::PlayerStopTrackingEvent(data) => {
             cleanup_player(state, &data.player);
         }

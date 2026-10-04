@@ -79,6 +79,8 @@ each plugin one `handle-tick-batch` call per world after block entities tick (se
 | `player-login-query-response-event` | `ServerLoginNetworking` replies | `c19760f9c` |
 | `player-sleep-check-event` | `EntitySleepEvents.ALLOW_SLEEP_TIME` / `ALLOW_NEARBY_MONSTERS` | `e8ceb3e1e` |
 | `player-configuration-payload-event` | `ServerConfigurationNetworking` replies | `d75320470` |
+| `living-death-event` | NeoForge `LivingDeathEvent`, Fabric `ServerLivingEntityEvents.ALLOW_DEATH` / `AFTER_DEATH`, `AFTER_KILLED_OTHER_ENTITY`: damage type, direct entity and killer; cancellable | `@C2@` |
+| `living-drops-event` | NeoForge `LivingDropsEvent` and `LivingExperienceDropEvent`: loot and equipment drops and experience, which handlers may replace | `@C2@` |
 
 ## Host functions
 
@@ -131,7 +133,7 @@ by one. Upstream declares about 290 Bukkit-style events; 56 of them are never fi
 | Recipes and recipe types | `RecipeSerializer` | same | Dump; `register-crafting-handler` for code-defined crafting | 🟡 | B | no custom recipe types the host matches |
 | Entity types | `EntityType.Builder` | same | none | ❌ | A |  |
 | Default entity attributes | `FabricDefaultAttributeRegistry` | `EntityAttributeCreationEvent`, `EntityAttributeModificationEvent` | none | ❌ | A | with entity types |
-| Loot table changes | `LootTableEvents.MODIFY`, `REPLACE`, `MODIFY_DROPS` | `LootTableLoadEvent`, global loot modifiers | `drops` block hook; `block-drop-item-event` replaces any block's drops; `loot-generate-event` can only cancel | 🟡 | A | tables themselves can't be changed |
+| Loot table changes | `LootTableEvents.MODIFY`, `REPLACE`, `MODIFY_DROPS` | `LootTableLoadEvent`, global loot modifiers | `drops` block hook; `block-drop-item-event` and `living-drops-event` replace any block's or entity's drops; `loot-generate-event` can only cancel | 🟡 | A | tables themselves can't be changed |
 | Biome and feature changes (ores, plants) | `BiomeModifications` | `BiomeModifier` | `set-chunk-generator` replaces the whole generator | ❌ | A |  |
 | Structures | datapack + `StructureModifier` | same | none | ❌ | B |  |
 | Mob effects, potions, brewing | `Registry.register`; brewing through Mixins | `PotionBrewEvent`, `MobEffectEvent` | `player.add-effect` with vanilla effects | ❌ | B | for modded ones |
@@ -179,7 +181,7 @@ by one. Upstream declares about 290 Bukkit-style events; 56 of them are never fi
 | What mods do | Fabric API | NeoForge | Pumpkin | Status | Need | Notes |
 |:--|:--|:--|:--|:--|:--|:--|
 | Damage: allow, change, after | `ServerLivingEntityEvents.ALLOW_DAMAGE`, `AFTER_DAMAGE` | `LivingIncomingDamageEvent`, `LivingDamageEvent` | `entity-damage-event`, `entity-damage-by-entity-event` | ✅ | A |  |
-| Death and kills | `ALLOW_DEATH`, `AFTER_DEATH`, `AFTER_KILLED_OTHER_ENTITY` | `LivingDeathEvent`, `LivingDropsEvent`, `LivingExperienceDropEvent` | `entity-death-event` (id and xp only), `player-death-event` | 🟡 | A | no killer, no drops |
+| Death and kills | `ALLOW_DEATH`, `AFTER_DEATH`, `AFTER_KILLED_OTHER_ENTITY` | `LivingDeathEvent`, `LivingDropsEvent`, `LivingExperienceDropEvent` | `living-death-event` (damage type, killer), `living-drops-event`, `player-death-event` | ✅ | A |  |
 | Per-entity data | data attachments | attachments | `set/get-custom-data` on entities, worlds, chunks | 🟡 | A | no sync to clients |
 | Copy data on respawn or dimension change | `ServerPlayerEvents.COPY_FROM`, `AFTER_RESPAWN` | `PlayerEvent.Clone` | `player-respawn-event` | ✅ | B | not needed: Pumpkin keeps the same player, with its custom data, across respawn |
 | Join, leave, respawn, change world | `ServerPlayConnectionEvents`, `ServerEntityLevelChangeEvents` | `PlayerEvent.PlayerLoggedIn` and others | player events | ✅ | A |  |
@@ -443,9 +445,9 @@ Every `Event` field in the Fabric API 0.161.0 main sources (client sources left 
 | `ServerEntityEvents.EQUIPMENT_CHANGE` | none | ❌ | B |  |
 | `ServerEntityLevelChangeEvents`: `AFTER_ENTITY_CHANGE_LEVEL`, `AFTER_PLAYER_CHANGE_LEVEL` | `player-change-world-event`; `entity-portal-event` | 🟡 | C | Non-player entities: before, not after |
 | `ServerLivingEntityEvents`: `ALLOW_DAMAGE`, `AFTER_DAMAGE` | `entity-damage-event` | ✅ | A |  |
-| `ServerLivingEntityEvents`: `ALLOW_DEATH`, `AFTER_DEATH` | `entity-death-event`, `player-death-event` | 🟡 | A | Death can't be cancelled for non-players; no damage source |
+| `ServerLivingEntityEvents`: `ALLOW_DEATH`, `AFTER_DEATH` | `living-death-event`, `player-death-event` | ✅ | A | Cancelling keeps the entity alive if a handler healed it, as in Fabric |
 | `ServerLivingEntityEvents.MOB_CONVERSION` | `entity-transform-event` | ✅ | C |  |
-| `ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY` | none | ❌ | B |  |
+| `ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY` | `living-death-event` (`killer-id`) | ✅ | B |  |
 | `ServerMobEffectEvents`: `ALLOW_ADD`, `BEFORE_ADD`, `AFTER_ADD`, `ALLOW_EARLY_REMOVE`, `BEFORE_REMOVE`, `AFTER_REMOVE` | `entity-potion-effect-event` | 🟡 | B | One event for add and remove |
 | `ServerPlayerEvents`: `JOIN`, `LEAVE`, `AFTER_RESPAWN` | `player-join-event`, `player-leave-event`, `player-respawn-event` | ✅ | A |  |
 | `ServerPlayerEvents.COPY_FROM` | respawn keeps the same player and its custom data | ✅ | B | Nothing to copy |
@@ -463,7 +465,7 @@ Every `Event` field in the Fabric API 0.161.0 main sources (client sources left 
 | `BlockTransformerEvents.MODIFY` | none | ❌ | B | Strip, till, flatten |
 | `DefaultItemComponentEvents.MODIFY` | none | ❌ | B | Change vanilla items' default components |
 | `EnchantmentEvents`: `ALLOW_ENCHANTING`, `MODIFY`, `MODIFY_WITH_LOOKUP` | `prepare-item-enchant-event`, `enchant-item-event` | 🟡 | C | No enchantment definition changes |
-| `LootTableEvents`: `REPLACE`, `MODIFY`, `ALL_LOADED`, `MODIFY_DROPS` | `block-drop-item-event` (block drops); `loot-generate-event` (cancel only) | 🟡 | A | Tables can't be changed |
+| `LootTableEvents`: `REPLACE`, `MODIFY`, `ALL_LOADED`, `MODIFY_DROPS` | `block-drop-item-event` (block drops), `living-drops-event` (entity drops); `loot-generate-event` (cancel only) | 🟡 | A | Tables can't be changed |
 | `AdvancementEvents`: `REPLACE`, `MODIFY`, `ALL_LOADED` | none | ❌ | C |  |
 | `FabricDefaultAttributeRegistry.MODIFY` | none | ❌ | B |  |
 | `FluidFlowEvents.ALLOW` | `block-from-to-event` | ✅ | C |  |
@@ -559,8 +561,8 @@ Every event class in NeoForge 26.3.x outside its client package (267 classes, ne
 | `XpOrbTargetingEvent` | none | ❌ | C |  |
 | `ProjectileImpactEvent` | `projectile-hit-event` | ✅ | B |  |
 | `LivingIncomingDamageEvent`, `LivingDamageEvent.Pre/Post`, `ArmorHurtEvent` | `entity-damage-event` | 🟡 | A | No separate after-armor step |
-| `LivingDeathEvent` | `entity-death-event` | 🟡 | A |  |
-| `LivingDropsEvent`, `LivingExperienceDropEvent` | none | ❌ | A |  |
+| `LivingDeathEvent` | `living-death-event` | ✅ | A |  |
+| `LivingDropsEvent`, `LivingExperienceDropEvent` | `living-drops-event` | ✅ | A | Players' inventories aren't in the drops |
 | `LivingHealEvent` | `entity-regain-health-event` | ✅ | C |  |
 | `LivingKnockBackEvent` | `entity-knockback-event` (declared, not fired) | ❌ | C |  |
 | `LivingFallEvent`, `PlayerFlyableFallEvent` | none | ❌ | C |  |

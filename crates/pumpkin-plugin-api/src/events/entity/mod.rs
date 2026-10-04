@@ -227,3 +227,9 @@ pub use villager_career_change::*;
 pub use villager_replenish_trade::*;
 pub use villager_reputation_change::*;
 pub use warden_anger_change::*;
+/// A living entity took fatal damage (NeoForge `LivingDeathEvent`, Fabric `ServerLivingEntityEvents.ALLOW_DEATH`). Cancel and heal it to keep it alive.
+pub mod living_death;
+pub use living_death::*;
+/// What a dying living entity drops (NeoForge `LivingDropsEvent`, `LivingExperienceDropEvent`). Replace `drops` or change `experience`; cancel to drop no items.
+pub mod living_drops;
+pub use living_drops::*;

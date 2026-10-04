@@ -125,6 +125,8 @@ functions it needs. Each one is listed in `HOOKS.md`.
 - Menus: `cddec52a8`, `31377bbf9`
 - Events: `b9be9ddc0`, `defeddb36`, `d719b608c`, `9bf64aded`, `729862d48`, `ada7f58d6`,
   `c19760f9c`, `e8ceb3e1e`, `d75320470`, `fcad77c09`
+- Death and drops events (`living-death-event`, `living-drops-event`): `@C2@`
+  (`entity/living.rs` `allow_death`, `on_death`: loot and equipment collected before dropping)
 - Host functions: `bd7f4c35e`, `8c64bfb06`, `4c0cc6ae9`, `786ca3cd8`, `1d73c14ae`, `907bef135`
 - Bulk world access: `5d96d025f`
 - `f76a58841` a missing `must_use`
