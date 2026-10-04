@@ -38,6 +38,7 @@ mod carver;
 mod cat_variant;
 mod chat_type;
 mod chunk_status;
+mod command_argument_type;
 mod chunk_view_lut;
 mod configured_feature;
 mod context_provider;
@@ -138,6 +139,7 @@ pub fn main() {
         (sound_category::build, "sound_category.rs"),
         (entity_pose::build, "entity_pose.rs"),
         (scoreboard_slot::build, "scoreboard_slot.rs"),
+        (command_argument_type::build, "command_argument_type.rs"),
         (world_event::build, "world_event.rs"),
         (entity_type::build, "entity_type.rs"),
         (statistic::build, "statistic.rs"),

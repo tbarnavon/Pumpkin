@@ -1,5 +1,6 @@
 use std::io::Write;
 
+use pumpkin_data::command_argument_type::command_argument_type_id;
 use pumpkin_data::packet::clientbound::play::COMMANDS;
 use pumpkin_macros::java_packet;
 use pumpkin_util::identifier::Identifier;
@@ -182,8 +183,10 @@ impl ProtoNode<'_> {
     }
 }
 
+/// Network id of `brigadier:string`, the same in every version with numeric argument ids.
+const STRING_ARGUMENT_ID: i32 = 5;
+
 #[derive(Debug, Clone)]
-#[repr(u32)]
 pub enum ArgumentType {
     Bool,
     Float { min: Option<f32>, max: Option<f32> },
@@ -250,11 +253,74 @@ impl ArgumentType {
 
     pub const SCORE_HOLDER_FLAG_ALLOW_MULTIPLE: u8 = 1;
 
+    /// The type's name in the `command_argument_type` registry.
     #[must_use]
-    pub const fn to_id(&self, _version: &JavaMinecraftVersion) -> i32 {
-        // SAFETY: Since Self is repr(u32), it is guaranteed to hold the discriminant in the first 4 bytes
-        // See https://doc.rust-lang.org/reference/items/enumerations.html#pointer-casting
-        unsafe { *std::ptr::from_ref::<Self>(self).cast::<u32>() as i32 }
+    pub const fn registry_name(&self) -> &'static str {
+        match self {
+            Self::Bool => "brigadier:bool",
+            Self::Float { .. } => "brigadier:float",
+            Self::Double { .. } => "brigadier:double",
+            Self::Integer { .. } => "brigadier:integer",
+            Self::Long { .. } => "brigadier:long",
+            Self::String(_) => "brigadier:string",
+            Self::Entity { .. } => "minecraft:entity",
+            Self::GameProfile => "minecraft:game_profile",
+            Self::BlockPos => "minecraft:block_pos",
+            Self::ColumnPos => "minecraft:column_pos",
+            Self::Vec3 => "minecraft:vec3",
+            Self::Vec2 => "minecraft:vec2",
+            Self::BlockState => "minecraft:block_state",
+            Self::BlockPredicate => "minecraft:block_predicate",
+            Self::ItemStack => "minecraft:item_stack",
+            Self::ItemPredicate => "minecraft:item_predicate",
+            Self::Color => "minecraft:color",
+            Self::HexColor => "minecraft:hex_color",
+            Self::Component => "minecraft:component",
+            Self::Style => "minecraft:style",
+            Self::Message => "minecraft:message",
+            Self::NbtCompound => "minecraft:nbt_compound_tag",
+            Self::NbtTag => "minecraft:nbt_tag",
+            Self::NbtPath => "minecraft:nbt_path",
+            Self::Objective => "minecraft:objective",
+            Self::ObjectiveCriteria => "minecraft:objective_criteria",
+            Self::Operation => "minecraft:operation",
+            Self::Particle => "minecraft:particle",
+            Self::Angle => "minecraft:angle",
+            Self::Rotation => "minecraft:rotation",
+            Self::ScoreboardSlot => "minecraft:scoreboard_slot",
+            Self::ScoreHolder { .. } => "minecraft:score_holder",
+            Self::Swizzle => "minecraft:swizzle",
+            Self::Team => "minecraft:team",
+            Self::ItemSlot => "minecraft:item_slot",
+            Self::ItemSlots => "minecraft:item_slots",
+            Self::ResourceLocation => "minecraft:resource_location",
+            Self::Function => "minecraft:function",
+            Self::EntityAnchor => "minecraft:entity_anchor",
+            Self::IntRange => "minecraft:int_range",
+            Self::FloatRange => "minecraft:float_range",
+            Self::Dimension => "minecraft:dimension",
+            Self::Gamemode => "minecraft:gamemode",
+            Self::Time { .. } => "minecraft:time",
+            Self::ResourceOrTag { .. } => "minecraft:resource_or_tag",
+            Self::ResourceOrTagKey { .. } => "minecraft:resource_or_tag_key",
+            Self::Resource { .. } => "minecraft:resource",
+            Self::ResourceKey { .. } => "minecraft:resource_key",
+            Self::ResourceSelector => "minecraft:resource_selector",
+            Self::TemplateMirror => "minecraft:template_mirror",
+            Self::TemplateRotation => "minecraft:template_rotation",
+            Self::Heightmap => "minecraft:heightmap",
+            Self::LootTable => "minecraft:loot_table",
+            Self::LootPredicate => "minecraft:loot_predicate",
+            Self::LootModifier => "minecraft:loot_modifier",
+            Self::Dialog => "minecraft:dialog",
+            Self::Uuid => "minecraft:uuid",
+        }
+    }
+
+    /// The type's network id, or `None` when this version's registry lacks it.
+    #[must_use]
+    pub fn to_id(&self) -> Option<i32> {
+        command_argument_type_id(self.registry_name())
     }
 
     #[must_use]
@@ -372,9 +438,13 @@ impl ArgumentType {
         version: &JavaMinecraftVersion,
     ) -> Result<(), WritingError> {
         if *version >= JavaMinecraftVersion::V_1_19 {
-            let id = self.to_id(version);
-            write.write_var_int(&(id).into())?;
-            if id == 5 {
+            // A type this version lacks goes as a greedy string, like older versions do.
+            let Some(id) = self.to_id() else {
+                write.write_var_int(&STRING_ARGUMENT_ID.into())?;
+                return write.write_var_int(&2.into());
+            };
+            write.write_var_int(&id.into())?;
+            if id == STRING_ARGUMENT_ID {
                 let behavior_val = match self {
                     Self::String(StringProtoArgBehavior::SingleWord) => 0,
                     Self::String(StringProtoArgBehavior::QuotablePhrase) => 1,

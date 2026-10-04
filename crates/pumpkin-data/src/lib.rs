@@ -240,6 +240,10 @@ pub mod configured_feature;
 #[path = "generated/scoreboard_slot.rs"]
 pub mod scoreboard;
 
+#[rustfmt::skip]
+#[path = "generated/command_argument_type.rs"]
+pub mod command_argument_type;
+
 #[cfg(feature = "damage")]
 #[rustfmt::skip]
 #[path = "generated/damage_type.rs"]
