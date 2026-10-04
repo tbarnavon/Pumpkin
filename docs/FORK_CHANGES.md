@@ -192,11 +192,15 @@ send upstream (`ROADMAP.md`, item 12); once merged there, drop them here.
   client couldn't read them (`pumpkin-protocol/src/java/client/config/config_disconnect.rs`)
 - `523f5c9a6` arrows passed their shooter as the direct entity, and the damage event packet sent
   cause and direct entity swapped (`pumpkin/src/entity/{projectile/arrow,living}.rs`)
+- `f19f3dc6b` (branch `version-1.21.1`) badlands terracotta bands below y = 0 used a wrapped
+  unsigned index: a panic in debug builds, the wrong band in release
+  (`pumpkin-world/src/generation/surface/terrain.rs`)
 
 ## 11. Docs
 
 Fork-only: `docs/DESIGN.md`, `docs/STATUS.md`, `docs/ROADMAP.md`, `docs/HOOKS.md`,
-`docs/modloaders/` (one file per loader), this file.
+`docs/modloaders/` (one file per loader), this file. Version branches add their own
+(`docs/VERSION-1.21.1.md`).
 `docs/FABRIC_API_PARITY.md` was removed on 2026-10-03; its open rows are in `HOOKS.md`, "Hook
 catalog".
 
