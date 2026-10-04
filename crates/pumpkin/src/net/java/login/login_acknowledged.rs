@@ -1,6 +1,7 @@
 #[allow(clippy::wildcard_imports)]
 use super::*;
 use crate::net::java::loaders::{LoaderHandshake, LoaderOptions};
+use pumpkin_data::packet::CURRENT_MC_VERSION_NAME;
 use pumpkin_fabric::handshake::{Outgoing, Step};
 use pumpkin_protocol::java::client::config::{CConfigPing, CPluginMessage};
 
@@ -157,7 +158,7 @@ impl PendingConnection {
     pub async fn send_known_packs(&mut self, server: &Server) {
         let features = server.get_enabled_features();
         self.send_packet_now(&CFeatureFlags::new(&features)).await;
-        let version_str = CURRENT_MC_VERSION.to_string();
+        let version_str = CURRENT_MC_VERSION_NAME.to_string();
         let loaded_packs = server.datapack_manager.get_loaded_packs();
         let known_packs = server.get_known_packs(&version_str, &loaded_packs);
         self.send_packet_now(&CKnownPacks::new(&known_packs)).await;

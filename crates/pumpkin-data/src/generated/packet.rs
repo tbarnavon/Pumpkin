@@ -2,6 +2,9 @@
 use pumpkin_util::version::JavaMinecraftVersion;
 pub const CURRENT_MC_VERSION: JavaMinecraftVersion =
     pumpkin_util::version::JavaMinecraftVersion::V_1_21;
+#[doc = r" The game version's name, which the protocol version can't tell apart (767 is 1.21 and"]
+#[doc = r" 1.21.1): what clients see and the vanilla pack's version."]
+pub const CURRENT_MC_VERSION_NAME: &str = "1.21.1";
 pub const LOWEST_SUPPORTED_MC_VERSION: JavaMinecraftVersion =
     pumpkin_util::version::JavaMinecraftVersion::V_1_21;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

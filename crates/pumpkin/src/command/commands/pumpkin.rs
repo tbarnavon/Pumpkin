@@ -1,4 +1,4 @@
-use pumpkin_data::packet::CURRENT_MC_VERSION;
+use pumpkin_data::packet::{CURRENT_MC_VERSION, CURRENT_MC_VERSION_NAME};
 use pumpkin_util::text::click::ClickEvent;
 use pumpkin_util::text::hover::HoverEvent;
 use pumpkin_util::text::{TextComponent, color::NamedColor};
@@ -335,7 +335,7 @@ impl CommandExecutor for Executor {
             "pumpkin:commands.pumpkin.minecraft_version",
             locale,
             vec![
-                TextComponent::text(CURRENT_MC_VERSION.to_string()).0,
+                TextComponent::text(CURRENT_MC_VERSION_NAME.to_string()).0,
                 TextComponent::text(CURRENT_MC_VERSION.protocol_version().to_string()).0,
             ],
         );

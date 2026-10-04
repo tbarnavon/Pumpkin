@@ -424,7 +424,7 @@ pub fn build_heartbeat_payload(
     HeartbeatPayload {
         server_type: "pumpkin".to_string(),
         server_version: env!("CARGO_PKG_VERSION").to_string(),
-        minecraft_version: pumpkin_data::packet::CURRENT_MC_VERSION.to_string(),
+        minecraft_version: pumpkin_data::packet::CURRENT_MC_VERSION_NAME.to_string(),
         protocol_version: pumpkin_data::packet::CURRENT_MC_VERSION.protocol_version(),
         online_players: server.get_player_count(),
         max_players: server.advanced_config.networking.java.max_players,

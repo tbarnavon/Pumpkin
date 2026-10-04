@@ -7,6 +7,7 @@ use crate::version::JavaMinecraftVersion;
 
 /// The newest protocol version used as the fallback for unknown versions in `PacketId::to_id`.
 const LATEST_VERSION: JavaMinecraftVersion = JavaMinecraftVersion::V_1_21;
+const LATEST_VERSION_NAME: &str = "1.21.1";
 
 /// Represents the protocol_id object within the JSON.
 #[derive(Deserialize)]
@@ -117,6 +118,9 @@ pub(crate) fn build() -> TokenStream {
         use pumpkin_util::version::JavaMinecraftVersion;
 
         pub const CURRENT_MC_VERSION: JavaMinecraftVersion = #LATEST_VERSION;
+        /// The game version's name, which the protocol version can't tell apart (767 is 1.21 and
+        /// 1.21.1): what clients see and the vanilla pack's version.
+        pub const CURRENT_MC_VERSION_NAME: &str = #LATEST_VERSION_NAME;
         pub const LOWEST_SUPPORTED_MC_VERSION: JavaMinecraftVersion = #LATEST_VERSION;
 
         #packet_id_struct
