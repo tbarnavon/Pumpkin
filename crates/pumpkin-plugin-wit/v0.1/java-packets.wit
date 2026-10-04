@@ -1244,6 +1244,17 @@ interface java-packets {
     y-power: f64,
     z-power: f64,
   }
+  record c-recipe {
+    state: recipe-book-state,
+    book-settings: list<bool>,
+    recipes: list<string>,
+    highlights: list<string>,
+  }
+  enum recipe-book-state {
+    init,
+    add,
+    remove,
+  }
   record c-recipe-book-add {
     replace: bool,
   }
@@ -1783,6 +1794,7 @@ interface java-packets {
     c-player-spawn-position(c-player-spawn-position),
     c-post-effects(c-post-effects),
     c-projectile-power(c-projectile-power),
+    c-recipe(c-recipe),
     c-recipe-book-add(c-recipe-book-add),
     c-recipe-book-remove(c-recipe-book-remove),
     c-recipe-book-settings(c-recipe-book-settings),

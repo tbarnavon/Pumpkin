@@ -4,6 +4,7 @@ use dashmap::DashMap;
 use pumpkin_data::chunk::Biome;
 use pumpkin_data::item::{BedrockItem, BedrockItemVersion};
 use pumpkin_data::packet::CURRENT_MC_VERSION;
+use pumpkin_data::recipe_sync::{SYNCED_RECIPES, SyncedRecipeData};
 use pumpkin_protocol::bedrock::client::item_registry::{CItemRegistry, ItemData};
 use pumpkin_protocol::bedrock::client::level_event::{CLevelEvent, LevelEvent};
 use pumpkin_protocol::bedrock::client::{
@@ -102,7 +103,8 @@ use pumpkin_protocol::java::client::play::{
     PlayerSpawnData,
 };
 use pumpkin_protocol::java::client::play::{
-    CPlayerSpawnPosition, CRecipeBookAdd, CRecipeBookSettings, CSystemChatMessage, CUpdateRecipes,
+    CPlayerSpawnPosition, CRecipe, CRecipeBookAdd, CRecipeBookSettings, CSystemChatMessage,
+    CUpdateRecipes, RecipeBookState,
 };
 use pumpkin_protocol::java::client::play::{CSetEntityMetadata, Metadata};
 use pumpkin_protocol::{
@@ -3765,6 +3767,24 @@ impl World {
             if let Ok(data) = java_client.serialize_packet(&add_packet) {
                 java_client.send_packet_now(data).await;
             }
+        } else if let crate::net::ClientPlatform::Java(java_client) = player.client.as_ref()
+            && server.advanced_config.recipe.send_recipes
+            && java_client.version.load() >= JavaMinecraftVersion::V_1_21
+        {
+            // Every recipe is unlocked; special recipes never show in the book.
+            let recipes: Vec<&str> = SYNCED_RECIPES
+                .iter()
+                .filter(|recipe| !matches!(recipe.data, SyncedRecipeData::Special { .. }))
+                .map(|recipe| recipe.id)
+                .collect();
+            java_client
+                .send_packet(&CRecipe {
+                    state: RecipeBookState::Init,
+                    book_settings: [false; 8],
+                    recipes: &recipes,
+                    highlights: &[],
+                })
+                .await;
         }
         let msg_comp = TextComponent::translate_cross(
             translation::java::MULTIPLAYER_PLAYER_JOINED,

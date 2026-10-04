@@ -65,7 +65,7 @@ pub struct SyncedRecipe {
     pub serializer: i32,
     pub data: SyncedRecipeData,
 }
-#[doc = r" Every recipe, ordered by id."]
+#[doc = r" Every recipe, ordered by id like `recipes::RECIPES_CRAFTING`."]
 pub static SYNCED_RECIPES: &[SyncedRecipe] = &[
     SyncedRecipe {
         id: "minecraft:acacia_boat",

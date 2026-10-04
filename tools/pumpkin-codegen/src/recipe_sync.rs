@@ -12,7 +12,8 @@ pub fn build() -> TokenStream {
         .map(|entry| entry.unwrap().path())
         .filter(|path| path.extension().is_some_and(|ext| ext == "json"))
         .collect();
-    paths.sort();
+    // Same order as `RECIPES_CRAFTING`, whose index the recipe book uses as display id.
+    paths.sort_by_key(|path| path.file_stem().unwrap().to_owned());
     let serializers: Vec<String> =
         serde_json::from_str(&fs::read_to_string("../../assets/recipe_serializers.json").unwrap())
             .expect("Failed to parse recipe_serializers.json");
@@ -102,7 +103,7 @@ pub fn build() -> TokenStream {
             pub data: SyncedRecipeData,
         }
 
-        /// Every recipe, ordered by id.
+        /// Every recipe, ordered by id like `recipes::RECIPES_CRAFTING`.
         pub static SYNCED_RECIPES: &[SyncedRecipe] = &[#(#recipes),*];
     }
 }
