@@ -41,6 +41,9 @@ uses, for example:
   the preliminary surface level);
 - game rules: 1.21.1's ids under the code's later names, plus fixed internal rules;
 - aliases for renamed blocks, property groups and enums (`LATER_*` lists in `block.rs`).
+- what pre-1.21.2 clients need and later versions dropped: the full recipe list for
+  `update_recipes` (`recipe_sync.rs`, numbered by `recipe_serializers.json`) and command
+  argument ids (`command_argument_types.json`).
 
 ## Tests
 
@@ -58,8 +61,12 @@ uses, for example:
   biomes can differ from vanilla 1.21.1.
 - **World files:** worlds are written with 26.x's data version and Pumpkin's chunk format, so a
   vanilla 1.21.1 server can't open them, and Pumpkin doesn't load vanilla 1.21.1 worlds.
-- **Client check:** the scripted protocol check covers login, configuration and joining. A real
-  1.21.1 client still has to be checked in game.
+- **Client check:** a real 1.21.1 client joins and plays (boats, inventories, enchanting,
+  stonecutter, recipe book). Every serverbound packet was compared with 1.21.1's code;
+  clientbound packets were only checked where something broke in game.
+- **Pick block:** 1.21.1's `pick_item` (middle click in survival) has no handler yet.
+- **Recipe book:** clicking a furnace recipe does nothing (also on later versions), and no ghost
+  recipe is shown when ingredients are missing.
 - **Content:** content added after 1.21.1 is removed (copper golem, creaking, happy ghast,
   nautilus, cushions, shelves, spears, ...). Where a mechanic differs, the code follows 1.21.1:
   - boats are one entity with a wood type;
