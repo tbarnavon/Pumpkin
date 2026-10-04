@@ -44,7 +44,7 @@ login queries. The login channel `forge:login` only carries `LoginWrapper` from 
 |:--|:--|:--|
 | Tags | 🟡 | Vanilla packet; Forge's registry sync runs first |
 | Component codecs | ✅ | Loader-independent |
-| Data dump | ❌ | Needs a Forge build of the Extractor |
+| Data dump | ✅ | The Extractor's Forge build (2026-10-04): the mod's entries, Forge's synced registry snapshots (ids, aliases, overrides, blocked ids) with each snapshot's bytes, and the mod list `ModVersions` needs |
 | Real client tested | ✅ | Plain Forge 26.3 joins; with Storage Drawers 26.3.0.1 (Forge build), drawers, their GUI and the framing table work, alongside a Fabric player on the same server (2026-10-04) |
 
 ## Order of work

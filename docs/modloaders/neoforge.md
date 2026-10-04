@@ -96,7 +96,7 @@ clients:
 | Tags | 🟡 | Vanilla packet; the NeoForge registry sync must run first, as in the patch |
 | Component codecs | ✅ | Loader-independent (`register-component-stream-codec`) |
 | Mod list check | ➖ | Channel negotiation does the checking |
-| Data dump | ❌ | The Extractor is a Fabric mod; needs a NeoForge build |
+| Data dump | ✅ | The Extractor's NeoForge build (2026-10-04): the mod's entries, NeoForge's frozen registry snapshots with each `neoforge:frozen_registry` payload as the server encodes it, and the mod list |
 | Real client tested | 🟡 | Plain NeoForge 26.3.0.46-beta joins and plays (2026-10-03); no mods yet |
 
 ## Order of work
@@ -106,6 +106,6 @@ In `../ROADMAP.md`, item 7:
 1. Detection, negotiation (`neoforge:register` / `network` / `modded_network_setup_failed`) and
    the ping-ordered start of configuration.
 2. Registry sync of all `doesSync()` registries, then `c:version` / `c:register`.
-3. A NeoForge build of the Extractor, and a test mod.
+3. ~~A NeoForge build of the Extractor~~ (done 2026-10-04), and a test mod.
 4. `advanced_open_screen` (menus), then config sync, data maps and extensible enum checks.
 5. Recipe content, attachments, `neoforge:split`, custom ingredients for NeoForge clients.

@@ -65,8 +65,8 @@ ticking block entity now costs ~0.4 µs, so ~100,000 of them fit in a 50 ms tick
      data serializers (`modloaders/fabric.md`, "Order of work").
    - **NeoForge adapter**, next to `pumpkin-fabric`: detection, `neoforge:register` negotiation
      and frozen registry sync (`a904c6276`) and NeoForge's synced config (`3035bfca5`) are
-     done, and a plain NeoForge client joins and plays (2026-10-03); next a NeoForge build of
-     the Extractor and a test mod; `advanced_open_screen`; mods' synced configs, data maps,
+     done, and a plain NeoForge client joins and plays (2026-10-03); the Extractor has NeoForge
+     and Forge builds (2026-10-04); next a test mod; `advanced_open_screen`; mods' synced configs, data maps,
      extensible enum and feature flag checks;
      recipe content, attachments, `neoforge:split`, custom ingredients
      (`modloaders/neoforge.md`).
