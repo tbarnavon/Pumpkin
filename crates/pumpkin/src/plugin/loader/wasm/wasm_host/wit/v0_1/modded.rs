@@ -32,8 +32,8 @@ use super::pumpkin::plugin::menu::MenuDefinition;
 use super::pumpkin::plugin::modded::{
     self as wit, BlockCall, BlockEntityTick, BlockHit, BlockHooks, BlockReply, Breaking,
     EntityContact, Interaction, InteractionResult, InventoryTick, ItemCall, ItemDestroyed,
-    ItemHooks, ItemStackedClick, ItemUse, ItemUseOnBlock, NeighborChange, Placement,
-    PlayerInventoryTicks, Removal, ShapeUpdate, Tick, TickBatch,
+    ItemHooks, ItemStackedClick, ItemUse, ItemUseOnBlock, ItemUseTick, ItemUsing, NeighborChange,
+    Placement, PlayerInventoryTicks, Removal, ShapeUpdate, Tick, TickBatch,
 };
 use super::pumpkin::plugin::player::Player as WitPlayer;
 use super::pumpkin::plugin::world::World as WitWorld;
@@ -149,10 +149,20 @@ pub struct QueuedInventoryTick {
     stack: pumpkin_data::item_stack::ItemStack,
 }
 
+/// A queued `use-tick` call.
+struct QueuedItemUse {
+    handler_id: u32,
+    player: Arc<Player>,
+    hand: WitHand,
+    stack: pumpkin_data::item_stack::ItemStack,
+    remaining_ticks: i32,
+}
+
 /// One plugin's per-tick hook calls for one world and tick.
 #[derive(Default)]
 struct QueuedBatch {
     inventories: Vec<(Arc<Player>, Vec<QueuedInventoryTick>)>,
+    item_uses: Vec<QueuedItemUse>,
     entity_contacts: Vec<QueuedContact>,
     block_entities: Vec<(u32, BlockPos, BlockStateId)>,
 }
@@ -264,6 +274,16 @@ fn build_tick_batch(
             ticks: wit_ticks,
         });
     }
+    let mut item_uses = Vec::with_capacity(batch.item_uses.len());
+    for item_use in batch.item_uses {
+        item_uses.push(ItemUseTick {
+            handler_id: item_use.handler_id,
+            player: state.add::<WitPlayer>(item_use.player)?,
+            hand: item_use.hand,
+            stack: state.add::<WitItemStack>(Arc::new(Mutex::new(item_use.stack)))?,
+            remaining_ticks: item_use.remaining_ticks,
+        });
+    }
     let mut entity_contacts = Vec::with_capacity(batch.entity_contacts.len());
     for contact in batch.entity_contacts {
         let entity = contact.entity.get_entity();
@@ -291,6 +311,7 @@ fn build_tick_batch(
     Ok(TickBatch {
         world: state.add::<WitWorld>(world)?,
         inventories,
+        item_uses,
         entity_contacts,
         block_entities,
     })
@@ -364,7 +385,9 @@ impl PluginBlock {
                                 }
                                 return Ok(HookReply::Drops(drops));
                             }
-                            BlockReply::None | BlockReply::Stacked(_) => HookReply::None,
+                            BlockReply::None | BlockReply::Stacked(_) | BlockReply::Stack(_) => {
+                                HookReply::None
+                            }
                             BlockReply::State(state) => HookReply::State(state),
                             BlockReply::Interaction(result) => HookReply::Interaction(result),
                         };
@@ -927,6 +950,14 @@ enum ItemCallData {
         entity: Arc<dyn EntityBase>,
         stack: pumpkin_data::item_stack::ItemStack,
     },
+    Using {
+        hook: ItemHooks,
+        world: Arc<World>,
+        player: Arc<Player>,
+        hand: WitHand,
+        stack: pumpkin_data::item_stack::ItemStack,
+        remaining_ticks: i32,
+    },
 }
 
 /// What an item hook call returned, with item-stack resources already resolved.
@@ -937,6 +968,7 @@ enum ItemReply {
         pumpkin_data::item_stack::ItemStack,
         pumpkin_data::item_stack::ItemStack,
     ),
+    Stack(pumpkin_data::item_stack::ItemStack),
 }
 
 fn add_optional_stack(
@@ -1013,6 +1045,29 @@ fn build_item_call(state: &mut PluginHostState, data: ItemCallData) -> wasmtime:
             entity: state.add::<super::pumpkin::plugin::world::Entity>(entity)?,
             stack: state.add::<WitItemStack>(Arc::new(Mutex::new(stack)))?,
         }),
+        ItemCallData::Using {
+            hook,
+            world,
+            player,
+            hand,
+            stack,
+            remaining_ticks,
+        } => {
+            let using = ItemUsing {
+                world: state.add::<WitWorld>(world)?,
+                player: state.add::<WitPlayer>(player)?,
+                hand,
+                stack: state.add::<WitItemStack>(Arc::new(Mutex::new(stack)))?,
+                remaining_ticks,
+            };
+            if hook == ItemHooks::FINISH_USING {
+                ItemCall::FinishUsing(using)
+            } else if hook == ItemHooks::RELEASE_USING {
+                ItemCall::ReleaseUsing(using)
+            } else {
+                ItemCall::StopUsing(using)
+            }
+        }
     })
 }
 
@@ -1116,6 +1171,38 @@ impl PluginItem {
         );
     }
 
+    /// Calls `finish-using`, `release-using` or `stop-using` for the player's item in use.
+    fn using(
+        &self,
+        hook: ItemHooks,
+        player: &Player,
+        hand: pumpkin_util::Hand,
+        stack: &pumpkin_data::item_stack::ItemStack,
+        remaining_ticks: i32,
+    ) -> ItemReply {
+        if !self.hooks.contains(hook) {
+            return ItemReply::None;
+        }
+        let world = player.world();
+        let Some(server) = world.server.upgrade() else {
+            return ItemReply::None;
+        };
+        let Some(player) = world.get_player_by_id(player.entity_id()) else {
+            return ItemReply::None;
+        };
+        self.invoke_reply(
+            &server,
+            ItemCallData::Using {
+                hook,
+                world,
+                player,
+                hand: to_wit_hand(hand),
+                stack: stack.clone(),
+                remaining_ticks,
+            },
+        )
+    }
+
     fn invoke(&self, server: &Server, data: ItemCallData) -> Option<InteractionResult> {
         match self.invoke_reply(server, data) {
             ItemReply::Interaction(result) => Some(result),
@@ -1169,6 +1256,15 @@ impl PluginItem {
                                     None => empty.clone(),
                                 };
                                 ItemReply::Stacked(slot, carried)
+                            }
+                            BlockReply::Stack(stack) => {
+                                let stack = guest.with(|mut store| {
+                                    stack.map(|s| store.data_mut().take(s)).transpose()
+                                })?;
+                                ItemReply::Stack(match stack {
+                                    Some(stack) => stack.lock().await.clone(),
+                                    None => pumpkin_data::item_stack::ItemStack::EMPTY.clone(),
+                                })
                             }
                             _ => ItemReply::None,
                         })
@@ -1264,6 +1360,86 @@ impl crate::item::ItemBehaviour for PluginItem {
             },
         );
         reply.map_or(BlockActionResult::Pass, PluginBlock::interaction)
+    }
+
+    fn on_use_tick(
+        &self,
+        stack: &pumpkin_data::item_stack::ItemStack,
+        player: &Player,
+        remaining_use_ticks: i32,
+    ) {
+        if !self.hooks.contains(ItemHooks::USE_TICK) {
+            return;
+        }
+        let Some(hand) = *player
+            .living_entity
+            .active_hand
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+        else {
+            return;
+        };
+        let world = player.world();
+        let Some(player) = world.get_player_by_id(player.entity_id()) else {
+            return;
+        };
+        let item_use = QueuedItemUse {
+            handler_id: self.handler_id,
+            player,
+            hand: to_wit_hand(hand),
+            stack: stack.clone(),
+            remaining_ticks: remaining_use_ticks,
+        };
+        world
+            .plugin_ticks
+            .push(&self.plugin, |batch| batch.item_uses.push(item_use));
+    }
+
+    fn finish_using(
+        &self,
+        stack: &pumpkin_data::item_stack::ItemStack,
+        player: &Player,
+        hand: pumpkin_util::Hand,
+    ) -> Option<pumpkin_data::item_stack::ItemStack> {
+        // The hook sees the hand after the `consumable` component was applied.
+        let in_hand = player.inventory.get_stack_in_hand(hand);
+        let in_hand = if in_hand.item.id == stack.item.id {
+            in_hand
+        } else {
+            stack.clone()
+        };
+        match self.using(ItemHooks::FINISH_USING, player, hand, &in_hand, 0) {
+            ItemReply::Stack(stack) => Some(stack),
+            _ => None,
+        }
+    }
+
+    fn use_on_release(&self) -> bool {
+        self.hooks.contains(ItemHooks::USE_ON_RELEASE)
+    }
+
+    fn on_stopped_using(&self, stack: &pumpkin_data::item_stack::ItemStack, player: &Player) {
+        let hand = player
+            .living_entity
+            .active_hand
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .unwrap_or(pumpkin_util::Hand::Right);
+        let remaining = player
+            .living_entity
+            .item_use_time
+            .load(std::sync::atomic::Ordering::Relaxed);
+        self.using(ItemHooks::RELEASE_USING, player, hand, stack, remaining);
+    }
+
+    fn on_use_ended(
+        &self,
+        stack: &pumpkin_data::item_stack::ItemStack,
+        player: &Player,
+        hand: pumpkin_util::Hand,
+        remaining: i32,
+    ) {
+        self.using(ItemHooks::STOP_USING, player, hand, stack, remaining);
     }
 
     fn as_any(&self) -> &dyn std::any::Any {

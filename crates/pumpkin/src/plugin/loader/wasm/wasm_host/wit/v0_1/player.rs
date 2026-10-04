@@ -1098,6 +1098,59 @@ impl pumpkin::plugin::player::HostPlayer for PluginHostState {
         Ok(stack.is_empty())
     }
 
+    async fn start_using_item(
+        &mut self,
+        player: Resource<Player>,
+        hand: pumpkin::plugin::common::Hand,
+        duration: i32,
+    ) -> wasmtime::Result<bool> {
+        let player = self.get(&player)?;
+        let hand = match hand {
+            pumpkin::plugin::common::Hand::Left => pumpkin_util::Hand::Left,
+            pumpkin::plugin::common::Hand::Right => pumpkin_util::Hand::Right,
+        };
+        let living = &player.living_entity;
+        let stack = player.inventory().get_stack_in_hand(hand);
+        let in_use = living
+            .active_hand
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .is_some();
+        if stack.is_empty() || in_use || duration <= 0 {
+            return Ok(false);
+        }
+        living.set_active_hand(hand, stack, duration);
+        Ok(true)
+    }
+
+    async fn stop_using_item(&mut self, player: Resource<Player>) -> wasmtime::Result<()> {
+        self.get(&player)?.living_entity.clear_active_hand();
+        Ok(())
+    }
+
+    async fn get_item_use(
+        &mut self,
+        player: Resource<Player>,
+    ) -> wasmtime::Result<Option<(pumpkin::plugin::common::Hand, i32)>> {
+        let living = &self.get(&player)?.living_entity;
+        let hand = *living
+            .active_hand
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        Ok(hand.map(|hand| {
+            let hand = match hand {
+                pumpkin_util::Hand::Left => pumpkin::plugin::common::Hand::Left,
+                pumpkin_util::Hand::Right => pumpkin::plugin::common::Hand::Right,
+            };
+            (
+                hand,
+                living
+                    .item_use_time
+                    .load(std::sync::atomic::Ordering::Relaxed),
+            )
+        }))
+    }
+
     async fn set_item_in_hand(
         &mut self,
         player: Resource<Player>,

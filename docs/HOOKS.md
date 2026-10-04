@@ -43,6 +43,11 @@ Called through the plugin export `handle-item-hook`.
 | `stacked-on-other` | `Item.overrideStackedOnOther` | `13b9d100c` |
 | `destroyed` | `Item.onDestroyed` | `13b9d100c` |
 | `not-in-containers` (no call) | `Item.canFitInsideContainerItems` | `13b9d100c` |
+| `finish-using` | `Item.finishUsingItem` | `@C1@` |
+| `release-using` | `Item.releaseUsing` | `@C1@` |
+| `use-tick` (opt-in, batched) | `Item.onUseTick` | `@C1@` |
+| `stop-using` | NeoForge `IItemExtension.onStopUsing` | `@C1@` |
+| `use-on-release` (no call) | `Item.useOnRelease` | `@C1@` |
 
 Hooks marked *batched* run every tick. The host queues them while the world ticks and sends
 each plugin one `handle-tick-batch` call per world after block entities tick (see below).
@@ -91,6 +96,7 @@ each plugin one `handle-tick-batch` call per world after block entities tick (se
 | `server.get-players-tracking-chunk`, `get-players-tracking-entity` | `PlayerLookup.tracking` | `4c0cc6ae9` |
 | `server.set-flammable` | `FlammableBlockRegistry.add` | `786ca3cd8` |
 | `player.give-item` | `Inventory.add` | `8c64bfb06`, moved in `25b0b7b63` |
+| `player.start-using-item`, `stop-using-item`, `get-item-use` | `LivingEntity.startUsingItem` (with the `Item.getUseDuration` value), `stopUsingItem`, `getUseItemRemainingTicks` | `@C1@` |
 | `entity.get-item-stack` / `set-item-stack` | An item entity's stack | `1d73c14ae` |
 | `item-stack.get/set/remove-component-by-id` | Components by id, modded ones as NBT | `bd7f4c35e`, `b45e6363d` |
 | `item-stack.to-nbt` / `from-nbt` | Saved form of a stack | `bd7f4c35e` |
@@ -160,7 +166,7 @@ by one. Upstream declares about 290 Bukkit-style events; 56 of them are never fi
 | Hook | Java | Pumpkin | Status | Need | Notes |
 |:--|:--|:--|:--|:--|:--|
 | Use on block, use, inventory tick, stacked clicks, destroyed, container rules | `Item.*` | `modded.item-hooks` (above) | ✅ | A |  |
-| Use over time: finish, release, use duration | `Item.finishUsingItem`, `releaseUsing`, `getUseDuration`, `LivingEntityUseItemEvent` | `player-item-consume-event` | 🟡 | A | no hooks for plugin items |
+| Use over time: finish, release, use duration | `Item.finishUsingItem`, `releaseUsing`, `getUseDuration`, `LivingEntityUseItemEvent` | `finish-using`, `release-using`, `use-tick`, `stop-using` item hooks, `player.start-using-item`; `player-item-consume-event` | ✅ | A |  |
 | Use on entity | `Item.interactLivingEntity`, `UseEntityCallback` | `player-interact-entity-event` | 🟡 | B | no item hook |
 | Hit and mine with the item | `Item.hurtEnemy`, `postHurtEnemy`, `mineBlock` | none | ❌ | B |  |
 | Recipe remainder, enchantability, attribute modifiers | `FabricItem`, `IItemExtension` | components from the dump | 🟡 | C |  |
@@ -275,11 +281,11 @@ Overridable methods of `Item` (39). Tooltip and bar display methods are client-o
 | `overrideOtherStackedOnMe`, `overrideStackedOnOther` | `stacked-on-me`, `stacked-on-other` item hooks | ✅ | B |  |
 | `onDestroyed` | `destroyed` item hook | ✅ | C |  |
 | `canFitInsideContainerItems` | `not-in-containers` flag | ✅ | C |  |
-| `finishUsingItem` | `player-item-consume-event` | 🟡 | A | No hook for plugin items (food, potions, custom use) |
-| `releaseUsing` | none | ❌ | A | Bows, tridents, charged items |
-| `onUseTick` | none | ❌ | B |  |
-| `getUseDuration`, `getUseAnimation` | the `consumable` component | 🟡 | B | No code-defined duration |
-| `useOnRelease` | none | ❌ | C |  |
+| `finishUsingItem` | `finish-using` item hook | ✅ | A | Runs after the host applied the `consumable` component |
+| `releaseUsing` | `release-using` item hook | ✅ | A |  |
+| `onUseTick` | `use-tick` item hook (batched) | ✅ | B |  |
+| `getUseDuration`, `getUseAnimation` | the `consumable` component; `player.start-using-item` takes the duration | ✅ | B | The animation is client side |
+| `useOnRelease` | `use-on-release` flag | ✅ | C |  |
 | `interactLivingEntity` | `player-interact-entity-event` | 🟡 | B | No item hook |
 | `hurtEnemy`, `postHurtEnemy` | none | ❌ | B | Weapons with on-hit effects |
 | `mineBlock` | none | ❌ | B | Tools with on-break effects |
@@ -387,7 +393,7 @@ Client-only ones (`getHighlightTip`, `shouldCauseReequipAnimation`, `shouldCause
 | `getDefaultAttributeModifiers` | components | ✅ | C |  |
 | `canEquip`, `getEquipmentSlot` | the `equippable` component | ✅ | C |  |
 | `isPiglinCurrency`, `makesPiglinsNeutral`, `isGazeDisguise`, `canWalkOnPowderedSnow` | none | ❌ | C |  |
-| `onStopUsing`, `canContinueUsing` | none | ❌ | B |  |
+| `onStopUsing`, `canContinueUsing` | `stop-using` item hook | 🟡 | B | No `canContinueUsing`: the use stops when the hand holds another item, like vanilla |
 | `supportsEnchantment`, `applyEnchantments`, `getEnchantmentLevel`, `getAllEnchantments` | enchantment tags | 🟡 | C |  |
 | `canGrindstoneRepair`, `getXpRepairRatio` | none | ❌ | C |  |
 | `onAnimalArmorTick` | none | ❌ | C |  |
@@ -564,7 +570,7 @@ Every event class in NeoForge 26.3.x outside its client package (267 classes, ne
 | `LivingChangeTargetEvent` | `entity-target-event` | ✅ | C |  |
 | `LivingConversionEvent.Pre/Post` | `entity-transform-event` | ✅ | C |  |
 | `LivingDestroyBlockEvent` | `entity-change-block-event` | ✅ | C |  |
-| `LivingEntityUseItemEvent.Start/Tick/Stop/Finish` | `player-item-consume-event` | 🟡 | A | Finish only |
+| `LivingEntityUseItemEvent.Start/Tick/Stop/Finish` | `player-item-consume-event`; item hooks for plugin items | 🟡 | A | For vanilla items, start only |
 | `LivingEquipmentChangeEvent` | none | ❌ | B |  |
 | `LivingGetProjectileEvent` | none | ❌ | C |  |
 | `LivingShieldBlockEvent` | none | ❌ | C |  |

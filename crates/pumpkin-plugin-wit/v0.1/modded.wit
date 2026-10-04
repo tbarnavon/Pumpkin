@@ -169,6 +169,8 @@ interface modded {
         drops(list<item-stack>),
         /// Reply to `stacked-on-me` and `stacked-on-other`.
         stacked(stacked-result),
+        /// Reply to `finish-using`: the stack the hand holds afterwards (none for empty).
+        stack(option<item-stack>),
     }
 
     /// The hooks a plugin implements for a set of items.
@@ -191,6 +193,24 @@ interface modded {
         /// `Item.canFitInsideContainerItems` returns false: the item can't go into bundles or
         /// shulker boxes. No call is made.
         not-in-containers,
+        /// `Item.finishUsingItem`: the use time started with `player.start-using-item` (or by
+        /// the `consumable` component) ran out. Runs after the host applied the `consumable`
+        /// component, if any; reply `stack` to replace what the hand holds.
+        finish-using,
+        /// `Item.releaseUsing`: the player let go of the use button before the use time ran out
+        /// (bows, tridents).
+        release-using,
+        /// `Item.onUseTick`: every tick while the item is in use. Delivered in
+        /// `tick-batch.item-uses`. Opt in only for items that need it.
+        use-tick,
+        /// NeoForge's `IItemExtension.onStopUsing`: the use ended for any reason (finished,
+        /// released, switched away, died, `player.stop-using-item`), after `finish-using` or
+        /// `release-using`.
+        stop-using,
+        /// `Item.useOnRelease` returns true: the use doesn't finish when its time runs out, only
+        /// when released (crossbows); then `release-using` runs, then `finish-using`. No call is
+        /// made.
+        use-on-release,
     }
 
     record item-use-on-block {
@@ -254,12 +274,27 @@ interface modded {
         stack: item-stack,
     }
 
+    /// An item in use over time, for `finish-using`, `release-using` and `stop-using`.
+    record item-using {
+        %world: %world,
+        player: player,
+        hand: hand,
+        /// A copy of the stack in use. Change the player's hand through the player API, or
+        /// reply `stack` to `finish-using`.
+        stack: item-stack,
+        /// Ticks left of the use time (`getUseItemRemainingTicks`); 0 for `finish-using`.
+        remaining-ticks: s32,
+    }
+
     variant item-call {
         use-on-block(item-use-on-block),
         %use(item-use),
         stacked-on-me(item-stacked-click),
         stacked-on-other(item-stacked-click),
         destroyed(item-destroyed),
+        finish-using(item-using),
+        release-using(item-using),
+        stop-using(item-using),
     }
 
     /// One block entity of a block with the `ticker` hook.
@@ -269,20 +304,32 @@ interface modded {
         state: u16,
     }
 
+    /// A player's item in use with the `use-tick` hook (`Item.onUseTick`).
+    record item-use-tick {
+        handler-id: u32,
+        player: player,
+        hand: hand,
+        /// A copy of the stack in use.
+        stack: item-stack,
+        /// Ticks left of the use time, before this tick counts down.
+        remaining-ticks: s32,
+    }
+
     /// A player's stacks of items with the `inventory-tick` hook.
     record player-inventory-ticks {
         player: player,
         ticks: list<inventory-tick>,
     }
 
-    /// A plugin's per-tick hooks (`ticker`, `entity-inside`, `step-on`, `inventory-tick`) for
-    /// one world and one tick, sent to the `handle-tick-batch` export in a single call after
-    /// the world's block entities ticked. Each list is in the order the host met them; handle
-    /// them in vanilla's tick order: inventories (players), then entity contacts (entities),
-    /// then block entities.
+    /// A plugin's per-tick hooks (`ticker`, `entity-inside`, `step-on`, `inventory-tick`,
+    /// `use-tick`) for one world and one tick, sent to the `handle-tick-batch` export in a
+    /// single call after the world's block entities ticked. Each list is in the order the host
+    /// met them; handle them in vanilla's tick order: inventories and item uses (players), then
+    /// entity contacts (entities), then block entities.
     record tick-batch {
         %world: %world,
         inventories: list<player-inventory-ticks>,
+        item-uses: list<item-use-tick>,
         entity-contacts: list<entity-contact>,
         block-entities: list<block-entity-tick>,
     }

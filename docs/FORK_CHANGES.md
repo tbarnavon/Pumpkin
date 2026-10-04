@@ -117,6 +117,9 @@ functions it needs. Each one is listed in `HOOKS.md`.
 
 - Block and item hooks: `add68fe15`, `0084f1557`, `e51c7666c`, `95105a9ab`, `342715c3c`,
   `044588b3a`, `c3b1024a1`, `dfe6c259c`, `13b9d100c`
+- Item use over time (`finish-using`, `release-using`, `use-tick`, `stop-using`,
+  `use-on-release`; `player.start-using-item`): `@C1@` (`entity/living.rs` use tick, finish and
+  `clear_active_hand`; `item/{mod,registry}.rs`)
 - Per-tick hooks batched into one `handle-tick-batch` call per plugin and tick: `1fa249829`
   (`WH/modded.rs` `PluginTickQueue`, flushed from `World::tick`; `entity/player.rs`)
 - Menus: `cddec52a8`, `31377bbf9`

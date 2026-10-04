@@ -667,6 +667,25 @@ impl LivingEntity {
         self.set_living_flag(Self::OFF_HAND_ACTIVE_FLAG, hand == Hand::Left);
     }
 
+    /// NeoForge's `IItemExtension.onStopUsing`, from `LivingEntity.stopUsingItem`: tells a
+    /// player's item that its use ended.
+    fn on_use_ended(&self, stack: &ItemStack, hand: Hand) {
+        if self.entity.entity_type != &EntityType::PLAYER {
+            return;
+        }
+        let world = self.entity.world.load_full();
+        let (Some(server), Some(player)) = (
+            world.server.upgrade(),
+            world.get_player_by_id(self.entity.entity_id),
+        ) else {
+            return;
+        };
+        let remaining = self.item_use_time.load(Ordering::Relaxed);
+        server
+            .item_registry
+            .on_use_ended(stack, &player, hand, remaining);
+    }
+
     fn set_living_flag(&self, flag: u8, value: bool) {
         let index = flag;
         let mut b = self.livings_flags.load(Ordering::Relaxed);
@@ -708,14 +727,19 @@ impl LivingEntity {
     }
 
     pub fn clear_active_hand(&self) {
-        *self
+        let item_in_use = self
             .item_in_use
             .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner) = None;
-        *self
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .take();
+        let active_hand = self
             .active_hand
             .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner) = None;
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .take();
+        if let (Some(stack), Some(hand)) = (item_in_use, active_hand) {
+            self.on_use_ended(&stack, hand);
+        }
         self.recent_kinetic_enemies
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
@@ -3425,24 +3449,42 @@ impl EntityBase for LivingEntity {
 
         self.tick_effects();
 
+        // `LivingEntity.updatingUsingItem`: the use stops when the hand no longer holds the item.
+        let mut use_on_release = false;
         if let Some(player) = caller.get_player() {
-            let remaining_use_ticks = self.item_use_time.load(Ordering::Relaxed);
-            if remaining_use_ticks > 0 {
-                let item_in_use = self
-                    .item_in_use
-                    .lock()
-                    .unwrap_or_else(std::sync::PoisonError::into_inner)
-                    .clone();
-                if let Some(item) = item_in_use.as_ref() {
-                    server
-                        .item_registry
-                        .on_use_tick(item, player, remaining_use_ticks);
+            let item_in_use = self
+                .item_in_use
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .clone();
+            let active_hand = *self
+                .active_hand
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
+            if let Some(item) = item_in_use.as_ref()
+                && let Some(hand) = active_hand
+            {
+                if player.inventory.get_stack_in_hand(hand).item.id == item.item.id {
+                    // `Item.useOnRelease`: the use outlasts its time until released.
+                    use_on_release = server.item_registry.use_on_release(item);
+                    let remaining_use_ticks = self.item_use_time.load(Ordering::Relaxed);
+                    if remaining_use_ticks > 0 || use_on_release {
+                        server
+                            .item_registry
+                            .on_use_tick(item, player, remaining_use_ticks);
+                    }
+                    if use_on_release {
+                        self.item_use_time.fetch_sub(1, Ordering::Relaxed);
+                    }
+                } else {
+                    self.clear_active_hand();
                 }
             }
         }
 
         // Current active item
-        if self.item_use_time.load(Ordering::Relaxed) > 0
+        if !use_on_release
+            && self.item_use_time.load(Ordering::Relaxed) > 0
             && self.item_use_time.fetch_sub(1, Ordering::Relaxed) <= 1
         {
             let item_in_use = self
@@ -3451,9 +3493,12 @@ impl EntityBase for LivingEntity {
                 .unwrap_or_else(std::sync::PoisonError::into_inner)
                 .clone();
             if let Some(item) = item_in_use.as_ref() {
-                // Consume item
+                // Consume item: `Item.finishUsingItem` only consumes through the `consumable`
+                // component; other items (plugin items, shields) keep their stack.
+                let consumable = item.get_data_component::<ConsumableImpl>().is_some();
                 let mut is_potion = false;
-                if let Some(food) = item.get_data_component::<FoodImpl>()
+                if consumable
+                    && let Some(food) = item.get_data_component::<FoodImpl>()
                     && let Some(player) = caller.get_player()
                 {
                     player
@@ -3469,9 +3514,10 @@ impl EntityBase for LivingEntity {
                 self.apply_consumable_effects(caller, item);
 
                 // Handle potion consumption
-                if item
-                    .get_data_component::<pumpkin_data::data_component_impl::PotionContentsImpl>()
-                    .is_some()
+                if consumable
+                    && item
+                        .get_data_component::<pumpkin_data::data_component_impl::PotionContentsImpl>()
+                        .is_some()
                 {
                     let effects = crate::item::potion::PotionContents::read_potion_effects(item);
                     crate::item::potion::PotionContents::apply_effects_to(
@@ -3483,7 +3529,7 @@ impl EntityBase for LivingEntity {
                     is_potion = true;
                 }
 
-                if let Some(player) = caller.get_player() {
+                if consumable && let Some(player) = caller.get_player() {
                     player.trigger_advancement(
                         crate::entity::player::advancement::trigger::AdvancementTrigger::ConsumeItem {
                             item_id: format!("minecraft:{}", item.item.registry_key),
@@ -3562,6 +3608,18 @@ impl EntityBase for LivingEntity {
                             .clone()
                             .unwrap_or_else(|| item.item.registry_key.to_string());
                         player.start_cooldown(group, (cooldown.seconds * 20.0) as i32);
+                    }
+                }
+
+                // A plugin item's `finish-using` hook may replace the stack in the hand.
+                if let Some(player) = caller.get_player() {
+                    let hand = self
+                        .active_hand
+                        .lock()
+                        .unwrap_or_else(std::sync::PoisonError::into_inner)
+                        .unwrap_or(Hand::Right);
+                    if let Some(result) = server.item_registry.finish_using(item, player, hand) {
+                        player.inventory.set_stack_in_hand(hand, result);
                     }
                 }
 

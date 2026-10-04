@@ -1076,6 +1076,16 @@ interface player {
         /// matching stacks first, then empty slots. `stack` keeps what did not fit; returns `true`
         /// if all of it fit.
         give-item: func(stack: borrow<item-stack>) -> bool;
+        /// `LivingEntity.startUsingItem`: starts using the stack in `hand` over time (eating,
+        /// drawing a bow, charging) for `duration` ticks, the value `Item.getUseDuration` gives in
+        /// Java. Plugin items then get their `use-tick`, `finish-using`, `release-using` and
+        /// `stop-using` hooks. Returns false when the hand is empty or an item is already in use.
+        start-using-item: func(hand: hand, duration: s32) -> bool;
+        /// `LivingEntity.stopUsingItem`: stops using the item, without finishing or releasing it.
+        stop-using-item: func();
+        /// The hand in use and the ticks left (`getUseItemRemainingTicks`), or none when no item
+        /// is in use.
+        get-item-use: func() -> option<tuple<hand, s32>>;
         /// Returns the player's ender chest inventory handle.
         get-ender-chest: func () -> inventory;
 

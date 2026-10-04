@@ -72,6 +72,21 @@ pub trait ItemBehaviour: Send + Sync {
 
     fn on_use_tick(&self, _stack: &ItemStack, _player: &Player, _remaining_use_ticks: i32) {}
 
+    /// `Item.finishUsingItem`, after the host applied the `consumable` component: the stack
+    /// the hand holds afterwards, or `None` to keep it.
+    fn finish_using(&self, _stack: &ItemStack, _player: &Player, _hand: Hand) -> Option<ItemStack> {
+        None
+    }
+
+    /// `Item.useOnRelease`: the use lasts until released instead of finishing when its time
+    /// runs out.
+    fn use_on_release(&self) -> bool {
+        false
+    }
+
+    /// NeoForge's `IItemExtension.onStopUsing`: the use ended for any reason.
+    fn on_use_ended(&self, _stack: &ItemStack, _player: &Player, _hand: Hand, _remaining: i32) {}
+
     /// Returns the maximum number of ticks this item can be used for.
     /// Return 0 if the item does not have a behaviour-driven use duration.
     fn get_use_duration(&self) -> i32 {

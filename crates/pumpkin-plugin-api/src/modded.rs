@@ -87,7 +87,8 @@ impl crate::Context {
 }
 
 pub use crate::wit::pumpkin::plugin::modded::{
-    ItemCall, ItemDestroyed, ItemHooks, ItemStackedClick, ItemUse, ItemUseOnBlock, StackedResult,
+    ItemCall, ItemDestroyed, ItemHooks, ItemStackedClick, ItemUse, ItemUseOnBlock, ItemUseTick,
+    ItemUsing, StackedResult,
 };
 
 /// Handles the hooks of the items it was registered for.
@@ -106,6 +107,9 @@ pub trait ItemHookHandler: Send + Sync + 'static {
         _tick: InventoryTick,
     ) {
     }
+
+    /// [`ItemHooks::USE_TICK`]: the item `tick.player` is using, every tick (`Item.onUseTick`).
+    fn use_tick(&self, _server: &Server, _world: &World, _tick: ItemUseTick) {}
 }
 
 pub(crate) static ITEM_HOOK_HANDLERS: Mutex<BTreeMap<u32, Arc<dyn ItemHookHandler>>> =
@@ -162,6 +166,11 @@ pub(crate) fn dispatch_tick_batch(server: Server, batch: TickBatch) {
             if let Some(handler) = items.get(&tick.handler_id) {
                 handler.inventory_tick(&server, world, &inventory.player, tick);
             }
+        }
+    }
+    for item_use in batch.item_uses {
+        if let Some(handler) = items.get(&item_use.handler_id) {
+            handler.use_tick(&server, world, item_use);
         }
     }
     for contact in batch.entity_contacts {

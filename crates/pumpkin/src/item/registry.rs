@@ -97,6 +97,31 @@ impl ItemRegistry {
         }
     }
 
+    /// `Item.finishUsingItem`: the stack to put in `hand`, if the item's behaviour replaces it.
+    pub fn finish_using(
+        &self,
+        stack: &ItemStack,
+        player: &Player,
+        hand: Hand,
+    ) -> Option<ItemStack> {
+        self.get_pumpkin_item(stack.item.id)
+            .and_then(|behaviour| behaviour.finish_using(stack, player, hand))
+    }
+
+    /// `Item.useOnRelease`.
+    #[must_use]
+    pub fn use_on_release(&self, stack: &ItemStack) -> bool {
+        self.get_pumpkin_item(stack.item.id)
+            .is_some_and(|behaviour| behaviour.use_on_release())
+    }
+
+    /// The use of `stack` ended (`LivingEntity.stopUsingItem`).
+    pub fn on_use_ended(&self, stack: &ItemStack, player: &Player, hand: Hand, remaining: i32) {
+        if let Some(behaviour) = self.get_pumpkin_item(stack.item.id) {
+            behaviour.on_use_ended(stack, player, hand, remaining);
+        }
+    }
+
     /// Returns the item's use duration in ticks, as defined by its registered behaviour.
     /// Returns `None` if the item has no registered behaviour or its duration is 0.
     #[must_use]
