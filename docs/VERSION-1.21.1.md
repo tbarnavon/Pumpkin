@@ -45,6 +45,30 @@ uses, for example:
   `update_recipes` (`recipe_sync.rs`, numbered by `recipe_serializers.json`) and command
   argument ids (`command_argument_types.json`).
 
+## Protocol
+
+Every serverbound and clientbound play packet was compared with 1.21.1's packet classes.
+Where later versions changed a packet, the writers branch on the version. Some later packets
+have no 1.21.1 counterpart, and the server sends what 1.21.1 uses instead:
+
+| Later packet | 1.21.1 |
+| --- | --- |
+| `set_cursor_item` | `container_set_slot` for container -1, slot -1 |
+| `set_player_inventory` | `container_set_slot` for container -2 |
+| `entity_position_sync` | `teleport_entity` |
+| `add_entity` for experience orbs | `add_experience_orb`, which carries the value |
+| `pick_item_from_block` / `_entity` (serverbound) | `pick_item`, an inventory slot to swap into the hotbar |
+
+**Item stacks** have their own codec for 1.20.5 to 1.21.1 (`data_component_v1_21.rs`),
+written from 1.21.1's component stream codecs. It writes the tooltip flags, the older food,
+tool, custom model data and potion layouts, and network NBT for components without a network
+codec. Components 1.21.1 doesn't know are never sent. Components the server can't express in
+1.21.1's form are left out of the stack: `can_place_on`, `can_break`, `instrument`,
+`recipes`, `lock` and `pot_decorations`. Items from clients are read with the same codec.
+
+**Particles** sent without options (commands, plugins) get default options in 1.21.1's
+layouts, since the client can't decode an option particle without them.
+
 ## Tests
 
 - **Worldgen fixtures:** the fixtures in `assets/tests/` are translated from 26.x's ids to
@@ -61,12 +85,10 @@ uses, for example:
   biomes can differ from vanilla 1.21.1.
 - **World files:** worlds are written with 26.x's data version and Pumpkin's chunk format, so a
   vanilla 1.21.1 server can't open them, and Pumpkin doesn't load vanilla 1.21.1 worlds.
-- **Client check:** a real 1.21.1 client joins and plays (boats, inventories, enchanting,
-  stonecutter, recipe book). Every serverbound packet was compared with 1.21.1's code;
-  clientbound packets were only checked where something broke in game.
-- **Pick block:** 1.21.1's `pick_item` (middle click in survival) has no handler yet.
-- **Recipe book:** clicking a furnace recipe does nothing (also on later versions), and no ghost
-  recipe is shown when ingredients are missing.
+- **Saddles:** pigs, striders and horses show a saddle through entity data in 1.21.1, not
+  through the saddle equipment slot of later versions, which isn't sent. Saddled animals look
+  unsaddled.
+- **Unsent components:** see Protocol.
 - **Content:** content added after 1.21.1 is removed (copper golem, creaking, happy ghast,
   nautilus, cushions, shelves, spears, ...). Where a mechanic differs, the code follows 1.21.1:
   - boats are one entity with a wood type;
