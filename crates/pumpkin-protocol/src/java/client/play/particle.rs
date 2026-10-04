@@ -217,9 +217,66 @@ impl ClientPacket for CParticle<'_> {
         if *version >= JavaMinecraftVersion::V_1_20_5 {
             write.write_var_int(&self.particle_id)?;
         }
-        write.write_slice(self.data)?;
+        if self.data.is_empty()
+            && *version >= JavaMinecraftVersion::V_1_20_5
+            && *version < JavaMinecraftVersion::V_1_21_2
+        {
+            write_default_options(&mut write, self.particle_id)?;
+        } else {
+            write.write_slice(self.data)?;
+        }
 
         Ok(())
+    }
+}
+
+/// Writes default options for a particle sent without any, in the 1.20.5 to 1.21.1 layouts
+/// (`ParticleTypes`): the client can't decode a particle that has options without them.
+fn write_default_options(write: &mut impl Write, particle_id: VarInt) -> Result<(), WritingError> {
+    use pumpkin_data::{Block, item::Item, particle::Particle};
+
+    let Some(particle) = Particle::from_id(particle_id.0 as u16) else {
+        return Ok(());
+    };
+    match particle {
+        // `BlockParticleOption`: a block state id
+        Particle::Block | Particle::BlockMarker | Particle::FallingDust | Particle::DustPillar => {
+            write.write_var_int(&VarInt(i32::from(Block::STONE.default_state.id.as_u16())))
+        }
+        // `DustParticleOptions`: a color vector and a scale
+        Particle::Dust => {
+            for component in [1.0, 0.0, 0.0, 1.0] {
+                write.write_f32_be(component)?;
+            }
+            Ok(())
+        }
+        // `DustColorTransitionOptions`: two color vectors and a scale
+        Particle::DustColorTransition => {
+            for component in [1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0] {
+                write.write_f32_be(component)?;
+            }
+            Ok(())
+        }
+        // `ColorParticleOption`: an ARGB int
+        Particle::EntityEffect => write.write_i32_be(-1),
+        // `SculkChargeParticleOptions`: the roll
+        Particle::SculkCharge => write.write_f32_be(0.0),
+        // `ShriekParticleOption`: the delay
+        Particle::Shriek => write.write_var_int(&VarInt(0)),
+        // `ItemParticleOption`: a non-empty item stack without components
+        Particle::Item => {
+            write.write_var_int(&VarInt(1))?;
+            write.write_var_int(&VarInt(i32::from(Item::STONE.id)))?;
+            write.write_var_int(&VarInt(0))?;
+            write.write_var_int(&VarInt(0))
+        }
+        // `VibrationParticleOption`: a block position source (type 0, position) and the travel time
+        Particle::Vibration => {
+            write.write_var_int(&VarInt(0))?;
+            write.write_i64_be(0)?;
+            write.write_var_int(&VarInt(0))
+        }
+        _ => Ok(()),
     }
 }
 
