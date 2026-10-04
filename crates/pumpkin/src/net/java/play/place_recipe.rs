@@ -46,6 +46,18 @@ impl JavaClient {
         let cooking_display_count = RECIPES_COOKING.len();
         let dynamic_recipes = server.recipe_manager.get_dynamic_recipes();
 
+        if (crafting_display_count..crafting_display_count + cooking_display_count)
+            .contains(&target_id)
+        {
+            Self::place_cooking_recipe(
+                player,
+                target_id,
+                &RECIPES_COOKING[target_id - crafting_display_count],
+                use_max,
+            );
+            return;
+        }
+
         let (grid_width, crafting_inv) = {
             let screen_handler_arc = player
                 .current_screen_handler
@@ -113,9 +125,6 @@ impl JavaClient {
                 }
                 _ => return,
             }
-        } else if target_id < crafting_display_count + cooking_display_count {
-            // TODO: cooking recipes
-            return;
         } else {
             let dynamic_id = target_id - crafting_display_count - cooking_display_count;
             let Some(DynamicRecipe::Crafting(crafting)) = dynamic_recipes.get(dynamic_id) else {
@@ -211,6 +220,7 @@ impl JavaClient {
         };
 
         if amount_to_craft == 0 {
+            Self::send_ghost_recipe(player, target_id);
             let screen_handler_arc = player
                 .current_screen_handler
                 .lock()
@@ -241,5 +251,101 @@ impl JavaClient {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .send_content_updates();
+    }
+
+    /// Places a cooking recipe in a furnace, smoker or blast furnace: vanilla's
+    /// `ServerPlaceRecipe` with the input slot as a 1x1 grid.
+    fn place_cooking_recipe(
+        player: &Arc<Player>,
+        display_id: usize,
+        recipe: &pumpkin_data::recipes::CookingRecipeType,
+        use_max: bool,
+    ) {
+        use crate::net::java::recipe_helper::{
+            GenericIngredient, compute_biggest_craftable, take_n_ingredient,
+        };
+        use pumpkin_data::recipes::CookingRecipeType;
+        use pumpkin_data::screen::WindowType;
+
+        let screen_handler_arc = player
+            .current_screen_handler
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone();
+        let mut handler = screen_handler_arc
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let ((Some(WindowType::Furnace), CookingRecipeType::Smelting(cooking))
+        | (Some(WindowType::BlastFurnace), CookingRecipeType::Blasting(cooking))
+        | (Some(WindowType::Smoker), CookingRecipeType::Smoking(cooking))) =
+            (handler.window_type(), recipe)
+        else {
+            return;
+        };
+        let input = handler.get_behaviour().slots[0].get_inventory();
+        let ingredient = GenericIngredient::Vanilla(&cooking.ingredient);
+
+        // The input goes back to the inventory first; a matching input counts towards what can
+        // be placed, and a click without `use_max` adds one more.
+        let current = input.get_stack(0);
+        let recipe_matches = !current.is_empty() && ingredient.match_item(current.item);
+        let current_count = if recipe_matches {
+            current.item_count
+        } else {
+            0
+        };
+        let removed = input.remove_stack(0);
+        if !removed.is_empty() {
+            player.inventory.offer(removed, false, player.as_ref());
+        }
+
+        let available = compute_biggest_craftable(&[ingredient], &player.inventory);
+        if available == 0 {
+            drop(handler);
+            Self::send_ghost_recipe(player, display_id);
+            screen_handler_arc
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .send_content_updates();
+            return;
+        }
+        let amount = if use_max {
+            available
+        } else if recipe_matches {
+            current_count.saturating_add(1).min(available)
+        } else {
+            1
+        };
+        let taken = take_n_ingredient(&player.inventory, &ingredient, amount);
+        if !taken.is_empty() {
+            input.set_stack(0, taken);
+        }
+        handler.send_content_updates();
+    }
+
+    /// Shows the recipe's ingredients as ghost items when the player lacks them
+    /// (`ClientboundPlaceGhostRecipePacket`). Clients from 1.21.2 on get the recipe display in
+    /// that packet, which isn't sent yet.
+    fn send_ghost_recipe(player: &Arc<Player>, display_id: usize) {
+        if pumpkin_data::packet::CURRENT_MC_VERSION
+            >= pumpkin_util::version::JavaMinecraftVersion::V_1_21_2
+        {
+            return;
+        }
+        let Some(recipe_id) =
+            pumpkin_protocol::java::server::play::recipe_id_of_display(display_id)
+        else {
+            return;
+        };
+        let sync_id = player
+            .current_screen_handler
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .sync_id();
+        player.try_send_client_packet(
+            &pumpkin_protocol::java::client::play::CPlaceGhostRecipe::new(sync_id, recipe_id),
+        );
     }
 }

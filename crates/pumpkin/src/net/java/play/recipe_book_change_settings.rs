@@ -15,5 +15,12 @@ impl JavaClient {
             packet.is_filtering,
         );
         server.plugin_manager.fire_blocking(server, &mut event);
+        if event.cancelled {
+            return;
+        }
+        // `ServerRecipeBook.setBookSetting`
+        if let Ok(book) = usize::try_from(packet.book_type.0) {
+            player.set_recipe_book_flags(book, packet.is_open, packet.is_filtering);
+        }
     }
 }

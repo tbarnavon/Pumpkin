@@ -3780,7 +3780,7 @@ impl World {
             java_client
                 .send_packet(&CRecipe {
                     state: RecipeBookState::Init,
-                    book_settings: [false; 8],
+                    book_settings: player.recipe_book_flags(),
                     recipes: &recipes,
                     highlights: &[],
                 })

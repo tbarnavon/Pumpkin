@@ -399,6 +399,18 @@ pub enum SpamType {
     Command,
 }
 
+/// Vanilla's NBT keys for the recipe book settings (`RecipeBookSettings.write`).
+const RECIPE_BOOK_SETTINGS_KEYS: [&str; 8] = [
+    "isGuiOpen",
+    "isFilteringCraftable",
+    "isFurnaceGuiOpen",
+    "isFurnaceFilteringCraftable",
+    "isBlastingFurnaceGuiOpen",
+    "isBlastingFurnaceFilteringCraftable",
+    "isSmokerGuiOpen",
+    "isSmokerFilteringCraftable",
+];
+
 pub struct Player {
     /// The underlying living entity object that represents the player.
     pub living_entity: LivingEntity,
@@ -498,6 +510,9 @@ pub struct Player {
     pub experience_points: AtomicI32,
     pub item_cooldowns: std::sync::Mutex<HashMap<String, ItemCooldown>>,
     pub experience_pick_up_delay: Mutex<u32>,
+    /// The recipe book's open and filtering flags, two bits per book in the order of
+    /// `RECIPE_BOOK_SETTINGS_KEYS` (vanilla's `RecipeBookSettings`).
+    pub recipe_book_settings: AtomicU8,
     pub chunk_sender: Mutex<crate::net::ChunkSender>,
     pub chunk_listener: Mutex<Receiver<(Vector2<i32>, Weak<ChunkData>)>>,
     pub held_chunk_tickets: Mutex<Option<(Option<i8>, Option<i8>)>>,
@@ -748,6 +763,7 @@ impl Player {
             last_input: AtomicI8::new(0),
             carried_item: Mutex::new(None),
             experience_pick_up_delay: Mutex::new(0),
+            recipe_book_settings: AtomicU8::new(0),
             teleport_id_count: AtomicI32::new(0),
             mining: AtomicBool::new(false),
             mining_pos: Mutex::new(BlockPos::ZERO),
@@ -932,6 +948,41 @@ impl Player {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner) = footer.clone();
         self.try_send_client_packet(&CTabList::new(header, footer));
+    }
+
+    /// The recipe book flags as the `recipe` packet sends them: open and filtering for the
+    /// crafting, furnace, blast furnace and smoker books.
+    pub fn recipe_book_flags(&self) -> [bool; 8] {
+        let flags = self.recipe_book_settings.load(Ordering::Relaxed);
+        std::array::from_fn(|bit| flags & (1 << bit) != 0)
+    }
+
+    /// `ServerRecipeBook.toNbt`: the book settings. Every recipe is unlocked, so no recipe
+    /// lists are kept.
+    fn recipe_book_nbt(&self) -> NbtCompound {
+        let mut recipe_book = NbtCompound::new();
+        for (flag, key) in self
+            .recipe_book_flags()
+            .into_iter()
+            .zip(RECIPE_BOOK_SETTINGS_KEYS)
+        {
+            recipe_book.put_bool(key, flag);
+        }
+        recipe_book
+    }
+
+    /// Sets one book's open and filtering flags; `book` is vanilla's `RecipeBookType` ordinal.
+    pub fn set_recipe_book_flags(&self, book: usize, open: bool, filtering: bool) {
+        if book >= 4 {
+            return;
+        }
+        let mask = 0b11u8 << (book * 2);
+        let value = (u8::from(open) | (u8::from(filtering) << 1)) << (book * 2);
+        let _ =
+            self.recipe_book_settings
+                .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |flags| {
+                    Some((flags & !mask) | value)
+                });
     }
 
     pub fn start_cooldown(&self, group: String, duration: i32) {
@@ -7044,6 +7095,7 @@ impl EntityBase for Player {
         }
 
         nbt.put_bool("seenCredits", self.seen_credits.load(Ordering::Relaxed));
+        nbt.put_compound("recipeBook", self.recipe_book_nbt());
         nbt.put_compound(
             "warden_spawn_tracker",
             self.warden_spawn_tracker
@@ -7133,6 +7185,15 @@ impl EntityBase for Player {
 
     #[expect(clippy::too_many_lines)]
     fn read_custom_nbt(&self, nbt: &NbtCompound) {
+        if let Some(recipe_book) = nbt.get_compound("recipeBook") {
+            let mut flags = 0u8;
+            for (bit, key) in RECIPE_BOOK_SETTINGS_KEYS.iter().enumerate() {
+                if recipe_book.get_bool(key).unwrap_or(false) {
+                    flags |= 1 << bit;
+                }
+            }
+            self.recipe_book_settings.store(flags, Ordering::Relaxed);
+        }
         self.inventory.read_nbt_non_mut(nbt);
         self.ender_chest_inventory.read_nbt_non_mut(nbt);
         self.living_entity
