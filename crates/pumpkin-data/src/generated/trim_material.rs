@@ -12,7 +12,6 @@ pub enum TrimMaterial {
     Netherite,
     Quartz,
     Redstone,
-    Resin,
 }
 impl TrimMaterial {
     #[doc = "Returns the trim material from a resource name (bare or namespaced)."]
@@ -29,7 +28,6 @@ impl TrimMaterial {
             "minecraft:netherite" | "netherite" => Some(Self::Netherite),
             "minecraft:quartz" | "quartz" => Some(Self::Quartz),
             "minecraft:redstone" | "redstone" => Some(Self::Redstone),
-            "minecraft:resin" | "resin" => Some(Self::Resin),
             _ => None,
         }
     }
@@ -52,7 +50,6 @@ impl TrimMaterial {
             Self::Netherite => "netherite",
             Self::Quartz => "quartz",
             Self::Redstone => "redstone",
-            Self::Resin => "resin",
         }
     }
     #[doc = "Returns the fully-qualified asset id of the trim material."]
@@ -69,7 +66,6 @@ impl TrimMaterial {
             Self::Netherite => "minecraft:netherite",
             Self::Quartz => "minecraft:quartz",
             Self::Redstone => "minecraft:redstone",
-            Self::Resin => "minecraft:resin",
         }
     }
     #[doc = "Returns the palette id for texture styling."]
@@ -86,7 +82,6 @@ impl TrimMaterial {
             Self::Netherite => "minecraft:trim/netherite",
             Self::Quartz => "minecraft:trim/quartz",
             Self::Redstone => "minecraft:trim/redstone",
-            Self::Resin => "minecraft:trim/resin",
         }
     }
     #[doc = "Returns the hex color code for this material."]
@@ -103,7 +98,6 @@ impl TrimMaterial {
             Self::Netherite => "#625859",
             Self::Quartz => "#E3D4C4",
             Self::Redstone => "#971607",
-            Self::Resin => "#FC7812",
         }
     }
     #[doc = "Returns the translation key describing this trim material."]
@@ -120,7 +114,6 @@ impl TrimMaterial {
             Self::Netherite => "trim_material.minecraft.netherite",
             Self::Quartz => "trim_material.minecraft.quartz",
             Self::Redstone => "trim_material.minecraft.redstone",
-            Self::Resin => "trim_material.minecraft.resin",
         }
     }
     #[doc = "Returns all vanilla trim materials."]
@@ -137,7 +130,6 @@ impl TrimMaterial {
             Self::Netherite,
             Self::Quartz,
             Self::Redstone,
-            Self::Resin,
         ]
     }
 }

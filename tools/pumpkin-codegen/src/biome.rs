@@ -22,13 +22,27 @@ where
     enum StringOrVec {
         String(String),
         Vec(Vec<String>),
+        /// 1.21.1: carvers by carving step (`air`, `liquid`).
+        Steps(BTreeMap<String, StringOrVec>),
     }
 
-    match Option::<StringOrVec>::deserialize(deserializer)? {
-        Some(StringOrVec::String(s)) => Ok(vec![s]),
-        Some(StringOrVec::Vec(v)) => Ok(v),
-        None => Ok(Vec::new()),
+    fn flatten(value: StringOrVec, out: &mut Vec<String>) {
+        match value {
+            StringOrVec::String(s) => out.push(s),
+            StringOrVec::Vec(v) => out.extend(v),
+            StringOrVec::Steps(steps) => {
+                for step in steps.into_values() {
+                    flatten(step, out);
+                }
+            }
+        }
     }
+
+    let mut carvers = Vec::new();
+    if let Some(value) = Option::<StringOrVec>::deserialize(deserializer)? {
+        flatten(value, &mut carvers);
+    }
+    Ok(carvers)
 }
 
 /// Raw deserialization shape for a single biome entry from `biome.json`.

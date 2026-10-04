@@ -2241,6 +2241,12 @@ fn parse_metric(s: &str) -> DistanceMetric {
     }
 }
 
+thread_local! {
+    /// Cell size (xz, y) of the noise settings being parsed. 1.21.1's `interpolated` nodes take it
+    /// from the settings (`NoiseSettings.getCellWidth/Height`) instead of carrying it.
+    static CELL_SIZE: std::cell::Cell<(i32, i32)> = const { std::cell::Cell::new((4, 8)) };
+}
+
 fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> DensityFunctionRepr {
     match val {
         serde_json::Value::Number(n) => DensityFunctionRepr::Constant {
@@ -2765,14 +2771,15 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                             .expect("Missing input/argument"),
                     );
                     let wrapper = if clean_type == "interpolated" {
-                        let cell_size_xz =
-                            obj.get("cell_size_xz")
-                                .and_then(|v| v.as_i64())
-                                .expect("Missing cell_size_xz") as i32;
-                        let cell_size_y =
-                            obj.get("cell_size_y")
-                                .and_then(|v| v.as_i64())
-                                .expect("Missing cell_size_y") as i32;
+                        let (settings_xz, settings_y) = CELL_SIZE.with(std::cell::Cell::get);
+                        let cell_size_xz = obj
+                            .get("cell_size_xz")
+                            .and_then(|v| v.as_i64())
+                            .map_or(settings_xz, |v| v as i32);
+                        let cell_size_y = obj
+                            .get("cell_size_y")
+                            .and_then(|v| v.as_i64())
+                            .map_or(settings_y, |v| v as i32);
                         WrapperType::Interpolated {
                             cell_size_xz,
                             cell_size_y,
@@ -2784,6 +2791,49 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                         input: Box::new(input),
                         wrapper,
                     }
+                }
+                // 1.21.1's `WeirdScaledSampler`: `r * |noise(pos / r)|`, `r` picked from `input`
+                // by the rarity mapper (`NoiseRouterData.QuantizedSpaghettiRarity`). Later
+                // versions write the same as `abs(interval_select(...))`, which this becomes.
+                "weird_scaled_sampler" => {
+                    let input = obj.get("input").expect("Missing input").clone();
+                    let noise = obj.get("noise").expect("Missing noise").clone();
+                    let (thresholds, rarities): (&[f64], &[f64]) = match obj
+                        .get("rarity_value_mapper")
+                        .and_then(|v| v.as_str())
+                        .expect("Missing rarity_value_mapper")
+                    {
+                        // getSpaghettiRarity3D (caves)
+                        "type_1" => (&[-0.5, 0.0, 0.5], &[0.75, 1.0, 1.5, 2.0]),
+                        // getSpaghettiRarity2D (tunnels)
+                        "type_2" => (&[-0.75, -0.5, 0.5, 0.75], &[0.5, 0.75, 1.0, 2.0, 3.0]),
+                        other => panic!("Unknown rarity_value_mapper: {other}"),
+                    };
+                    let functions: Vec<serde_json::Value> = rarities
+                        .iter()
+                        .map(|rarity| {
+                            serde_json::json!({
+                                "type": "minecraft:mul",
+                                "left": {
+                                    "type": "minecraft:noise",
+                                    "noise": noise,
+                                    "xz_scale": 1.0 / rarity,
+                                    "y_scale": 1.0 / rarity,
+                                },
+                                "right": rarity,
+                            })
+                        })
+                        .collect();
+                    let rewritten = serde_json::json!({
+                        "type": "minecraft:abs",
+                        "input": {
+                            "type": "minecraft:interval_select",
+                            "input": input,
+                            "thresholds": thresholds,
+                            "functions": functions,
+                        },
+                    });
+                    parse_vanilla_df(base_df_dir, &rewritten)
                 }
                 "find_top_surface" | "weird_utility_density" => {
                     let density =
@@ -2867,6 +2917,12 @@ fn load_vanilla_noise_router(
             path.display()
         )
     });
+    // 1.21.1: `noise.size_horizontal` and `size_vertical` are in quarter-blocks.
+    if let Some(noise) = val.get("noise") {
+        let xz = noise.get("size_horizontal").and_then(serde_json::Value::as_i64).unwrap_or(1);
+        let y = noise.get("size_vertical").and_then(serde_json::Value::as_i64).unwrap_or(2);
+        CELL_SIZE.with(|cell| cell.set((xz as i32 * 4, y as i32 * 4)));
+    }
     let nr = val
         .get("noise_router")
         .expect("Missing noise_router in noise_settings");

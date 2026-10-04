@@ -10,7 +10,8 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 struct TrimMaterialJson {
     description: TrimDescriptionJson,
-    palette_id: String,
+    /// 1.21.1's `asset_name` (`iron`); later versions name the palette `minecraft:trim/iron`.
+    asset_name: String,
 }
 
 #[derive(Deserialize)]
@@ -56,7 +57,7 @@ pub fn build() -> TokenStream {
     for (name, json) in &materials {
         let variant_ident = format_ident!("{}", name.to_pascal_case());
         let namespaced = format!("minecraft:{name}");
-        let palette_id = &json.palette_id;
+        let palette_id = &format!("minecraft:trim/{}", json.asset_name);
         let color = json.description.color.as_deref().unwrap_or("");
         let translation_key = json.description.translate.as_deref().unwrap_or("");
 

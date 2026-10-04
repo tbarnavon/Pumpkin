@@ -274,14 +274,7 @@ impl ToTokens for ItemComponents {
 
         if let Some(modifiers) = &self.attribute_modifiers {
             let modifier_code = modifiers.iter().map(|modifier| {
-                let r#type = format_ident!(
-                    "{}",
-                    modifier
-                        .r#type
-                        .strip_prefix("minecraft:")
-                        .unwrap()
-                        .to_uppercase()
-                );
+                let r#type = crate::attributes::attribute_ident(&modifier.r#type);
                 let id = LitStr::new(&modifier.id, Span::call_site());
                 let amount = modifier.amount;
                 let operation = Ident::new(&format!("{:?}", modifier.operation), Span::call_site());
@@ -1469,6 +1462,43 @@ pub struct BedrockItem {
     components: Nbt,
 }
 
+/// `items.json` of 1.21.1 as the generators read it: each item's components plus the internal
+/// ones `item_internal_components.json` derives from 1.21.1's code (`equippable`, `consumable`,
+/// fuel...), with the components whose shape changed since 1.21.1 put in the later shape the
+/// generators parse.
+pub(crate) fn load_items_json() -> String {
+    use serde_json::{Map, Value};
+    let mut items: Map<String, Value> =
+        serde_json::from_str(&fs::read_to_string("../../assets/items.json").unwrap())
+            .expect("Failed to parse items.json");
+    let internal: Map<String, Value> = serde_json::from_str(
+        &fs::read_to_string("../../assets/item_internal_components.json").unwrap(),
+    )
+    .expect("Failed to parse item_internal_components.json");
+    for (name, item) in &mut items {
+        let Some(components) = item.get_mut("components").and_then(Value::as_object_mut) else {
+            continue;
+        };
+        // 1.21.1: `{"modifiers": [...], "show_in_tooltip": ...}`; later a plain list.
+        if let Some(Value::Object(modifiers)) = components.get("minecraft:attribute_modifiers") {
+            let list = modifiers.get("modifiers").cloned().unwrap_or(Value::Array(Vec::new()));
+            components.insert("minecraft:attribute_modifiers".into(), list);
+        }
+        // 1.21.1: `{"song": ..., "show_in_tooltip": ...}`; later the song alone.
+        if let Some(Value::Object(playable)) = components.get("minecraft:jukebox_playable")
+            && let Some(song) = playable.get("song").cloned()
+        {
+            components.insert("minecraft:jukebox_playable".into(), song);
+        }
+        if let Some(Value::Object(extra)) = internal.get(name) {
+            for (key, value) in extra {
+                components.entry(key.clone()).or_insert_with(|| value.clone());
+            }
+        }
+    }
+    serde_json::to_string(&items).expect("items.json")
+}
+
 /// Reads `items.json` and generates the complete item registry `TokenStream`.
 pub fn build() -> TokenStream {
     let blocks_assets: BlockAssets =
@@ -1476,8 +1506,7 @@ pub fn build() -> TokenStream {
             .expect("Failed to parse blocks.json");
 
     let items: BTreeMap<String, Item> =
-        serde_json::from_str(&fs::read_to_string("../../assets/items.json").unwrap())
-            .expect("Failed to parse items.json");
+        serde_json::from_str(&load_items_json()).expect("Failed to parse items.json");
 
     let be_item_components: BTreeMap<String, Option<NbtCompound>> = {
         let data = fs::read("../../assets/bedrock/item_components.nbt").unwrap();

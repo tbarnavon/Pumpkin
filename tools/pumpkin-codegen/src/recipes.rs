@@ -101,7 +101,35 @@ pub struct SmithingTrimRecipeStruct {
     template: RecipeIngredientTypes,
     base: RecipeIngredientTypes,
     addition: RecipeIngredientTypes,
-    pattern: String,
+    /// Later versions name the pattern; 1.21.1 finds it from the template item.
+    #[serde(default)]
+    pattern: Option<String>,
+}
+
+/// 1.21.1: the trim pattern whose `template_item` is the given item.
+fn trim_pattern_for_template(template: &str) -> Option<String> {
+    static PATTERNS: std::sync::OnceLock<Vec<(String, String)>> = std::sync::OnceLock::new();
+    let patterns = PATTERNS.get_or_init(|| {
+        let dir = std::path::Path::new("../../assets/datapack/data/minecraft/trim_pattern");
+        let mut patterns = Vec::new();
+        for entry in fs::read_dir(dir).expect("Missing trim_pattern directory").flatten() {
+            let path = entry.path();
+            let Some(stem) = path.file_stem().map(|s| s.to_string_lossy().into_owned()) else {
+                continue;
+            };
+            let json: serde_json::Value =
+                serde_json::from_str(&fs::read_to_string(&path).expect("read trim_pattern"))
+                    .expect("parse trim_pattern");
+            if let Some(item) = json.get("template_item").and_then(|v| v.as_str()) {
+                patterns.push((item.to_string(), format!("minecraft:{stem}")));
+            }
+        }
+        patterns
+    });
+    patterns
+        .iter()
+        .find(|(item, _)| item == template)
+        .map(|(_, pattern)| pattern.clone())
 }
 
 impl ToTokens for SmithingTrimRecipeStruct {
@@ -109,7 +137,11 @@ impl ToTokens for SmithingTrimRecipeStruct {
         let template = self.template.to_token_stream();
         let base = self.base.to_token_stream();
         let addition = self.addition.to_token_stream();
-        let pattern = &self.pattern;
+        let pattern = self.pattern.clone().unwrap_or_else(|| match &self.template {
+            RecipeIngredientTypes::Simple(item) => trim_pattern_for_template(item)
+                .unwrap_or_else(|| panic!("No trim pattern for template {item}")),
+            RecipeIngredientTypes::OneOf(_) => panic!("Trim recipe with several templates"),
+        });
 
         tokens.extend(quote! {
             SmithingTrimRecipe {
@@ -453,13 +485,52 @@ impl ToTokens for RecipeResultStruct {
 }
 
 /// Deserialized recipe ingredient, which is either a single item/tag or a list of alternatives.
-#[derive(Deserialize)]
-#[serde(untagged)]
 pub enum RecipeIngredientTypes {
     /// A single item registry key or tag (prefixed with `#`).
     Simple(String),
     /// A list of acceptable alternative item registry keys.
     OneOf(Vec<String>),
+}
+
+/// One 1.21.1 ingredient value: `{"item": ...}` or `{"tag": ...}`.
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum IngredientValue1_21_1 {
+    Item { item: String },
+    Tag { tag: String },
+    Plain(String),
+}
+
+impl IngredientValue1_21_1 {
+    fn into_key(self) -> String {
+        match self {
+            Self::Item { item } | Self::Plain(item) => item,
+            Self::Tag { tag } => format!("#{tag}"),
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for RecipeIngredientTypes {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        #[derive(Deserialize)]
+        #[serde(untagged)]
+        enum Raw {
+            One(IngredientValue1_21_1),
+            Many(Vec<IngredientValue1_21_1>),
+        }
+        Ok(match Raw::deserialize(deserializer)? {
+            Raw::One(value) => Self::Simple(value.into_key()),
+            Raw::Many(values) => {
+                let mut keys: Vec<String> =
+                    values.into_iter().map(IngredientValue1_21_1::into_key).collect();
+                if keys.len() == 1 {
+                    Self::Simple(keys.remove(0))
+                } else {
+                    Self::OneOf(keys)
+                }
+            }
+        })
+    }
 }
 
 impl ToTokens for RecipeIngredientTypes {

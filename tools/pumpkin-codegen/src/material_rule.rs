@@ -543,24 +543,37 @@ pub fn build() -> TokenStream {
     let cond_dir =
         std::path::Path::new("../../assets/datapack/data/minecraft/worldgen/material_condition");
 
+    // 1.21.1 keeps each dimension's surface rule inline in its noise settings (`surface_rule`);
+    // there are no named rule files, and the bedrock floor and roof are part of these rules.
+    let settings_dir =
+        std::path::Path::new("../../assets/datapack/data/minecraft/worldgen/noise_settings");
     let top_level_rules = [
-        "bedrock_floor",
-        "bedrock_roof",
-        "end",
-        "nether",
-        "overworld",
-        "overworld_caves",
-        "overworld_floating_islands",
+        ("OVERWORLD", "overworld"),
+        ("END", "end"),
+        ("NETHER", "nether"),
+        ("OVERWORLD_CAVES", "caves"),
+        ("OVERWORLD_FLOATING_ISLANDS", "floating_islands"),
     ];
 
     let mut const_defs = TokenStream::new();
 
-    for rule_name in top_level_rules {
-        let raw = RawMaterialRule::Ref(format!("minecraft:{}", rule_name));
+    for (const_name, settings_name) in top_level_rules {
+        let path = settings_dir.join(format!("{settings_name}.json"));
+        let settings: serde_json::Value = serde_json::from_str(
+            &fs::read_to_string(&path).unwrap_or_else(|_| panic!("Failed to read {path:?}")),
+        )
+        .unwrap_or_else(|e| panic!("Failed to parse {path:?}: {e}"));
+        let raw: RawMaterialRule = serde_json::from_value(
+            settings
+                .get("surface_rule")
+                .unwrap_or_else(|| panic!("{path:?} has no surface_rule"))
+                .clone(),
+        )
+        .unwrap_or_else(|e| panic!("Failed to parse the surface rule of {path:?}: {e}"));
         let resolved = resolve_rule(&raw, rule_dir, cond_dir)
-            .unwrap_or_else(|| panic!("Failed to resolve material rule {}", rule_name));
+            .unwrap_or_else(|| panic!("Failed to resolve material rule {settings_name}"));
 
-        let const_ident = format_ident!("{}", rule_name.to_uppercase());
+        let const_ident = format_ident!("{}", const_name);
         const_defs.extend(quote!(
             pub const #const_ident: MaterialRule = #resolved;
         ));
@@ -604,10 +617,10 @@ pub fn build() -> TokenStream {
                     "overworld" | "amplified" | "large_biomes" => Some(&OVERWORLD),
                     "nether" => Some(&NETHER),
                     "end" => Some(&END),
-                    "bedrock_floor" => Some(&BEDROCK_FLOOR),
-                    "bedrock_roof" => Some(&BEDROCK_ROOF),
-                    "overworld_caves" => Some(&OVERWORLD_CAVES),
-                    "overworld_floating_islands" => Some(&OVERWORLD_FLOATING_ISLANDS),
+                    "caves" | "overworld_caves" => Some(&OVERWORLD_CAVES),
+                    "floating_islands" | "overworld_floating_islands" => {
+                        Some(&OVERWORLD_FLOATING_ISLANDS)
+                    }
                     _ => None,
                 }
             }

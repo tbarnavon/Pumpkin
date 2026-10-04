@@ -101,10 +101,7 @@ impl ToTokens for NamedEntityType<'_> {
                 vec.iter()
                     .map(|map| {
                         let (key, value) = map.iter().next().unwrap();
-                        let key = key.strip_prefix("minecraft:").unwrap_or(key);
-                        // Replace dots with underscores and uppercase for Enum naming (e.g. generic.max_health -> GENERIC_MAX_HEALTH)
-                        let enum_variant =
-                            format_ident!("{}", key.replace('.', "_").to_uppercase());
+                        let enum_variant = crate::attributes::attribute_ident(key);
 
                         quote! { (Attributes::#enum_variant, #value) }
                     })

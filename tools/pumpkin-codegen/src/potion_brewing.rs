@@ -2,7 +2,6 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 use serde::Deserialize;
 use std::fs;
-use std::path::Path;
 
 #[derive(Deserialize)]
 struct DataDrivenBrewingRecipe {
@@ -47,24 +46,16 @@ struct BrewingOutputPotionContents {
 
 /// Generates the `TokenStream` for `BREWING_RECIPES`, `POTION_RECIPES` and `ITEM_RECIPES`.
 pub fn build() -> TokenStream {
-    // 2. Load 26.3 data-driven brewing recipes from datapack
-    let brewing_dir = Path::new("../../assets/datapack/data/minecraft/recipe/brewing");
-    let mut entries: Vec<_> = fs::read_dir(brewing_dir)
-        .expect("Missing brewing recipe directory")
-        .flatten()
-        .filter(|e| e.path().extension().is_some_and(|ext| ext == "json"))
-        .collect();
-    entries.sort_by_key(|e| e.path());
+    // 1.21.1 brews in code (`PotionBrewing`); the Extractor writes every mix it makes as the
+    // data-driven recipes of later versions, in one list.
+    let recipes: Vec<DataDrivenBrewingRecipe> = serde_json::from_str(
+        &fs::read_to_string("../../assets/brewing_recipes.json")
+            .expect("Missing brewing_recipes.json"),
+    )
+    .expect("Failed to parse brewing_recipes.json");
 
     let mut brewing_tokens = Vec::new();
-    for entry in entries {
-        let content = fs::read_to_string(entry.path()).expect("Failed to read brewing recipe");
-        let recipe: DataDrivenBrewingRecipe = serde_json::from_str(&content).unwrap_or_else(|e| {
-            panic!(
-                "Failed to parse brewing recipe {}: {e}",
-                entry.path().display()
-            )
-        });
+    for recipe in recipes {
 
         let from_item = format_ident!(
             "{}",

@@ -36,8 +36,8 @@ pub struct Modifiers {
     attribute: String,
     /// Unique resource location ID for this modifier (used for stacking prevention).
     id: String,
-    /// The base numeric value applied by this modifier.
-    #[serde(rename = "baseValue")]
+    /// The numeric value applied by this modifier (1.21.1's `amount`).
+    #[serde(rename = "amount")]
     base_value: f64,
     /// The operation used to combine this modifier with the base attribute value.
     operation: String,
@@ -46,7 +46,7 @@ pub struct Modifiers {
 impl Modifiers {
     /// Converts this modifier entry into a `TokenStream` for use in generated code.
     pub fn get_tokens(self) -> TokenStream {
-        let attribute = format_ident!("{}", self.attribute.to_uppercase());
+        let attribute = crate::attributes::attribute_ident(&self.attribute);
         let id = self.id;
         let base_value = self.base_value;
         let operation = format_ident!("{}", self.operation.to_pascal_case());

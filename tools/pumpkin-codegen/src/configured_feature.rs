@@ -12,7 +12,7 @@ use crate::placed_feature::{
 };
 
 fn load_configured_features() -> BTreeMap<String, Value> {
-    let dir = Path::new("../../assets/datapack/data/minecraft/worldgen/feature");
+    let dir = Path::new("../../assets/datapack/data/minecraft/worldgen/configured_feature");
     let mut map = BTreeMap::new();
     collect_configured_features(dir, "", &mut map);
     map
@@ -20,7 +20,7 @@ fn load_configured_features() -> BTreeMap<String, Value> {
 
 fn collect_configured_features(dir: &Path, prefix: &str, map: &mut BTreeMap<String, Value>) {
     let mut entries: Vec<_> = fs::read_dir(dir)
-        .expect("Missing worldgen/feature directory")
+        .expect("Missing worldgen/configured_feature directory")
         .flatten()
         .collect();
     entries.sort_by_key(|e| e.path());

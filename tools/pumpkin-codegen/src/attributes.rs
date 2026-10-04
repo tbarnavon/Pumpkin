@@ -15,6 +15,14 @@ struct Attributes {
     default_value: f64,
 }
 
+/// The constant for an attribute name. 1.21.1 prefixes attributes (`generic.armor`,
+/// `player.block_break_speed`); the constant drops the prefix (`ARMOR`), as later versions do.
+pub(crate) fn attribute_ident(name: &str) -> proc_macro2::Ident {
+    let name = name.strip_prefix("minecraft:").unwrap_or(name);
+    let name = name.rsplit('.').next().unwrap_or(name);
+    format_ident!("{}", name.to_shouty_snake_case())
+}
+
 /// Generates the `TokenStream` for the `Attributes` struct and its associated constants.
 pub fn build() -> TokenStream {
     let attributes: BTreeMap<String, Attributes> =
@@ -28,7 +36,7 @@ pub fn build() -> TokenStream {
     let mut constant_idents = Vec::new();
 
     for (raw_name, raw_value) in sorted_attributes {
-        let constant_ident = format_ident!("{}", raw_name.to_shouty_snake_case());
+        let constant_ident = attribute_ident(&raw_name);
         constant_idents.push(constant_ident.clone());
 
         let id_lit = LitInt::new(&raw_value.id.to_string(), Span::call_site());

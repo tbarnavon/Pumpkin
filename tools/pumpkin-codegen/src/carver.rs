@@ -5,10 +5,10 @@ use std::collections::BTreeMap;
 use std::fs;
 
 pub fn build() -> TokenStream {
-    let dir = std::path::Path::new("../../assets/datapack/data/minecraft/worldgen/carver");
+    let dir = std::path::Path::new("../../assets/datapack/data/minecraft/worldgen/configured_carver");
     let mut carvers: BTreeMap<String, Value> = BTreeMap::new();
     let mut entries: Vec<_> = fs::read_dir(dir)
-        .expect("Missing worldgen/carver directory")
+        .expect("Missing worldgen/configured_carver directory")
         .flatten()
         .filter(|e| e.path().extension().is_some_and(|ext| ext == "json"))
         .collect();

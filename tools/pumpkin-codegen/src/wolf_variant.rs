@@ -7,18 +7,37 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 use serde::Deserialize;
 
+/// A 1.21.1 `wolf_variant` entry: the three textures and the biomes it spawns in (no baby
+/// textures yet).
 #[derive(Deserialize)]
+struct WolfVariantJson1_21_1 {
+    angry_texture: String,
+    tame_texture: String,
+    wild_texture: String,
+}
+
 struct WolfVariantJson {
     assets: WolfAssetsJson,
-    #[serde(default)]
     baby_assets: Option<WolfAssetsJson>,
 }
 
-#[derive(Deserialize)]
 struct WolfAssetsJson {
     angry: String,
     tame: String,
     wild: String,
+}
+
+impl From<WolfVariantJson1_21_1> for WolfVariantJson {
+    fn from(json: WolfVariantJson1_21_1) -> Self {
+        Self {
+            assets: WolfAssetsJson {
+                angry: json.angry_texture,
+                tame: json.tame_texture,
+                wild: json.wild_texture,
+            },
+            baby_assets: None,
+        }
+    }
 }
 
 pub fn build() -> TokenStream {
@@ -40,8 +59,9 @@ pub fn build() -> TokenStream {
 
         let stem = path.file_stem().unwrap().to_string_lossy().to_string();
         let content = fs::read_to_string(&path).expect("read wolf_variant file");
-        let json: WolfVariantJson =
-            serde_json::from_str(&content).expect("parse wolf_variant JSON");
+        let json: WolfVariantJson = serde_json::from_str::<WolfVariantJson1_21_1>(&content)
+            .expect("parse wolf_variant JSON")
+            .into();
 
         variants.insert(stem, json);
     }

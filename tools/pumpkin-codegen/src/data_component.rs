@@ -6,9 +6,26 @@ use std::fs;
 
 /// Generates the `TokenStream` for the `DataComponent` enum and its ID/name conversion methods.
 pub fn build() -> TokenStream {
-    let data_component: BTreeMap<String, u8> =
+    let mut data_component: BTreeMap<String, u8> =
         serde_json::from_str(&fs::read_to_string("../../assets/data_component.json").unwrap())
             .expect("Failed to parse data_component.json");
+    // 1.21.1's components keep their network ids. The components of later versions that the
+    // shared game code uses (`consumable`, `equippable`...) follow as internal-only ones: the
+    // server derives them from 1.21.1's code and never sends them.
+    let networked_count = data_component.len();
+    let internal: BTreeMap<String, u8> = serde_json::from_str(
+        &fs::read_to_string("../../assets/data_component_internal.json").unwrap(),
+    )
+    .expect("Failed to parse data_component_internal.json");
+    let mut internal: Vec<_> = internal.into_iter().collect();
+    internal.sort_by_key(|(_, i)| *i);
+    for (name, _) in internal {
+        if !data_component.contains_key(&name) {
+            let id = u8::try_from(data_component.len()).expect("too many data components");
+            data_component.insert(name, id);
+        }
+    }
+    let networked_count = u8::try_from(networked_count).expect("too many data components");
 
     let mut enum_variants = TokenStream::new();
     let mut id_to_enum = TokenStream::new();
@@ -58,6 +75,12 @@ pub fn build() -> TokenStream {
             #[must_use]
             pub const fn to_id(self) -> u8 {
                 self as u8
+            }
+
+            /// Whether 1.21.1 clients know this component; internal-only ones are never sent.
+            #[must_use]
+            pub const fn is_networked(self) -> bool {
+                (self as u8) < #networked_count
             }
 
             #[must_use]

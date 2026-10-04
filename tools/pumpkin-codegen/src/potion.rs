@@ -14,21 +14,32 @@ struct Potion {
     effects: Vec<Effect>,
 }
 
-/// A single status effect instance applied by a potion, as defined in `potion.json`.
+/// A single status effect instance applied by a potion, as 1.21.1's `MobEffectInstance.CODEC`
+/// writes it in `potion.json`: fields at their default are left out.
 #[derive(Deserialize)]
 pub struct Effect {
     /// Namespaced effect resource location (e.g. `"minecraft:speed"`).
+    #[serde(rename = "id")]
     effect_type: String,
     /// Duration of the effect in ticks.
+    #[serde(default)]
     duration: i32,
     /// Amplifier level (0 = level I, 1 = level II, …).
+    #[serde(default)]
     amplifier: u8,
     /// Whether this effect is ambient (produced by beacon, reducing particle density).
+    #[serde(default)]
     ambient: bool,
     /// Whether particles should be displayed while the effect is active.
+    #[serde(default = "default_true")]
     show_particles: bool,
     /// Whether the effect icon should appear in the HUD.
+    #[serde(default = "default_true")]
     show_icon: bool,
+}
+
+const fn default_true() -> bool {
+    true
 }
 
 impl Effect {

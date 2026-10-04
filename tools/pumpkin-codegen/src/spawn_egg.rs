@@ -25,8 +25,7 @@ struct EntityDataComponent {
 /// Generates the `TokenStream` for `entity_from_egg` and `spawn_egg_ids` helper functions.
 pub fn build() -> TokenStream {
     let items: BTreeMap<String, ItemEntry> =
-        serde_json::from_str(&fs::read_to_string("../../assets/items.json").unwrap())
-            .expect("Failed to parse items.json");
+        serde_json::from_str(&crate::item::load_items_json()).expect("Failed to parse items.json");
 
     let mut eggs: BTreeMap<u16, String> = BTreeMap::new();
     for (_, item) in items {

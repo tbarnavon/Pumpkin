@@ -177,21 +177,41 @@ fn build_configured_features()
                 state: pumpkin_data::Block::SMOOTH_BASALT.default_state,
             }),
             inner_placements: vec![
-                BlockStateCodec {
-                    name: &pumpkin_data::Block::SMALL_AMETHYST_BUD,
-                    properties: None,
+                {
+                    let mut props = std::collections::HashMap::new();
+                    props.insert("facing".to_string(), "up".to_string());
+                    props.insert("waterlogged".to_string(), "false".to_string());
+                    BlockStateCodec {
+                        name: &pumpkin_data::Block::SMALL_AMETHYST_BUD,
+                        properties: Some(props),
+                    }
                 },
-                BlockStateCodec {
-                    name: &pumpkin_data::Block::MEDIUM_AMETHYST_BUD,
-                    properties: None,
+                {
+                    let mut props = std::collections::HashMap::new();
+                    props.insert("facing".to_string(), "up".to_string());
+                    props.insert("waterlogged".to_string(), "false".to_string());
+                    BlockStateCodec {
+                        name: &pumpkin_data::Block::MEDIUM_AMETHYST_BUD,
+                        properties: Some(props),
+                    }
                 },
-                BlockStateCodec {
-                    name: &pumpkin_data::Block::LARGE_AMETHYST_BUD,
-                    properties: None,
+                {
+                    let mut props = std::collections::HashMap::new();
+                    props.insert("facing".to_string(), "up".to_string());
+                    props.insert("waterlogged".to_string(), "false".to_string());
+                    BlockStateCodec {
+                        name: &pumpkin_data::Block::LARGE_AMETHYST_BUD,
+                        properties: Some(props),
+                    }
                 },
-                BlockStateCodec {
-                    name: &pumpkin_data::Block::AMETHYST_CLUSTER,
-                    properties: None,
+                {
+                    let mut props = std::collections::HashMap::new();
+                    props.insert("facing".to_string(), "up".to_string());
+                    props.insert("waterlogged".to_string(), "false".to_string());
+                    BlockStateCodec {
+                        name: &pumpkin_data::Block::AMETHYST_CLUSTER,
+                        properties: Some(props),
+                    }
                 },
             ],
             cannot_replace: BlockWrapper::Single("#minecraft:features_cannot_replace".to_string()),
@@ -212,8 +232,16 @@ fn build_configured_features()
                     max_inclusive: 6i32,
                 },
             )),
-            distribution_points: IntProvider::Constant(0),
-            point_offset: IntProvider::Constant(0),
+            distribution_points: IntProvider::Object(NormalIntProvider::Uniform(
+                UniformIntProvider {
+                    min_inclusive: 3i32,
+                    max_inclusive: 4i32,
+                },
+            )),
+            point_offset: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
+                min_inclusive: 1i32,
+                max_inclusive: 2i32,
+            })),
             min_gen_offset: -16i32,
             max_gen_offset: 16i32,
             noise_multiplier: 0.05f64,
@@ -251,11 +279,31 @@ fn build_configured_features()
             foliage_provider: BlockStateProvider::Weighted(WeightedBlockStateProvider {
                 entries: vec![
                     Weighted {
-                        data: pumpkin_data::Block::AZALEA_LEAVES.default_state,
+                        data: {
+                            let mut props = std::collections::HashMap::new();
+                            props.insert("distance".to_string(), "7".to_string());
+                            props.insert("persistent".to_string(), "false".to_string());
+                            props.insert("waterlogged".to_string(), "false".to_string());
+                            BlockStateCodec {
+                                name: &pumpkin_data::Block::AZALEA_LEAVES,
+                                properties: Some(props),
+                            }
+                            .get_state()
+                        },
                         weight: 3i32,
                     },
                     Weighted {
-                        data: pumpkin_data::Block::FLOWERING_AZALEA_LEAVES.default_state,
+                        data: {
+                            let mut props = std::collections::HashMap::new();
+                            props.insert("distance".to_string(), "7".to_string());
+                            props.insert("persistent".to_string(), "false".to_string());
+                            props.insert("waterlogged".to_string(), "false".to_string());
+                            BlockStateCodec {
+                                name: &pumpkin_data::Block::FLOWERING_AZALEA_LEAVES,
+                                properties: Some(props),
+                            }
+                            .get_state()
+                        },
                         weight: 1i32,
                     },
                 ],
@@ -278,7 +326,7 @@ fn build_configured_features()
             },
             ignore_vines: false,
             below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::ROOTED_DIRT.default_state,
+                state: pumpkin_data::Block::AIR.default_state,
             }),
             decorators: vec![],
             root_placer: None,
@@ -319,51 +367,9 @@ fn build_configured_features()
             ],
             default: Box::new(PlacedFeatureWrapper::Direct(PlacedFeature {
                 feature: Feature::Named(
-                    pumpkin_data::configured_feature::ConfiguredFeature::GrassJungle,
+                    pumpkin_data::configured_feature::ConfiguredFeature::PatchGrassJungle,
                 ),
-                placement: vec![
-                    PlacementModifier::Count(CountPlacementModifier {
-                        count: IntProvider::Constant(32i32),
-                    }),
-                    PlacementModifier::RandomOffset(RandomOffsetPlacementModifier {
-                        xz_spread: IntProvider::Object(NormalIntProvider::Trapezoid(
-                            TrapezoidIntProvider {
-                                min_inclusive: -7i32,
-                                max_inclusive: 7i32,
-                                plateau: 0i32,
-                            },
-                        )),
-                        y_spread: IntProvider::Object(NormalIntProvider::Trapezoid(
-                            TrapezoidIntProvider {
-                                min_inclusive: -3i32,
-                                max_inclusive: 3i32,
-                                plateau: 0i32,
-                            },
-                        )),
-                    }),
-                    PlacementModifier::BlockPredicateFilter(BlockFilterPlacementModifier {
-                        predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
-                            predicates: vec![
-                                BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
-                                    offset: OffsetBlocksBlockPredicate { offset: None },
-                                    tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                }),
-                                BlockPredicate::Not(NotBlockPredicate {
-                                    predicate: Box::new(BlockPredicate::MatchingBlocks(
-                                        MatchingBlocksBlockPredicate {
-                                            offset: OffsetBlocksBlockPredicate {
-                                                offset: Some(Vector3::new(0i32, -1i32, 0i32)),
-                                            },
-                                            blocks: MatchingBlocksWrapper::Single(
-                                                "minecraft:podzol".to_string(),
-                                            ),
-                                        },
-                                    )),
-                                }),
-                            ],
-                        }),
-                    }),
-                ],
+                placement: vec![],
             })),
         }),
     );
@@ -371,7 +377,15 @@ fn build_configured_features()
         pumpkin_data::configured_feature::ConfiguredFeature::BasaltBlobs,
         ConfiguredFeature::NetherrackReplaceBlobs(ReplaceBlobsFeature {
             target: pumpkin_data::Block::NETHERRACK.default_state,
-            state: pumpkin_data::Block::BASALT.default_state,
+            state: {
+                let mut props = std::collections::HashMap::new();
+                props.insert("axis".to_string(), "y".to_string());
+                BlockStateCodec {
+                    name: &pumpkin_data::Block::BASALT,
+                    properties: Some(props),
+                }
+                .get_state()
+            },
             radius: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
                 min_inclusive: 3i32,
                 max_inclusive: 7i32,
@@ -380,24 +394,9 @@ fn build_configured_features()
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::BasaltPillar,
-        ConfiguredFeature::NoOp,
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::BerryBush,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("age".to_string(), "3".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::SWEET_BERRY_BUSH,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            schedule_tick: None,
-        }),
+        ConfiguredFeature::BasaltPillar(
+            crate::generation::feature::features::basalt_pillar::BasaltPillarFeature {},
+        ),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::Birch,
@@ -506,432 +505,6 @@ fn build_configured_features()
             decorators: vec![TreeDecorator::Beehive(BeehiveTreeDecorator {
                 probability: 0.002f32,
             })],
-            root_placer: None,
-        })),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::BirchBees0002LeafLitter,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::BIRCH_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            trunk_placer: TrunkPlacer {
-                base_height: 5u8,
-                height_rand_a: 2u8,
-                height_rand_b: 0u8,
-                r#type: TrunkType::Straight(StraightTrunkPlacer),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::BIRCH_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Constant(2i32),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::Blob(BlobFoliagePlacer { height: 3i32 }),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::TwoLayersFeatureSize(TwoLayersFeatureSize {
-                    limit: 1u8,
-                    lower_size: 0u8,
-                    upper_size: 1u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![
-                TreeDecorator::Beehive(BeehiveTreeDecorator {
-                    probability: 0.002f32,
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 96i32,
-                    radius: 4i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 150i32,
-                    radius: 1i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-            ],
             root_placer: None,
         })),
     );
@@ -1048,451 +621,14 @@ fn build_configured_features()
         })),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::BirchLeafLitter,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::BIRCH_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            trunk_placer: TrunkPlacer {
-                base_height: 5u8,
-                height_rand_a: 2u8,
-                height_rand_b: 0u8,
-                r#type: TrunkType::Straight(StraightTrunkPlacer),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::BIRCH_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Constant(2i32),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::Blob(BlobFoliagePlacer { height: 3i32 }),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::TwoLayersFeatureSize(TwoLayersFeatureSize {
-                    limit: 1u8,
-                    lower_size: 0u8,
-                    upper_size: 1u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 96i32,
-                    radius: 4i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 150i32,
-                    radius: 1i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-            ],
-            root_placer: None,
-        })),
-    );
-    map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::BirchTall,
         ConfiguredFeature::RandomSelector(RandomFeature {
-            features: vec![
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenSuperBirchTree,
-                    ),
-                    chance: 0.00625f32,
-                },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::SuperBirchBees0002,
-                    ),
-                    chance: 0.5f32,
-                },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenBirchTree,
-                    ),
-                    chance: 0.0125f32,
-                },
-            ],
+            features: vec![RandomFeatureEntry {
+                feature: PlacedFeatureWrapper::Named(
+                    pumpkin_data::placed_feature::PlacedFeature::SuperBirchBees0002,
+                ),
+                chance: 0.5f32,
+            }],
             default: Box::new(PlacedFeatureWrapper::Named(
                 pumpkin_data::placed_feature::PlacedFeature::BirchBees0002,
             )),
@@ -1520,75 +656,6 @@ fn build_configured_features()
         ConfiguredFeature::BonusChest(
             crate::generation::feature::features::bonus_chest::BonusChestFeature {},
         ),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::BrownMushroom,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::BROWN_MUSHROOM.default_state,
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::Bush,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::BUSH.default_state,
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::Cactus,
-        ConfiguredFeature::BlockColumn(BlockColumnFeature {
-            layers: vec![
-                Layer {
-                    height: IntProvider::Object(NormalIntProvider::BiasedToBottom(
-                        BiasedToBottomIntProvider {
-                            min_inclusive: 1i32,
-                            max_inclusive: 3i32,
-                        },
-                    )),
-                    provider: BlockStateProvider::Simple(SimpleStateProvider {
-                        state: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("age".to_string(), "0".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::CACTUS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                    }),
-                },
-                Layer {
-                    height: IntProvider::Object(NormalIntProvider::WeightedList(
-                        WeightedListIntProvider {
-                            distribution: vec![
-                                WeightedEntry {
-                                    data: IntProvider::Constant(0i32),
-                                    weight: 3i32,
-                                },
-                                WeightedEntry {
-                                    data: IntProvider::Constant(1i32),
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    )),
-                    provider: BlockStateProvider::Simple(SimpleStateProvider {
-                        state: pumpkin_data::Block::CACTUS_FLOWER.default_state,
-                    }),
-                },
-            ],
-            direction: BlockDirection::Up,
-            allowed_placement: BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
-                offset: OffsetBlocksBlockPredicate { offset: None },
-                tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-            }),
-            prioritize_tip: false,
-        }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::CaveVine,
@@ -1628,21 +695,85 @@ fn build_configured_features()
                             ],
                         },
                     )),
-                    provider: BlockStateProvider::Simple(SimpleStateProvider {
-                        state: pumpkin_data::Block::AIR.default_state,
+                    provider: BlockStateProvider::Weighted(WeightedBlockStateProvider {
+                        entries: vec![
+                            Weighted {
+                                data: {
+                                    let mut props = std::collections::HashMap::new();
+                                    props.insert("berries".to_string(), "false".to_string());
+                                    BlockStateCodec {
+                                        name: &pumpkin_data::Block::CAVE_VINES_PLANT,
+                                        properties: Some(props),
+                                    }
+                                    .get_state()
+                                },
+                                weight: 4i32,
+                            },
+                            Weighted {
+                                data: {
+                                    let mut props = std::collections::HashMap::new();
+                                    props.insert("berries".to_string(), "true".to_string());
+                                    BlockStateCodec {
+                                        name: &pumpkin_data::Block::CAVE_VINES_PLANT,
+                                        properties: Some(props),
+                                    }
+                                    .get_state()
+                                },
+                                weight: 1i32,
+                            },
+                        ],
                     }),
                 },
                 Layer {
                     height: IntProvider::Constant(1i32),
-                    provider: BlockStateProvider::Simple(SimpleStateProvider {
-                        state: pumpkin_data::Block::AIR.default_state,
+                    provider: BlockStateProvider::RandomizedInt(RandomizedIntBlockStateProvider {
+                        source: Box::new(BlockStateProvider::Weighted(
+                            WeightedBlockStateProvider {
+                                entries: vec![
+                                    Weighted {
+                                        data: {
+                                            let mut props = std::collections::HashMap::new();
+                                            props.insert("age".to_string(), "0".to_string());
+                                            props
+                                                .insert("berries".to_string(), "false".to_string());
+                                            BlockStateCodec {
+                                                name: &pumpkin_data::Block::CAVE_VINES,
+                                                properties: Some(props),
+                                            }
+                                            .get_state()
+                                        },
+                                        weight: 4i32,
+                                    },
+                                    Weighted {
+                                        data: {
+                                            let mut props = std::collections::HashMap::new();
+                                            props.insert("age".to_string(), "0".to_string());
+                                            props.insert("berries".to_string(), "true".to_string());
+                                            BlockStateCodec {
+                                                name: &pumpkin_data::Block::CAVE_VINES,
+                                                properties: Some(props),
+                                            }
+                                            .get_state()
+                                        },
+                                        weight: 1i32,
+                                    },
+                                ],
+                            },
+                        )),
+                        property: "age".to_string(),
+                        values: IntProvider::Object(NormalIntProvider::Uniform(
+                            UniformIntProvider {
+                                min_inclusive: 23i32,
+                                max_inclusive: 25i32,
+                            },
+                        )),
                     }),
                 },
             ],
             direction: BlockDirection::Down,
-            allowed_placement: BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
+            allowed_placement: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
                 offset: OffsetBlocksBlockPredicate { offset: None },
-                tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
+                blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
             }),
             prioritize_tip: true,
         }),
@@ -1676,21 +807,85 @@ fn build_configured_features()
                             ],
                         },
                     )),
-                    provider: BlockStateProvider::Simple(SimpleStateProvider {
-                        state: pumpkin_data::Block::AIR.default_state,
+                    provider: BlockStateProvider::Weighted(WeightedBlockStateProvider {
+                        entries: vec![
+                            Weighted {
+                                data: {
+                                    let mut props = std::collections::HashMap::new();
+                                    props.insert("berries".to_string(), "false".to_string());
+                                    BlockStateCodec {
+                                        name: &pumpkin_data::Block::CAVE_VINES_PLANT,
+                                        properties: Some(props),
+                                    }
+                                    .get_state()
+                                },
+                                weight: 4i32,
+                            },
+                            Weighted {
+                                data: {
+                                    let mut props = std::collections::HashMap::new();
+                                    props.insert("berries".to_string(), "true".to_string());
+                                    BlockStateCodec {
+                                        name: &pumpkin_data::Block::CAVE_VINES_PLANT,
+                                        properties: Some(props),
+                                    }
+                                    .get_state()
+                                },
+                                weight: 1i32,
+                            },
+                        ],
                     }),
                 },
                 Layer {
                     height: IntProvider::Constant(1i32),
-                    provider: BlockStateProvider::Simple(SimpleStateProvider {
-                        state: pumpkin_data::Block::AIR.default_state,
+                    provider: BlockStateProvider::RandomizedInt(RandomizedIntBlockStateProvider {
+                        source: Box::new(BlockStateProvider::Weighted(
+                            WeightedBlockStateProvider {
+                                entries: vec![
+                                    Weighted {
+                                        data: {
+                                            let mut props = std::collections::HashMap::new();
+                                            props.insert("age".to_string(), "0".to_string());
+                                            props
+                                                .insert("berries".to_string(), "false".to_string());
+                                            BlockStateCodec {
+                                                name: &pumpkin_data::Block::CAVE_VINES,
+                                                properties: Some(props),
+                                            }
+                                            .get_state()
+                                        },
+                                        weight: 4i32,
+                                    },
+                                    Weighted {
+                                        data: {
+                                            let mut props = std::collections::HashMap::new();
+                                            props.insert("age".to_string(), "0".to_string());
+                                            props.insert("berries".to_string(), "true".to_string());
+                                            BlockStateCodec {
+                                                name: &pumpkin_data::Block::CAVE_VINES,
+                                                properties: Some(props),
+                                            }
+                                            .get_state()
+                                        },
+                                        weight: 1i32,
+                                    },
+                                ],
+                            },
+                        )),
+                        property: "age".to_string(),
+                        values: IntProvider::Object(NormalIntProvider::Uniform(
+                            UniformIntProvider {
+                                min_inclusive: 23i32,
+                                max_inclusive: 25i32,
+                            },
+                        )),
                     }),
                 },
             ],
             direction: BlockDirection::Down,
-            allowed_placement: BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
+            allowed_placement: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
                 offset: OffsetBlocksBlockPredicate { offset: None },
-                tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
+                blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
             }),
             prioritize_tip: true,
         }),
@@ -1956,33 +1151,9 @@ fn build_configured_features()
         }),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::CoralBlockDecoration,
-        ConfiguredFeature::NoOp,
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::CoralBrainBlock,
-        ConfiguredFeature::NoOp,
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::CoralBubbleBlock,
-        ConfiguredFeature::NoOp,
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::CoralFireBlock,
-        ConfiguredFeature::NoOp,
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::CoralHornBlock,
-        ConfiguredFeature::NoOp,
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::CoralTubeBlock,
-        ConfiguredFeature::NoOp,
-    );
-    map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::CrimsonForestVegetation,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
+        ConfiguredFeature::NetherForestVegetation(NetherForestVegetationFeature {
+            state_provider: BlockStateProvider::Weighted(WeightedBlockStateProvider {
                 entries: vec![
                     Weighted {
                         data: pumpkin_data::Block::CRIMSON_ROOTS.default_state,
@@ -1998,7 +1169,31 @@ fn build_configured_features()
                     },
                 ],
             }),
-            schedule_tick: None,
+            spread_width: 8i32,
+            spread_height: 4i32,
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::CrimsonForestVegetationBonemeal,
+        ConfiguredFeature::NetherForestVegetation(NetherForestVegetationFeature {
+            state_provider: BlockStateProvider::Weighted(WeightedBlockStateProvider {
+                entries: vec![
+                    Weighted {
+                        data: pumpkin_data::Block::CRIMSON_ROOTS.default_state,
+                        weight: 87i32,
+                    },
+                    Weighted {
+                        data: pumpkin_data::Block::CRIMSON_FUNGUS.default_state,
+                        weight: 11i32,
+                    },
+                    Weighted {
+                        data: pumpkin_data::Block::WARPED_FUNGUS.default_state,
+                        weight: 1i32,
+                    },
+                ],
+            }),
+            spread_width: 3i32,
+            spread_height: 1i32,
         }),
     );
     map.insert(
@@ -2006,7 +1201,15 @@ fn build_configured_features()
         ConfiguredFeature::HugeFungus(
             crate::generation::feature::features::huge_fungus::HugeFungusFeature {
                 valid_base_block: pumpkin_data::Block::CRIMSON_NYLIUM.default_state,
-                stem_state: pumpkin_data::Block::CRIMSON_STEM.default_state,
+                stem_state: {
+                    let mut props = std::collections::HashMap::new();
+                    props.insert("axis".to_string(), "y".to_string());
+                    BlockStateCodec {
+                        name: &pumpkin_data::Block::CRIMSON_STEM,
+                        properties: Some(props),
+                    }
+                    .get_state()
+                },
                 hat_state: pumpkin_data::Block::NETHER_WART_BLOCK.default_state,
                 decor_state: pumpkin_data::Block::SHROOMLIGHT.default_state,
                 replaceable_blocks: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
@@ -2019,7 +1222,6 @@ fn build_configured_features()
                         "minecraft:acacia_sapling".to_string(),
                         "minecraft:cherry_sapling".to_string(),
                         "minecraft:dark_oak_sapling".to_string(),
-                        "minecraft:pale_oak_sapling".to_string(),
                         "minecraft:mangrove_propagule".to_string(),
                         "minecraft:dandelion".to_string(),
                         "minecraft:torchflower".to_string(),
@@ -2067,7 +1269,6 @@ fn build_configured_features()
                         "minecraft:flowering_azalea".to_string(),
                         "minecraft:moss_carpet".to_string(),
                         "minecraft:pink_petals".to_string(),
-                        "minecraft:wildflowers".to_string(),
                         "minecraft:big_dripleaf".to_string(),
                         "minecraft:big_dripleaf_stem".to_string(),
                         "minecraft:small_dripleaf".to_string(),
@@ -2082,7 +1283,15 @@ fn build_configured_features()
         ConfiguredFeature::HugeFungus(
             crate::generation::feature::features::huge_fungus::HugeFungusFeature {
                 valid_base_block: pumpkin_data::Block::CRIMSON_NYLIUM.default_state,
-                stem_state: pumpkin_data::Block::CRIMSON_STEM.default_state,
+                stem_state: {
+                    let mut props = std::collections::HashMap::new();
+                    props.insert("axis".to_string(), "y".to_string());
+                    BlockStateCodec {
+                        name: &pumpkin_data::Block::CRIMSON_STEM,
+                        properties: Some(props),
+                    }
+                    .get_state()
+                },
                 hat_state: pumpkin_data::Block::NETHER_WART_BLOCK.default_state,
                 decor_state: pumpkin_data::Block::SHROOMLIGHT.default_state,
                 replaceable_blocks: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
@@ -2095,7 +1304,6 @@ fn build_configured_features()
                         "minecraft:acacia_sapling".to_string(),
                         "minecraft:cherry_sapling".to_string(),
                         "minecraft:dark_oak_sapling".to_string(),
-                        "minecraft:pale_oak_sapling".to_string(),
                         "minecraft:mangrove_propagule".to_string(),
                         "minecraft:dandelion".to_string(),
                         "minecraft:torchflower".to_string(),
@@ -2143,7 +1351,6 @@ fn build_configured_features()
                         "minecraft:flowering_azalea".to_string(),
                         "minecraft:moss_carpet".to_string(),
                         "minecraft:pink_petals".to_string(),
-                        "minecraft:wildflowers".to_string(),
                         "minecraft:big_dripleaf".to_string(),
                         "minecraft:big_dripleaf_stem".to_string(),
                         "minecraft:small_dripleaf".to_string(),
@@ -2152,15 +1359,6 @@ fn build_configured_features()
                 planted: true,
             },
         ),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::CrimsonRoots,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::CRIMSON_ROOTS.default_state,
-            }),
-            schedule_tick: None,
-        }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::DarkForestVegetation,
@@ -2186,37 +1384,25 @@ fn build_configured_features()
                 },
                 RandomFeatureEntry {
                     feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::DarkOakLeafLitter,
+                        pumpkin_data::placed_feature::PlacedFeature::DarkOakChecked,
                     ),
                     chance: 0.6666667f32,
                 },
                 RandomFeatureEntry {
                     feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenBirchTree,
-                    ),
-                    chance: 0.0025f32,
-                },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::BirchLeafLitter,
+                        pumpkin_data::placed_feature::PlacedFeature::BirchChecked,
                     ),
                     chance: 0.2f32,
                 },
                 RandomFeatureEntry {
                     feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenOakTree,
-                    ),
-                    chance: 0.0125f32,
-                },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FancyOakLeafLitter,
+                        pumpkin_data::placed_feature::PlacedFeature::FancyOakChecked,
                     ),
                     chance: 0.1f32,
                 },
             ],
             default: Box::new(PlacedFeatureWrapper::Named(
-                pumpkin_data::placed_feature::PlacedFeature::OakLeafLitter,
+                pumpkin_data::placed_feature::PlacedFeature::OakChecked,
             )),
         }),
     );
@@ -2277,444 +1463,18 @@ fn build_configured_features()
         })),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::DarkOakLeafLitter,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::DARK_OAK_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            trunk_placer: TrunkPlacer {
-                base_height: 6u8,
-                height_rand_a: 2u8,
-                height_rand_b: 1u8,
-                r#type: TrunkType::DarkOak(DarkOakTrunkPlacer),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::DARK_OAK_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Constant(0i32),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::DarkOak(DarkOakFoliagePlacer),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::ThreeLayersFeatureSize(ThreeLayersFeatureSize {
-                    limit: 1u8,
-                    upper_limit: 1u8,
-                    lower_size: 0u8,
-                    middle_size: 1u8,
-                    upper_size: 2u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 96i32,
-                    radius: 4i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 150i32,
-                    radius: 1i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-            ],
-            root_placer: None,
-        })),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::DeadBush,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::DEAD_BUSH.default_state,
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::Delta,
         ConfiguredFeature::DeltaFeature(
             crate::generation::feature::features::delta_feature::DeltaFeatureFeature {
-                contents: pumpkin_data::Block::LAVA.default_state,
+                contents: {
+                    let mut props = std::collections::HashMap::new();
+                    props.insert("level".to_string(), "0".to_string());
+                    BlockStateCodec {
+                        name: &pumpkin_data::Block::LAVA,
+                        properties: Some(props),
+                    }
+                    .get_state()
+                },
                 rim: pumpkin_data::Block::MAGMA_BLOCK.default_state,
                 size: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
                     min_inclusive: 3i32,
@@ -2729,13 +1489,15 @@ fn build_configured_features()
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::DesertWell,
-        ConfiguredFeature::NoOp,
+        ConfiguredFeature::DesertWell(
+            crate::generation::feature::features::desert_well::DesertWellFeature,
+        ),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::DiskClay,
         ConfiguredFeature::Disk(crate::generation::feature::features::disk::DiskFeature {
             state_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::CLAY.default_state,
+                state: pumpkin_data::Block::AIR.default_state,
             }),
             target: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
                 offset: OffsetBlocksBlockPredicate { offset: None },
@@ -2754,42 +1516,8 @@ fn build_configured_features()
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::DiskGrass,
         ConfiguredFeature::Disk(crate::generation::feature::features::disk::DiskFeature {
-            state_provider: BlockStateProvider::Rule(RuleBasedBlockStateProvider {
-                fallback: Some(Box::new(BlockStateProvider::Simple(SimpleStateProvider {
-                    state: pumpkin_data::Block::DIRT.default_state,
-                }))),
-                rules: vec![BlockStateRule {
-                    if_true: BlockPredicate::Not(NotBlockPredicate {
-                        predicate: Box::new(BlockPredicate::AnyOf(AnyOfBlockPredicate {
-                            predicates: vec![
-                                BlockPredicate::Solid(SolidBlockPredicate {
-                                    offset: OffsetBlocksBlockPredicate {
-                                        offset: Some(Vector3::new(0i32, 1i32, 0i32)),
-                                    },
-                                }),
-                                BlockPredicate::MatchingFluids(MatchingFluidsBlockPredicate {
-                                    offset: OffsetBlocksBlockPredicate {
-                                        offset: Some(Vector3::new(0i32, 1i32, 0i32)),
-                                    },
-                                    fluids: MatchingBlocksWrapper::Single(
-                                        "minecraft:water".to_string(),
-                                    ),
-                                }),
-                            ],
-                        })),
-                    }),
-                    then: BlockStateProvider::Simple(SimpleStateProvider {
-                        state: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("snowy".to_string(), "false".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::GRASS_BLOCK,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                    }),
-                }],
+            state_provider: BlockStateProvider::Simple(SimpleStateProvider {
+                state: pumpkin_data::Block::AIR.default_state,
             }),
             target: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
                 offset: OffsetBlocksBlockPredicate { offset: None },
@@ -2809,7 +1537,7 @@ fn build_configured_features()
         pumpkin_data::configured_feature::ConfiguredFeature::DiskGravel,
         ConfiguredFeature::Disk(crate::generation::feature::features::disk::DiskFeature {
             state_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::GRAVEL.default_state,
+                state: pumpkin_data::Block::AIR.default_state,
             }),
             target: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
                 offset: OffsetBlocksBlockPredicate { offset: None },
@@ -2828,21 +1556,8 @@ fn build_configured_features()
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::DiskSand,
         ConfiguredFeature::Disk(crate::generation::feature::features::disk::DiskFeature {
-            state_provider: BlockStateProvider::Rule(RuleBasedBlockStateProvider {
-                fallback: Some(Box::new(BlockStateProvider::Simple(SimpleStateProvider {
-                    state: pumpkin_data::Block::SAND.default_state,
-                }))),
-                rules: vec![BlockStateRule {
-                    if_true: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
-                        offset: OffsetBlocksBlockPredicate {
-                            offset: Some(Vector3::new(0i32, -1i32, 0i32)),
-                        },
-                        blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
-                    }),
-                    then: BlockStateProvider::Simple(SimpleStateProvider {
-                        state: pumpkin_data::Block::SANDSTONE.default_state,
-                    }),
-                }],
+            state_provider: BlockStateProvider::Simple(SimpleStateProvider {
+                state: pumpkin_data::Block::AIR.default_state,
             }),
             target: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
                 offset: OffsetBlocksBlockPredicate { offset: None },
@@ -2902,7 +1617,20 @@ fn build_configured_features()
                                         weight: 1i32,
                                     },
                                     Weighted {
-                                        data: pumpkin_data::Block::SMALL_DRIPLEAF.default_state,
+                                        data: {
+                                            let mut props = std::collections::HashMap::new();
+                                            props.insert("facing".to_string(), "north".to_string());
+                                            props.insert("half".to_string(), "lower".to_string());
+                                            props.insert(
+                                                "waterlogged".to_string(),
+                                                "false".to_string(),
+                                            );
+                                            BlockStateCodec {
+                                                name: &pumpkin_data::Block::SMALL_DRIPLEAF,
+                                                properties: Some(props),
+                                            }
+                                            .get_state()
+                                        },
                                         weight: 1i32,
                                     },
                                     Weighted {
@@ -2992,20 +1720,15 @@ fn build_configured_features()
                                 },
                             ],
                             direction: BlockDirection::Up,
-                            allowed_placement: BlockPredicate::AnyOf(AnyOfBlockPredicate {
-                                predicates: vec![
-                                    BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
-                                        offset: OffsetBlocksBlockPredicate { offset: None },
-                                        tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                    }),
-                                    BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate { offset: None },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    }),
-                                ],
-                            }),
+                            allowed_placement: BlockPredicate::MatchingBlocks(
+                                MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Multiple(vec![
+                                        "minecraft:air".to_string(),
+                                        "minecraft:water".to_string(),
+                                    ]),
+                                },
+                            ),
                             prioritize_tip: true,
                         },
                     ))),
@@ -3074,20 +1797,15 @@ fn build_configured_features()
                                 },
                             ],
                             direction: BlockDirection::Up,
-                            allowed_placement: BlockPredicate::AnyOf(AnyOfBlockPredicate {
-                                predicates: vec![
-                                    BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
-                                        offset: OffsetBlocksBlockPredicate { offset: None },
-                                        tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                    }),
-                                    BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate { offset: None },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    }),
-                                ],
-                            }),
+                            allowed_placement: BlockPredicate::MatchingBlocks(
+                                MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Multiple(vec![
+                                        "minecraft:air".to_string(),
+                                        "minecraft:water".to_string(),
+                                    ]),
+                                },
+                            ),
                             prioritize_tip: true,
                         },
                     ))),
@@ -3156,20 +1874,15 @@ fn build_configured_features()
                                 },
                             ],
                             direction: BlockDirection::Up,
-                            allowed_placement: BlockPredicate::AnyOf(AnyOfBlockPredicate {
-                                predicates: vec![
-                                    BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
-                                        offset: OffsetBlocksBlockPredicate { offset: None },
-                                        tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                    }),
-                                    BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate { offset: None },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    }),
-                                ],
-                            }),
+                            allowed_placement: BlockPredicate::MatchingBlocks(
+                                MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Multiple(vec![
+                                        "minecraft:air".to_string(),
+                                        "minecraft:water".to_string(),
+                                    ]),
+                                },
+                            ),
                             prioritize_tip: true,
                         },
                     ))),
@@ -3238,20 +1951,15 @@ fn build_configured_features()
                                 },
                             ],
                             direction: BlockDirection::Up,
-                            allowed_placement: BlockPredicate::AnyOf(AnyOfBlockPredicate {
-                                predicates: vec![
-                                    BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
-                                        offset: OffsetBlocksBlockPredicate { offset: None },
-                                        tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                    }),
-                                    BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate { offset: None },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    }),
-                                ],
-                            }),
+                            allowed_placement: BlockPredicate::MatchingBlocks(
+                                MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Multiple(vec![
+                                        "minecraft:air".to_string(),
+                                        "minecraft:water".to_string(),
+                                    ]),
+                                },
+                            ),
                             prioritize_tip: true,
                         },
                     ))),
@@ -3265,24 +1973,6 @@ fn build_configured_features()
         ConfiguredFeature::DripstoneCluster(
             crate::generation::feature::features::drip_stone::cluster::DripstoneClusterFeature {},
         ),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::DryGrass,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                entries: vec![
-                    Weighted {
-                        data: pumpkin_data::Block::SHORT_DRY_GRASS.default_state,
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: pumpkin_data::Block::TALL_DRY_GRASS.default_state,
-                        weight: 1i32,
-                    },
-                ],
-            }),
-            schedule_tick: None,
-        }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::EndGatewayDelayed,
@@ -3317,235 +2007,10 @@ fn build_configured_features()
         ),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::EndPodiumActive,
-        ConfiguredFeature::EndPodium(
-            crate::generation::feature::features::end_podium::EndPodiumFeature::new(true),
-        ),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::EndPodiumInactive,
-        ConfiguredFeature::EndPodium(
-            crate::generation::feature::features::end_podium::EndPodiumFeature::new(false),
-        ),
-    );
-    map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::EndSpike,
         ConfiguredFeature::EndSpike(EndSpikeFeature {
             crystal_invulnerable: false,
             spikes: vec![],
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::FallenBirchTree,
-        ConfiguredFeature::FallenTree(FallenTreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::BIRCH_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            log_length: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                min_inclusive: 5i32,
-                max_inclusive: 8i32,
-            })),
-            stump_decorators: vec![],
-            log_decorators: vec![TreeDecorator::AttachedToLogs(AttachedToLogsTreeDecorator {
-                probability: 0.1f32,
-                block_provider: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                    entries: vec![
-                        Weighted {
-                            data: pumpkin_data::Block::RED_MUSHROOM.default_state,
-                            weight: 2i32,
-                        },
-                        Weighted {
-                            data: pumpkin_data::Block::BROWN_MUSHROOM.default_state,
-                            weight: 1i32,
-                        },
-                    ],
-                }),
-                directions: vec![BlockDirection::Up],
-            })],
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::FallenJungleTree,
-        ConfiguredFeature::FallenTree(FallenTreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::JUNGLE_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            log_length: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                min_inclusive: 4i32,
-                max_inclusive: 11i32,
-            })),
-            stump_decorators: vec![TreeDecorator::TrunkVine(TrunkVineTreeDecorator)],
-            log_decorators: vec![TreeDecorator::AttachedToLogs(AttachedToLogsTreeDecorator {
-                probability: 0.1f32,
-                block_provider: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                    entries: vec![
-                        Weighted {
-                            data: pumpkin_data::Block::RED_MUSHROOM.default_state,
-                            weight: 2i32,
-                        },
-                        Weighted {
-                            data: pumpkin_data::Block::BROWN_MUSHROOM.default_state,
-                            weight: 1i32,
-                        },
-                    ],
-                }),
-                directions: vec![BlockDirection::Up],
-            })],
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::FallenOakTree,
-        ConfiguredFeature::FallenTree(FallenTreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::OAK_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            log_length: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                min_inclusive: 4i32,
-                max_inclusive: 7i32,
-            })),
-            stump_decorators: vec![TreeDecorator::TrunkVine(TrunkVineTreeDecorator)],
-            log_decorators: vec![TreeDecorator::AttachedToLogs(AttachedToLogsTreeDecorator {
-                probability: 0.1f32,
-                block_provider: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                    entries: vec![
-                        Weighted {
-                            data: pumpkin_data::Block::RED_MUSHROOM.default_state,
-                            weight: 2i32,
-                        },
-                        Weighted {
-                            data: pumpkin_data::Block::BROWN_MUSHROOM.default_state,
-                            weight: 1i32,
-                        },
-                    ],
-                }),
-                directions: vec![BlockDirection::Up],
-            })],
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::FallenPoplarTree,
-        ConfiguredFeature::FallenTree(FallenTreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::POPLAR_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            log_length: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                min_inclusive: 4i32,
-                max_inclusive: 7i32,
-            })),
-            stump_decorators: vec![],
-            log_decorators: vec![TreeDecorator::AttachedToLogs(AttachedToLogsTreeDecorator {
-                probability: 0.1f32,
-                block_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                    state: pumpkin_data::Block::BROWN_MUSHROOM.default_state,
-                }),
-                directions: vec![BlockDirection::Up],
-            })],
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::FallenSpruceTree,
-        ConfiguredFeature::FallenTree(FallenTreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::SPRUCE_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            log_length: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                min_inclusive: 6i32,
-                max_inclusive: 10i32,
-            })),
-            stump_decorators: vec![],
-            log_decorators: vec![TreeDecorator::AttachedToLogs(AttachedToLogsTreeDecorator {
-                probability: 0.1f32,
-                block_provider: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                    entries: vec![
-                        Weighted {
-                            data: pumpkin_data::Block::RED_MUSHROOM.default_state,
-                            weight: 2i32,
-                        },
-                        Weighted {
-                            data: pumpkin_data::Block::BROWN_MUSHROOM.default_state,
-                            weight: 1i32,
-                        },
-                    ],
-                }),
-                directions: vec![BlockDirection::Up],
-            })],
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::FallenSuperBirchTree,
-        ConfiguredFeature::FallenTree(FallenTreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::BIRCH_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            log_length: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                min_inclusive: 5i32,
-                max_inclusive: 15i32,
-            })),
-            stump_decorators: vec![],
-            log_decorators: vec![TreeDecorator::AttachedToLogs(AttachedToLogsTreeDecorator {
-                probability: 0.1f32,
-                block_provider: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                    entries: vec![
-                        Weighted {
-                            data: pumpkin_data::Block::RED_MUSHROOM.default_state,
-                            weight: 2i32,
-                        },
-                        Weighted {
-                            data: pumpkin_data::Block::BROWN_MUSHROOM.default_state,
-                            weight: 1i32,
-                        },
-                    ],
-                }),
-                directions: vec![BlockDirection::Up],
-            })],
         }),
     );
     map.insert(
@@ -3659,7 +2124,7 @@ fn build_configured_features()
         })),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::FancyOakBees0002LeafLitter,
+        pumpkin_data::configured_feature::ConfiguredFeature::FancyOakBees0002,
         ConfiguredFeature::Tree(Box::new(TreeFeature {
             trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
                 state: {
@@ -3708,379 +2173,9 @@ fn build_configured_features()
             below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
                 state: pumpkin_data::Block::AIR.default_state,
             }),
-            decorators: vec![
-                TreeDecorator::Beehive(BeehiveTreeDecorator {
-                    probability: 0.002f32,
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 96i32,
-                    radius: 4i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 150i32,
-                    radius: 1i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-            ],
+            decorators: vec![TreeDecorator::Beehive(BeehiveTreeDecorator {
+                probability: 0.002f32,
+            })],
             root_placer: None,
         })),
     );
@@ -4197,707 +2292,454 @@ fn build_configured_features()
         })),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::FancyOakLeafLitter,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::OAK_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            trunk_placer: TrunkPlacer {
-                base_height: 3u8,
-                height_rand_a: 11u8,
-                height_rand_b: 0u8,
-                r#type: TrunkType::Fancy(FancyTrunkPlacer),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::OAK_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Constant(2i32),
-                offset: IntProvider::Constant(4i32),
-                r#type: FoliageType::Fancy(LargeOakFoliagePlacer { height: 4i32 }),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: Some(4u8),
-                r#type: FeatureSizeType::TwoLayersFeatureSize(TwoLayersFeatureSize {
-                    limit: 0u8,
-                    lower_size: 0u8,
-                    upper_size: 0u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 96i32,
-                    radius: 4i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 150i32,
-                    radius: 1i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-            ],
-            root_placer: None,
-        })),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::FireflyBush,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::FIREFLY_BUSH.default_state,
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::FlowerCherry,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                entries: vec![
-                    Weighted {
-                        data: pumpkin_data::Block::PINK_PETALS.default_state,
-                        weight: 1i32,
+        ConfiguredFeature::Flower(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 6u8,
+            y_spread: 2u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
+                            entries: vec![
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "north".to_string());
+                                        props.insert("flower_amount".to_string(), "1".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "east".to_string());
+                                        props.insert("flower_amount".to_string(), "1".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "south".to_string());
+                                        props.insert("flower_amount".to_string(), "1".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "west".to_string());
+                                        props.insert("flower_amount".to_string(), "1".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "north".to_string());
+                                        props.insert("flower_amount".to_string(), "2".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "east".to_string());
+                                        props.insert("flower_amount".to_string(), "2".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "south".to_string());
+                                        props.insert("flower_amount".to_string(), "2".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "west".to_string());
+                                        props.insert("flower_amount".to_string(), "2".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "north".to_string());
+                                        props.insert("flower_amount".to_string(), "3".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "east".to_string());
+                                        props.insert("flower_amount".to_string(), "3".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "south".to_string());
+                                        props.insert("flower_amount".to_string(), "3".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "west".to_string());
+                                        props.insert("flower_amount".to_string(), "3".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "north".to_string());
+                                        props.insert("flower_amount".to_string(), "4".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "east".to_string());
+                                        props.insert("flower_amount".to_string(), "4".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "south".to_string());
+                                        props.insert("flower_amount".to_string(), "4".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("facing".to_string(), "west".to_string());
+                                        props.insert("flower_amount".to_string(), "4".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::PINK_PETALS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    weight: 1i32,
+                                },
+                            ],
+                        }),
+                        schedule_tick: None,
                     },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "east".to_string());
-                            props.insert("flower_amount".to_string(), "1".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
                     },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "south".to_string());
-                            props.insert("flower_amount".to_string(), "1".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "west".to_string());
-                            props.insert("flower_amount".to_string(), "1".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "north".to_string());
-                            props.insert("flower_amount".to_string(), "2".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "east".to_string());
-                            props.insert("flower_amount".to_string(), "2".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "south".to_string());
-                            props.insert("flower_amount".to_string(), "2".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "west".to_string());
-                            props.insert("flower_amount".to_string(), "2".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "north".to_string());
-                            props.insert("flower_amount".to_string(), "3".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "east".to_string());
-                            props.insert("flower_amount".to_string(), "3".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "south".to_string());
-                            props.insert("flower_amount".to_string(), "3".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "west".to_string());
-                            props.insert("flower_amount".to_string(), "3".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "north".to_string());
-                            props.insert("flower_amount".to_string(), "4".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "east".to_string());
-                            props.insert("flower_amount".to_string(), "4".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "south".to_string());
-                            props.insert("flower_amount".to_string(), "4".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "west".to_string());
-                            props.insert("flower_amount".to_string(), "4".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::PINK_PETALS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                ],
+                )],
             }),
-            schedule_tick: None,
         }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::FlowerDefault,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                entries: vec![
-                    Weighted {
-                        data: pumpkin_data::Block::POPPY.default_state,
-                        weight: 2i32,
+        ConfiguredFeature::Flower(RandomPatchFeature {
+            tries: 64u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
+                            entries: vec![
+                                Weighted {
+                                    data: pumpkin_data::Block::POPPY.default_state,
+                                    weight: 2i32,
+                                },
+                                Weighted {
+                                    data: pumpkin_data::Block::DANDELION.default_state,
+                                    weight: 1i32,
+                                },
+                            ],
+                        }),
+                        schedule_tick: None,
                     },
-                    Weighted {
-                        data: pumpkin_data::Block::DANDELION.default_state,
-                        weight: 1i32,
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
                     },
-                ],
+                )],
             }),
-            schedule_tick: None,
         }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::FlowerFlowerForest,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
+        ConfiguredFeature::Flower(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 6u8,
+            y_spread: 2u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::NoiseProvider(NoiseBlockStateProvider {
+                            base: NoiseBlockStateProviderBase {
+                                seed: 2345i64,
+                                noise: DoublePerlinNoiseParametersCodec {
+                                    first_octave: 0i32,
+                                    amplitudes: vec![1f64],
+                                },
+                                scale: 0.020833334f32,
+                            },
+                            states: vec![
+                                pumpkin_data::Block::DANDELION.default_state,
+                                pumpkin_data::Block::POPPY.default_state,
+                                pumpkin_data::Block::ALLIUM.default_state,
+                                pumpkin_data::Block::AZURE_BLUET.default_state,
+                                pumpkin_data::Block::RED_TULIP.default_state,
+                                pumpkin_data::Block::ORANGE_TULIP.default_state,
+                                pumpkin_data::Block::WHITE_TULIP.default_state,
+                                pumpkin_data::Block::PINK_TULIP.default_state,
+                                pumpkin_data::Block::OXEYE_DAISY.default_state,
+                                pumpkin_data::Block::CORNFLOWER.default_state,
+                                pumpkin_data::Block::LILY_OF_THE_VALLEY.default_state,
+                            ],
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
             }),
-            schedule_tick: None,
         }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::FlowerMeadow,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
+        ConfiguredFeature::Flower(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 6u8,
+            y_spread: 2u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::DualNoise(DualNoiseBlockStateProvider {
+                            base: NoiseBlockStateProvider {
+                                base: NoiseBlockStateProviderBase {
+                                    seed: 2345i64,
+                                    noise: DoublePerlinNoiseParametersCodec {
+                                        first_octave: -3i32,
+                                        amplitudes: vec![1f64],
+                                    },
+                                    scale: 1f32,
+                                },
+                                states: vec![
+                                    {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("half".to_string(), "lower".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::TALL_GRASS,
+                                            properties: Some(props),
+                                        }
+                                        .get_state()
+                                    },
+                                    pumpkin_data::Block::ALLIUM.default_state,
+                                    pumpkin_data::Block::POPPY.default_state,
+                                    pumpkin_data::Block::AZURE_BLUET.default_state,
+                                    pumpkin_data::Block::DANDELION.default_state,
+                                    pumpkin_data::Block::CORNFLOWER.default_state,
+                                    pumpkin_data::Block::OXEYE_DAISY.default_state,
+                                    pumpkin_data::Block::SHORT_GRASS.default_state,
+                                ],
+                            },
+                            variety: [1u32, 3u32],
+                            slow_noise: DoublePerlinNoiseParametersCodec {
+                                first_octave: -10i32,
+                                amplitudes: vec![1f64],
+                            },
+                            slow_scale: 1f64,
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
             }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::FlowerPaleGarden,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::CLOSED_EYEBLOSSOM.default_state,
-            }),
-            schedule_tick: Some(true),
         }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::FlowerPlain,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
+        ConfiguredFeature::Flower(RandomPatchFeature {
+            tries: 64u8,
+            xz_spread: 6u8,
+            y_spread: 2u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::NoiseThreshold(
+                            NoiseThresholdBlockStateProvider {
+                                base: NoiseBlockStateProviderBase {
+                                    seed: 2345i64,
+                                    noise: DoublePerlinNoiseParametersCodec {
+                                        first_octave: 0i32,
+                                        amplitudes: vec![1f64],
+                                    },
+                                    scale: 0.005f32,
+                                },
+                                threshold: -0.8f32,
+                                high_chance: 0.33333334f32,
+                                default_state: pumpkin_data::Block::DANDELION.default_state,
+                                low_states: vec![
+                                    pumpkin_data::Block::ORANGE_TULIP.default_state,
+                                    pumpkin_data::Block::RED_TULIP.default_state,
+                                    pumpkin_data::Block::PINK_TULIP.default_state,
+                                    pumpkin_data::Block::WHITE_TULIP.default_state,
+                                ],
+                                high_states: vec![
+                                    pumpkin_data::Block::POPPY.default_state,
+                                    pumpkin_data::Block::AZURE_BLUET.default_state,
+                                    pumpkin_data::Block::OXEYE_DAISY.default_state,
+                                    pumpkin_data::Block::CORNFLOWER.default_state,
+                                ],
+                            },
+                        ),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
             }),
-            schedule_tick: None,
         }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::FlowerSwamp,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::BLUE_ORCHID.default_state,
+        ConfiguredFeature::Flower(RandomPatchFeature {
+            tries: 64u8,
+            xz_spread: 6u8,
+            y_spread: 2u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: pumpkin_data::Block::BLUE_ORCHID.default_state,
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
             }),
-            schedule_tick: None,
         }),
     );
     map.insert(
@@ -4905,195 +2747,173 @@ fn build_configured_features()
         ConfiguredFeature::SimpleRandomSelector(SimpleRandomFeature {
             features: vec![
                 PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
-                        SimpleBlockFeature {
-                            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                                state: {
-                                    let mut props = std::collections::HashMap::new();
-                                    props.insert("half".to_string(), "lower".to_string());
-                                    BlockStateCodec {
-                                        name: &pumpkin_data::Block::LILAC,
-                                        properties: Some(props),
-                                    }
-                                    .get_state()
-                                },
+                    feature: Feature::Inlined(Box::new(ConfiguredFeature::RandomPatch(
+                        RandomPatchFeature {
+                            tries: 96u8,
+                            xz_spread: 7u8,
+                            y_spread: 3u8,
+                            feature: Box::new(PlacedFeature {
+                                feature: Feature::Inlined(Box::new(
+                                    ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
+                                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                                            state: {
+                                                let mut props = std::collections::HashMap::new();
+                                                props.insert(
+                                                    "half".to_string(),
+                                                    "lower".to_string(),
+                                                );
+                                                BlockStateCodec {
+                                                    name: &pumpkin_data::Block::LILAC,
+                                                    properties: Some(props),
+                                                }
+                                                .get_state()
+                                            },
+                                        }),
+                                        schedule_tick: None,
+                                    }),
+                                )),
+                                placement: vec![PlacementModifier::BlockPredicateFilter(
+                                    BlockFilterPlacementModifier {
+                                        predicate: BlockPredicate::MatchingBlocks(
+                                            MatchingBlocksBlockPredicate {
+                                                offset: OffsetBlocksBlockPredicate { offset: None },
+                                                blocks: MatchingBlocksWrapper::Single(
+                                                    "minecraft:air".to_string(),
+                                                ),
+                                            },
+                                        ),
+                                    },
+                                )],
                             }),
-                            schedule_tick: None,
                         },
                     ))),
-                    placement: vec![
-                        PlacementModifier::Count(CountPlacementModifier {
-                            count: IntProvider::Constant(96i32),
-                        }),
-                        PlacementModifier::RandomOffset(RandomOffsetPlacementModifier {
-                            xz_spread: IntProvider::Object(NormalIntProvider::Trapezoid(
-                                TrapezoidIntProvider {
-                                    min_inclusive: -7i32,
-                                    max_inclusive: 7i32,
-                                    plateau: 0i32,
-                                },
-                            )),
-                            y_spread: IntProvider::Object(NormalIntProvider::Trapezoid(
-                                TrapezoidIntProvider {
-                                    min_inclusive: -3i32,
-                                    max_inclusive: 3i32,
-                                    plateau: 0i32,
-                                },
-                            )),
-                        }),
-                        PlacementModifier::BlockPredicateFilter(BlockFilterPlacementModifier {
-                            predicate: BlockPredicate::MatchingBlockTag(
-                                MatchingBlockTagPredicate {
-                                    offset: OffsetBlocksBlockPredicate { offset: None },
-                                    tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                },
-                            ),
-                        }),
-                    ],
+                    placement: vec![],
                 },
                 PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
-                        SimpleBlockFeature {
-                            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                                state: {
-                                    let mut props = std::collections::HashMap::new();
-                                    props.insert("half".to_string(), "lower".to_string());
-                                    BlockStateCodec {
-                                        name: &pumpkin_data::Block::ROSE_BUSH,
-                                        properties: Some(props),
-                                    }
-                                    .get_state()
-                                },
+                    feature: Feature::Inlined(Box::new(ConfiguredFeature::RandomPatch(
+                        RandomPatchFeature {
+                            tries: 96u8,
+                            xz_spread: 7u8,
+                            y_spread: 3u8,
+                            feature: Box::new(PlacedFeature {
+                                feature: Feature::Inlined(Box::new(
+                                    ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
+                                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                                            state: {
+                                                let mut props = std::collections::HashMap::new();
+                                                props.insert(
+                                                    "half".to_string(),
+                                                    "lower".to_string(),
+                                                );
+                                                BlockStateCodec {
+                                                    name: &pumpkin_data::Block::ROSE_BUSH,
+                                                    properties: Some(props),
+                                                }
+                                                .get_state()
+                                            },
+                                        }),
+                                        schedule_tick: None,
+                                    }),
+                                )),
+                                placement: vec![PlacementModifier::BlockPredicateFilter(
+                                    BlockFilterPlacementModifier {
+                                        predicate: BlockPredicate::MatchingBlocks(
+                                            MatchingBlocksBlockPredicate {
+                                                offset: OffsetBlocksBlockPredicate { offset: None },
+                                                blocks: MatchingBlocksWrapper::Single(
+                                                    "minecraft:air".to_string(),
+                                                ),
+                                            },
+                                        ),
+                                    },
+                                )],
                             }),
-                            schedule_tick: None,
                         },
                     ))),
-                    placement: vec![
-                        PlacementModifier::Count(CountPlacementModifier {
-                            count: IntProvider::Constant(96i32),
-                        }),
-                        PlacementModifier::RandomOffset(RandomOffsetPlacementModifier {
-                            xz_spread: IntProvider::Object(NormalIntProvider::Trapezoid(
-                                TrapezoidIntProvider {
-                                    min_inclusive: -7i32,
-                                    max_inclusive: 7i32,
-                                    plateau: 0i32,
-                                },
-                            )),
-                            y_spread: IntProvider::Object(NormalIntProvider::Trapezoid(
-                                TrapezoidIntProvider {
-                                    min_inclusive: -3i32,
-                                    max_inclusive: 3i32,
-                                    plateau: 0i32,
-                                },
-                            )),
-                        }),
-                        PlacementModifier::BlockPredicateFilter(BlockFilterPlacementModifier {
-                            predicate: BlockPredicate::MatchingBlockTag(
-                                MatchingBlockTagPredicate {
-                                    offset: OffsetBlocksBlockPredicate { offset: None },
-                                    tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                },
-                            ),
-                        }),
-                    ],
+                    placement: vec![],
                 },
                 PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
-                        SimpleBlockFeature {
-                            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                                state: {
-                                    let mut props = std::collections::HashMap::new();
-                                    props.insert("half".to_string(), "lower".to_string());
-                                    BlockStateCodec {
-                                        name: &pumpkin_data::Block::PEONY,
-                                        properties: Some(props),
-                                    }
-                                    .get_state()
-                                },
+                    feature: Feature::Inlined(Box::new(ConfiguredFeature::RandomPatch(
+                        RandomPatchFeature {
+                            tries: 96u8,
+                            xz_spread: 7u8,
+                            y_spread: 3u8,
+                            feature: Box::new(PlacedFeature {
+                                feature: Feature::Inlined(Box::new(
+                                    ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
+                                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                                            state: {
+                                                let mut props = std::collections::HashMap::new();
+                                                props.insert(
+                                                    "half".to_string(),
+                                                    "lower".to_string(),
+                                                );
+                                                BlockStateCodec {
+                                                    name: &pumpkin_data::Block::PEONY,
+                                                    properties: Some(props),
+                                                }
+                                                .get_state()
+                                            },
+                                        }),
+                                        schedule_tick: None,
+                                    }),
+                                )),
+                                placement: vec![PlacementModifier::BlockPredicateFilter(
+                                    BlockFilterPlacementModifier {
+                                        predicate: BlockPredicate::MatchingBlocks(
+                                            MatchingBlocksBlockPredicate {
+                                                offset: OffsetBlocksBlockPredicate { offset: None },
+                                                blocks: MatchingBlocksWrapper::Single(
+                                                    "minecraft:air".to_string(),
+                                                ),
+                                            },
+                                        ),
+                                    },
+                                )],
                             }),
-                            schedule_tick: None,
                         },
                     ))),
-                    placement: vec![
-                        PlacementModifier::Count(CountPlacementModifier {
-                            count: IntProvider::Constant(96i32),
-                        }),
-                        PlacementModifier::RandomOffset(RandomOffsetPlacementModifier {
-                            xz_spread: IntProvider::Object(NormalIntProvider::Trapezoid(
-                                TrapezoidIntProvider {
-                                    min_inclusive: -7i32,
-                                    max_inclusive: 7i32,
-                                    plateau: 0i32,
-                                },
-                            )),
-                            y_spread: IntProvider::Object(NormalIntProvider::Trapezoid(
-                                TrapezoidIntProvider {
-                                    min_inclusive: -3i32,
-                                    max_inclusive: 3i32,
-                                    plateau: 0i32,
-                                },
-                            )),
-                        }),
-                        PlacementModifier::BlockPredicateFilter(BlockFilterPlacementModifier {
-                            predicate: BlockPredicate::MatchingBlockTag(
-                                MatchingBlockTagPredicate {
-                                    offset: OffsetBlocksBlockPredicate { offset: None },
-                                    tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                },
-                            ),
-                        }),
-                    ],
+                    placement: vec![],
                 },
                 PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
-                        SimpleBlockFeature {
-                            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                                state: pumpkin_data::Block::LILY_OF_THE_VALLEY.default_state,
+                    feature: Feature::Inlined(Box::new(ConfiguredFeature::NoBonemealFlower(
+                        RandomPatchFeature {
+                            tries: 96u8,
+                            xz_spread: 7u8,
+                            y_spread: 3u8,
+                            feature: Box::new(PlacedFeature {
+                                feature: Feature::Inlined(Box::new(
+                                    ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
+                                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                                            state: pumpkin_data::Block::LILY_OF_THE_VALLEY
+                                                .default_state,
+                                        }),
+                                        schedule_tick: None,
+                                    }),
+                                )),
+                                placement: vec![PlacementModifier::BlockPredicateFilter(
+                                    BlockFilterPlacementModifier {
+                                        predicate: BlockPredicate::MatchingBlocks(
+                                            MatchingBlocksBlockPredicate {
+                                                offset: OffsetBlocksBlockPredicate { offset: None },
+                                                blocks: MatchingBlocksWrapper::Single(
+                                                    "minecraft:air".to_string(),
+                                                ),
+                                            },
+                                        ),
+                                    },
+                                )],
                             }),
-                            schedule_tick: None,
                         },
                     ))),
-                    placement: vec![
-                        PlacementModifier::Count(CountPlacementModifier {
-                            count: IntProvider::Constant(96i32),
-                        }),
-                        PlacementModifier::RandomOffset(RandomOffsetPlacementModifier {
-                            xz_spread: IntProvider::Object(NormalIntProvider::Trapezoid(
-                                TrapezoidIntProvider {
-                                    min_inclusive: -7i32,
-                                    max_inclusive: 7i32,
-                                    plateau: 0i32,
-                                },
-                            )),
-                            y_spread: IntProvider::Object(NormalIntProvider::Trapezoid(
-                                TrapezoidIntProvider {
-                                    min_inclusive: -3i32,
-                                    max_inclusive: 3i32,
-                                    plateau: 0i32,
-                                },
-                            )),
-                        }),
-                        PlacementModifier::BlockPredicateFilter(BlockFilterPlacementModifier {
-                            predicate: BlockPredicate::MatchingBlockTag(
-                                MatchingBlockTagPredicate {
-                                    offset: OffsetBlocksBlockPredicate { offset: None },
-                                    tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                },
-                            ),
-                        }),
-                    ],
+                    placement: vec![],
                 },
             ],
         }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::ForestRock,
-        ConfiguredFeature::ForestRock(
-            crate::generation::feature::features::forest_rock::ForestRockFeature {
-                state: pumpkin_data::Block::MOSSY_COBBLESTONE.default_state,
-            },
-        ),
+        compile_error!("unknown configured feature type: minecraft:forest_rock"),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::FossilCoal,
@@ -5184,42 +3004,15 @@ fn build_configured_features()
                     pumpkin_data::BlockId::CALCITE,
                     pumpkin_data::BlockId::TUFF,
                     pumpkin_data::BlockId::DEEPSLATE,
-                    pumpkin_data::BlockId::SULFUR,
-                    pumpkin_data::BlockId::CINNABAR,
                 ],
             },
         ),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::GlowstoneExtra,
-        ConfiguredFeature::NoOp,
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::Grass,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::SHORT_GRASS.default_state,
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::GrassJungle,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                entries: vec![
-                    Weighted {
-                        data: pumpkin_data::Block::SHORT_GRASS.default_state,
-                        weight: 3i32,
-                    },
-                    Weighted {
-                        data: pumpkin_data::Block::FERN.default_state,
-                        weight: 1i32,
-                    },
-                ],
-            }),
-            schedule_tick: None,
-        }),
+        ConfiguredFeature::GlowstoneBlob(
+            crate::generation::feature::features::glowstone_blob::GlowstoneBlobFeature {},
+        ),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::HugeBrownMushroom,
@@ -5237,7 +3030,7 @@ fn build_configured_features()
         pumpkin_data::configured_feature::ConfiguredFeature::IcePatch,
         ConfiguredFeature::Disk(crate::generation::feature::features::disk::DiskFeature {
             state_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::PACKED_ICE.default_state,
+                state: pumpkin_data::Block::AIR.default_state,
             }),
             target: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
                 offset: OffsetBlocksBlockPredicate { offset: None },
@@ -5458,58 +3251,7 @@ fn build_configured_features()
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::Kelp,
-        ConfiguredFeature::BlockColumn(BlockColumnFeature {
-            layers: vec![
-                Layer {
-                    height: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                        min_inclusive: 0i32,
-                        max_inclusive: 9i32,
-                    })),
-                    provider: BlockStateProvider::Simple(SimpleStateProvider {
-                        state: pumpkin_data::Block::KELP_PLANT.default_state,
-                    }),
-                },
-                Layer {
-                    height: IntProvider::Constant(1i32),
-                    provider: BlockStateProvider::RandomizedInt(RandomizedIntBlockStateProvider {
-                        source: Box::new(BlockStateProvider::Simple(SimpleStateProvider {
-                            state: {
-                                let mut props = std::collections::HashMap::new();
-                                props.insert("age".to_string(), "0".to_string());
-                                BlockStateCodec {
-                                    name: &pumpkin_data::Block::KELP,
-                                    properties: Some(props),
-                                }
-                                .get_state()
-                            },
-                        })),
-                        property: "age".to_string(),
-                        values: IntProvider::Object(NormalIntProvider::Uniform(
-                            UniformIntProvider {
-                                min_inclusive: 20i32,
-                                max_inclusive: 23i32,
-                            },
-                        )),
-                    }),
-                },
-            ],
-            direction: BlockDirection::Up,
-            allowed_placement: BlockPredicate::AllOf(AllOfBlockPredicate {
-                predicates: vec![
-                    BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
-                        offset: OffsetBlocksBlockPredicate { offset: None },
-                        blocks: MatchingBlocksWrapper::Single("minecraft:water".to_string()),
-                    }),
-                    BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
-                        offset: OffsetBlocksBlockPredicate {
-                            offset: Some(Vector3::new(0i32, 1i32, 0i32)),
-                        },
-                        blocks: MatchingBlocksWrapper::Single("minecraft:water".to_string()),
-                    }),
-                ],
-            }),
-            prioritize_tip: true,
-        }),
+        ConfiguredFeature::Kelp(crate::generation::feature::features::kelp::KelpFeature {}),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::LakeLava,
@@ -5532,205 +3274,24 @@ fn build_configured_features()
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::LargeBasaltColumns,
-        ConfiguredFeature::WeightedRandomSelector(WeightedRandomFeature {
-            features: vec![
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::NoOp)),
-                        placement: vec![],
-                    }),
-                    weight: 9i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::NoOp)),
-                        placement: vec![],
-                    }),
-                    weight: 1i32,
-                },
-            ],
-            total_weight: 10i32,
-        }),
+        ConfiguredFeature::BasaltColumns(
+            crate::generation::feature::features::basalt_columns::BasaltColumnsFeature {
+                height: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
+                    min_inclusive: 5i32,
+                    max_inclusive: 10i32,
+                })),
+                reach: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
+                    min_inclusive: 2i32,
+                    max_inclusive: 3i32,
+                })),
+            },
+        ),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::LargeDripstone,
         ConfiguredFeature::LargeDripstone(
             crate::generation::feature::features::drip_stone::large::LargeDripstoneFeature {},
         ),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::LargeFern,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("half".to_string(), "lower".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::LARGE_FERN,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::LeafLitter,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                entries: vec![
-                    Weighted {
-                        data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "east".to_string());
-                            props.insert("segment_amount".to_string(), "1".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::LEAF_LITTER,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "south".to_string());
-                            props.insert("segment_amount".to_string(), "1".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::LEAF_LITTER,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "west".to_string());
-                            props.insert("segment_amount".to_string(), "1".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::LEAF_LITTER,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "north".to_string());
-                            props.insert("segment_amount".to_string(), "2".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::LEAF_LITTER,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "east".to_string());
-                            props.insert("segment_amount".to_string(), "2".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::LEAF_LITTER,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "south".to_string());
-                            props.insert("segment_amount".to_string(), "2".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::LEAF_LITTER,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "west".to_string());
-                            props.insert("segment_amount".to_string(), "2".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::LEAF_LITTER,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "north".to_string());
-                            props.insert("segment_amount".to_string(), "3".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::LEAF_LITTER,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "east".to_string());
-                            props.insert("segment_amount".to_string(), "3".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::LEAF_LITTER,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "south".to_string());
-                            props.insert("segment_amount".to_string(), "3".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::LEAF_LITTER,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "west".to_string());
-                            props.insert("segment_amount".to_string(), "3".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::LEAF_LITTER,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                ],
-            }),
-            schedule_tick: None,
-        }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::LushCavesClay,
@@ -5826,9 +3387,31 @@ fn build_configured_features()
                     probability: 0.14f32,
                     exclusion_radius_xz: 1i32,
                     exclusion_radius_y: 0i32,
-                    block_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                        state: pumpkin_data::Block::AIR.default_state,
-                    }),
+                    block_provider: BlockStateProvider::RandomizedInt(
+                        RandomizedIntBlockStateProvider {
+                            source: Box::new(BlockStateProvider::Simple(SimpleStateProvider {
+                                state: {
+                                    let mut props = std::collections::HashMap::new();
+                                    props.insert("age".to_string(), "0".to_string());
+                                    props.insert("hanging".to_string(), "true".to_string());
+                                    props.insert("stage".to_string(), "0".to_string());
+                                    props.insert("waterlogged".to_string(), "false".to_string());
+                                    BlockStateCodec {
+                                        name: &pumpkin_data::Block::MANGROVE_PROPAGULE,
+                                        properties: Some(props),
+                                    }
+                                    .get_state()
+                                },
+                            })),
+                            property: "age".to_string(),
+                            values: IntProvider::Object(NormalIntProvider::Uniform(
+                                UniformIntProvider {
+                                    min_inclusive: 0i32,
+                                    max_inclusive: 4i32,
+                                },
+                            )),
+                        },
+                    ),
                     required_empty_blocks: 2i32,
                     directions: vec![BlockDirection::Down],
                 }),
@@ -6033,7 +3616,15 @@ fn build_configured_features()
             }),
             decorators: vec![TreeDecorator::AlterGround(AlterGroundTreeDecorator {
                 provider: BlockStateProvider::Simple(SimpleStateProvider {
-                    state: pumpkin_data::Block::AIR.default_state,
+                    state: {
+                        let mut props = std::collections::HashMap::new();
+                        props.insert("snowy".to_string(), "false".to_string());
+                        BlockStateCodec {
+                            name: &pumpkin_data::Block::PODZOL,
+                            properties: Some(props),
+                        }
+                        .get_state()
+                    },
                 }),
             })],
             root_placer: None,
@@ -6098,20 +3689,19 @@ fn build_configured_features()
             }),
             decorators: vec![TreeDecorator::AlterGround(AlterGroundTreeDecorator {
                 provider: BlockStateProvider::Simple(SimpleStateProvider {
-                    state: pumpkin_data::Block::AIR.default_state,
+                    state: {
+                        let mut props = std::collections::HashMap::new();
+                        props.insert("snowy".to_string(), "false".to_string());
+                        BlockStateCodec {
+                            name: &pumpkin_data::Block::PODZOL,
+                            properties: Some(props),
+                        }
+                        .get_state()
+                    },
                 }),
             })],
             root_placer: None,
         })),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::Melon,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::MELON.default_state,
-            }),
-            schedule_tick: None,
-        }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::MonsterRoom,
@@ -6228,7 +3818,15 @@ fn build_configured_features()
                         weight: 50i32,
                     },
                     Weighted {
-                        data: pumpkin_data::Block::TALL_GRASS.default_state,
+                        data: {
+                            let mut props = std::collections::HashMap::new();
+                            props.insert("half".to_string(), "lower".to_string());
+                            BlockStateCodec {
+                                name: &pumpkin_data::Block::TALL_GRASS,
+                                properties: Some(props),
+                            }
+                            .get_state()
+                        },
                         weight: 10i32,
                     },
                 ],
@@ -6255,16 +3853,23 @@ fn build_configured_features()
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::NetherSprouts,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
+        ConfiguredFeature::NetherForestVegetation(NetherForestVegetationFeature {
+            state_provider: BlockStateProvider::Simple(SimpleStateProvider {
                 state: pumpkin_data::Block::NETHER_SPROUTS.default_state,
             }),
-            schedule_tick: None,
+            spread_width: 8i32,
+            spread_height: 4i32,
         }),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::NyliumBonemeal,
-        ConfiguredFeature::NoOp,
+        pumpkin_data::configured_feature::ConfiguredFeature::NetherSproutsBonemeal,
+        ConfiguredFeature::NetherForestVegetation(NetherForestVegetationFeature {
+            state_provider: BlockStateProvider::Simple(SimpleStateProvider {
+                state: pumpkin_data::Block::NETHER_SPROUTS.default_state,
+            }),
+            spread_width: 3i32,
+            spread_height: 1i32,
+        }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::Oak,
@@ -6321,7 +3926,7 @@ fn build_configured_features()
         })),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::OakBees0002LeafLitter,
+        pumpkin_data::configured_feature::ConfiguredFeature::OakBees0002,
         ConfiguredFeature::Tree(Box::new(TreeFeature {
             trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
                 state: {
@@ -6370,379 +3975,9 @@ fn build_configured_features()
             below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
                 state: pumpkin_data::Block::AIR.default_state,
             }),
-            decorators: vec![
-                TreeDecorator::Beehive(BeehiveTreeDecorator {
-                    probability: 0.002f32,
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 96i32,
-                    radius: 4i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 150i32,
-                    radius: 1i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-            ],
+            decorators: vec![TreeDecorator::Beehive(BeehiveTreeDecorator {
+                probability: 0.002f32,
+            })],
             root_placer: None,
         })),
     );
@@ -6859,976 +4094,6 @@ fn build_configured_features()
         })),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::OakLeafLitter,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::OAK_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            trunk_placer: TrunkPlacer {
-                base_height: 4u8,
-                height_rand_a: 2u8,
-                height_rand_b: 0u8,
-                r#type: TrunkType::Straight(StraightTrunkPlacer),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::OAK_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Constant(2i32),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::Blob(BlobFoliagePlacer { height: 3i32 }),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::TwoLayersFeatureSize(TwoLayersFeatureSize {
-                    limit: 1u8,
-                    lower_size: 0u8,
-                    upper_size: 1u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 96i32,
-                    radius: 4i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 150i32,
-                    radius: 1i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-            ],
-            root_placer: None,
-        })),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::OrangePoplar,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::POPLAR_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            trunk_placer: TrunkPlacer {
-                base_height: 7u8,
-                height_rand_a: 4u8,
-                height_rand_b: 0u8,
-                r#type: TrunkType::Poplar(PoplarTrunkPlacer {
-                    trunk_height_above_branches: IntProvider::Constant(4i32),
-                    branch_amount: IntProvider::Object(NormalIntProvider::Uniform(
-                        UniformIntProvider {
-                            min_inclusive: 1i32,
-                            max_inclusive: 4i32,
-                        },
-                    )),
-                }),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::ORANGE_POPLAR_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Object(NormalIntProvider::WeightedList(
-                    WeightedListIntProvider {
-                        distribution: vec![
-                            WeightedEntry {
-                                data: IntProvider::Constant(5i32),
-                                weight: 5i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(6i32),
-                                weight: 5i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(7i32),
-                                weight: 1i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(8i32),
-                                weight: 1i32,
-                            },
-                        ],
-                    },
-                )),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::Poplar(PoplarFoliagePlacer {
-                    height: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                        min_inclusive: 5i32,
-                        max_inclusive: 6i32,
-                    })),
-                    side_hole_chance: 0.15f32,
-                }),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::TwoLayersFeatureSize(TwoLayersFeatureSize {
-                    limit: 1u8,
-                    lower_size: 0u8,
-                    upper_size: 2u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![],
-            root_placer: None,
-        })),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::OrangePoplarLeafLitter,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::POPLAR_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            trunk_placer: TrunkPlacer {
-                base_height: 7u8,
-                height_rand_a: 4u8,
-                height_rand_b: 0u8,
-                r#type: TrunkType::Poplar(PoplarTrunkPlacer {
-                    trunk_height_above_branches: IntProvider::Constant(4i32),
-                    branch_amount: IntProvider::Object(NormalIntProvider::Uniform(
-                        UniformIntProvider {
-                            min_inclusive: 1i32,
-                            max_inclusive: 4i32,
-                        },
-                    )),
-                }),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::ORANGE_POPLAR_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Object(NormalIntProvider::WeightedList(
-                    WeightedListIntProvider {
-                        distribution: vec![
-                            WeightedEntry {
-                                data: IntProvider::Constant(5i32),
-                                weight: 5i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(6i32),
-                                weight: 5i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(7i32),
-                                weight: 1i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(8i32),
-                                weight: 1i32,
-                            },
-                        ],
-                    },
-                )),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::Poplar(PoplarFoliagePlacer {
-                    height: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                        min_inclusive: 5i32,
-                        max_inclusive: 6i32,
-                    })),
-                    side_hole_chance: 0.15f32,
-                }),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::TwoLayersFeatureSize(TwoLayersFeatureSize {
-                    limit: 1u8,
-                    lower_size: 0u8,
-                    upper_size: 2u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 96i32,
-                    radius: 4i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 150i32,
-                    radius: 1i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-            ],
-            root_placer: None,
-        })),
-    );
-    map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::OreAncientDebrisLarge,
         ConfiguredFeature::ScatteredOre(
             crate::generation::feature::features::scattered_ore::ScatteredOreFeature {
@@ -7897,14 +4162,174 @@ fn build_configured_features()
             }],
         }),
     );
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreCoal , ConfiguredFeature :: Ore (OreFeature { size : 17i32 , discard_chance_on_air_exposure : 0f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: COAL_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_COAL_ORE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreCoalBuried , ConfiguredFeature :: Ore (OreFeature { size : 17i32 , discard_chance_on_air_exposure : 0.5f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: COAL_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_COAL_ORE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreCopperLarge , ConfiguredFeature :: Ore (OreFeature { size : 20i32 , discard_chance_on_air_exposure : 0f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: COPPER_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_COPPER_ORE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreCopperSmall , ConfiguredFeature :: Ore (OreFeature { size : 10i32 , discard_chance_on_air_exposure : 0f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: COPPER_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_COPPER_ORE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreDiamondBuried , ConfiguredFeature :: Ore (OreFeature { size : 8i32 , discard_chance_on_air_exposure : 1f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DIAMOND_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_DIAMOND_ORE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreDiamondLarge , ConfiguredFeature :: Ore (OreFeature { size : 12i32 , discard_chance_on_air_exposure : 0.7f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DIAMOND_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_DIAMOND_ORE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreDiamondMedium , ConfiguredFeature :: Ore (OreFeature { size : 8i32 , discard_chance_on_air_exposure : 0.5f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DIAMOND_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_DIAMOND_ORE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreDiamondSmall , ConfiguredFeature :: Ore (OreFeature { size : 4i32 , discard_chance_on_air_exposure : 0.5f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DIAMOND_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_DIAMOND_ORE . default_state }] , })) ;
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreCoal,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 17i32,
+            discard_chance_on_air_exposure: 0f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::COAL_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_COAL_ORE.default_state,
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreCoalBuried,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 17i32,
+            discard_chance_on_air_exposure: 0.5f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::COAL_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_COAL_ORE.default_state,
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreCopperLarge,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 20i32,
+            discard_chance_on_air_exposure: 0f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::COPPER_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_COPPER_ORE.default_state,
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreCopperSmall,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 10i32,
+            discard_chance_on_air_exposure: 0f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::COPPER_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_COPPER_ORE.default_state,
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreDiamondBuried,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 8i32,
+            discard_chance_on_air_exposure: 1f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DIAMOND_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_DIAMOND_ORE.default_state,
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreDiamondLarge,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 12i32,
+            discard_chance_on_air_exposure: 0.7f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DIAMOND_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_DIAMOND_ORE.default_state,
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreDiamondMedium,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 8i32,
+            discard_chance_on_air_exposure: 0.5f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DIAMOND_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_DIAMOND_ORE.default_state,
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreDiamondSmall,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 4i32,
+            discard_chance_on_air_exposure: 0.5f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DIAMOND_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_DIAMOND_ORE.default_state,
+                },
+            ],
+        }),
+    );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::OreDiorite,
         ConfiguredFeature::Ore(OreFeature {
@@ -7931,9 +4356,69 @@ fn build_configured_features()
             }],
         }),
     );
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreEmerald , ConfiguredFeature :: Ore (OreFeature { size : 3i32 , discard_chance_on_air_exposure : 0f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: EMERALD_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_EMERALD_ORE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreGold , ConfiguredFeature :: Ore (OreFeature { size : 9i32 , discard_chance_on_air_exposure : 0f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: GOLD_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_GOLD_ORE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreGoldBuried , ConfiguredFeature :: Ore (OreFeature { size : 9i32 , discard_chance_on_air_exposure : 0.5f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: GOLD_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_GOLD_ORE . default_state }] , })) ;
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreEmerald,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 3i32,
+            discard_chance_on_air_exposure: 0f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::EMERALD_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_EMERALD_ORE.default_state,
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreGold,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 9i32,
+            discard_chance_on_air_exposure: 0f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::GOLD_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_GOLD_ORE.default_state,
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreGoldBuried,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 9i32,
+            discard_chance_on_air_exposure: 0.5f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::GOLD_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_GOLD_ORE.default_state,
+                },
+            ],
+        }),
+    );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::OreGranite,
         ConfiguredFeature::Ore(OreFeature {
@@ -7973,11 +4458,119 @@ fn build_configured_features()
             }],
         }),
     );
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreInfested , ConfiguredFeature :: Ore (OreFeature { size : 9i32 , discard_chance_on_air_exposure : 0f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: INFESTED_STONE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: INFESTED_DEEPSLATE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreIron , ConfiguredFeature :: Ore (OreFeature { size : 9i32 , discard_chance_on_air_exposure : 0f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: IRON_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_IRON_ORE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreIronSmall , ConfiguredFeature :: Ore (OreFeature { size : 4i32 , discard_chance_on_air_exposure : 0f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: IRON_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_IRON_ORE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreLapis , ConfiguredFeature :: Ore (OreFeature { size : 7i32 , discard_chance_on_air_exposure : 0f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: LAPIS_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_LAPIS_ORE . default_state }] , })) ;
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreLapisBuried , ConfiguredFeature :: Ore (OreFeature { size : 7i32 , discard_chance_on_air_exposure : 1f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: LAPIS_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_LAPIS_ORE . default_state }] , })) ;
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreInfested,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 9i32,
+            discard_chance_on_air_exposure: 0f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::INFESTED_STONE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: {
+                        let mut props = std::collections::HashMap::new();
+                        props.insert("axis".to_string(), "y".to_string());
+                        BlockStateCodec {
+                            name: &pumpkin_data::Block::INFESTED_DEEPSLATE,
+                            properties: Some(props),
+                        }
+                        .get_state()
+                    },
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreIron,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 9i32,
+            discard_chance_on_air_exposure: 0f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::IRON_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_IRON_ORE.default_state,
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreIronSmall,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 4i32,
+            discard_chance_on_air_exposure: 0f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::IRON_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_IRON_ORE.default_state,
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreLapis,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 7i32,
+            discard_chance_on_air_exposure: 0f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::LAPIS_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_LAPIS_ORE.default_state,
+                },
+            ],
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreLapisBuried,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 7i32,
+            discard_chance_on_air_exposure: 1f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::LAPIS_ORE.default_state,
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: pumpkin_data::Block::DEEPSLATE_LAPIS_ORE.default_state,
+                },
+            ],
+        }),
+    );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::OreMagma,
         ConfiguredFeature::Ore(OreFeature {
@@ -8017,7 +4610,43 @@ fn build_configured_features()
             }],
         }),
     );
-    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: OreRedstone , ConfiguredFeature :: Ore (OreFeature { size : 8i32 , discard_chance_on_air_exposure : 0f32 , targets : vec ! [OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : 0i32 , max_inclusive : 2031i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_STONE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: REDSTONE_ORE . default_state } , OreTarget { target : RuleTest :: AnyOf (vec ! [RuleTest :: AllOf (vec ! [RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }) , RuleTest :: HeightMatch { min_inclusive : - 2032i32 , max_inclusive : 8i32 }]) , RuleTest :: AllOf (vec ! [RuleTest :: Not (Box :: new (RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_HEIGHT_SPECIFIC_ORE_REPLACEABLES }))) , RuleTest :: TagMatch (TagMatchRuleTest { tag : pumpkin_data :: tag :: Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES })])]) , state : pumpkin_data :: Block :: DEEPSLATE_REDSTONE_ORE . default_state }] , })) ;
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::OreRedstone,
+        ConfiguredFeature::Ore(OreFeature {
+            size: 8i32,
+            discard_chance_on_air_exposure: 0f32,
+            targets: vec![
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_STONE_ORE_REPLACEABLES,
+                    }),
+                    state: {
+                        let mut props = std::collections::HashMap::new();
+                        props.insert("lit".to_string(), "false".to_string());
+                        BlockStateCodec {
+                            name: &pumpkin_data::Block::REDSTONE_ORE,
+                            properties: Some(props),
+                        }
+                        .get_state()
+                    },
+                },
+                OreTarget {
+                    target: RuleTest::TagMatch(TagMatchRuleTest {
+                        tag: pumpkin_data::tag::Block::MINECRAFT_DEEPSLATE_ORE_REPLACEABLES,
+                    }),
+                    state: {
+                        let mut props = std::collections::HashMap::new();
+                        props.insert("lit".to_string(), "false".to_string());
+                        BlockStateCodec {
+                            name: &pumpkin_data::Block::DEEPSLATE_REDSTONE_ORE,
+                            properties: Some(props),
+                        }
+                        .get_state()
+                    },
+                },
+            ],
+        }),
+    );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::OreSoulSand,
         ConfiguredFeature::Ore(OreFeature {
@@ -8045,322 +4674,753 @@ fn build_configured_features()
         }),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::PaleForestFlower,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::CLOSED_EYEBLOSSOM.default_state,
-            }),
-            schedule_tick: Some(true),
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::PaleGardenVegetation,
-        ConfiguredFeature::RandomSelector(RandomFeature {
-            features: vec![
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::PaleOakCreakingChecked,
-                    ),
-                    chance: 0.1f32,
-                },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::PaleOakChecked,
-                    ),
-                    chance: 0.9f32,
-                },
-            ],
-            default: Box::new(PlacedFeatureWrapper::Named(
-                pumpkin_data::placed_feature::PlacedFeature::PaleOakChecked,
-            )),
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::PaleMossPatch,
-        ConfiguredFeature::VegetationPatch(vegetation_patch::VegetationPatchFeature {
-            replaceable: BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
-                offset: OffsetBlocksBlockPredicate { offset: None },
-                tag: pumpkin_data::tag::Block::MINECRAFT_MOSS_REPLACEABLE,
-            }),
-            ground_state: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::PALE_MOSS_BLOCK.default_state,
-            }),
-            vegetation_feature: Box::new(PlacedFeature {
-                feature: Feature::Named(
-                    pumpkin_data::configured_feature::ConfiguredFeature::PaleMossVegetation,
-                ),
-                placement: vec![],
-            }),
-            surface: pumpkin_util::math::vertical_surface_type::VerticalSurfaceType::Floor,
-            depth: IntProvider::Constant(1i32),
-            extra_bottom_block_chance: 0f32,
-            vertical_range: 5i32,
-            vegetation_chance: 0.3f32,
-            xz_radius: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                min_inclusive: 2i32,
-                max_inclusive: 4i32,
-            })),
-            extra_edge_column_chance: 0.75f32,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::PaleMossPatchBonemeal,
-        ConfiguredFeature::VegetationPatch(vegetation_patch::VegetationPatchFeature {
-            replaceable: BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
-                offset: OffsetBlocksBlockPredicate { offset: None },
-                tag: pumpkin_data::tag::Block::MINECRAFT_MOSS_REPLACEABLE,
-            }),
-            ground_state: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::PALE_MOSS_BLOCK.default_state,
-            }),
-            vegetation_feature: Box::new(PlacedFeature {
-                feature: Feature::Named(
-                    pumpkin_data::configured_feature::ConfiguredFeature::PaleMossVegetation,
-                ),
-                placement: vec![],
-            }),
-            surface: pumpkin_util::math::vertical_surface_type::VerticalSurfaceType::Floor,
-            depth: IntProvider::Constant(1i32),
-            extra_bottom_block_chance: 0f32,
-            vertical_range: 5i32,
-            vegetation_chance: 0.6f32,
-            xz_radius: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                min_inclusive: 1i32,
-                max_inclusive: 2i32,
-            })),
-            extra_edge_column_chance: 0.75f32,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::PaleMossVegetation,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                entries: vec![
-                    Weighted {
-                        data: pumpkin_data::Block::PALE_MOSS_CARPET.default_state,
-                        weight: 25i32,
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchBerryBush,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: {
+                                let mut props = std::collections::HashMap::new();
+                                props.insert("age".to_string(), "3".to_string());
+                                BlockStateCodec {
+                                    name: &pumpkin_data::Block::SWEET_BERRY_BUSH,
+                                    properties: Some(props),
+                                }
+                                .get_state()
+                            },
+                        }),
+                        schedule_tick: None,
                     },
-                    Weighted {
-                        data: pumpkin_data::Block::SHORT_GRASS.default_state,
-                        weight: 25i32,
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
+                            predicates: vec![
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Single(
+                                        "minecraft:air".to_string(),
+                                    ),
+                                }),
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate {
+                                        offset: Some(Vector3::new(0i32, -1i32, 0i32)),
+                                    },
+                                    blocks: MatchingBlocksWrapper::Single(
+                                        "minecraft:grass_block".to_string(),
+                                    ),
+                                }),
+                            ],
+                        }),
                     },
-                    Weighted {
-                        data: pumpkin_data::Block::TALL_GRASS.default_state,
-                        weight: 10i32,
-                    },
-                ],
+                )],
             }),
-            schedule_tick: None,
         }),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::PaleOak,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::PALE_OAK_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchBrownMushroom,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: pumpkin_data::Block::BROWN_MUSHROOM.default_state,
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
             }),
-            trunk_placer: TrunkPlacer {
-                base_height: 6u8,
-                height_rand_a: 2u8,
-                height_rand_b: 1u8,
-                r#type: TrunkType::DarkOak(DarkOakTrunkPlacer),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::PALE_OAK_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Constant(0i32),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::DarkOak(DarkOakFoliagePlacer),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::ThreeLayersFeatureSize(ThreeLayersFeatureSize {
-                    limit: 1u8,
-                    upper_limit: 1u8,
-                    lower_size: 0u8,
-                    middle_size: 1u8,
-                    upper_size: 2u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![TreeDecorator::PaleMoss(PaleMossTreeDecorator {
-                leaves_probability: 0.15f32,
-                trunk_probability: 0.4f32,
-                ground_probability: 0.8f32,
-            })],
-            root_placer: None,
-        })),
+        }),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::PaleOakBonemeal,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::PALE_OAK_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchCactus,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 10u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::BlockColumn(
+                    BlockColumnFeature {
+                        layers: vec![Layer {
+                            height: IntProvider::Object(NormalIntProvider::BiasedToBottom(
+                                BiasedToBottomIntProvider {
+                                    min_inclusive: 1i32,
+                                    max_inclusive: 3i32,
+                                },
+                            )),
+                            provider: BlockStateProvider::Simple(SimpleStateProvider {
+                                state: {
+                                    let mut props = std::collections::HashMap::new();
+                                    props.insert("age".to_string(), "0".to_string());
+                                    BlockStateCodec {
+                                        name: &pumpkin_data::Block::CACTUS,
+                                        properties: Some(props),
+                                    }
+                                    .get_state()
+                                },
+                            }),
+                        }],
+                        direction: BlockDirection::Up,
+                        allowed_placement: BlockPredicate::MatchingBlocks(
+                            MatchingBlocksBlockPredicate {
+                                offset: OffsetBlocksBlockPredicate { offset: None },
+                                blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                            },
+                        ),
+                        prioritize_tip: false,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
+                            predicates: vec![
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Single(
+                                        "minecraft:air".to_string(),
+                                    ),
+                                }),
+                                BlockPredicate::WouldSurvive(WouldSurviveBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    state: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("age".to_string(), "0".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::CACTUS,
+                                            properties: Some(props),
+                                        }
+                                    },
+                                }),
+                            ],
+                        }),
+                    },
+                )],
             }),
-            trunk_placer: TrunkPlacer {
-                base_height: 6u8,
-                height_rand_a: 2u8,
-                height_rand_b: 1u8,
-                r#type: TrunkType::DarkOak(DarkOakTrunkPlacer),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::PALE_OAK_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Constant(0i32),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::DarkOak(DarkOakFoliagePlacer),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::ThreeLayersFeatureSize(ThreeLayersFeatureSize {
-                    limit: 1u8,
-                    upper_limit: 1u8,
-                    lower_size: 0u8,
-                    middle_size: 1u8,
-                    upper_size: 2u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![],
-            root_placer: None,
-        })),
+        }),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::PaleOakCreaking,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::PALE_OAK_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchCrimsonRoots,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: pumpkin_data::Block::CRIMSON_ROOTS.default_state,
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
             }),
-            trunk_placer: TrunkPlacer {
-                base_height: 6u8,
-                height_rand_a: 2u8,
-                height_rand_b: 1u8,
-                r#type: TrunkType::DarkOak(DarkOakTrunkPlacer),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::PALE_OAK_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchDeadBush,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 4u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: pumpkin_data::Block::DEAD_BUSH.default_state,
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
             }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Constant(0i32),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::DarkOak(DarkOakFoliagePlacer),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::ThreeLayersFeatureSize(ThreeLayersFeatureSize {
-                    limit: 1u8,
-                    upper_limit: 1u8,
-                    lower_size: 0u8,
-                    middle_size: 1u8,
-                    upper_size: 2u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![
-                TreeDecorator::PaleMoss(PaleMossTreeDecorator {
-                    leaves_probability: 0.15f32,
-                    trunk_probability: 0.4f32,
-                    ground_probability: 0.8f32,
-                }),
-                TreeDecorator::CreakingHeart(CreakingHeartTreeDecorator { probability: 1f32 }),
-            ],
-            root_placer: None,
-        })),
+        }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::PatchFire,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("age".to_string(), "0".to_string());
-                    props.insert("east".to_string(), "false".to_string());
-                    props.insert("north".to_string(), "false".to_string());
-                    props.insert("south".to_string(), "false".to_string());
-                    props.insert("up".to_string(), "false".to_string());
-                    props.insert("west".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::FIRE,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: {
+                                let mut props = std::collections::HashMap::new();
+                                props.insert("age".to_string(), "0".to_string());
+                                props.insert("east".to_string(), "false".to_string());
+                                props.insert("north".to_string(), "false".to_string());
+                                props.insert("south".to_string(), "false".to_string());
+                                props.insert("up".to_string(), "false".to_string());
+                                props.insert("west".to_string(), "false".to_string());
+                                BlockStateCodec {
+                                    name: &pumpkin_data::Block::FIRE,
+                                    properties: Some(props),
+                                }
+                                .get_state()
+                            },
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
+                            predicates: vec![
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Single(
+                                        "minecraft:air".to_string(),
+                                    ),
+                                }),
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate {
+                                        offset: Some(Vector3::new(0i32, -1i32, 0i32)),
+                                    },
+                                    blocks: MatchingBlocksWrapper::Single(
+                                        "minecraft:netherrack".to_string(),
+                                    ),
+                                }),
+                            ],
+                        }),
+                    },
+                )],
             }),
-            schedule_tick: None,
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchGrass,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 32u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: pumpkin_data::Block::SHORT_GRASS.default_state,
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
+            }),
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchGrassJungle,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 32u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
+                            entries: vec![
+                                Weighted {
+                                    data: pumpkin_data::Block::SHORT_GRASS.default_state,
+                                    weight: 3i32,
+                                },
+                                Weighted {
+                                    data: pumpkin_data::Block::FERN.default_state,
+                                    weight: 1i32,
+                                },
+                            ],
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
+                            predicates: vec![
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Single(
+                                        "minecraft:air".to_string(),
+                                    ),
+                                }),
+                                BlockPredicate::Not(NotBlockPredicate {
+                                    predicate: Box::new(BlockPredicate::MatchingBlocks(
+                                        MatchingBlocksBlockPredicate {
+                                            offset: OffsetBlocksBlockPredicate {
+                                                offset: Some(Vector3::new(0i32, -1i32, 0i32)),
+                                            },
+                                            blocks: MatchingBlocksWrapper::Single(
+                                                "minecraft:podzol".to_string(),
+                                            ),
+                                        },
+                                    )),
+                                }),
+                            ],
+                        }),
+                    },
+                )],
+            }),
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchLargeFern,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: {
+                                let mut props = std::collections::HashMap::new();
+                                props.insert("half".to_string(), "lower".to_string());
+                                BlockStateCodec {
+                                    name: &pumpkin_data::Block::LARGE_FERN,
+                                    properties: Some(props),
+                                }
+                                .get_state()
+                            },
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
+            }),
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchMelon,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 64u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: pumpkin_data::Block::MELON.default_state,
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
+                            predicates: vec![
+                                BlockPredicate::Replaceable(ReplaceableBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                }),
+                                BlockPredicate::MatchingFluids(MatchingFluidsBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    fluids: MatchingBlocksWrapper::Single(
+                                        "minecraft:empty".to_string(),
+                                    ),
+                                }),
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate {
+                                        offset: Some(Vector3::new(0i32, -1i32, 0i32)),
+                                    },
+                                    blocks: MatchingBlocksWrapper::Single(
+                                        "minecraft:grass_block".to_string(),
+                                    ),
+                                }),
+                            ],
+                        }),
+                    },
+                )],
+            }),
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchPumpkin,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: pumpkin_data::Block::PUMPKIN.default_state,
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
+                            predicates: vec![
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Single(
+                                        "minecraft:air".to_string(),
+                                    ),
+                                }),
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate {
+                                        offset: Some(Vector3::new(0i32, -1i32, 0i32)),
+                                    },
+                                    blocks: MatchingBlocksWrapper::Single(
+                                        "minecraft:grass_block".to_string(),
+                                    ),
+                                }),
+                            ],
+                        }),
+                    },
+                )],
+            }),
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchRedMushroom,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: pumpkin_data::Block::RED_MUSHROOM.default_state,
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
+            }),
         }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::PatchSoulFire,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::SOUL_FIRE.default_state,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: pumpkin_data::Block::SOUL_FIRE.default_state,
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
+                            predicates: vec![
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Single(
+                                        "minecraft:air".to_string(),
+                                    ),
+                                }),
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate {
+                                        offset: Some(Vector3::new(0i32, -1i32, 0i32)),
+                                    },
+                                    blocks: MatchingBlocksWrapper::Single(
+                                        "minecraft:soul_soil".to_string(),
+                                    ),
+                                }),
+                            ],
+                        }),
+                    },
+                )],
             }),
-            schedule_tick: None,
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchSugarCane,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 20u8,
+            xz_spread: 4u8,
+            y_spread: 0u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::BlockColumn(
+                    BlockColumnFeature {
+                        layers: vec![Layer {
+                            height: IntProvider::Object(NormalIntProvider::BiasedToBottom(
+                                BiasedToBottomIntProvider {
+                                    min_inclusive: 2i32,
+                                    max_inclusive: 4i32,
+                                },
+                            )),
+                            provider: BlockStateProvider::Simple(SimpleStateProvider {
+                                state: {
+                                    let mut props = std::collections::HashMap::new();
+                                    props.insert("age".to_string(), "0".to_string());
+                                    BlockStateCodec {
+                                        name: &pumpkin_data::Block::SUGAR_CANE,
+                                        properties: Some(props),
+                                    }
+                                    .get_state()
+                                },
+                            }),
+                        }],
+                        direction: BlockDirection::Up,
+                        allowed_placement: BlockPredicate::MatchingBlocks(
+                            MatchingBlocksBlockPredicate {
+                                offset: OffsetBlocksBlockPredicate { offset: None },
+                                blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                            },
+                        ),
+                        prioritize_tip: false,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
+                            predicates: vec![
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Single(
+                                        "minecraft:air".to_string(),
+                                    ),
+                                }),
+                                BlockPredicate::WouldSurvive(WouldSurviveBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    state: {
+                                        let mut props = std::collections::HashMap::new();
+                                        props.insert("age".to_string(), "0".to_string());
+                                        BlockStateCodec {
+                                            name: &pumpkin_data::Block::SUGAR_CANE,
+                                            properties: Some(props),
+                                        }
+                                    },
+                                }),
+                                BlockPredicate::AnyOf(AnyOfBlockPredicate {
+                                    predicates: vec![
+                                        BlockPredicate::MatchingFluids(
+                                            MatchingFluidsBlockPredicate {
+                                                offset: OffsetBlocksBlockPredicate {
+                                                    offset: Some(Vector3::new(1i32, -1i32, 0i32)),
+                                                },
+                                                fluids: MatchingBlocksWrapper::Multiple(vec![
+                                                    "minecraft:water".to_string(),
+                                                    "minecraft:flowing_water".to_string(),
+                                                ]),
+                                            },
+                                        ),
+                                        BlockPredicate::MatchingFluids(
+                                            MatchingFluidsBlockPredicate {
+                                                offset: OffsetBlocksBlockPredicate {
+                                                    offset: Some(Vector3::new(-1i32, -1i32, 0i32)),
+                                                },
+                                                fluids: MatchingBlocksWrapper::Multiple(vec![
+                                                    "minecraft:water".to_string(),
+                                                    "minecraft:flowing_water".to_string(),
+                                                ]),
+                                            },
+                                        ),
+                                        BlockPredicate::MatchingFluids(
+                                            MatchingFluidsBlockPredicate {
+                                                offset: OffsetBlocksBlockPredicate {
+                                                    offset: Some(Vector3::new(0i32, -1i32, 1i32)),
+                                                },
+                                                fluids: MatchingBlocksWrapper::Multiple(vec![
+                                                    "minecraft:water".to_string(),
+                                                    "minecraft:flowing_water".to_string(),
+                                                ]),
+                                            },
+                                        ),
+                                        BlockPredicate::MatchingFluids(
+                                            MatchingFluidsBlockPredicate {
+                                                offset: OffsetBlocksBlockPredicate {
+                                                    offset: Some(Vector3::new(0i32, -1i32, -1i32)),
+                                                },
+                                                fluids: MatchingBlocksWrapper::Multiple(vec![
+                                                    "minecraft:water".to_string(),
+                                                    "minecraft:flowing_water".to_string(),
+                                                ]),
+                                            },
+                                        ),
+                                    ],
+                                }),
+                            ],
+                        }),
+                    },
+                )],
+            }),
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchSunflower,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: {
+                                let mut props = std::collections::HashMap::new();
+                                props.insert("half".to_string(), "lower".to_string());
+                                BlockStateCodec {
+                                    name: &pumpkin_data::Block::SUNFLOWER,
+                                    properties: Some(props),
+                                }
+                                .get_state()
+                            },
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
+            }),
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchTaigaGrass,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 32u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
+                            entries: vec![
+                                Weighted {
+                                    data: pumpkin_data::Block::SHORT_GRASS.default_state,
+                                    weight: 1i32,
+                                },
+                                Weighted {
+                                    data: pumpkin_data::Block::FERN.default_state,
+                                    weight: 4i32,
+                                },
+                            ],
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
+            }),
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchTallGrass,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 96u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: {
+                                let mut props = std::collections::HashMap::new();
+                                props.insert("half".to_string(), "lower".to_string());
+                                BlockStateCodec {
+                                    name: &pumpkin_data::Block::TALL_GRASS,
+                                    properties: Some(props),
+                                }
+                                .get_state()
+                            },
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
+            }),
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::PatchWaterlily,
+        ConfiguredFeature::RandomPatch(RandomPatchFeature {
+            tries: 10u8,
+            xz_spread: 7u8,
+            y_spread: 3u8,
+            feature: Box::new(PlacedFeature {
+                feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
+                    SimpleBlockFeature {
+                        to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                            state: pumpkin_data::Block::LILY_PAD.default_state,
+                        }),
+                        schedule_tick: None,
+                    },
+                ))),
+                placement: vec![PlacementModifier::BlockPredicateFilter(
+                    BlockFilterPlacementModifier {
+                        predicate: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
+                            offset: OffsetBlocksBlockPredicate { offset: None },
+                            blocks: MatchingBlocksWrapper::Single("minecraft:air".to_string()),
+                        }),
+                    },
+                )],
+            }),
         }),
     );
     map.insert(
@@ -8421,7 +5481,15 @@ fn build_configured_features()
                             weight: 19i32,
                         },
                         Weighted {
-                            data: pumpkin_data::Block::JACK_O_LANTERN.default_state,
+                            data: {
+                                let mut props = std::collections::HashMap::new();
+                                props.insert("facing".to_string(), "north".to_string());
+                                BlockStateCodec {
+                                    name: &pumpkin_data::Block::JACK_O_LANTERN,
+                                    properties: Some(props),
+                                }
+                                .get_state()
+                            },
                             weight: 1i32,
                         },
                     ],
@@ -8525,24 +5593,13 @@ fn build_configured_features()
                             target_condition: BlockPredicate::Solid(SolidBlockPredicate {
                                 offset: OffsetBlocksBlockPredicate { offset: None },
                             }),
-                            allowed_search_condition: Some(BlockPredicate::AnyOf(
-                                AnyOfBlockPredicate {
-                                    predicates: vec![
-                                        BlockPredicate::MatchingBlockTag(
-                                            MatchingBlockTagPredicate {
-                                                offset: OffsetBlocksBlockPredicate { offset: None },
-                                                tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                            },
-                                        ),
-                                        BlockPredicate::MatchingBlocks(
-                                            MatchingBlocksBlockPredicate {
-                                                offset: OffsetBlocksBlockPredicate { offset: None },
-                                                blocks: MatchingBlocksWrapper::Single(
-                                                    "minecraft:water".to_string(),
-                                                ),
-                                            },
-                                        ),
-                                    ],
+                            allowed_search_condition: Some(BlockPredicate::MatchingBlocks(
+                                MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Multiple(vec![
+                                        "minecraft:air".to_string(),
+                                        "minecraft:water".to_string(),
+                                    ]),
                                 },
                             )),
                             max_steps: 12i32,
@@ -8568,24 +5625,13 @@ fn build_configured_features()
                             target_condition: BlockPredicate::Solid(SolidBlockPredicate {
                                 offset: OffsetBlocksBlockPredicate { offset: None },
                             }),
-                            allowed_search_condition: Some(BlockPredicate::AnyOf(
-                                AnyOfBlockPredicate {
-                                    predicates: vec![
-                                        BlockPredicate::MatchingBlockTag(
-                                            MatchingBlockTagPredicate {
-                                                offset: OffsetBlocksBlockPredicate { offset: None },
-                                                tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                            },
-                                        ),
-                                        BlockPredicate::MatchingBlocks(
-                                            MatchingBlocksBlockPredicate {
-                                                offset: OffsetBlocksBlockPredicate { offset: None },
-                                                blocks: MatchingBlocksWrapper::Single(
-                                                    "minecraft:water".to_string(),
-                                                ),
-                                            },
-                                        ),
-                                    ],
+                            allowed_search_condition: Some(BlockPredicate::MatchingBlocks(
+                                MatchingBlocksBlockPredicate {
+                                    offset: OffsetBlocksBlockPredicate { offset: None },
+                                    blocks: MatchingBlocksWrapper::Multiple(vec![
+                                        "minecraft:air".to_string(),
+                                        "minecraft:water".to_string(),
+                                    ]),
                                 },
                             )),
                             max_steps: 12i32,
@@ -8597,580 +5643,6 @@ fn build_configured_features()
                     ],
                 },
             ],
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::Pumpkin,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::PUMPKIN.default_state,
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::RedMushroom,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::RED_MUSHROOM.default_state,
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::RedPoplar,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::POPLAR_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            trunk_placer: TrunkPlacer {
-                base_height: 7u8,
-                height_rand_a: 4u8,
-                height_rand_b: 0u8,
-                r#type: TrunkType::Poplar(PoplarTrunkPlacer {
-                    trunk_height_above_branches: IntProvider::Constant(4i32),
-                    branch_amount: IntProvider::Object(NormalIntProvider::Uniform(
-                        UniformIntProvider {
-                            min_inclusive: 1i32,
-                            max_inclusive: 4i32,
-                        },
-                    )),
-                }),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::RED_POPLAR_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Object(NormalIntProvider::WeightedList(
-                    WeightedListIntProvider {
-                        distribution: vec![
-                            WeightedEntry {
-                                data: IntProvider::Constant(5i32),
-                                weight: 5i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(6i32),
-                                weight: 5i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(7i32),
-                                weight: 1i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(8i32),
-                                weight: 1i32,
-                            },
-                        ],
-                    },
-                )),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::Poplar(PoplarFoliagePlacer {
-                    height: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                        min_inclusive: 5i32,
-                        max_inclusive: 6i32,
-                    })),
-                    side_hole_chance: 0.15f32,
-                }),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::TwoLayersFeatureSize(TwoLayersFeatureSize {
-                    limit: 1u8,
-                    lower_size: 0u8,
-                    upper_size: 2u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![],
-            root_placer: None,
-        })),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::RedPoplarLeafLitter,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::POPLAR_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            trunk_placer: TrunkPlacer {
-                base_height: 7u8,
-                height_rand_a: 4u8,
-                height_rand_b: 0u8,
-                r#type: TrunkType::Poplar(PoplarTrunkPlacer {
-                    trunk_height_above_branches: IntProvider::Constant(4i32),
-                    branch_amount: IntProvider::Object(NormalIntProvider::Uniform(
-                        UniformIntProvider {
-                            min_inclusive: 1i32,
-                            max_inclusive: 4i32,
-                        },
-                    )),
-                }),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::RED_POPLAR_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Object(NormalIntProvider::WeightedList(
-                    WeightedListIntProvider {
-                        distribution: vec![
-                            WeightedEntry {
-                                data: IntProvider::Constant(5i32),
-                                weight: 5i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(6i32),
-                                weight: 5i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(7i32),
-                                weight: 1i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(8i32),
-                                weight: 1i32,
-                            },
-                        ],
-                    },
-                )),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::Poplar(PoplarFoliagePlacer {
-                    height: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                        min_inclusive: 5i32,
-                        max_inclusive: 6i32,
-                    })),
-                    side_hole_chance: 0.15f32,
-                }),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::TwoLayersFeatureSize(TwoLayersFeatureSize {
-                    limit: 1u8,
-                    lower_size: 0u8,
-                    upper_size: 2u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 96i32,
-                    radius: 4i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 150i32,
-                    radius: 1i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-            ],
-            root_placer: None,
-        })),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::RedShrub,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::RED_SHRUB.default_state,
-            }),
-            schedule_tick: None,
         }),
     );
     map.insert(
@@ -9213,9 +5685,13 @@ fn build_configured_features()
                     predicates: vec![
                         BlockPredicate::AnyOf(AnyOfBlockPredicate {
                             predicates: vec![
-                                BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
+                                BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
                                     offset: OffsetBlocksBlockPredicate { offset: None },
-                                    tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
+                                    blocks: MatchingBlocksWrapper::Multiple(vec![
+                                        "minecraft:air".to_string(),
+                                        "minecraft:cave_air".to_string(),
+                                        "minecraft:void_air".to_string(),
+                                    ]),
                                 }),
                                 BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
                                     offset: OffsetBlocksBlockPredicate { offset: None },
@@ -9235,49 +5711,37 @@ fn build_configured_features()
         ),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::RootedSulfurSpring,
-        ConfiguredFeature::RootSystem(
-            crate::generation::feature::features::root_system::RootSystemFeature {
-                feature: Box::new(PlacedFeature {
-                    feature: Feature::Named(
-                        pumpkin_data::configured_feature::ConfiguredFeature::SulfurSpring,
-                    ),
-                    placement: vec![],
-                }),
-                required_vertical_space_for_tree: 5i32,
-                root_radius: 3i32,
-                root_replaceable: BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
-                    offset: OffsetBlocksBlockPredicate { offset: None },
-                    tag: pumpkin_data::tag::Block::MINECRAFT_AZALEA_ROOT_REPLACEABLE,
-                }),
-                root_state_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                    state: pumpkin_data::Block::SULFUR.default_state,
-                }),
-                root_placement_attempts: 20i32,
-                root_column_max_height: 184i32,
-                hanging_root_radius: 1i32,
-                hanging_roots_vertical_span: 1i32,
-                hanging_root_state_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                    state: pumpkin_data::Block::SULFUR.default_state,
-                }),
-                hanging_root_placement_attempts: 1i32,
-                allowed_vertical_water_for_tree: 1i32,
-                allowed_tree_position: BlockPredicate::MatchingBlockTag(
-                    MatchingBlockTagPredicate {
-                        offset: OffsetBlocksBlockPredicate { offset: None },
-                        tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
+        pumpkin_data::configured_feature::ConfiguredFeature::SculkPatchAncientCity,
+        ConfiguredFeature::SculkPatch(
+            crate::generation::feature::features::sculk_patch::SculkPatchFeature {
+                charge_count: 10i32,
+                amount_per_charge: 32i32,
+                spread_attempts: 64i32,
+                growth_rounds: 0i32,
+                spread_rounds: 1i32,
+                extra_rare_growths: IntProvider::Object(NormalIntProvider::Uniform(
+                    UniformIntProvider {
+                        min_inclusive: 1i32,
+                        max_inclusive: 3i32,
                     },
-                ),
+                )),
+                catalyst_chance: 0.5f32,
             },
         ),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::SculkPatchAncientCity,
-        ConfiguredFeature::NoOp,
-    );
-    map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::SculkPatchDeepDark,
-        ConfiguredFeature::NoOp,
+        ConfiguredFeature::SculkPatch(
+            crate::generation::feature::features::sculk_patch::SculkPatchFeature {
+                charge_count: 10i32,
+                amount_per_charge: 32i32,
+                spread_attempts: 64i32,
+                growth_rounds: 0i32,
+                spread_rounds: 1i32,
+                extra_rare_growths: IntProvider::Constant(0i32),
+                catalyst_chance: 0.5f32,
+            },
+        ),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::SculkVein,
@@ -9304,278 +5768,63 @@ fn build_configured_features()
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::SeaPickle,
+        ConfiguredFeature::SeaPickle(SeaPickleFeature {
+            count: IntProvider::Constant(20i32),
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::SeagrassMid,
+        ConfiguredFeature::Seagrass(SeagrassFeature {
+            probability: 0.6f32,
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::SeagrassShort,
+        ConfiguredFeature::Seagrass(SeagrassFeature {
+            probability: 0.3f32,
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::SeagrassSimple,
         ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::RandomizedInt(RandomizedIntBlockStateProvider {
-                source: Box::new(BlockStateProvider::Simple(SimpleStateProvider {
-                    state: {
-                        let mut props = std::collections::HashMap::new();
-                        props.insert("pickles".to_string(), "1".to_string());
-                        props.insert("waterlogged".to_string(), "true".to_string());
-                        BlockStateCodec {
-                            name: &pumpkin_data::Block::SEA_PICKLE,
-                            properties: Some(props),
-                        }
-                        .get_state()
-                    },
-                })),
-                property: "pickles".to_string(),
-                values: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                    min_inclusive: 1i32,
-                    max_inclusive: 4i32,
-                })),
+            to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                state: pumpkin_data::Block::SEAGRASS.default_state,
             }),
             schedule_tick: None,
         }),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::SeagrassMid,
-        ConfiguredFeature::WeightedRandomSelector(WeightedRandomFeature {
-            features: vec![
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
-                            SimpleBlockFeature {
-                                to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                                    state: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("half".to_string(), "lower".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::TALL_SEAGRASS,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                }),
-                                schedule_tick: None,
-                            },
-                        ))),
-                        placement: vec![PlacementModifier::BlockPredicateFilter(
-                            BlockFilterPlacementModifier {
-                                predicate: BlockPredicate::MatchingBlocks(
-                                    MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate {
-                                            offset: Some(Vector3::new(0i32, 1i32, 0i32)),
-                                        },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    },
-                                ),
-                            },
-                        )],
-                    }),
-                    weight: 60i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
-                            SimpleBlockFeature {
-                                to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                                    state: pumpkin_data::Block::SEAGRASS.default_state,
-                                }),
-                                schedule_tick: None,
-                            },
-                        ))),
-                        placement: vec![],
-                    }),
-                    weight: 40i32,
-                },
-            ],
-            total_weight: 100i32,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::SeagrassShort,
-        ConfiguredFeature::WeightedRandomSelector(WeightedRandomFeature {
-            features: vec![
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
-                            SimpleBlockFeature {
-                                to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                                    state: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("half".to_string(), "lower".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::TALL_SEAGRASS,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                }),
-                                schedule_tick: None,
-                            },
-                        ))),
-                        placement: vec![PlacementModifier::BlockPredicateFilter(
-                            BlockFilterPlacementModifier {
-                                predicate: BlockPredicate::MatchingBlocks(
-                                    MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate {
-                                            offset: Some(Vector3::new(0i32, 1i32, 0i32)),
-                                        },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    },
-                                ),
-                            },
-                        )],
-                    }),
-                    weight: 30i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
-                            SimpleBlockFeature {
-                                to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                                    state: pumpkin_data::Block::SEAGRASS.default_state,
-                                }),
-                                schedule_tick: None,
-                            },
-                        ))),
-                        placement: vec![],
-                    }),
-                    weight: 70i32,
-                },
-            ],
-            total_weight: 100i32,
-        }),
-    );
-    map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::SeagrassSlightlyLessShort,
-        ConfiguredFeature::WeightedRandomSelector(WeightedRandomFeature {
-            features: vec![
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
-                            SimpleBlockFeature {
-                                to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                                    state: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("half".to_string(), "lower".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::TALL_SEAGRASS,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                }),
-                                schedule_tick: None,
-                            },
-                        ))),
-                        placement: vec![PlacementModifier::BlockPredicateFilter(
-                            BlockFilterPlacementModifier {
-                                predicate: BlockPredicate::MatchingBlocks(
-                                    MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate {
-                                            offset: Some(Vector3::new(0i32, 1i32, 0i32)),
-                                        },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    },
-                                ),
-                            },
-                        )],
-                    }),
-                    weight: 40i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
-                            SimpleBlockFeature {
-                                to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                                    state: pumpkin_data::Block::SEAGRASS.default_state,
-                                }),
-                                schedule_tick: None,
-                            },
-                        ))),
-                        placement: vec![],
-                    }),
-                    weight: 60i32,
-                },
-            ],
-            total_weight: 100i32,
+        ConfiguredFeature::Seagrass(SeagrassFeature {
+            probability: 0.4f32,
         }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::SeagrassTall,
-        ConfiguredFeature::WeightedRandomSelector(WeightedRandomFeature {
-            features: vec![
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
-                            SimpleBlockFeature {
-                                to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                                    state: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("half".to_string(), "lower".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::TALL_SEAGRASS,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                }),
-                                schedule_tick: None,
-                            },
-                        ))),
-                        placement: vec![PlacementModifier::BlockPredicateFilter(
-                            BlockFilterPlacementModifier {
-                                predicate: BlockPredicate::MatchingBlocks(
-                                    MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate {
-                                            offset: Some(Vector3::new(0i32, 1i32, 0i32)),
-                                        },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    },
-                                ),
-                            },
-                        )],
-                    }),
-                    weight: 80i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::SimpleBlock(
-                            SimpleBlockFeature {
-                                to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                                    state: pumpkin_data::Block::SEAGRASS.default_state,
-                                }),
-                                schedule_tick: None,
-                            },
-                        ))),
-                        placement: vec![],
-                    }),
-                    weight: 20i32,
-                },
-            ],
-            total_weight: 100i32,
+        ConfiguredFeature::Seagrass(SeagrassFeature {
+            probability: 0.8f32,
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::SinglePieceOfGrass,
+        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
+            to_place: BlockStateProvider::Simple(SimpleStateProvider {
+                state: pumpkin_data::Block::SHORT_GRASS.default_state,
+            }),
+            schedule_tick: None,
         }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::SmallBasaltColumns,
-        ConfiguredFeature::WeightedRandomSelector(WeightedRandomFeature {
-            features: vec![
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::NoOp)),
-                        placement: vec![],
-                    }),
-                    weight: 9i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::NoOp)),
-                        placement: vec![],
-                    }),
-                    weight: 1i32,
-                },
-            ],
-            total_weight: 10i32,
-        }),
+        ConfiguredFeature::BasaltColumns(
+            crate::generation::feature::features::basalt_columns::BasaltColumnsFeature {
+                height: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
+                    min_inclusive: 1i32,
+                    max_inclusive: 4i32,
+                })),
+                reach: IntProvider::Constant(1i32),
+            },
+        ),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::SporeBlossom,
@@ -9793,192 +6042,6 @@ fn build_configured_features()
         })),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::SugarCane,
-        ConfiguredFeature::BlockColumn(BlockColumnFeature {
-            layers: vec![Layer {
-                height: IntProvider::Object(NormalIntProvider::BiasedToBottom(
-                    BiasedToBottomIntProvider {
-                        min_inclusive: 2i32,
-                        max_inclusive: 4i32,
-                    },
-                )),
-                provider: BlockStateProvider::Simple(SimpleStateProvider {
-                    state: {
-                        let mut props = std::collections::HashMap::new();
-                        props.insert("age".to_string(), "0".to_string());
-                        BlockStateCodec {
-                            name: &pumpkin_data::Block::SUGAR_CANE,
-                            properties: Some(props),
-                        }
-                        .get_state()
-                    },
-                }),
-            }],
-            direction: BlockDirection::Up,
-            allowed_placement: BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
-                offset: OffsetBlocksBlockPredicate { offset: None },
-                tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-            }),
-            prioritize_tip: false,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::SulfurPool,
-        ConfiguredFeature::NoOp,
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::SulfurSpike,
-        ConfiguredFeature::SimpleRandomSelector(SimpleRandomFeature {
-            features: vec![
-                PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::PointedDripstone(
-                        SmallDripstoneFeature {
-                            taller_dripstone: 0.2f32,
-                            directional_spread: 0.7f32,
-                            spread_radius2: 0.5f32,
-                            spread_radius3: 0.5f32,
-                        },
-                    ))),
-                    placement: vec![
-                        PlacementModifier::EnvironmentScan(EnvironmentScanPlacementModifier {
-                            direction_of_search: BlockDirection::Down,
-                            target_condition: BlockPredicate::Solid(SolidBlockPredicate {
-                                offset: OffsetBlocksBlockPredicate { offset: None },
-                            }),
-                            allowed_search_condition: Some(BlockPredicate::AnyOf(
-                                AnyOfBlockPredicate {
-                                    predicates: vec![
-                                        BlockPredicate::MatchingBlockTag(
-                                            MatchingBlockTagPredicate {
-                                                offset: OffsetBlocksBlockPredicate { offset: None },
-                                                tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                            },
-                                        ),
-                                        BlockPredicate::MatchingBlocks(
-                                            MatchingBlocksBlockPredicate {
-                                                offset: OffsetBlocksBlockPredicate { offset: None },
-                                                blocks: MatchingBlocksWrapper::Single(
-                                                    "minecraft:water".to_string(),
-                                                ),
-                                            },
-                                        ),
-                                    ],
-                                },
-                            )),
-                            max_steps: 12i32,
-                        }),
-                        PlacementModifier::RandomOffset(RandomOffsetPlacementModifier {
-                            xz_spread: IntProvider::Constant(0i32),
-                            y_spread: IntProvider::Constant(1i32),
-                        }),
-                    ],
-                },
-                PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::PointedDripstone(
-                        SmallDripstoneFeature {
-                            taller_dripstone: 0.2f32,
-                            directional_spread: 0.7f32,
-                            spread_radius2: 0.5f32,
-                            spread_radius3: 0.5f32,
-                        },
-                    ))),
-                    placement: vec![
-                        PlacementModifier::EnvironmentScan(EnvironmentScanPlacementModifier {
-                            direction_of_search: BlockDirection::Up,
-                            target_condition: BlockPredicate::Solid(SolidBlockPredicate {
-                                offset: OffsetBlocksBlockPredicate { offset: None },
-                            }),
-                            allowed_search_condition: Some(BlockPredicate::AnyOf(
-                                AnyOfBlockPredicate {
-                                    predicates: vec![
-                                        BlockPredicate::MatchingBlockTag(
-                                            MatchingBlockTagPredicate {
-                                                offset: OffsetBlocksBlockPredicate { offset: None },
-                                                tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-                                            },
-                                        ),
-                                        BlockPredicate::MatchingBlocks(
-                                            MatchingBlocksBlockPredicate {
-                                                offset: OffsetBlocksBlockPredicate { offset: None },
-                                                blocks: MatchingBlocksWrapper::Single(
-                                                    "minecraft:water".to_string(),
-                                                ),
-                                            },
-                                        ),
-                                    ],
-                                },
-                            )),
-                            max_steps: 12i32,
-                        }),
-                        PlacementModifier::RandomOffset(RandomOffsetPlacementModifier {
-                            xz_spread: IntProvider::Constant(0i32),
-                            y_spread: IntProvider::Constant(-1i32),
-                        }),
-                    ],
-                },
-            ],
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::SulfurSpikeCluster,
-        ConfiguredFeature::DripstoneCluster(
-            crate::generation::feature::features::drip_stone::cluster::DripstoneClusterFeature {},
-        ),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::SulfurSpring,
-        ConfiguredFeature::WeightedRandomSelector(WeightedRandomFeature {
-            features: vec![
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::NoOp)),
-                        placement: vec![],
-                    }),
-                    weight: 200i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::NoOp)),
-                        placement: vec![],
-                    }),
-                    weight: 90i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::NoOp)),
-                        placement: vec![],
-                    }),
-                    weight: 20i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Inlined(Box::new(ConfiguredFeature::NoOp)),
-                        placement: vec![],
-                    }),
-                    weight: 5i32,
-                },
-            ],
-            total_weight: 315i32,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::Sunflower,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("half".to_string(), "lower".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::SUNFLOWER,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::SuperBirchBees,
         ConfiguredFeature::Tree(Box::new(TreeFeature {
             trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
@@ -10147,41 +6210,6 @@ fn build_configured_features()
         })),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::TaigaGrass,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                entries: vec![
-                    Weighted {
-                        data: pumpkin_data::Block::SHORT_GRASS.default_state,
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: pumpkin_data::Block::FERN.default_state,
-                        weight: 4i32,
-                    },
-                ],
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::TallGrass,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("half".to_string(), "lower".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::TALL_GRASS,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::TallMangrove,
         ConfiguredFeature::Tree(Box::new(TreeFeature {
             trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
@@ -10258,9 +6286,31 @@ fn build_configured_features()
                     probability: 0.14f32,
                     exclusion_radius_xz: 1i32,
                     exclusion_radius_y: 0i32,
-                    block_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                        state: pumpkin_data::Block::AIR.default_state,
-                    }),
+                    block_provider: BlockStateProvider::RandomizedInt(
+                        RandomizedIntBlockStateProvider {
+                            source: Box::new(BlockStateProvider::Simple(SimpleStateProvider {
+                                state: {
+                                    let mut props = std::collections::HashMap::new();
+                                    props.insert("age".to_string(), "0".to_string());
+                                    props.insert("hanging".to_string(), "true".to_string());
+                                    props.insert("stage".to_string(), "0".to_string());
+                                    props.insert("waterlogged".to_string(), "false".to_string());
+                                    BlockStateCodec {
+                                        name: &pumpkin_data::Block::MANGROVE_PROPAGULE,
+                                        properties: Some(props),
+                                    }
+                                    .get_state()
+                                },
+                            })),
+                            property: "age".to_string(),
+                            values: IntProvider::Object(NormalIntProvider::Uniform(
+                                UniformIntProvider {
+                                    min_inclusive: 0i32,
+                                    max_inclusive: 4i32,
+                                },
+                            )),
+                        },
+                    ),
                     required_empty_blocks: 2i32,
                     directions: vec![BlockDirection::Down],
                 }),
@@ -10320,115 +6370,31 @@ fn build_configured_features()
         })),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::TreesBadlands,
-        ConfiguredFeature::RandomSelector(RandomFeature {
-            features: vec![RandomFeatureEntry {
-                feature: PlacedFeatureWrapper::Named(
-                    pumpkin_data::placed_feature::PlacedFeature::FallenOakTree,
-                ),
-                chance: 0.0125f32,
-            }],
-            default: Box::new(PlacedFeatureWrapper::Named(
-                pumpkin_data::placed_feature::PlacedFeature::OakLeafLitter,
-            )),
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::TreesBirch,
-        ConfiguredFeature::RandomSelector(RandomFeature {
-            features: vec![RandomFeatureEntry {
-                feature: PlacedFeatureWrapper::Named(
-                    pumpkin_data::placed_feature::PlacedFeature::FallenBirchTree,
-                ),
-                chance: 0.0125f32,
-            }],
-            default: Box::new(PlacedFeatureWrapper::Named(
-                pumpkin_data::placed_feature::PlacedFeature::BirchBees0002,
-            )),
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::TreesBirchAndOakLeafLitter,
+        pumpkin_data::configured_feature::ConfiguredFeature::TreesBirchAndOak,
         ConfiguredFeature::RandomSelector(RandomFeature {
             features: vec![
                 RandomFeatureEntry {
                     feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenBirchTree,
-                    ),
-                    chance: 0.0025f32,
-                },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::BirchBees0002LeafLitter,
+                        pumpkin_data::placed_feature::PlacedFeature::BirchBees0002,
                     ),
                     chance: 0.2f32,
                 },
                 RandomFeatureEntry {
                     feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FancyOakBees0002LeafLitter,
+                        pumpkin_data::placed_feature::PlacedFeature::FancyOakBees0002,
                     ),
                     chance: 0.1f32,
                 },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenOakTree,
-                    ),
-                    chance: 0.0125f32,
-                },
             ],
             default: Box::new(PlacedFeatureWrapper::Named(
-                pumpkin_data::placed_feature::PlacedFeature::OakBees0002LeafLitter,
+                pumpkin_data::placed_feature::PlacedFeature::OakBees0002,
             )),
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::TreesDappledForest,
-        ConfiguredFeature::WeightedRandomSelector(WeightedRandomFeature {
-            features: vec![
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::RedPoplarLeafLitter,
-                    ),
-                    weight: 200i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::OrangePoplarLeafLitter,
-                    ),
-                    weight: 240i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::YellowPoplarLeafLitter,
-                    ),
-                    weight: 90i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::SpruceChecked,
-                    ),
-                    weight: 27i32,
-                },
-                WeightedRandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenPoplarTree,
-                    ),
-                    weight: 120i32,
-                },
-            ],
-            total_weight: 677i32,
         }),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::TreesFlowerForest,
         ConfiguredFeature::RandomSelector(RandomFeature {
             features: vec![
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenBirchTree,
-                    ),
-                    chance: 0.0025f32,
-                },
                 RandomFeatureEntry {
                     feature: PlacedFeatureWrapper::Named(
                         pumpkin_data::placed_feature::PlacedFeature::BirchBees002,
@@ -10483,12 +6449,6 @@ fn build_configured_features()
                     ),
                     chance: 0.33333334f32,
                 },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenJungleTree,
-                    ),
-                    chance: 0.0125f32,
-                },
             ],
             default: Box::new(PlacedFeatureWrapper::Named(
                 pumpkin_data::placed_feature::PlacedFeature::JungleTree,
@@ -10517,12 +6477,6 @@ fn build_configured_features()
                     ),
                     chance: 0.33333334f32,
                 },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenSpruceTree,
-                    ),
-                    chance: 0.0125f32,
-                },
             ],
             default: Box::new(PlacedFeatureWrapper::Named(
                 pumpkin_data::placed_feature::PlacedFeature::SpruceChecked,
@@ -10545,12 +6499,6 @@ fn build_configured_features()
                     ),
                     chance: 0.33333334f32,
                 },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenSpruceTree,
-                    ),
-                    chance: 0.0125f32,
-                },
             ],
             default: Box::new(PlacedFeatureWrapper::Named(
                 pumpkin_data::placed_feature::PlacedFeature::SpruceChecked,
@@ -10560,23 +6508,15 @@ fn build_configured_features()
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::TreesPlains,
         ConfiguredFeature::RandomSelector(RandomFeature {
-            features: vec![
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Direct(PlacedFeature {
-                        feature: Feature::Named(
-                            pumpkin_data::configured_feature::ConfiguredFeature::FancyOakBees005,
-                        ),
-                        placement: vec![],
-                    }),
-                    chance: 0.33333334f32,
-                },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenOakTree,
+            features: vec![RandomFeatureEntry {
+                feature: PlacedFeatureWrapper::Direct(PlacedFeature {
+                    feature: Feature::Named(
+                        pumpkin_data::configured_feature::ConfiguredFeature::FancyOakBees005,
                     ),
-                    chance: 0.0125f32,
-                },
-            ],
+                    placement: vec![],
+                }),
+                chance: 0.33333334f32,
+            }],
             default: Box::new(PlacedFeatureWrapper::Direct(PlacedFeature {
                 feature: Feature::Named(
                     pumpkin_data::configured_feature::ConfiguredFeature::OakBees005,
@@ -10588,36 +6528,14 @@ fn build_configured_features()
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::TreesSavanna,
         ConfiguredFeature::RandomSelector(RandomFeature {
-            features: vec![
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::AcaciaChecked,
-                    ),
-                    chance: 0.8f32,
-                },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenOakTree,
-                    ),
-                    chance: 0.0125f32,
-                },
-            ],
-            default: Box::new(PlacedFeatureWrapper::Named(
-                pumpkin_data::placed_feature::PlacedFeature::OakChecked,
-            )),
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::TreesSnowy,
-        ConfiguredFeature::RandomSelector(RandomFeature {
             features: vec![RandomFeatureEntry {
                 feature: PlacedFeatureWrapper::Named(
-                    pumpkin_data::placed_feature::PlacedFeature::FallenSpruceTree,
+                    pumpkin_data::placed_feature::PlacedFeature::AcaciaChecked,
                 ),
-                chance: 0.0125f32,
+                chance: 0.8f32,
             }],
             default: Box::new(PlacedFeatureWrapper::Named(
-                pumpkin_data::placed_feature::PlacedFeature::SpruceChecked,
+                pumpkin_data::placed_feature::PlacedFeature::OakChecked,
             )),
         }),
     );
@@ -10637,12 +6555,6 @@ fn build_configured_features()
                     ),
                     chance: 0.5f32,
                 },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenJungleTree,
-                    ),
-                    chance: 0.0125f32,
-                },
             ],
             default: Box::new(PlacedFeatureWrapper::Named(
                 pumpkin_data::placed_feature::PlacedFeature::JungleTree,
@@ -10652,20 +6564,12 @@ fn build_configured_features()
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::TreesTaiga,
         ConfiguredFeature::RandomSelector(RandomFeature {
-            features: vec![
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::PineChecked,
-                    ),
-                    chance: 0.33333334f32,
-                },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenSpruceTree,
-                    ),
-                    chance: 0.0125f32,
-                },
-            ],
+            features: vec![RandomFeatureEntry {
+                feature: PlacedFeatureWrapper::Named(
+                    pumpkin_data::placed_feature::PlacedFeature::PineChecked,
+                ),
+                chance: 0.33333334f32,
+            }],
             default: Box::new(PlacedFeatureWrapper::Named(
                 pumpkin_data::placed_feature::PlacedFeature::SpruceChecked,
             )),
@@ -10691,12 +6595,6 @@ fn build_configured_features()
             features: vec![
                 RandomFeatureEntry {
                     feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenSpruceTree,
-                    ),
-                    chance: 0.008325f32,
-                },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
                         pumpkin_data::placed_feature::PlacedFeature::SpruceChecked,
                     ),
                     chance: 0.666f32,
@@ -10707,12 +6605,6 @@ fn build_configured_features()
                     ),
                     chance: 0.1f32,
                 },
-                RandomFeatureEntry {
-                    feature: PlacedFeatureWrapper::Named(
-                        pumpkin_data::placed_feature::PlacedFeature::FallenOakTree,
-                    ),
-                    chance: 0.0125f32,
-                },
             ],
             default: Box::new(PlacedFeatureWrapper::Named(
                 pumpkin_data::placed_feature::PlacedFeature::OakChecked,
@@ -10721,72 +6613,23 @@ fn build_configured_features()
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::TwistingVines,
-        ConfiguredFeature::BlockColumn(BlockColumnFeature {
-            layers: vec![
-                Layer {
-                    height: IntProvider::Object(NormalIntProvider::WeightedList(
-                        WeightedListIntProvider {
-                            distribution: vec![
-                                WeightedEntry {
-                                    data: IntProvider::Object(NormalIntProvider::Uniform(
-                                        UniformIntProvider {
-                                            min_inclusive: 0i32,
-                                            max_inclusive: 7i32,
-                                        },
-                                    )),
-                                    weight: 10i32,
-                                },
-                                WeightedEntry {
-                                    data: IntProvider::Object(NormalIntProvider::Uniform(
-                                        UniformIntProvider {
-                                            min_inclusive: 1i32,
-                                            max_inclusive: 15i32,
-                                        },
-                                    )),
-                                    weight: 2i32,
-                                },
-                                WeightedEntry {
-                                    data: IntProvider::Constant(0i32),
-                                    weight: 3i32,
-                                },
-                            ],
-                        },
-                    )),
-                    provider: BlockStateProvider::Simple(SimpleStateProvider {
-                        state: pumpkin_data::Block::TWISTING_VINES_PLANT.default_state,
-                    }),
-                },
-                Layer {
-                    height: IntProvider::Constant(1i32),
-                    provider: BlockStateProvider::RandomizedInt(RandomizedIntBlockStateProvider {
-                        source: Box::new(BlockStateProvider::Simple(SimpleStateProvider {
-                            state: {
-                                let mut props = std::collections::HashMap::new();
-                                props.insert("age".to_string(), "0".to_string());
-                                BlockStateCodec {
-                                    name: &pumpkin_data::Block::TWISTING_VINES,
-                                    properties: Some(props),
-                                }
-                                .get_state()
-                            },
-                        })),
-                        property: "age".to_string(),
-                        values: IntProvider::Object(NormalIntProvider::Uniform(
-                            UniformIntProvider {
-                                min_inclusive: 17i32,
-                                max_inclusive: 25i32,
-                            },
-                        )),
-                    }),
-                },
-            ],
-            direction: BlockDirection::Up,
-            allowed_placement: BlockPredicate::MatchingBlockTag(MatchingBlockTagPredicate {
-                offset: OffsetBlocksBlockPredicate { offset: None },
-                tag: pumpkin_data::tag::Block::MINECRAFT_AIR,
-            }),
-            prioritize_tip: true,
-        }),
+        ConfiguredFeature::TwistingVines(
+            crate::generation::feature::features::twisting_vines::TwistingVinesFeature {
+                spread_width: 8i32,
+                spread_height: 4i32,
+                max_height: 8i32,
+            },
+        ),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::TwistingVinesBonemeal,
+        ConfiguredFeature::TwistingVines(
+            crate::generation::feature::features::twisting_vines::TwistingVinesFeature {
+                spread_width: 3i32,
+                spread_height: 1i32,
+                max_height: 2i32,
+            },
+        ),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::UnderwaterMagma,
@@ -10808,347 +6651,11 @@ fn build_configured_features()
             crate::generation::feature::features::void_start_platform::VoidStartPlatformFeature {},
         ),
     );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::WarmOceanVegetation,
-        ConfiguredFeature::SimpleRandomSelector(SimpleRandomFeature {
-            features: vec![
-                PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::CoralTree(
-                        crate::generation::feature::features::coral::coral_tree::CoralTreeFeature,
-                    ))),
-                    placement: vec![],
-                },
-                PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::CoralClaw(
-                        crate::generation::feature::features::coral::coral_claw::CoralClawFeature,
-                    ))),
-                    placement: vec![],
-                },
-                PlacedFeature {
-                    feature: Feature::Named(
-                        pumpkin_data::configured_feature::ConfiguredFeature::CoralTubeBlock,
-                    ),
-                    placement: vec![
-                        PlacementModifier::RandomOffset(RandomOffsetPlacementModifier {
-                            xz_spread: IntProvider::Constant(0i32),
-                            y_spread: IntProvider::Object(NormalIntProvider::Uniform(
-                                UniformIntProvider {
-                                    min_inclusive: -3i32,
-                                    max_inclusive: -1i32,
-                                },
-                            )),
-                        }),
-                        PlacementModifier::Biome(BiomePlacementModifier),
-                        PlacementModifier::Biome(BiomePlacementModifier),
-                        PlacementModifier::BlockPredicateFilter(BlockFilterPlacementModifier {
-                            predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
-                                predicates: vec![
-                                    BlockPredicate::AnyOf(AnyOfBlockPredicate {
-                                        predicates: vec![
-                                            BlockPredicate::MatchingBlocks(
-                                                MatchingBlocksBlockPredicate {
-                                                    offset: OffsetBlocksBlockPredicate {
-                                                        offset: None,
-                                                    },
-                                                    blocks: MatchingBlocksWrapper::Single(
-                                                        "minecraft:water".to_string(),
-                                                    ),
-                                                },
-                                            ),
-                                            BlockPredicate::MatchingBlockTag(
-                                                MatchingBlockTagPredicate {
-                                                    offset: OffsetBlocksBlockPredicate {
-                                                        offset: None,
-                                                    },
-                                                    tag: pumpkin_data::tag::Block::MINECRAFT_CORALS,
-                                                },
-                                            ),
-                                        ],
-                                    }),
-                                    BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate {
-                                            offset: Some(Vector3::new(0i32, 1i32, 0i32)),
-                                        },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    }),
-                                ],
-                            }),
-                        }),
-                    ],
-                },
-                PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::CoralTree(
-                        crate::generation::feature::features::coral::coral_tree::CoralTreeFeature,
-                    ))),
-                    placement: vec![],
-                },
-                PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::CoralClaw(
-                        crate::generation::feature::features::coral::coral_claw::CoralClawFeature,
-                    ))),
-                    placement: vec![],
-                },
-                PlacedFeature {
-                    feature: Feature::Named(
-                        pumpkin_data::configured_feature::ConfiguredFeature::CoralBrainBlock,
-                    ),
-                    placement: vec![
-                        PlacementModifier::RandomOffset(RandomOffsetPlacementModifier {
-                            xz_spread: IntProvider::Constant(0i32),
-                            y_spread: IntProvider::Object(NormalIntProvider::Uniform(
-                                UniformIntProvider {
-                                    min_inclusive: -3i32,
-                                    max_inclusive: -1i32,
-                                },
-                            )),
-                        }),
-                        PlacementModifier::Biome(BiomePlacementModifier),
-                        PlacementModifier::Biome(BiomePlacementModifier),
-                        PlacementModifier::BlockPredicateFilter(BlockFilterPlacementModifier {
-                            predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
-                                predicates: vec![
-                                    BlockPredicate::AnyOf(AnyOfBlockPredicate {
-                                        predicates: vec![
-                                            BlockPredicate::MatchingBlocks(
-                                                MatchingBlocksBlockPredicate {
-                                                    offset: OffsetBlocksBlockPredicate {
-                                                        offset: None,
-                                                    },
-                                                    blocks: MatchingBlocksWrapper::Single(
-                                                        "minecraft:water".to_string(),
-                                                    ),
-                                                },
-                                            ),
-                                            BlockPredicate::MatchingBlockTag(
-                                                MatchingBlockTagPredicate {
-                                                    offset: OffsetBlocksBlockPredicate {
-                                                        offset: None,
-                                                    },
-                                                    tag: pumpkin_data::tag::Block::MINECRAFT_CORALS,
-                                                },
-                                            ),
-                                        ],
-                                    }),
-                                    BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate {
-                                            offset: Some(Vector3::new(0i32, 1i32, 0i32)),
-                                        },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    }),
-                                ],
-                            }),
-                        }),
-                    ],
-                },
-                PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::CoralTree(
-                        crate::generation::feature::features::coral::coral_tree::CoralTreeFeature,
-                    ))),
-                    placement: vec![],
-                },
-                PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::CoralClaw(
-                        crate::generation::feature::features::coral::coral_claw::CoralClawFeature,
-                    ))),
-                    placement: vec![],
-                },
-                PlacedFeature {
-                    feature: Feature::Named(
-                        pumpkin_data::configured_feature::ConfiguredFeature::CoralBubbleBlock,
-                    ),
-                    placement: vec![
-                        PlacementModifier::RandomOffset(RandomOffsetPlacementModifier {
-                            xz_spread: IntProvider::Constant(0i32),
-                            y_spread: IntProvider::Object(NormalIntProvider::Uniform(
-                                UniformIntProvider {
-                                    min_inclusive: -3i32,
-                                    max_inclusive: -1i32,
-                                },
-                            )),
-                        }),
-                        PlacementModifier::Biome(BiomePlacementModifier),
-                        PlacementModifier::Biome(BiomePlacementModifier),
-                        PlacementModifier::BlockPredicateFilter(BlockFilterPlacementModifier {
-                            predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
-                                predicates: vec![
-                                    BlockPredicate::AnyOf(AnyOfBlockPredicate {
-                                        predicates: vec![
-                                            BlockPredicate::MatchingBlocks(
-                                                MatchingBlocksBlockPredicate {
-                                                    offset: OffsetBlocksBlockPredicate {
-                                                        offset: None,
-                                                    },
-                                                    blocks: MatchingBlocksWrapper::Single(
-                                                        "minecraft:water".to_string(),
-                                                    ),
-                                                },
-                                            ),
-                                            BlockPredicate::MatchingBlockTag(
-                                                MatchingBlockTagPredicate {
-                                                    offset: OffsetBlocksBlockPredicate {
-                                                        offset: None,
-                                                    },
-                                                    tag: pumpkin_data::tag::Block::MINECRAFT_CORALS,
-                                                },
-                                            ),
-                                        ],
-                                    }),
-                                    BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate {
-                                            offset: Some(Vector3::new(0i32, 1i32, 0i32)),
-                                        },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    }),
-                                ],
-                            }),
-                        }),
-                    ],
-                },
-                PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::CoralTree(
-                        crate::generation::feature::features::coral::coral_tree::CoralTreeFeature,
-                    ))),
-                    placement: vec![],
-                },
-                PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::CoralClaw(
-                        crate::generation::feature::features::coral::coral_claw::CoralClawFeature,
-                    ))),
-                    placement: vec![],
-                },
-                PlacedFeature {
-                    feature: Feature::Named(
-                        pumpkin_data::configured_feature::ConfiguredFeature::CoralFireBlock,
-                    ),
-                    placement: vec![
-                        PlacementModifier::RandomOffset(RandomOffsetPlacementModifier {
-                            xz_spread: IntProvider::Constant(0i32),
-                            y_spread: IntProvider::Object(NormalIntProvider::Uniform(
-                                UniformIntProvider {
-                                    min_inclusive: -3i32,
-                                    max_inclusive: -1i32,
-                                },
-                            )),
-                        }),
-                        PlacementModifier::Biome(BiomePlacementModifier),
-                        PlacementModifier::Biome(BiomePlacementModifier),
-                        PlacementModifier::BlockPredicateFilter(BlockFilterPlacementModifier {
-                            predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
-                                predicates: vec![
-                                    BlockPredicate::AnyOf(AnyOfBlockPredicate {
-                                        predicates: vec![
-                                            BlockPredicate::MatchingBlocks(
-                                                MatchingBlocksBlockPredicate {
-                                                    offset: OffsetBlocksBlockPredicate {
-                                                        offset: None,
-                                                    },
-                                                    blocks: MatchingBlocksWrapper::Single(
-                                                        "minecraft:water".to_string(),
-                                                    ),
-                                                },
-                                            ),
-                                            BlockPredicate::MatchingBlockTag(
-                                                MatchingBlockTagPredicate {
-                                                    offset: OffsetBlocksBlockPredicate {
-                                                        offset: None,
-                                                    },
-                                                    tag: pumpkin_data::tag::Block::MINECRAFT_CORALS,
-                                                },
-                                            ),
-                                        ],
-                                    }),
-                                    BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate {
-                                            offset: Some(Vector3::new(0i32, 1i32, 0i32)),
-                                        },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    }),
-                                ],
-                            }),
-                        }),
-                    ],
-                },
-                PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::CoralTree(
-                        crate::generation::feature::features::coral::coral_tree::CoralTreeFeature,
-                    ))),
-                    placement: vec![],
-                },
-                PlacedFeature {
-                    feature: Feature::Inlined(Box::new(ConfiguredFeature::CoralClaw(
-                        crate::generation::feature::features::coral::coral_claw::CoralClawFeature,
-                    ))),
-                    placement: vec![],
-                },
-                PlacedFeature {
-                    feature: Feature::Named(
-                        pumpkin_data::configured_feature::ConfiguredFeature::CoralHornBlock,
-                    ),
-                    placement: vec![
-                        PlacementModifier::RandomOffset(RandomOffsetPlacementModifier {
-                            xz_spread: IntProvider::Constant(0i32),
-                            y_spread: IntProvider::Object(NormalIntProvider::Uniform(
-                                UniformIntProvider {
-                                    min_inclusive: -3i32,
-                                    max_inclusive: -1i32,
-                                },
-                            )),
-                        }),
-                        PlacementModifier::Biome(BiomePlacementModifier),
-                        PlacementModifier::Biome(BiomePlacementModifier),
-                        PlacementModifier::BlockPredicateFilter(BlockFilterPlacementModifier {
-                            predicate: BlockPredicate::AllOf(AllOfBlockPredicate {
-                                predicates: vec![
-                                    BlockPredicate::AnyOf(AnyOfBlockPredicate {
-                                        predicates: vec![
-                                            BlockPredicate::MatchingBlocks(
-                                                MatchingBlocksBlockPredicate {
-                                                    offset: OffsetBlocksBlockPredicate {
-                                                        offset: None,
-                                                    },
-                                                    blocks: MatchingBlocksWrapper::Single(
-                                                        "minecraft:water".to_string(),
-                                                    ),
-                                                },
-                                            ),
-                                            BlockPredicate::MatchingBlockTag(
-                                                MatchingBlockTagPredicate {
-                                                    offset: OffsetBlocksBlockPredicate {
-                                                        offset: None,
-                                                    },
-                                                    tag: pumpkin_data::tag::Block::MINECRAFT_CORALS,
-                                                },
-                                            ),
-                                        ],
-                                    }),
-                                    BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
-                                        offset: OffsetBlocksBlockPredicate {
-                                            offset: Some(Vector3::new(0i32, 1i32, 0i32)),
-                                        },
-                                        blocks: MatchingBlocksWrapper::Single(
-                                            "minecraft:water".to_string(),
-                                        ),
-                                    }),
-                                ],
-                            }),
-                        }),
-                    ],
-                },
-            ],
-        }),
-    );
+    map . insert (pumpkin_data :: configured_feature :: ConfiguredFeature :: WarmOceanVegetation , ConfiguredFeature :: SimpleRandomSelector (SimpleRandomFeature { features : vec ! [PlacedFeature { feature : Feature :: Inlined (Box :: new (ConfiguredFeature :: CoralTree (crate :: generation :: feature :: features :: coral :: coral_tree :: CoralTreeFeature))) , placement : vec ! [] , } , PlacedFeature { feature : Feature :: Inlined (Box :: new (ConfiguredFeature :: CoralClaw (crate :: generation :: feature :: features :: coral :: coral_claw :: CoralClawFeature))) , placement : vec ! [] , } , PlacedFeature { feature : Feature :: Inlined (Box :: new (ConfiguredFeature :: CoralMushroom (crate :: generation :: feature :: features :: coral :: coral_mushroom :: CoralMushroomFeature))) , placement : vec ! [] , }] , })) ;
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::WarpedForestVegetation,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
+        ConfiguredFeature::NetherForestVegetation(NetherForestVegetationFeature {
+            state_provider: BlockStateProvider::Weighted(WeightedBlockStateProvider {
                 entries: vec![
                     Weighted {
                         data: pumpkin_data::Block::WARPED_ROOTS.default_state,
@@ -11168,7 +6675,35 @@ fn build_configured_features()
                     },
                 ],
             }),
-            schedule_tick: None,
+            spread_width: 8i32,
+            spread_height: 4i32,
+        }),
+    );
+    map.insert(
+        pumpkin_data::configured_feature::ConfiguredFeature::WarpedForestVegetationBonemeal,
+        ConfiguredFeature::NetherForestVegetation(NetherForestVegetationFeature {
+            state_provider: BlockStateProvider::Weighted(WeightedBlockStateProvider {
+                entries: vec![
+                    Weighted {
+                        data: pumpkin_data::Block::WARPED_ROOTS.default_state,
+                        weight: 85i32,
+                    },
+                    Weighted {
+                        data: pumpkin_data::Block::CRIMSON_ROOTS.default_state,
+                        weight: 1i32,
+                    },
+                    Weighted {
+                        data: pumpkin_data::Block::WARPED_FUNGUS.default_state,
+                        weight: 13i32,
+                    },
+                    Weighted {
+                        data: pumpkin_data::Block::CRIMSON_FUNGUS.default_state,
+                        weight: 1i32,
+                    },
+                ],
+            }),
+            spread_width: 3i32,
+            spread_height: 1i32,
         }),
     );
     map.insert(
@@ -11176,7 +6711,15 @@ fn build_configured_features()
         ConfiguredFeature::HugeFungus(
             crate::generation::feature::features::huge_fungus::HugeFungusFeature {
                 valid_base_block: pumpkin_data::Block::WARPED_NYLIUM.default_state,
-                stem_state: pumpkin_data::Block::WARPED_STEM.default_state,
+                stem_state: {
+                    let mut props = std::collections::HashMap::new();
+                    props.insert("axis".to_string(), "y".to_string());
+                    BlockStateCodec {
+                        name: &pumpkin_data::Block::WARPED_STEM,
+                        properties: Some(props),
+                    }
+                    .get_state()
+                },
                 hat_state: pumpkin_data::Block::WARPED_WART_BLOCK.default_state,
                 decor_state: pumpkin_data::Block::SHROOMLIGHT.default_state,
                 replaceable_blocks: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
@@ -11189,7 +6732,6 @@ fn build_configured_features()
                         "minecraft:acacia_sapling".to_string(),
                         "minecraft:cherry_sapling".to_string(),
                         "minecraft:dark_oak_sapling".to_string(),
-                        "minecraft:pale_oak_sapling".to_string(),
                         "minecraft:mangrove_propagule".to_string(),
                         "minecraft:dandelion".to_string(),
                         "minecraft:torchflower".to_string(),
@@ -11237,7 +6779,6 @@ fn build_configured_features()
                         "minecraft:flowering_azalea".to_string(),
                         "minecraft:moss_carpet".to_string(),
                         "minecraft:pink_petals".to_string(),
-                        "minecraft:wildflowers".to_string(),
                         "minecraft:big_dripleaf".to_string(),
                         "minecraft:big_dripleaf_stem".to_string(),
                         "minecraft:small_dripleaf".to_string(),
@@ -11252,7 +6793,15 @@ fn build_configured_features()
         ConfiguredFeature::HugeFungus(
             crate::generation::feature::features::huge_fungus::HugeFungusFeature {
                 valid_base_block: pumpkin_data::Block::WARPED_NYLIUM.default_state,
-                stem_state: pumpkin_data::Block::WARPED_STEM.default_state,
+                stem_state: {
+                    let mut props = std::collections::HashMap::new();
+                    props.insert("axis".to_string(), "y".to_string());
+                    BlockStateCodec {
+                        name: &pumpkin_data::Block::WARPED_STEM,
+                        properties: Some(props),
+                    }
+                    .get_state()
+                },
                 hat_state: pumpkin_data::Block::WARPED_WART_BLOCK.default_state,
                 decor_state: pumpkin_data::Block::SHROOMLIGHT.default_state,
                 replaceable_blocks: BlockPredicate::MatchingBlocks(MatchingBlocksBlockPredicate {
@@ -11265,7 +6814,6 @@ fn build_configured_features()
                         "minecraft:acacia_sapling".to_string(),
                         "minecraft:cherry_sapling".to_string(),
                         "minecraft:dark_oak_sapling".to_string(),
-                        "minecraft:pale_oak_sapling".to_string(),
                         "minecraft:mangrove_propagule".to_string(),
                         "minecraft:dandelion".to_string(),
                         "minecraft:torchflower".to_string(),
@@ -11313,7 +6861,6 @@ fn build_configured_features()
                         "minecraft:flowering_azalea".to_string(),
                         "minecraft:moss_carpet".to_string(),
                         "minecraft:pink_petals".to_string(),
-                        "minecraft:wildflowers".to_string(),
                         "minecraft:big_dripleaf".to_string(),
                         "minecraft:big_dripleaf_stem".to_string(),
                         "minecraft:small_dripleaf".to_string(),
@@ -11324,773 +6871,10 @@ fn build_configured_features()
         ),
     );
     map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::Waterlily,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::LILY_PAD.default_state,
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::WeepingVines,
-        ConfiguredFeature::NoOp,
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::Wildflower,
-        ConfiguredFeature::SimpleBlock(SimpleBlockFeature {
-            to_place: BlockStateProvider::Weighted(WeightedBlockStateProvider {
-                entries: vec![
-                    Weighted {
-                        data: pumpkin_data::Block::WILDFLOWERS.default_state,
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "east".to_string());
-                            props.insert("flower_amount".to_string(), "1".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "south".to_string());
-                            props.insert("flower_amount".to_string(), "1".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "west".to_string());
-                            props.insert("flower_amount".to_string(), "1".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "north".to_string());
-                            props.insert("flower_amount".to_string(), "2".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "east".to_string());
-                            props.insert("flower_amount".to_string(), "2".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "south".to_string());
-                            props.insert("flower_amount".to_string(), "2".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "west".to_string());
-                            props.insert("flower_amount".to_string(), "2".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "north".to_string());
-                            props.insert("flower_amount".to_string(), "3".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "east".to_string());
-                            props.insert("flower_amount".to_string(), "3".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "south".to_string());
-                            props.insert("flower_amount".to_string(), "3".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "west".to_string());
-                            props.insert("flower_amount".to_string(), "3".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "north".to_string());
-                            props.insert("flower_amount".to_string(), "4".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "east".to_string());
-                            props.insert("flower_amount".to_string(), "4".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "south".to_string());
-                            props.insert("flower_amount".to_string(), "4".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                    Weighted {
-                        data: {
-                            let mut props = std::collections::HashMap::new();
-                            props.insert("facing".to_string(), "west".to_string());
-                            props.insert("flower_amount".to_string(), "4".to_string());
-                            BlockStateCodec {
-                                name: &pumpkin_data::Block::WILDFLOWERS,
-                                properties: Some(props),
-                            }
-                            .get_state()
-                        },
-                        weight: 1i32,
-                    },
-                ],
-            }),
-            schedule_tick: None,
-        }),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::YellowPoplar,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::POPLAR_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            trunk_placer: TrunkPlacer {
-                base_height: 7u8,
-                height_rand_a: 4u8,
-                height_rand_b: 0u8,
-                r#type: TrunkType::Poplar(PoplarTrunkPlacer {
-                    trunk_height_above_branches: IntProvider::Constant(4i32),
-                    branch_amount: IntProvider::Object(NormalIntProvider::Uniform(
-                        UniformIntProvider {
-                            min_inclusive: 1i32,
-                            max_inclusive: 4i32,
-                        },
-                    )),
-                }),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::YELLOW_POPLAR_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Object(NormalIntProvider::WeightedList(
-                    WeightedListIntProvider {
-                        distribution: vec![
-                            WeightedEntry {
-                                data: IntProvider::Constant(5i32),
-                                weight: 5i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(6i32),
-                                weight: 5i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(7i32),
-                                weight: 1i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(8i32),
-                                weight: 1i32,
-                            },
-                        ],
-                    },
-                )),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::Poplar(PoplarFoliagePlacer {
-                    height: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                        min_inclusive: 5i32,
-                        max_inclusive: 6i32,
-                    })),
-                    side_hole_chance: 0.15f32,
-                }),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::TwoLayersFeatureSize(TwoLayersFeatureSize {
-                    limit: 1u8,
-                    lower_size: 0u8,
-                    upper_size: 2u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![],
-            root_placer: None,
-        })),
-    );
-    map.insert(
-        pumpkin_data::configured_feature::ConfiguredFeature::YellowPoplarLeafLitter,
-        ConfiguredFeature::Tree(Box::new(TreeFeature {
-            trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("axis".to_string(), "y".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::POPLAR_LOG,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            trunk_placer: TrunkPlacer {
-                base_height: 7u8,
-                height_rand_a: 4u8,
-                height_rand_b: 0u8,
-                r#type: TrunkType::Poplar(PoplarTrunkPlacer {
-                    trunk_height_above_branches: IntProvider::Constant(4i32),
-                    branch_amount: IntProvider::Object(NormalIntProvider::Uniform(
-                        UniformIntProvider {
-                            min_inclusive: 1i32,
-                            max_inclusive: 4i32,
-                        },
-                    )),
-                }),
-            },
-            foliage_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: {
-                    let mut props = std::collections::HashMap::new();
-                    props.insert("distance".to_string(), "7".to_string());
-                    props.insert("persistent".to_string(), "false".to_string());
-                    props.insert("waterlogged".to_string(), "false".to_string());
-                    BlockStateCodec {
-                        name: &pumpkin_data::Block::YELLOW_POPLAR_LEAVES,
-                        properties: Some(props),
-                    }
-                    .get_state()
-                },
-            }),
-            foliage_placer: FoliagePlacer {
-                radius: IntProvider::Object(NormalIntProvider::WeightedList(
-                    WeightedListIntProvider {
-                        distribution: vec![
-                            WeightedEntry {
-                                data: IntProvider::Constant(5i32),
-                                weight: 5i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(6i32),
-                                weight: 5i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(7i32),
-                                weight: 1i32,
-                            },
-                            WeightedEntry {
-                                data: IntProvider::Constant(8i32),
-                                weight: 1i32,
-                            },
-                        ],
-                    },
-                )),
-                offset: IntProvider::Constant(0i32),
-                r#type: FoliageType::Poplar(PoplarFoliagePlacer {
-                    height: IntProvider::Object(NormalIntProvider::Uniform(UniformIntProvider {
-                        min_inclusive: 5i32,
-                        max_inclusive: 6i32,
-                    })),
-                    side_hole_chance: 0.15f32,
-                }),
-            },
-            minimum_size: FeatureSize {
-                min_clipped_height: None,
-                r#type: FeatureSizeType::TwoLayersFeatureSize(TwoLayersFeatureSize {
-                    limit: 1u8,
-                    lower_size: 0u8,
-                    upper_size: 2u8,
-                }),
-            },
-            ignore_vines: true,
-            below_trunk_provider: BlockStateProvider::Simple(SimpleStateProvider {
-                state: pumpkin_data::Block::AIR.default_state,
-            }),
-            decorators: vec![
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 96i32,
-                    radius: 4i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-                TreeDecorator::PlaceOnGround(PlaceOnGroundTreeDecorator {
-                    tries: 150i32,
-                    radius: 1i32,
-                    height: 2i32,
-                    block_state_provider: BlockStateProvider::Weighted(
-                        WeightedBlockStateProvider {
-                            entries: vec![
-                                Weighted {
-                                    data: pumpkin_data::Block::LEAF_LITTER.default_state,
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "1".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "2".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "3".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "north".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "east".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "south".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                                Weighted {
-                                    data: {
-                                        let mut props = std::collections::HashMap::new();
-                                        props.insert("facing".to_string(), "west".to_string());
-                                        props.insert("segment_amount".to_string(), "4".to_string());
-                                        BlockStateCodec {
-                                            name: &pumpkin_data::Block::LEAF_LITTER,
-                                            properties: Some(props),
-                                        }
-                                        .get_state()
-                                    },
-                                    weight: 1i32,
-                                },
-                            ],
-                        },
-                    ),
-                }),
-            ],
-            root_placer: None,
-        })),
+        ConfiguredFeature::WeepingVines(
+            crate::generation::feature::features::weeping_vines::WeepingVinesFeature {},
+        ),
     );
     map
 }

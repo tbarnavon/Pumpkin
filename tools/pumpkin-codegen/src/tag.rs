@@ -305,8 +305,7 @@ pub(crate) fn build() -> TokenStream {
     }
 
     let items: BTreeMap<String, Item> =
-        serde_json::from_str(&fs::read_to_string("../../assets/items.json").unwrap())
-            .expect("Failed to parse items.json");
+        serde_json::from_str(&crate::item::load_items_json()).expect("Failed to parse items.json");
     let mut item_id_map: BTreeMap<String, u16> = BTreeMap::new();
     for (name, item) in &items {
         item_id_map.insert(name.clone(), item.id);
