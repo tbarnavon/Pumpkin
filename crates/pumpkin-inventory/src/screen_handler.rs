@@ -349,13 +349,27 @@ pub trait ScreenHandler: Send + Sync {
     /// Records a received stack for a slot (for sync tracking).
     fn set_received_stack(&mut self, slot: usize, stack: ItemStack) {
         let behaviour = self.get_behaviour_mut();
-        behaviour.previous_tracked_stacks[slot].set_received_stack(stack);
+        if slot < behaviour.previous_tracked_stacks.len() {
+            behaviour.previous_tracked_stacks[slot].set_received_stack(stack);
+        } else {
+            warn!(
+                "Incorrect slot index: {} available slots: {}",
+                slot,
+                behaviour.previous_tracked_stacks.len()
+            );
+        }
     }
 
     /// Records a received cursor hash (for sync tracking).
     fn set_received_cursor_hash(&mut self, hash: OptionalItemStackHash) {
         let behaviour = self.get_behaviour_mut();
         behaviour.previous_cursor_stack.set_received_hash(hash);
+    }
+
+    /// Records a received cursor stack (for sync tracking).
+    fn set_received_cursor_stack(&mut self, stack: ItemStack) {
+        let behaviour = self.get_behaviour_mut();
+        behaviour.previous_cursor_stack.set_received_stack(stack);
     }
 
     /// Adds a property to track.

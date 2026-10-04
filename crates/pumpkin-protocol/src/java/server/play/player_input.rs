@@ -31,8 +31,10 @@ impl<'a> ServerPacket<'a> for SPlayerInput {
         } else {
             let sideways = bytebuf.get_f32_be()?;
             let forward = bytebuf.get_f32_be()?;
-            let jumping = bytebuf.get_bool()?;
-            let sneaking = bytebuf.get_bool()?;
+            // Before 1.21.2: jumping is bit 1 and sneaking bit 2 of one flag byte.
+            let flags = bytebuf.get_u8()?;
+            let jumping = flags & 1 != 0;
+            let sneaking = flags & 2 != 0;
 
             let mut input: i8 = 0;
             if forward > 0.0 {
@@ -85,9 +87,26 @@ impl crate::ClientPacket for SPlayerInput {
             let sneaking = (self.input & Self::SNEAK) != 0;
             write.write_f32_be(sideways)?;
             write.write_f32_be(forward)?;
-            write.write_bool(jumping)?;
-            write.write_bool(sneaking)?;
+            write.write_u8(u8::from(jumping) | (u8::from(sneaking) << 1))?;
         }
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn player_input_1_21_reads_flag_byte() {
+        // 1.21.1 sends sideways and forward as floats, then jumping (1) and sneaking (2) as one byte.
+        let bytes = [0x3f, 0x80, 0, 0, 0xbf, 0x80, 0, 0, 0x03];
+        let mut slice = bytes.as_slice();
+        let packet = SPlayerInput::read(&mut slice, &JavaMinecraftVersion::V_1_21).unwrap();
+        assert!(slice.is_empty());
+        assert_eq!(
+            packet.input,
+            SPlayerInput::LEFT | SPlayerInput::BACKWARD | SPlayerInput::JUMP | SPlayerInput::SNEAK
+        );
     }
 }

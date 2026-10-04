@@ -277,7 +277,7 @@ use pumpkin_protocol::java::client::play::{
     PreviousMessage, Statistic,
 };
 use pumpkin_protocol::java::server::play::{
-    SClickSlot, SContainerButtonClick, SRenameItem, SlotActionType,
+    ClientStack, SClickSlot, SContainerButtonClick, SRenameItem, SlotActionType,
 };
 use pumpkin_util::math::{
     boundingbox::BoundingBox, experience, position::BlockPos, vector2::Vector2, vector3::Vector3,
@@ -6344,10 +6344,16 @@ impl Player {
         );
 
         for (key, value) in packet.array_of_changed_slots {
-            screen_handler.set_received_hash(key as usize, value);
+            match value {
+                ClientStack::Hash(hash) => screen_handler.set_received_hash(key as usize, hash),
+                ClientStack::Stack(stack) => screen_handler.set_received_stack(key as usize, stack),
+            }
         }
 
-        screen_handler.set_received_cursor_hash(packet.carried_item);
+        match packet.carried_item {
+            ClientStack::Hash(hash) => screen_handler.set_received_cursor_hash(hash),
+            ClientStack::Stack(stack) => screen_handler.set_received_cursor_stack(stack),
+        }
         screen_handler.enable_sync();
 
         if not_in_sync {

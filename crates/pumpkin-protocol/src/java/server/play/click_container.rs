@@ -1,9 +1,10 @@
 use crate::VarInt;
-use crate::codec::item_stack_seralizer::OptionalItemStackHash;
+use crate::codec::item_stack_seralizer::{ItemStackSerializer, OptionalItemStackHash};
 use crate::{
     ServerPacket,
     ser::{NetworkReadExt, ReadingError},
 };
+use pumpkin_data::item_stack::ItemStack;
 use pumpkin_data::packet::serverbound::play::CONTAINER_CLICK;
 use pumpkin_macros::java_packet;
 use pumpkin_util::version::JavaMinecraftVersion;
@@ -18,8 +19,8 @@ pub struct SClickSlot {
     pub button: i8,
     pub mode: SlotActionType,
     pub length_of_array: VarInt,
-    pub array_of_changed_slots: Vec<(i16, OptionalItemStackHash)>,
-    pub carried_item: OptionalItemStackHash,
+    pub array_of_changed_slots: Vec<(i16, ClientStack)>,
+    pub carried_item: ClientStack,
 }
 
 impl SClickSlot {
@@ -54,13 +55,11 @@ impl<'a> ServerPacket<'a> for SClickSlot {
         }
         let mut array_of_changed_slots = Vec::with_capacity(length_of_array.0 as usize);
         for _ in 0..length_of_array.0 {
-            array_of_changed_slots.push((
-                bytebuf.get_i16_be()?,
-                OptionalItemStackHash::read(&mut bytebuf)?,
-            ));
+            array_of_changed_slots
+                .push((bytebuf.get_i16_be()?, ClientStack::read(bytebuf, *version)?));
         }
 
-        let carried_item = OptionalItemStackHash::read(&mut bytebuf)?;
+        let carried_item = ClientStack::read(bytebuf, *version)?;
 
         Ok(Self {
             sync_id,
@@ -94,10 +93,56 @@ impl crate::ClientPacket for SClickSlot {
         write.write_var_int(&VarInt(self.array_of_changed_slots.len() as i32))?;
         for (slot, item) in &self.array_of_changed_slots {
             write.write_i16_be(*slot)?;
-            item.write(&mut write)?;
+            item.write(&mut write, *version)?;
         }
-        self.carried_item.write(&mut write)?;
+        self.carried_item.write(&mut write, *version)?;
         Ok(())
+    }
+}
+
+/// What the client believes a slot holds after its click.
+#[derive(Clone)]
+pub enum ClientStack {
+    /// 1.21.5 and later send a hash of the stack.
+    Hash(OptionalItemStackHash),
+    /// Earlier versions send the whole stack.
+    Stack(ItemStack),
+}
+
+impl std::fmt::Debug for ClientStack {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Hash(hash) => f.debug_tuple("Hash").field(hash).finish(),
+            Self::Stack(stack) => f
+                .debug_struct("Stack")
+                .field("item", &stack.item.registry_key)
+                .field("count", &stack.item_count)
+                .finish(),
+        }
+    }
+}
+
+impl ClientStack {
+    fn read(read: &mut &[u8], version: JavaMinecraftVersion) -> Result<Self, ReadingError> {
+        if version >= JavaMinecraftVersion::V_1_21_5 {
+            Ok(Self::Hash(OptionalItemStackHash::read(read)?))
+        } else {
+            Ok(Self::Stack(
+                ItemStackSerializer::read_with_version(read, &version)?.to_stack(),
+            ))
+        }
+    }
+
+    fn write(
+        &self,
+        write: &mut impl crate::ser::NetworkWriteExt,
+        version: JavaMinecraftVersion,
+    ) -> Result<(), crate::ser::WritingError> {
+        match self {
+            Self::Hash(hash) => hash.write(write),
+            Self::Stack(stack) => ItemStackSerializer(std::borrow::Cow::Borrowed(stack))
+                .write_with_version(write, &version),
+        }
     }
 }
 

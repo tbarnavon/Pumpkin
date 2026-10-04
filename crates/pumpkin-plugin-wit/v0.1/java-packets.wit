@@ -120,8 +120,12 @@ interface java-packets {
     button: u8,
     mode: slot-action-type,
     length-of-array: s32,
-    array-of-changed-slots: list<tuple<s32, string>>,
-    carried-item: string,
+    array-of-changed-slots: list<tuple<s32, client-stack>>,
+    carried-item: client-stack,
+  }
+  variant client-stack {
+    hash(string),
+    stack(string),
   }
   enum slot-action-type {
     pickup,
