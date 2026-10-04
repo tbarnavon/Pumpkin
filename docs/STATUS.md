@@ -339,3 +339,21 @@ Fabric API and Paper.
   With Storage Drawers 26.3.0.1 (Forge build, same version as the Fabric dump and plugin), a
   Forge player and a Fabric player play on the same server: drawers, their GUI and the framing
   table work. The plugin needed no change.
+
+## Hook gaps, batch 1: items and drops (2026-10-04)
+
+- Item use over time (`d4ab33e9a`): item hooks `finish-using`, `release-using`, `use-tick`
+  (batched in `tick-batch.item-uses`), `stop-using` and the `use-on-release` flag; core
+  `player.start-using-item`, `stop-using-item`, `get-item-use`. The use now stops when the hand
+  no longer holds the item, and items without a `consumable` component are no longer consumed
+  when their use time runs out.
+- Death and drops (`90e30cf06`): `living-death-event` (damage type, direct entity, killer;
+  cancellable as Fabric's `ALLOW_DEATH`) and `living-drops-event` (loot and equipment drops and
+  experience, replaceable before they spawn).
+
+Tested: clippy and tests (430 passed in the server crate). A test plugin on a scratch server
+spawned and killed mobs through the plugin API: the drops event saw a zombie's loot, a
+handler replaced it with 3 diamonds and 7 experience, and a later handler and the world saw the
+replacement; a pig whose death was cancelled without healing died; a cow whose death was
+cancelled with a heal lived. Item use hooks and the killer fields need a player: not tested
+yet with a real client.

@@ -43,11 +43,11 @@ Called through the plugin export `handle-item-hook`.
 | `stacked-on-other` | `Item.overrideStackedOnOther` | `13b9d100c` |
 | `destroyed` | `Item.onDestroyed` | `13b9d100c` |
 | `not-in-containers` (no call) | `Item.canFitInsideContainerItems` | `13b9d100c` |
-| `finish-using` | `Item.finishUsingItem` | `@C1@` |
-| `release-using` | `Item.releaseUsing` | `@C1@` |
-| `use-tick` (opt-in, batched) | `Item.onUseTick` | `@C1@` |
-| `stop-using` | NeoForge `IItemExtension.onStopUsing` | `@C1@` |
-| `use-on-release` (no call) | `Item.useOnRelease` | `@C1@` |
+| `finish-using` | `Item.finishUsingItem` | `d4ab33e9a` |
+| `release-using` | `Item.releaseUsing` | `d4ab33e9a` |
+| `use-tick` (opt-in, batched) | `Item.onUseTick` | `d4ab33e9a` |
+| `stop-using` | NeoForge `IItemExtension.onStopUsing` | `d4ab33e9a` |
+| `use-on-release` (no call) | `Item.useOnRelease` | `d4ab33e9a` |
 
 Hooks marked *batched* run every tick. The host queues them while the world ticks and sends
 each plugin one `handle-tick-batch` call per world after block entities tick (see below).
@@ -79,8 +79,8 @@ each plugin one `handle-tick-batch` call per world after block entities tick (se
 | `player-login-query-response-event` | `ServerLoginNetworking` replies | `c19760f9c` |
 | `player-sleep-check-event` | `EntitySleepEvents.ALLOW_SLEEP_TIME` / `ALLOW_NEARBY_MONSTERS` | `e8ceb3e1e` |
 | `player-configuration-payload-event` | `ServerConfigurationNetworking` replies | `d75320470` |
-| `living-death-event` | NeoForge `LivingDeathEvent`, Fabric `ServerLivingEntityEvents.ALLOW_DEATH` / `AFTER_DEATH`, `AFTER_KILLED_OTHER_ENTITY`: damage type, direct entity and killer; cancellable | `@C2@` |
-| `living-drops-event` | NeoForge `LivingDropsEvent` and `LivingExperienceDropEvent`: loot and equipment drops and experience, which handlers may replace | `@C2@` |
+| `living-death-event` | NeoForge `LivingDeathEvent`, Fabric `ServerLivingEntityEvents.ALLOW_DEATH` / `AFTER_DEATH`, `AFTER_KILLED_OTHER_ENTITY`: damage type, direct entity and killer; cancellable | `90e30cf06` |
+| `living-drops-event` | NeoForge `LivingDropsEvent` and `LivingExperienceDropEvent`: loot and equipment drops and experience, which handlers may replace | `90e30cf06` |
 
 ## Host functions
 
@@ -98,7 +98,7 @@ each plugin one `handle-tick-batch` call per world after block entities tick (se
 | `server.get-players-tracking-chunk`, `get-players-tracking-entity` | `PlayerLookup.tracking` | `4c0cc6ae9` |
 | `server.set-flammable` | `FlammableBlockRegistry.add` | `786ca3cd8` |
 | `player.give-item` | `Inventory.add` | `8c64bfb06`, moved in `25b0b7b63` |
-| `player.start-using-item`, `stop-using-item`, `get-item-use` | `LivingEntity.startUsingItem` (with the `Item.getUseDuration` value), `stopUsingItem`, `getUseItemRemainingTicks` | `@C1@` |
+| `player.start-using-item`, `stop-using-item`, `get-item-use` | `LivingEntity.startUsingItem` (with the `Item.getUseDuration` value), `stopUsingItem`, `getUseItemRemainingTicks` | `d4ab33e9a` |
 | `entity.get-item-stack` / `set-item-stack` | An item entity's stack | `1d73c14ae` |
 | `item-stack.get/set/remove-component-by-id` | Components by id, modded ones as NBT | `bd7f4c35e`, `b45e6363d` |
 | `item-stack.to-nbt` / `from-nbt` | Saved form of a stack | `bd7f4c35e` |
@@ -680,9 +680,10 @@ upstream's to fire; listed so a mod port doesn't count on them.
 Implementation order for `ROADMAP.md` item 6, most needed first. Items in one line ship together.
 Every ❌ and 🟡 row in the tables above falls in one of these batches.
 
-1. **A, items and drops:** item use over time for plugin items (`finish-using`, `release-using`,
-   use ticks, stop using); a drops event for entities (`LivingDropsEvent`, experience), and
-   killer and damage source in the death event.
+1. ~~**A, items and drops:** item use over time for plugin items (`finish-using`,
+   `release-using`, use ticks, stop using); a drops event for entities (`LivingDropsEvent`,
+   experience), and killer and damage source in the death event.~~ Done: `d4ab33e9a`,
+   `90e30cf06`.
 2. **A, menus and storage:** menu data slots (progress bars) and menu buttons
    (`clickMenuButton`); sided item storage with transactions, a fluid storage, and a generic
    lookup so plugins can expose and find each other's storages (energy included).

@@ -54,8 +54,9 @@ ticking block entity now costs ~0.4 µs, so ~100,000 of them fit in a 50 ms tick
 
 6. **Hook catalog.** Research done (2026-10-03): `HOOKS.md`, "Hook catalog", compares Fabric
    API, NeoForge, Paper/Bukkit events and common Mixin targets with what Pumpkin offers, and
-   orders the gaps by need ("Gaps by need"). Next: implement them in batches, most needed
-   first.
+   orders the gaps by need ("Gaps by need"). Implementing them in batches, most needed first:
+   batch 1 (item use over time, death and drops events) done (2026-10-04, `d4ab33e9a`,
+   `90e30cf06`); next batch 2 (menu data slots and buttons, sided storage, fluids, lookups).
 7. **Loader networking.** Each loader's pieces, with channels and source classes, are in
    `modloaders/`. In order:
    - **Fabric (finish):** configuration tasks that wait for a reply; registry sync for the

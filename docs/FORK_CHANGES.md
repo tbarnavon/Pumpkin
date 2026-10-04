@@ -118,14 +118,14 @@ functions it needs. Each one is listed in `HOOKS.md`.
 - Block and item hooks: `add68fe15`, `0084f1557`, `e51c7666c`, `95105a9ab`, `342715c3c`,
   `044588b3a`, `c3b1024a1`, `dfe6c259c`, `13b9d100c`
 - Item use over time (`finish-using`, `release-using`, `use-tick`, `stop-using`,
-  `use-on-release`; `player.start-using-item`): `@C1@` (`entity/living.rs` use tick, finish and
+  `use-on-release`; `player.start-using-item`): `d4ab33e9a` (`entity/living.rs` use tick, finish and
   `clear_active_hand`; `item/{mod,registry}.rs`)
 - Per-tick hooks batched into one `handle-tick-batch` call per plugin and tick: `1fa249829`
   (`WH/modded.rs` `PluginTickQueue`, flushed from `World::tick`; `entity/player.rs`)
 - Menus: `cddec52a8`, `31377bbf9`
 - Events: `b9be9ddc0`, `defeddb36`, `d719b608c`, `9bf64aded`, `729862d48`, `ada7f58d6`,
   `c19760f9c`, `e8ceb3e1e`, `d75320470`, `fcad77c09`
-- Death and drops events (`living-death-event`, `living-drops-event`): `@C2@`
+- Death and drops events (`living-death-event`, `living-drops-event`): `90e30cf06`
   (`entity/living.rs` `allow_death`, `on_death`: loot and equipment collected before dropping)
 - Host functions: `bd7f4c35e`, `8c64bfb06`, `4c0cc6ae9`, `786ca3cd8`, `1d73c14ae`, `907bef135`
 - Bulk world access: `5d96d025f`
