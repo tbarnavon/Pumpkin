@@ -43,7 +43,8 @@ impl TntMinecart {
         let world = entity.world.load();
         world.send_entity_status(
             entity,
-            EntityStatus::TntPrime,
+            // 1.21.1's `MinecartTNT` primes on event 10, which shares its id with `EAT_GRASS`.
+            EntityStatus::EatGrass,
             Some(ActorEventID::PrimeTNTCart),
         );
         world.play_sound(

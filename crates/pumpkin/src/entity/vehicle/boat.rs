@@ -1,5 +1,5 @@
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 
 use crossbeam::atomic::AtomicCell;
 
@@ -8,28 +8,67 @@ use crate::entity::{Entity, EntityBase, living::LivingEntity};
 use crate::server::Server;
 
 use pumpkin_data::damage::DamageType;
+use pumpkin_data::entity::EntityType;
+use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
+use pumpkin_nbt::compound::NbtCompound;
+use pumpkin_protocol::codec::var_int::VarInt;
 use pumpkin_protocol::java::client::play::Metadata;
 
 use pumpkin_util::math::vector3::Vector3;
 
 use crate::entity::vehicle::vehicle::VehicleEntity;
 
+/// 1.21.1's boat types (`Boat.Type`), in order: the name saved as `Type`, the boat item and the
+/// chest boat item.
+pub const BOAT_TYPES: [(&str, &Item, &Item); 9] = [
+    ("oak", &Item::OAK_BOAT, &Item::OAK_CHEST_BOAT),
+    ("spruce", &Item::SPRUCE_BOAT, &Item::SPRUCE_CHEST_BOAT),
+    ("birch", &Item::BIRCH_BOAT, &Item::BIRCH_CHEST_BOAT),
+    ("jungle", &Item::JUNGLE_BOAT, &Item::JUNGLE_CHEST_BOAT),
+    ("acacia", &Item::ACACIA_BOAT, &Item::ACACIA_CHEST_BOAT),
+    ("cherry", &Item::CHERRY_BOAT, &Item::CHERRY_CHEST_BOAT),
+    ("dark_oak", &Item::DARK_OAK_BOAT, &Item::DARK_OAK_CHEST_BOAT),
+    ("mangrove", &Item::MANGROVE_BOAT, &Item::MANGROVE_CHEST_BOAT),
+    ("bamboo", &Item::BAMBOO_RAFT, &Item::BAMBOO_CHEST_RAFT),
+];
+
 pub struct BoatEntity {
     pub vehicle: VehicleEntity,
     ticks_underwater: AtomicCell<f32>,
     left_paddle_moving: AtomicBool,
     right_paddle_moving: AtomicBool,
+    /// Index into [`BOAT_TYPES`].
+    boat_type: AtomicUsize,
 }
 
 impl BoatEntity {
-    pub const fn new(entity: Entity) -> Self {
-        Self {
+    pub fn new(entity: Entity) -> Self {
+        let boat = Self {
             vehicle: VehicleEntity::new(entity),
             ticks_underwater: AtomicCell::new(0.0),
             left_paddle_moving: AtomicBool::new(false),
             right_paddle_moving: AtomicBool::new(false),
-        }
+            boat_type: AtomicUsize::new(0),
+        };
+        boat.set_boat_type(0);
+        boat
+    }
+
+    fn is_chest_boat(&self) -> bool {
+        self.vehicle.entity.entity_type.id == EntityType::CHEST_BOAT.id
+    }
+
+    /// Sets the boat's type, an index into [`BOAT_TYPES`], and the item it drops.
+    pub fn set_boat_type(&self, boat_type: usize) {
+        let boat_type = boat_type.min(BOAT_TYPES.len() - 1);
+        self.boat_type.store(boat_type, Ordering::Relaxed);
+        let (_, boat, chest_boat) = BOAT_TYPES[boat_type];
+        self.vehicle.drop_item.store(Some(if self.is_chest_boat() {
+            chest_boat
+        } else {
+            boat
+        }));
     }
 
     pub fn set_paddles(&self, left: bool, right: bool) {
@@ -72,6 +111,26 @@ impl EntityBase for BoatEntity {
 
     fn init_data_tracker(&self) {
         self.send_wobble_metadata();
+        self.vehicle.entity.send_meta_data(
+            &[Metadata::new(
+                pumpkin_data::tracked_data::boat::ID_TYPE,
+                VarInt(self.boat_type.load(Ordering::Relaxed) as i32),
+            )],
+            None,
+        );
+    }
+
+    fn write_custom_nbt(&self, nbt: &mut NbtCompound) {
+        let (name, _, _) = BOAT_TYPES[self.boat_type.load(Ordering::Relaxed)];
+        nbt.put_string("Type", name.to_string());
+    }
+
+    fn read_custom_nbt(&self, nbt: &NbtCompound) {
+        if let Some(name) = nbt.get_string("Type")
+            && let Some(index) = BOAT_TYPES.iter().position(|(n, _, _)| *n == name)
+        {
+            self.set_boat_type(index);
+        }
     }
 
     fn can_hit(&self) -> bool {

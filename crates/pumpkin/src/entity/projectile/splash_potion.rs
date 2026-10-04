@@ -112,7 +112,7 @@ impl EntityBase for SplashPotionEntity {
 
         // Sync the item stack
         entity.set_synced_data(
-            pumpkin_data::tracked_data::splash_potion::ITEM_STACK,
+            pumpkin_data::tracked_data::potion::ITEM_STACK,
             pumpkin_protocol::codec::item_stack_seralizer::ItemStackSerializer::from(stack.clone()),
         );
     }

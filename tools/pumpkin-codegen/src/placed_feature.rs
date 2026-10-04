@@ -226,6 +226,16 @@ fn value_to_placement_modifier(v: &Value) -> TokenStream {
                 })
             }
         }
+        // The positions the given carving step carved. Only `seagrass_simple` uses it, with the
+        // liquid step, which no 1.21.1 carver carves, so it places nothing.
+        "minecraft:carving_mask" => {
+            let count = value_to_int_provider(&serde_json::json!(0));
+            quote! {
+                PlacementModifier::Count(CountPlacementModifier {
+                    count: #count,
+                })
+            }
+        }
         "minecraft:count_on_every_layer" => {
             let count = value_to_int_provider(&v["count"]);
             quote! {

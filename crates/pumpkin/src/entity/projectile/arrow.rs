@@ -460,17 +460,12 @@ impl EntityBase for ArrowEntity {
         let entity = self.get_entity();
         let flags = self.get_flags();
         let pierce = self.pierce_level.load(Ordering::Relaxed);
-        let in_ground = self.in_ground.load(Ordering::Relaxed);
 
         if entity.entity_type.id == EntityType::SPECTRAL_ARROW.id {
             entity.set_synced_data(pumpkin_data::tracked_data::spectral_arrow::ID_FLAGS, flags);
             entity.set_synced_data(
                 pumpkin_data::tracked_data::spectral_arrow::PIERCE_LEVEL,
                 pierce,
-            );
-            entity.set_synced_data(
-                pumpkin_data::tracked_data::spectral_arrow::IN_GROUND,
-                in_ground,
             );
         } else {
             let item_stack = self
@@ -480,7 +475,6 @@ impl EntityBase for ArrowEntity {
             let color = Self::get_effect_color(&item_stack);
             entity.set_synced_data(pumpkin_data::tracked_data::arrow::ID_FLAGS, flags);
             entity.set_synced_data(pumpkin_data::tracked_data::arrow::PIERCE_LEVEL, pierce);
-            entity.set_synced_data(pumpkin_data::tracked_data::arrow::IN_GROUND, in_ground);
             entity.set_synced_data(pumpkin_data::tracked_data::arrow::ID_EFFECT_COLOR, color);
         }
 
@@ -493,7 +487,6 @@ impl EntityBase for ArrowEntity {
         let entity = self.get_entity();
         let flags = self.get_flags();
         let pierce = self.pierce_level.load(Ordering::Relaxed);
-        let in_ground = self.in_ground.load(Ordering::Relaxed);
         let shared_flags = entity.flags.load(Ordering::Relaxed);
 
         let mut buf = Vec::new();
@@ -512,11 +505,6 @@ impl EntityBase for ArrowEntity {
                 pierce,
             )
             .write(&mut buf, &version);
-            let _ = Metadata::new(
-                pumpkin_data::tracked_data::spectral_arrow::IN_GROUND,
-                in_ground,
-            )
-            .write(&mut buf, &version);
         } else {
             let item_stack = self
                 .item_stack
@@ -526,8 +514,6 @@ impl EntityBase for ArrowEntity {
             let _ = Metadata::new(pumpkin_data::tracked_data::arrow::ID_FLAGS, flags)
                 .write(&mut buf, &version);
             let _ = Metadata::new(pumpkin_data::tracked_data::arrow::PIERCE_LEVEL, pierce)
-                .write(&mut buf, &version);
-            let _ = Metadata::new(pumpkin_data::tracked_data::arrow::IN_GROUND, in_ground)
                 .write(&mut buf, &version);
             if color != -1 {
                 let _ = Metadata::new(pumpkin_data::tracked_data::arrow::ID_EFFECT_COLOR, color)
@@ -597,10 +583,6 @@ impl EntityBase for ArrowEntity {
                 let block = world.get_block(&pos);
                 if block.is_air() {
                     self.in_ground.store(false, Ordering::Relaxed);
-                    entity.set_synced_data(
-                        pumpkin_data::tracked_data::abstract_arrow::IN_GROUND,
-                        false,
-                    );
                     let mut vel = entity.velocity.load();
                     vel.x *= rand::random::<f64>() * 0.2;
                     vel.y *= rand::random::<f64>() * 0.2;
@@ -858,9 +840,6 @@ impl EntityBase for ArrowEntity {
                 let offset = norm_dir.multiply(0.05, 0.05, 0.05);
                 entity.set_pos(hit_pos.sub(&offset));
                 entity.velocity.store(Vector3::new(0.0, 0.0, 0.0));
-
-                // Notify client that arrow is in ground
-                entity.set_synced_data(pumpkin_data::tracked_data::abstract_arrow::IN_GROUND, true);
 
                 // Play sound with vanilla pitch formula
                 let sound_pitch = 1.2 / (rand::random::<f32>() * 0.2 + 0.9);

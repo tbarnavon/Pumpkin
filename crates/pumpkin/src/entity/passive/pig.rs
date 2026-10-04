@@ -9,7 +9,6 @@ use pumpkin_data::pig_variant::PigVariant;
 use pumpkin_data::sound::Sound;
 use pumpkin_data::{entity::EntityType, item::Item};
 use pumpkin_nbt::compound::NbtCompound;
-use pumpkin_protocol::codec::var_int::VarInt;
 
 use crate::entity::EntityBase;
 use crate::entity::custom_sound::CustomSound;
@@ -91,21 +90,11 @@ impl PigEntity {
 
     pub fn set_variant(&self, variant: PigVariant) {
         self.variant.store(variant.id(), Ordering::Relaxed);
-        let entity = self.get_entity();
-        entity.set_synced_data(
-            pumpkin_data::tracked_data::pig::DATA_VARIANT_ID,
-            VarInt(variant.id() as i32),
-        );
     }
 
     pub fn set_sound_variant(&self, sound_variant: PigSoundVariant) {
         self.sound_variant
             .store(sound_variant as u8, Ordering::Relaxed);
-        let entity = self.get_entity();
-        entity.set_synced_data(
-            pumpkin_data::tracked_data::pig::DATA_SOUND_VARIANT_ID,
-            VarInt(sound_variant as u8 as i32),
-        );
     }
 }
 
@@ -160,14 +149,6 @@ impl Mob for PigEntity {
         if is_baby {
             entity.set_synced_data(pumpkin_data::tracked_data::pig::DATA_BABY_ID, true);
         }
-        entity.set_synced_data(
-            pumpkin_data::tracked_data::pig::DATA_VARIANT_ID,
-            VarInt(self.variant.load(Ordering::Relaxed) as i32),
-        );
-        entity.set_synced_data(
-            pumpkin_data::tracked_data::pig::DATA_SOUND_VARIANT_ID,
-            VarInt(self.sound_variant.load(Ordering::Relaxed) as i32),
-        );
     }
 
     fn mob_set_variant_name(&self, name: &str) {

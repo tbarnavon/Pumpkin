@@ -10,7 +10,6 @@ use crate::entity::boss::ender_dragon::EnderDragonEntity;
 use crate::entity::boss::wither::WitherEntity;
 use crate::entity::decoration::{
     armor_stand::ArmorStandEntity,
-    cushion::CushionEntity,
     display::{BlockDisplayEntity, ItemDisplayEntity, TextDisplayEntity},
     end_crystal::EndCrystalEntity,
     item_frame::ItemFrameEntity,
@@ -27,7 +26,6 @@ use crate::entity::mob::bat::{self, BatEntity};
 use crate::entity::mob::blaze::BlazeEntity;
 use crate::entity::mob::breeze::BreezeEntity;
 use crate::entity::mob::cave_spider::CaveSpiderEntity;
-use crate::entity::mob::creaking::CreakingEntity;
 use crate::entity::mob::creeper::CreeperEntity;
 use crate::entity::mob::elder_guardian::ElderGuardianEntity;
 use crate::entity::mob::enderman::EndermanEntity;
@@ -47,8 +45,8 @@ use crate::entity::mob::ravager::RavagerEntity;
 use crate::entity::mob::shulker::ShulkerEntity;
 use crate::entity::mob::silverfish::SilverfishEntity;
 use crate::entity::mob::skeleton::{
-    bogged::BoggedSkeletonEntity, parched::ParchedSkeletonEntity, skeleton::SkeletonEntity,
-    stray::StraySkeletonEntity, wither::WitherSkeletonEntity,
+    bogged::BoggedSkeletonEntity, skeleton::SkeletonEntity, stray::StraySkeletonEntity,
+    wither::WitherSkeletonEntity,
 };
 use crate::entity::mob::slime::SlimeEntity;
 use crate::entity::mob::spider::SpiderEntity;
@@ -68,7 +66,6 @@ use crate::entity::passive::camel::CamelEntity;
 use crate::entity::passive::cat::CatEntity;
 use crate::entity::passive::chicken::ChickenEntity;
 use crate::entity::passive::cod::CodEntity;
-use crate::entity::passive::copper_golem::CopperGolemEntity;
 use crate::entity::passive::cow::CowEntity;
 use crate::entity::passive::dolphin::DolphinEntity;
 use crate::entity::passive::donkey::DonkeyEntity;
@@ -76,13 +73,11 @@ use crate::entity::passive::fox::FoxEntity;
 use crate::entity::passive::frog::FrogEntity;
 use crate::entity::passive::glow_squid::GlowSquidEntity;
 use crate::entity::passive::goat::GoatEntity;
-use crate::entity::passive::happy_ghast::HappyGhastEntity;
 use crate::entity::passive::horse::HorseEntity;
 use crate::entity::passive::iron_golem::IronGolemEntity;
 use crate::entity::passive::llama::LlamaEntity;
 use crate::entity::passive::mooshroom::MooshroomEntity;
 use crate::entity::passive::mule::MuleEntity;
-use crate::entity::passive::nautilus::NautilusEntity;
 use crate::entity::passive::ocelot::OcelotEntity;
 use crate::entity::passive::panda::PandaEntity;
 use crate::entity::passive::parrot::ParrotEntity;
@@ -112,7 +107,6 @@ use crate::entity::projectile::ender_pearl::EnderPearlEntity;
 use crate::entity::projectile::eye_of_ender::EyeOfEnder;
 use crate::entity::projectile::fireball::FireballEntity;
 use crate::entity::projectile::firework_rocket::FireworkRocketEntity;
-use crate::entity::projectile::lingering_potion::LingeringPotionEntity;
 use crate::entity::projectile::llama_spit::LlamaSpitEntity;
 use crate::entity::projectile::shulker_bullet::ShulkerBulletEntity;
 use crate::entity::projectile::small_fireball::SmallFireballEntity;
@@ -149,7 +143,6 @@ pub fn from_type(
         // Skeleton
         id if id == EntityType::SKELETON.id => SkeletonEntity::new(entity),
         id if id == EntityType::BOGGED.id => BoggedSkeletonEntity::new(entity),
-        id if id == EntityType::PARCHED.id => ParchedSkeletonEntity::new(entity),
         id if id == EntityType::WITHER_SKELETON.id => WitherSkeletonEntity::new(entity),
         id if id == EntityType::STRAY.id => StraySkeletonEntity::new(entity),
 
@@ -176,7 +169,6 @@ pub fn from_type(
         id if id == EntityType::HOGLIN.id => HoglinEntity::new(entity),
         id if id == EntityType::ZOGLIN.id => ZoglinEntity::new(entity),
         id if id == EntityType::BREEZE.id => BreezeEntity::new(entity),
-        id if id == EntityType::CREAKING.id => CreakingEntity::new(entity),
         id if id == EntityType::ILLUSIONER.id => IllusionerEntity::new(entity),
         id if id == EntityType::VEX.id => VexEntity::new(entity),
         id if id == EntityType::ENDERMITE.id => EndermiteEntity::new(entity),
@@ -206,10 +198,8 @@ pub fn from_type(
         id if id == EntityType::AXOLOTL.id => AxolotlEntity::new(entity),
         id if id == EntityType::BEE.id => BeeEntity::new(entity),
         id if id == EntityType::CAMEL.id => CamelEntity::new(entity),
-        id if id == EntityType::COPPER_GOLEM.id => CopperGolemEntity::new(entity),
         id if id == EntityType::FROG.id => FrogEntity::new(entity),
         id if id == EntityType::GOAT.id => GoatEntity::new(entity),
-        id if id == EntityType::HAPPY_GHAST.id => HappyGhastEntity::new(entity),
         id if id == EntityType::MOOSHROOM.id => MooshroomEntity::new(entity),
         id if id == EntityType::OCELOT.id => OcelotEntity::new(entity),
         id if id == EntityType::PANDA.id => PandaEntity::new(entity),
@@ -224,7 +214,6 @@ pub fn from_type(
         id if id == EntityType::TROPICAL_FISH.id => TropicalFishEntity::new(entity),
         id if id == EntityType::TADPOLE.id => TadpoleEntity::new(entity),
         id if id == EntityType::DOLPHIN.id => DolphinEntity::new(entity),
-        id if id == EntityType::NAUTILUS.id => NautilusEntity::new(entity),
 
         id if id == EntityType::SNOW_GOLEM.id => SnowGolemEntity::new(entity),
         id if id == EntityType::IRON_GOLEM.id => IronGolemEntity::new(entity),
@@ -236,7 +225,6 @@ pub fn from_type(
             crate::entity::area_effect_cloud::AreaEffectCloudEntity::new(entity)
         }
         id if id == EntityType::ARMOR_STAND.id => Arc::new(ArmorStandEntity::new(entity)),
-        id if id == EntityType::CUSHION.id => Arc::new(CushionEntity::new(entity, 0)),
         id if id == EntityType::BLOCK_DISPLAY.id => BlockDisplayEntity::new(entity),
         id if id == EntityType::ITEM_DISPLAY.id => ItemDisplayEntity::new(entity),
         id if id == EntityType::TEXT_DISPLAY.id => TextDisplayEntity::new(entity),
@@ -309,33 +297,11 @@ pub fn from_type(
         id if id == EntityType::MARKER.id => MarkerEntity::new(entity),
         id if id == EntityType::INTERACTION.id => InteractionEntity::new(entity),
         id if id == EntityType::FIREWORK_ROCKET.id => Arc::new(FireworkRocketEntity::new(entity)),
-        id if id == EntityType::SPLASH_POTION.id => Arc::new(SplashPotionEntity::new(entity)),
-        id if id == EntityType::LINGERING_POTION.id => Arc::new(LingeringPotionEntity::new(entity)),
+        // 1.21.1 has one thrown potion entity; thrown lingering potions are spawned directly.
+        id if id == EntityType::POTION.id => Arc::new(SplashPotionEntity::new(entity)),
         id if id == EntityType::LLAMA_SPIT.id => Arc::new(LlamaSpitEntity::new(entity)),
         id if id == EntityType::EYE_OF_ENDER.id => Arc::new(EyeOfEnder::new(entity)),
-        id if id == EntityType::ACACIA_BOAT.id
-            || id == EntityType::ACACIA_CHEST_BOAT.id
-            || id == EntityType::BIRCH_BOAT.id
-            || id == EntityType::BIRCH_CHEST_BOAT.id
-            || id == EntityType::DARK_OAK_BOAT.id
-            || id == EntityType::DARK_OAK_CHEST_BOAT.id
-            || id == EntityType::JUNGLE_BOAT.id
-            || id == EntityType::JUNGLE_CHEST_BOAT.id
-            || id == EntityType::MANGROVE_BOAT.id
-            || id == EntityType::MANGROVE_CHEST_BOAT.id
-            || id == EntityType::OAK_BOAT.id
-            || id == EntityType::OAK_CHEST_BOAT.id
-            || id == EntityType::PALE_OAK_BOAT.id
-            || id == EntityType::PALE_OAK_CHEST_BOAT.id
-            || id == EntityType::SPRUCE_BOAT.id
-            || id == EntityType::SPRUCE_CHEST_BOAT.id
-            || id == EntityType::BAMBOO_RAFT.id
-            || id == EntityType::BAMBOO_CHEST_RAFT.id
-            || id == EntityType::CHERRY_BOAT.id
-            || id == EntityType::CHERRY_CHEST_BOAT.id
-            || id == EntityType::POPLAR_BOAT.id
-            || id == EntityType::POPLAR_CHEST_BOAT.id =>
-        {
+        id if id == EntityType::BOAT.id || id == EntityType::CHEST_BOAT.id => {
             Arc::new(BoatEntity::new(entity))
         }
         // Fallback Entity
@@ -375,7 +341,6 @@ pub fn check_spawn_rules(
         || id == EntityType::ZOMBIE.id
         || id == EntityType::ZOMBIE_HORSE.id
         || id == EntityType::ZOMBIE_VILLAGER.id
-        || id == EntityType::CREAKING.id
         || id == EntityType::EVOKER.id
         || id == EntityType::ILLUSIONER.id
         || id == EntityType::VEX.id
@@ -390,9 +355,8 @@ pub fn check_spawn_rules(
         return mob::MobEntity::check_any_light_monster_spawn_rules(world, pos);
     }
 
-    // Surface monsters (Husk, Parched, Camel Husk)
-    if id == EntityType::HUSK.id || id == EntityType::PARCHED.id || id == EntityType::CAMEL_HUSK.id
-    {
+    // Surface monsters (Husk)
+    if id == EntityType::HUSK.id {
         return mob::MobEntity::check_surface_monsters_spawn_rules(world, pos, is_thundering);
     }
 
@@ -445,11 +409,6 @@ pub fn check_spawn_rules(
         return mob::MobEntity::check_mob_spawn_rules(world, pos);
     }
 
-    // Sulfur Cube
-    if id == EntityType::SULFUR_CUBE.id {
-        return true;
-    }
-
     // Slime
     if id == EntityType::SLIME.id {
         return SlimeEntity::check_slime_spawn_rules(world, pos);
@@ -495,7 +454,6 @@ pub fn check_spawn_rules(
     if id == EntityType::CHICKEN.id
         || id == EntityType::COW.id
         || id == EntityType::DONKEY.id
-        || id == EntityType::HAPPY_GHAST.id
         || id == EntityType::HORSE.id
         || id == EntityType::LLAMA.id
         || id == EntityType::MULE.id
@@ -640,19 +598,6 @@ pub fn check_spawn_rules(
             && (world.get_block(pos) == &pumpkin_data::Block::WATER
                 || world
                     .get_fluid(pos)
-                    .has_tag(&pumpkin_data::tag::Fluid::MINECRAFT_WATER));
-    }
-    if id == EntityType::NAUTILUS.id {
-        let sea_level = world.sea_level;
-        let min_spawn_level = sea_level - 25;
-        return pos.0.y >= min_spawn_level
-            && pos.0.y <= sea_level - 5
-            && world
-                .get_fluid(&pos.down())
-                .has_tag(&pumpkin_data::tag::Fluid::MINECRAFT_WATER)
-            && (world.get_block(&pos.up()) == &pumpkin_data::Block::WATER
-                || world
-                    .get_fluid(&pos.up())
                     .has_tag(&pumpkin_data::tag::Fluid::MINECRAFT_WATER));
     }
     if id == EntityType::DROWNED.id {

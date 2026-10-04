@@ -768,7 +768,7 @@ fn emit_struct_output(
             output.push_str("            };\n");
             output.push_str("            let mut buf = Vec::new();\n");
             if attr_name == "java_packet" {
-                output.push_str("            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();\n");
+                output.push_str("            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;\n");
             } else {
                 output.push_str("            crate::net::bedrock::BedrockClient::write_raw_packet(&p, &mut buf).unwrap();\n");
             }
@@ -898,7 +898,7 @@ fn process_enum(
             output.push_str("            };\n");
             output.push_str("            let mut buf = Vec::new();\n");
             if attr_name == "java_packet" {
-                output.push_str("            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();\n");
+                output.push_str("            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;\n");
             } else {
                 output.push_str("            crate::net::bedrock::BedrockClient::write_raw_packet(&p, &mut buf).unwrap();\n");
             }

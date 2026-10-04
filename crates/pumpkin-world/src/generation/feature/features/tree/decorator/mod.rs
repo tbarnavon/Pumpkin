@@ -6,9 +6,7 @@ use attached_to_leaves::AttachedToLeavesTreeDecorator;
 use attached_to_logs::AttachedToLogsTreeDecorator;
 use beehive::BeehiveTreeDecorator;
 use cocoa::CocoaTreeDecorator;
-use creaking_heart::CreakingHeartTreeDecorator;
 use leave_vine::LeavesVineTreeDecorator;
-use pale_moss::PaleMossTreeDecorator;
 use place_on_ground::PlaceOnGroundTreeDecorator;
 use pumpkin_util::{math::position::BlockPos, random::RandomGenerator};
 
@@ -19,17 +17,13 @@ pub mod attached_to_leaves;
 pub mod attached_to_logs;
 pub mod beehive;
 pub mod cocoa;
-pub mod creaking_heart;
 pub mod leave_vine;
-pub mod pale_moss;
 pub mod place_on_ground;
 pub mod trunk_vine;
 
 pub enum TreeDecorator {
     TrunkVine(TrunkVineTreeDecorator),
     LeaveVine(LeavesVineTreeDecorator),
-    PaleMoss(PaleMossTreeDecorator),
-    CreakingHeart(CreakingHeartTreeDecorator),
     Cocoa(CocoaTreeDecorator),
     Beehive(BeehiveTreeDecorator),
     AlterGround(AlterGroundTreeDecorator),
@@ -53,12 +47,6 @@ impl TreeDecorator {
                 TrunkVineTreeDecorator::generate(chunk, random, log_positions);
             }
             Self::LeaveVine(decorator) => decorator.generate(chunk, random, foliage_positions),
-            Self::PaleMoss(decorator) => {
-                decorator.generate(chunk, random, log_positions, foliage_positions);
-            }
-            Self::CreakingHeart(decorator) => {
-                decorator.generate(chunk, random, log_positions);
-            }
             Self::Cocoa(decorator) => {
                 decorator.generate(chunk, random, log_positions);
             }

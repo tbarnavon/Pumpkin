@@ -28,11 +28,13 @@ impl FluidMetadata for FlowingLava {
 
 impl FlowingLava {
     fn can_spread_fire_around(world: &Arc<World>, pos: &BlockPos) -> bool {
-        let spread_radius = world
-            .level_info
-            .load()
-            .game_rules
-            .fire_spread_radius_around_player;
+        let level_info = world.level_info.load();
+        // 1.21.1's `doFireTick` off means no spread.
+        let spread_radius = if level_info.game_rules.do_fire_tick {
+            level_info.game_rules.fire_spread_radius_around_player
+        } else {
+            0
+        };
 
         if spread_radius == 0 {
             return false;

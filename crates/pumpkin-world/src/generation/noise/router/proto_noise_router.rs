@@ -421,21 +421,25 @@ impl ProtoNoiseRouters {
                     data,
                 } => {
                     let sampler = match data.noise_id.id {
-                        id if id == DoublePerlinNoiseParameters::NETHER_TEMPERATURE.id => {
+                        // 1.21.1's `RandomState`: with the legacy random source (the nether),
+                        // temperature and vegetation get fixed parameters, seeded from the seed.
+                        id if random_config.legacy_random_source
+                            && (id == DoublePerlinNoiseParameters::TEMPERATURE.id
+                                || id == DoublePerlinNoiseParameters::VEGETATION.id) =>
+                        {
+                            let seed_offset =
+                                u64::from(id == DoublePerlinNoiseParameters::VEGETATION.id);
                             let mut legacy_rand =
-                                LegacyRand::from_seed(random_config.seed.wrapping_add(0));
+                                LegacyRand::from_seed(random_config.seed.wrapping_add(seed_offset));
                             DoublePerlinNoiseSampler::from_params(
                                 &mut legacy_rand,
-                                &data.noise_id,
-                                true,
-                            )
-                        }
-                        id if id == DoublePerlinNoiseParameters::NETHER_VEGETATION.id => {
-                            let mut legacy_rand =
-                                LegacyRand::from_seed(random_config.seed.wrapping_add(1));
-                            DoublePerlinNoiseSampler::from_params(
-                                &mut legacy_rand,
-                                &data.noise_id,
+                                &DoublePerlinNoiseParameters::new(
+                                    id,
+                                    -7,
+                                    &[1.0, 1.0],
+                                    data.noise_id.lo,
+                                    data.noise_id.hi,
+                                ),
                                 true,
                             )
                         }

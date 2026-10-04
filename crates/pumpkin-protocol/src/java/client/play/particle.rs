@@ -68,14 +68,14 @@ impl<'a> CParticle<'a> {
 #[must_use]
 pub const fn particle_name_for_v1_7(particle: pumpkin_data::particle::Particle) -> &'static str {
     use pumpkin_data::particle::Particle::{
-        AngryVillager, Block, BlockCrumble, BlockMarker, Bubble, BubbleColumnUp, BubblePop,
-        CampfireSignalSmoke, Cloud, Composter, Crit, DamageIndicator, DragonBreath,
-        DrippingDripstoneLava, DrippingDripstoneWater, DrippingLava, DrippingWater, Dust,
-        DustColorTransition, DustPillar, DustPlume, Effect, Enchant, EnchantedHit, EntityEffect,
-        Explosion, ExplosionEmitter, FallingDust, Firework, Fishing, Flame, HappyVillager, Heart,
-        InstantEffect, Item, ItemSlime, ItemSnowball, LargeSmoke, Lava, Mycelium, Note, Poof,
-        Portal, Rain, ReversePortal, SmallFlame, Snowflake, SoulFireFlame, Splash, SweepAttack,
-        TotemOfUndying, Underwater, Witch,
+        AngryVillager, Block, BlockMarker, Bubble, BubbleColumnUp, BubblePop, CampfireSignalSmoke,
+        Cloud, Composter, Crit, DamageIndicator, DragonBreath, DrippingDripstoneLava,
+        DrippingDripstoneWater, DrippingLava, DrippingWater, Dust, DustColorTransition, DustPillar,
+        DustPlume, Effect, Enchant, EnchantedHit, EntityEffect, Explosion, ExplosionEmitter,
+        FallingDust, Firework, Fishing, Flame, HappyVillager, Heart, InstantEffect, Item,
+        ItemSlime, ItemSnowball, LargeSmoke, Lava, Mycelium, Note, Poof, Portal, Rain,
+        ReversePortal, SmallFlame, Snowflake, SoulFireFlame, Splash, SweepAttack, TotemOfUndying,
+        Underwater, Witch,
     };
     match particle {
         ExplosionEmitter => "hugeexplosion",
@@ -111,7 +111,7 @@ pub const fn particle_name_for_v1_7(particle: pumpkin_data::particle::Particle) 
         BlockMarker => "barrier",
         Rain => "droplet",
         Item => "iconcrack_",
-        Block | BlockCrumble => "blockcrack_",
+        Block => "blockcrack_",
         FallingDust => "blockdust_",
         _ => "smoke",
     }

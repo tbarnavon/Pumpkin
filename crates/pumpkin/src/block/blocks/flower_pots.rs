@@ -1,5 +1,5 @@
 use crate::block::registry::BlockActionResult;
-use crate::block::{BlockBehaviour, PathComputationType, RandomTickArgs, UseWithItemArgs};
+use crate::block::{BlockBehaviour, PathComputationType, UseWithItemArgs};
 use pumpkin_data::flower_pot_transformations::get_potted_item;
 use pumpkin_data::{Block, BlockId, BlockState};
 use pumpkin_macros::pumpkin_block_from_tag;
@@ -40,30 +40,6 @@ impl BlockBehaviour for FlowerPotBlock {
                 BlockFlags::NOTIFY_ALL,
             );
             BlockActionResult::Success
-        }
-    }
-
-    fn random_tick(&self, args: RandomTickArgs<'_>) {
-        let is_open_potted = args.block.eq(&Block::POTTED_OPEN_EYEBLOSSOM);
-        let is_closed_potted = args.block.eq(&Block::POTTED_CLOSED_EYEBLOSSOM);
-        if !is_open_potted && !is_closed_potted {
-            return;
-        }
-
-        let is_open = is_open_potted;
-        let should_be_open = args.world.eyeblossom_open(args.position).unwrap_or(is_open);
-
-        if is_open != should_be_open {
-            let next_block = if should_be_open {
-                &Block::POTTED_OPEN_EYEBLOSSOM
-            } else {
-                &Block::POTTED_CLOSED_EYEBLOSSOM
-            };
-            args.world.set_block_state(
-                args.position,
-                next_block.default_state.id,
-                BlockFlags::NOTIFY_ALL,
-            );
         }
     }
 

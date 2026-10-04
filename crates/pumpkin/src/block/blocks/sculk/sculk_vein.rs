@@ -18,12 +18,7 @@ pub struct MultifaceBlock;
 
 impl BlockMetadata for MultifaceBlock {
     fn ids() -> Box<[BlockId]> {
-        [
-            BlockId::SCULK_VEIN,
-            BlockId::GLOW_LICHEN,
-            BlockId::RESIN_CLUMP,
-        ]
-        .into()
+        [BlockId::SCULK_VEIN, BlockId::GLOW_LICHEN].into()
     }
 }
 

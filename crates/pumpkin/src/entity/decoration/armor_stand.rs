@@ -358,10 +358,8 @@ impl EntityBase for ArmorStandEntity {
         // TODO: IGNITES_ARMOR_STANDS (in_fire, campfire) - set on fire
         // TODO: BURNS_ARMOR_STANDS (on_fire) - reduce health
 
-        let can_break = damage_type == DamageType::PLAYER_EXPLOSION
-            || damage_type == DamageType::PLAYER_ATTACK
-            || damage_type == DamageType::SPEAR
-            || damage_type == DamageType::MACE_SMASH;
+        let can_break =
+            damage_type == DamageType::PLAYER_EXPLOSION || damage_type == DamageType::PLAYER_ATTACK;
 
         let always_kills = damage_type == DamageType::ARROW
             || damage_type == DamageType::TRIDENT

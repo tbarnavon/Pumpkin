@@ -71,14 +71,18 @@ impl LeashKnotEntity {
         let knot = Arc::new(Self::new(entity, pos));
         world.spawn_entity(knot.clone() as Arc<dyn EntityBase>);
 
-        world.play_sound(Sound::ItemLeadTied, SoundCategory::Neutral, &raw_pos);
+        world.play_sound(
+            Sound::EntityLeashKnotPlace,
+            SoundCategory::Neutral,
+            &raw_pos,
+        );
 
         knot
     }
 
     pub fn play_placement_sound(&self, world: &World) {
         let pos = self.entity.pos.load();
-        world.play_sound(Sound::ItemLeadTied, SoundCategory::Neutral, &pos);
+        world.play_sound(Sound::EntityLeashKnotPlace, SoundCategory::Neutral, &pos);
     }
 }
 
@@ -130,7 +134,7 @@ impl EntityBase for LeashKnotEntity {
                 }
             }
 
-            world.play_sound(Sound::ItemLeadUntied, SoundCategory::Neutral, &pos);
+            world.play_sound(Sound::EntityLeashKnotBreak, SoundCategory::Neutral, &pos);
             self.entity.remove();
         }
     }

@@ -134,12 +134,10 @@ impl Mob for ZombifiedPiglinEntity {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
 
-        let weapon = if rand::random_range(0..20) == 0 {
-            &Item::GOLDEN_SPEAR
-        } else {
-            &Item::GOLDEN_SWORD
-        };
-        equipment.put(&EquipmentSlot::MAIN_HAND, ItemStack::new(1, weapon));
+        equipment.put(
+            &EquipmentSlot::MAIN_HAND,
+            ItemStack::new(1, &Item::GOLDEN_SWORD),
+        );
     }
 
     fn mob_tick(&self, _caller: &dyn EntityBase) {

@@ -2919,8 +2919,14 @@ fn load_vanilla_noise_router(
     });
     // 1.21.1: `noise.size_horizontal` and `size_vertical` are in quarter-blocks.
     if let Some(noise) = val.get("noise") {
-        let xz = noise.get("size_horizontal").and_then(serde_json::Value::as_i64).unwrap_or(1);
-        let y = noise.get("size_vertical").and_then(serde_json::Value::as_i64).unwrap_or(2);
+        let xz = noise
+            .get("size_horizontal")
+            .and_then(serde_json::Value::as_i64)
+            .unwrap_or(1);
+        let y = noise
+            .get("size_vertical")
+            .and_then(serde_json::Value::as_i64)
+            .unwrap_or(2);
         CELL_SIZE.with(|cell| cell.set((xz as i32 * 4, y as i32 * 4)));
     }
     let nr = val

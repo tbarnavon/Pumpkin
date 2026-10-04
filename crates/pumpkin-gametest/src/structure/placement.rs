@@ -1,5 +1,4 @@
 use pumpkin_data::Block;
-use pumpkin_nbt::{NbtCompound, tag::NbtTag};
 use pumpkin_util::math::{position::BlockPos, vector3::Vector3};
 use pumpkin_world::world::BlockFlags;
 
@@ -112,13 +111,14 @@ pub async fn place_structure(
 /// Places a test using the effective structure rotation.
 ///
 /// The separate controller rotation is stored in `TestInstanceBlockEntity` data, as
-/// vanilla does for `/test run ... rotationSteps`.
+/// vanilla does for `/test run ... rotationSteps`; 1.21.1 has no test instance block, so
+/// it and the test id go unused.
 pub async fn place_structure_with_controller_rotation(
     world: &dyn GameTestWorld,
     template: &GameTestStructureTemplate,
-    test_id: &str,
+    _test_id: &str,
     rotation: GameTestRotation,
-    controller_rotation: GameTestRotation,
+    _controller_rotation: GameTestRotation,
     position: GameTestPosition,
     padding: i32,
 ) -> GameTestResult<TestStructureInstance> {
@@ -167,29 +167,10 @@ pub async fn place_structure_with_controller_rotation(
     world
         .set_block_state(
             &test_instance_pos,
-            Block::TEST_INSTANCE_BLOCK.default_state.id,
+            // 1.21.1 has no test instance block.
+            Block::STRUCTURE_BLOCK.default_state.id,
             BlockFlags::NOTIFY_ALL,
         )
-        .await?;
-
-    // TestInstanceBlockEntity.Data stores only the extra controller rotation. The
-    // client combines this with the test definition's base rotation from the synced
-    // minecraft:test_instance registry.
-    let mut data = NbtCompound::new();
-    data.put_string("test", test_id.to_string());
-    data.put("size", NbtTag::IntArray(source_size.to_vec()));
-    data.put_string(
-        "rotation",
-        controller_rotation.serialized_name().to_string(),
-    );
-    data.put_bool("ignore_entities", false);
-    data.put_string("status", "cleared".to_string());
-
-    let mut test_instance_nbt = NbtCompound::new();
-    test_instance_nbt.put_string("id", "minecraft:test_instance_block".to_string());
-    test_instance_nbt.put_compound("data", data);
-    world
-        .set_block_entity_nbt(&test_instance_pos, &test_instance_nbt)
         .await?;
 
     // StructureTemplate.placeInWorld rotates both relative positions and block

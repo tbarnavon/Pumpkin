@@ -77,7 +77,7 @@ impl EntityBase for LingeringPotionEntity {
 
         // Sync the item stack so the client renders the correct potion type
         entity.set_synced_data(
-            pumpkin_data::tracked_data::lingering_potion::ITEM_STACK,
+            pumpkin_data::tracked_data::potion::ITEM_STACK,
             pumpkin_protocol::codec::item_stack_seralizer::ItemStackSerializer::from(stack.clone()),
         );
     }

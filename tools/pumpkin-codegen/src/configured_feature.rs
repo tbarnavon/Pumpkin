@@ -208,9 +208,7 @@ pub fn build() -> TokenStream {
                     attached_to_logs::AttachedToLogsTreeDecorator,
                     beehive::BeehiveTreeDecorator,
                     cocoa::CocoaTreeDecorator,
-                    creaking_heart::CreakingHeartTreeDecorator,
                     leave_vine::LeavesVineTreeDecorator,
-                    pale_moss::PaleMossTreeDecorator,
                     place_on_ground::PlaceOnGroundTreeDecorator,
                     trunk_vine::TrunkVineTreeDecorator,
                 },
@@ -722,7 +720,8 @@ pub fn value_to_configured_feature(v: &Value) -> TokenStream {
         "minecraft:basalt_pillar" => {
             quote! { ConfiguredFeature::BasaltPillar(crate::generation::feature::features::basalt_pillar::BasaltPillarFeature {}) }
         }
-        "minecraft:block_blob" => {
+        // `forest_rock` until 1.21.5.
+        "minecraft:block_blob" | "minecraft:forest_rock" => {
             let state = value_to_block_state(&config["state"]);
             quote! {
                 ConfiguredFeature::ForestRock(crate::generation::feature::features::forest_rock::ForestRockFeature {
@@ -1767,22 +1766,6 @@ fn value_to_tree_decorator(v: &Value) -> Option<TokenStream> {
                     radius: #radius,
                     height: #height,
                     block_state_provider: #bsp,
-                })
-            }
-        }
-        "minecraft:creaking_heart" => {
-            let prob = v["probability"].as_f64().unwrap_or(0.0) as f32;
-            quote! { TreeDecorator::CreakingHeart(CreakingHeartTreeDecorator { probability: #prob }) }
-        }
-        "minecraft:pale_moss" => {
-            let leaves_probability = v["leaves_probability"].as_f64().unwrap_or(0.0) as f32;
-            let trunk_probability = v["trunk_probability"].as_f64().unwrap_or(0.0) as f32;
-            let ground_probability = v["ground_probability"].as_f64().unwrap_or(0.0) as f32;
-            quote! {
-                TreeDecorator::PaleMoss(PaleMossTreeDecorator {
-                    leaves_probability: #leaves_probability,
-                    trunk_probability: #trunk_probability,
-                    ground_probability: #ground_probability,
                 })
             }
         }

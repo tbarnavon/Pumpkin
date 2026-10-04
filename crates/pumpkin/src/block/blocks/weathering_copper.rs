@@ -1,9 +1,7 @@
 use std::sync::Arc;
 
 use pumpkin_data::block_properties::{
-    ChestLikeProperties, ChestType, CopperBulbLikeProperties, CopperGolemStatueLikeProperties,
-    DoubleBlockHalf, EnumVariants, IronChainLikeProperties, LanternLikeProperties,
-    MangroveRootsLikeProperties, OakDoorLikeProperties, OakFenceLikeProperties,
+    CopperBulbLikeProperties, DoubleBlockHalf, MangroveRootsLikeProperties, OakDoorLikeProperties,
     OakTrapdoorLikeProperties, WhiteWoolSlabLikeProperties, WhiteWoolStairsLikeProperties,
 };
 use pumpkin_data::tag::Taggable;
@@ -19,8 +17,8 @@ use crate::block::blocks::trapdoor::TrapDoorBlock;
 use crate::block::registry::BlockActionResult;
 use crate::block::{
     BlockBehaviour, BlockMetadata, BrokenArgs, CanPlaceAtArgs, CanUpdateAtArgs,
-    GetComparatorOutputArgs, GetStateForNeighborUpdateArgs, NormalUseArgs, OnNeighborUpdateArgs,
-    OnPlaceArgs, OnStateReplacedArgs, PathComputationType, PlacedArgs, RandomTickArgs,
+    GetStateForNeighborUpdateArgs, NormalUseArgs, OnNeighborUpdateArgs, OnPlaceArgs,
+    OnStateReplacedArgs, PathComputationType, PlacedArgs, RandomTickArgs,
 };
 use crate::world::World;
 
@@ -189,36 +187,6 @@ const COPPER_PROGRESSIONS: &[(&Block, &Block, &Block, &Block)] = &[
         &Block::WEATHERED_COPPER_BULB,
         &Block::OXIDIZED_COPPER_BULB,
     ),
-    (
-        &Block::COPPER_LANTERN,
-        &Block::EXPOSED_COPPER_LANTERN,
-        &Block::WEATHERED_COPPER_LANTERN,
-        &Block::OXIDIZED_COPPER_LANTERN,
-    ),
-    (
-        &Block::COPPER_CHEST,
-        &Block::EXPOSED_COPPER_CHEST,
-        &Block::WEATHERED_COPPER_CHEST,
-        &Block::OXIDIZED_COPPER_CHEST,
-    ),
-    (
-        &Block::COPPER_GOLEM_STATUE,
-        &Block::EXPOSED_COPPER_GOLEM_STATUE,
-        &Block::WEATHERED_COPPER_GOLEM_STATUE,
-        &Block::OXIDIZED_COPPER_GOLEM_STATUE,
-    ),
-    (
-        &Block::COPPER_BARS,
-        &Block::EXPOSED_COPPER_BARS,
-        &Block::WEATHERED_COPPER_BARS,
-        &Block::OXIDIZED_COPPER_BARS,
-    ),
-    (
-        &Block::COPPER_CHAIN,
-        &Block::EXPOSED_COPPER_CHAIN,
-        &Block::WEATHERED_COPPER_CHAIN,
-        &Block::OXIDIZED_COPPER_CHAIN,
-    ),
 ];
 
 /// Returns the next oxidized block in sequence, or `None` if already oxidized or not a weathering copper block.
@@ -369,56 +337,6 @@ pub fn with_properties_of(
         return props.to_state_id(to_block);
     }
 
-    // 8. Copper Lanterns
-    if from_block == &Block::COPPER_LANTERN
-        || from_block == &Block::EXPOSED_COPPER_LANTERN
-        || from_block == &Block::WEATHERED_COPPER_LANTERN
-        || from_block == &Block::OXIDIZED_COPPER_LANTERN
-    {
-        let props = LanternLikeProperties::from_state_id(from_state_id);
-        return props.to_state_id(to_block);
-    }
-
-    // 9. Copper Chests
-    if from_block == &Block::COPPER_CHEST
-        || from_block == &Block::EXPOSED_COPPER_CHEST
-        || from_block == &Block::WEATHERED_COPPER_CHEST
-        || from_block == &Block::OXIDIZED_COPPER_CHEST
-    {
-        let props = ChestLikeProperties::from_state_id(from_state_id);
-        return props.to_state_id(to_block);
-    }
-
-    // 10. Copper Golem Statues
-    if from_block == &Block::COPPER_GOLEM_STATUE
-        || from_block == &Block::EXPOSED_COPPER_GOLEM_STATUE
-        || from_block == &Block::WEATHERED_COPPER_GOLEM_STATUE
-        || from_block == &Block::OXIDIZED_COPPER_GOLEM_STATUE
-    {
-        let props = CopperGolemStatueLikeProperties::from_state_id(from_state_id);
-        return props.to_state_id(to_block);
-    }
-
-    // 11. Copper Bars
-    if from_block == &Block::COPPER_BARS
-        || from_block == &Block::EXPOSED_COPPER_BARS
-        || from_block == &Block::WEATHERED_COPPER_BARS
-        || from_block == &Block::OXIDIZED_COPPER_BARS
-    {
-        let props = OakFenceLikeProperties::from_state_id(from_state_id);
-        return props.to_state_id(to_block);
-    }
-
-    // 12. Copper Chains
-    if from_block == &Block::COPPER_CHAIN
-        || from_block == &Block::EXPOSED_COPPER_CHAIN
-        || from_block == &Block::WEATHERED_COPPER_CHAIN
-        || from_block == &Block::OXIDIZED_COPPER_CHAIN
-    {
-        let props = IronChainLikeProperties::from_state_id(from_state_id);
-        return props.to_state_id(to_block);
-    }
-
     // Fallback: use relative state index
     let offset = from_state_id
         .as_u16()
@@ -552,30 +470,13 @@ pub fn change_over_time(world: &Arc<World>, position: &BlockPos, block: &Block) 
             }
         }
     }
-    // Chest: update right companion chest if double chest
-    else if block == &Block::COPPER_CHEST
-        || block == &Block::EXPOSED_COPPER_CHEST
-        || block == &Block::WEATHERED_COPPER_CHEST
-    {
-        let chest_props = ChestLikeProperties::from_state_id(current_state_id);
-        if chest_props.r#type == ChestType::Left {
-            let right_dir = chest_props.facing.rotate_clockwise();
-            let right_pos = position.offset(right_dir.to_offset());
-            let (right_block, right_state_id) = world.get_block_and_state_id(&right_pos);
-            if right_block == block {
-                let right_new_state_id =
-                    with_properties_of(right_block, right_state_id, next_block);
-                world.set_block_state(&right_pos, right_new_state_id, BlockFlags::NOTIFY_LISTENERS);
-            }
-        }
-    }
 }
 
 // ---------------------------------------------------------------------------
 // Block implementations
 // ---------------------------------------------------------------------------
 
-/// Handles standard full weathering copper blocks, grates, bars, chains, lanterns, and statues.
+/// Handles standard full weathering copper blocks and grates.
 #[derive(Default)]
 pub struct WeatheringCopperBlock;
 
@@ -618,22 +519,6 @@ impl BlockMetadata for WeatheringCopperBlock {
             BlockId::EXPOSED_CHISELED_COPPER,
             BlockId::WEATHERED_CHISELED_COPPER,
             BlockId::OXIDIZED_CHISELED_COPPER,
-            BlockId::COPPER_BARS,
-            BlockId::EXPOSED_COPPER_BARS,
-            BlockId::WEATHERED_COPPER_BARS,
-            BlockId::OXIDIZED_COPPER_BARS,
-            BlockId::COPPER_CHAIN,
-            BlockId::EXPOSED_COPPER_CHAIN,
-            BlockId::WEATHERED_COPPER_CHAIN,
-            BlockId::OXIDIZED_COPPER_CHAIN,
-            BlockId::COPPER_LANTERN,
-            BlockId::EXPOSED_COPPER_LANTERN,
-            BlockId::WEATHERED_COPPER_LANTERN,
-            BlockId::OXIDIZED_COPPER_LANTERN,
-            BlockId::COPPER_GOLEM_STATUE,
-            BlockId::EXPOSED_COPPER_GOLEM_STATUE,
-            BlockId::WEATHERED_COPPER_GOLEM_STATUE,
-            BlockId::OXIDIZED_COPPER_GOLEM_STATUE,
         ]
         .into()
     }
@@ -643,26 +528,6 @@ impl BlockBehaviour for WeatheringCopperBlock {
     fn random_tick(&self, args: RandomTickArgs<'_>) {
         change_over_time(args.world, args.position, args.block);
     }
-
-    /// Only statues carry a pose, every other copper block here reads nothing.
-    fn get_comparator_output(&self, args: GetComparatorOutputArgs<'_>) -> Option<u8> {
-        if !is_copper_golem_statue(args.block.id) {
-            return None;
-        }
-        let props = CopperGolemStatueLikeProperties::from_state_id(args.state.id);
-        // Vanilla reads the pose ordinal, one-based.
-        Some(props.copper_golem_pose.to_index() as u8 + 1)
-    }
-}
-
-const fn is_copper_golem_statue(id: BlockId) -> bool {
-    matches!(
-        id,
-        BlockId::COPPER_GOLEM_STATUE
-            | BlockId::EXPOSED_COPPER_GOLEM_STATUE
-            | BlockId::WEATHERED_COPPER_GOLEM_STATUE
-            | BlockId::OXIDIZED_COPPER_GOLEM_STATUE
-    )
 }
 
 /// Weathering copper stair blocks.

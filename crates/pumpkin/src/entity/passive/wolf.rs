@@ -317,10 +317,6 @@ impl Mob for WolfEntity {
             VarInt(self.variant.load(Ordering::Relaxed) as i32),
         );
         entity.set_synced_data(
-            pumpkin_data::tracked_data::wolf::DATA_SOUND_VARIANT_ID,
-            VarInt(self.sound_variant.load(Ordering::Relaxed) as i32),
-        );
-        entity.set_synced_data(
             pumpkin_data::tracked_data::wolf::OWNER_UUID,
             self.get_owner(),
         );
@@ -417,10 +413,5 @@ impl WolfEntity {
     pub fn set_sound_variant(&self, sound_variant: WolfSoundVariant) {
         self.sound_variant
             .store(sound_variant as u8, Ordering::Relaxed);
-        let entity = self.get_entity();
-        entity.set_synced_data(
-            pumpkin_data::tracked_data::wolf::DATA_SOUND_VARIANT_ID,
-            VarInt(sound_variant as u8 as i32),
-        );
     }
 }

@@ -168,9 +168,15 @@ fn resolve_palette(structure: &NbtCompound) -> GameTestResult<Vec<PaletteEntry>>
         let name = entry
             .get_string("Name")
             .ok_or_else(|| invalid_structure(format!("Palette entry {index} is missing 'Name'")))?;
-        let block = Block::from_name(name).ok_or_else(|| {
-            invalid_structure(format!("Unknown block '{name}' in structure palette"))
-        })?;
+        // 1.21.1 has no test block: it's placed as a data structure block, its mode kept here.
+        let is_test_block = name.strip_prefix("minecraft:").unwrap_or(name) == "test_block";
+        let block = if is_test_block {
+            &Block::STRUCTURE_BLOCK
+        } else {
+            Block::from_name(name).ok_or_else(|| {
+                invalid_structure(format!("Unknown block '{name}' in structure palette"))
+            })?
+        };
 
         let mut test_mode = None;
         let state = if let Some(properties) = entry.get_compound("Properties") {
@@ -181,7 +187,7 @@ fn resolve_palette(structure: &NbtCompound) -> GameTestResult<Vec<PaletteEntry>>
                         "Block '{name}' property '{property_name}' in palette entry {index} is not a string"
                     ))
                 })?;
-                if block == &Block::TEST_BLOCK && property_name.as_ref() == "mode" {
+                if is_test_block && property_name.as_ref() == "mode" {
                     test_mode = Some(TestBlockMode::from_serialized_name(property_value).ok_or_else(
                         || {
                             invalid_structure(format!(
@@ -189,8 +195,12 @@ fn resolve_palette(structure: &NbtCompound) -> GameTestResult<Vec<PaletteEntry>>
                             ))
                         },
                     )?);
+                    continue;
                 }
                 property_pairs.push((property_name.as_ref(), property_value));
+            }
+            if is_test_block {
+                property_pairs.push(("mode", "data"));
             }
 
             block
@@ -200,11 +210,15 @@ fn resolve_palette(structure: &NbtCompound) -> GameTestResult<Vec<PaletteEntry>>
                         "No Pumpkin block state matches palette entry {index} for '{name}'"
                     ))
                 })?
+        } else if is_test_block {
+            block
+                .state_from_properties(&[("mode", "data")])
+                .unwrap_or(block.default_state)
         } else {
             block.default_state
         };
 
-        if block == &Block::TEST_BLOCK && test_mode.is_none() {
+        if is_test_block && test_mode.is_none() {
             // TestBlockMode.START is the first/default enum value in the 26.2 server source.
             test_mode = Some(TestBlockMode::Start);
         }

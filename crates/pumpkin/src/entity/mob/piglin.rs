@@ -1012,8 +1012,6 @@ impl Mob for PiglinEntity {
 
             let weapon = if rand::random::<f32>() < 0.5 {
                 &Item::CROSSBOW
-            } else if rand::random_range(0..10) == 0 {
-                &Item::GOLDEN_SPEAR
             } else {
                 &Item::GOLDEN_SWORD
             };

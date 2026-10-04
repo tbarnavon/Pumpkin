@@ -143,8 +143,12 @@ fn load_datapack_registry_ids(dir: &std::path::Path) -> BTreeMap<String, u16> {
     id_map
 }
 
+/// Loads and resolves the datapack's tags and the server-internal tags of `internal_data_dir`,
+/// adding the `(category, tag)` pairs of the internal ones to `internal`.
 fn load_datapack_tags(
     data_dir: &std::path::Path,
+    internal_data_dir: &std::path::Path,
+    internal: &mut HashSet<(String, String)>,
 ) -> BTreeMap<String, BTreeMap<String, Vec<String>>> {
     let mut raw_categories: BTreeMap<String, BTreeMap<String, Vec<String>>> = BTreeMap::new();
 
@@ -222,14 +226,34 @@ fn load_datapack_tags(
         }
     }
 
-    if let Ok(entries) = fs::read_dir(data_dir) {
-        let mut entries: Vec<_> = entries.flatten().collect();
-        entries.sort_by_key(|e| e.path());
-        for entry in entries {
-            let namespace = entry.file_name().to_string_lossy().into_owned();
-            let tags_dir = entry.path().join("tags");
-            if tags_dir.is_dir() {
-                walk_namespace_tags(&tags_dir, &tags_dir, &namespace, &mut raw_categories);
+    fn walk_data_dir(
+        data_dir: &std::path::Path,
+        raw: &mut BTreeMap<String, BTreeMap<String, Vec<String>>>,
+    ) {
+        if let Ok(entries) = fs::read_dir(data_dir) {
+            let mut entries: Vec<_> = entries.flatten().collect();
+            entries.sort_by_key(|e| e.path());
+            for entry in entries {
+                let namespace = entry.file_name().to_string_lossy().into_owned();
+                let tags_dir = entry.path().join("tags");
+                if tags_dir.is_dir() {
+                    walk_namespace_tags(&tags_dir, &tags_dir, &namespace, raw);
+                }
+            }
+        }
+    }
+
+    walk_data_dir(data_dir, &mut raw_categories);
+
+    // Later versions' tags the game code checks; a vanilla tag of the same name wins.
+    let mut internal_raw = BTreeMap::new();
+    walk_data_dir(internal_data_dir, &mut internal_raw);
+    for (cat, tag_map) in internal_raw {
+        let cat_map = raw_categories.entry(cat.clone()).or_default();
+        for (tag_name, values) in tag_map {
+            if !cat_map.contains_key(&tag_name) {
+                internal.insert((cat.clone(), tag_name.clone()));
+                cat_map.insert(tag_name, values);
             }
         }
     }
@@ -389,12 +413,18 @@ pub(crate) fn build() -> TokenStream {
     let mut latest_match_arms = Vec::new();
     let mut all_version_code = Vec::new();
     let mut version_fn_match_arms = Vec::new();
+    let mut internal_tag_arms = Vec::new();
 
     for (ver_folder, ver_ident_str) in versions {
         let datapack_data_dir = std::path::Path::new("../../assets/datapack/data");
         let datapack_base = datapack_data_dir.join("minecraft");
 
-        let tags = load_datapack_tags(&datapack_data_dir);
+        let mut internal_tags = HashSet::new();
+        let tags = load_datapack_tags(
+            datapack_data_dir,
+            std::path::Path::new("../../assets/tags_internal/data"),
+            &mut internal_tags,
+        );
         let is_latest = ver_folder == "1_21_1";
 
         let mut ver_cat_match_arms = Vec::new();
@@ -423,20 +453,23 @@ pub(crate) fn build() -> TokenStream {
                 }
             }
 
-            for (tag_name, values) in tag_map {
-                let ids: Vec<u16> = values
-                    .iter()
-                    .filter_map(|v| match key.as_str() {
-                        "block" => block_id_map.get(v).copied(),
-                        "item" => item_id_map.get(v).copied(),
-                        "fluid" => fluid_id_map.get(v).copied(),
-                        "entity_type" => entity_id_map.get(v).copied(),
-                        "game_event" => game_event_id_map.get(v).copied(),
-                        "potion" => potion_id_map.get(v).copied(),
-                        "point_of_interest_type" => poi_id_map.get(v).copied(),
-                        _ => datapack_id_maps.get(&key).and_then(|m| m.get(v).copied()),
-                    })
-                    .collect();
+            for (tag_name, mut values) in tag_map {
+                let id_of = |v: &String| match key.as_str() {
+                    "block" => block_id_map.get(v).copied(),
+                    "item" => item_id_map.get(v).copied(),
+                    "fluid" => fluid_id_map.get(v).copied(),
+                    "entity_type" => entity_id_map.get(v).copied(),
+                    "game_event" => game_event_id_map.get(v).copied(),
+                    "potion" => potion_id_map.get(v).copied(),
+                    "point_of_interest_type" => poi_id_map.get(v).copied(),
+                    _ => datapack_id_maps.get(&key).and_then(|m| m.get(v).copied()),
+                };
+                let internal = internal_tags.contains(&(key.clone(), tag_name.clone()));
+                if internal {
+                    // Only what 1.21.1 has.
+                    values.retain(|v| id_of(v).is_some());
+                }
+                let ids: Vec<u16> = values.iter().filter_map(id_of).collect();
 
                 let tag_const_name = format_ident!(
                     "{}",
@@ -448,6 +481,9 @@ pub(crate) fn build() -> TokenStream {
                         pub const #tag_const_name: Tag = (&[#(#values),*], &[#(#ids),*], #tag_name);
                     });
                     tag_map_entries.push(quote! { #tag_name => &#key_pascal::#tag_const_name });
+                    if internal {
+                        internal_tag_arms.push(quote! { (RegistryKey::#key_pascal, #tag_name) });
+                    }
                 } else {
                     tag_map_entries
                         .push(quote! { #tag_name => &(&[#(#values),*], &[#(#ids),*], #tag_name) });
@@ -547,6 +583,13 @@ pub(crate) fn build() -> TokenStream {
                 return None;
             }
             Some(get_latest_map(tag_category))
+        }
+
+        /// Whether `tag` is one of later versions' tags the server checks internally, which is
+        /// never sent to clients.
+        #[must_use]
+        pub fn is_internal_tag(tag_category: RegistryKey, tag: &str) -> bool {
+            matches!((tag_category, tag), #(#internal_tag_arms)|*)
         }
 
 

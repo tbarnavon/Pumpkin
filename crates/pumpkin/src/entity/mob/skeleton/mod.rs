@@ -19,7 +19,6 @@ use crate::entity::{
 use crate::world::World;
 
 pub mod bogged;
-pub mod parched;
 #[allow(clippy::module_inception)]
 pub mod skeleton;
 pub mod stray;

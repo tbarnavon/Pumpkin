@@ -25,7 +25,7 @@ pub fn serialize_java_packet(
                 code_of_conduct: &data.code_of_conduct,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::ConfigCConfigDisconnect(data) => {
@@ -33,7 +33,7 @@ pub fn serialize_java_packet(
                 reason: &data.reason,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::ConfigCFeatureFlags(data) => {
@@ -42,7 +42,7 @@ pub fn serialize_java_packet(
                 features: &vec_features,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::ConfigCConfigPing(data) => {
@@ -50,7 +50,7 @@ pub fn serialize_java_packet(
                 id: data.id.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::ConfigCPluginMessage(data) => {
@@ -59,7 +59,7 @@ pub fn serialize_java_packet(
                 data: &data.data,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::ConfigCConfigPostEffects(data) => {
@@ -67,7 +67,7 @@ pub fn serialize_java_packet(
                 effects: &data.effects,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::ConfigCTransfer(data) => {
@@ -77,7 +77,7 @@ pub fn serialize_java_packet(
                 port: &var_int_port,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::LoginCLoginDisconnect(data) => {
@@ -85,7 +85,7 @@ pub fn serialize_java_packet(
                 json_reason: data.json_reason.clone(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::LoginCLoginPluginRequest(data) => {
@@ -95,7 +95,7 @@ pub fn serialize_java_packet(
                 data: &data.data,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::LoginCSetCompression(data) => {
@@ -103,7 +103,7 @@ pub fn serialize_java_packet(
                 threshold: VarInt(data.threshold),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CAcknowledgeBlockChange(data) => {
@@ -111,7 +111,7 @@ pub fn serialize_java_packet(
                 sequence_id: VarInt(data.sequence_id),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CActionBar(data) => {
@@ -121,7 +121,7 @@ pub fn serialize_java_packet(
                 action_bar: &component_action_bar,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetBlockDestroyStage(data) => {
@@ -135,7 +135,7 @@ pub fn serialize_java_packet(
                 destroy_stage: data.destroy_stage.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CBlockEntityData(data) => {
@@ -149,7 +149,7 @@ pub fn serialize_java_packet(
                 nbt_data: data.nbt_data.clone().into_boxed_slice(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CBlockEvent(data) => {
@@ -164,7 +164,7 @@ pub fn serialize_java_packet(
                 block_type: VarInt(data.block_type),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CBlockUpdate(data) => {
@@ -177,7 +177,7 @@ pub fn serialize_java_packet(
                 state_id: VarInt(data.state_id),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CCenterChunk(data) => {
@@ -186,7 +186,7 @@ pub fn serialize_java_packet(
                 chunk_z: VarInt(data.chunk_z),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CChangeDifficulty(data) => {
@@ -195,7 +195,7 @@ pub fn serialize_java_packet(
                 locked: data.locked.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CChunkBatchEnd(data) => {
@@ -203,7 +203,7 @@ pub fn serialize_java_packet(
                 batch_size: VarInt(data.batch_size),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CClearTitle(data) => {
@@ -211,7 +211,7 @@ pub fn serialize_java_packet(
                 reset: data.reset.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CCloseContainer(data) => {
@@ -219,7 +219,7 @@ pub fn serialize_java_packet(
                 sync_id: VarInt(data.sync_id),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CCombatDeath(data) => {
@@ -229,7 +229,7 @@ pub fn serialize_java_packet(
                 message: &component_message,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CCombatEnd(data) => {
@@ -237,7 +237,7 @@ pub fn serialize_java_packet(
                 duration_ticks: VarInt(data.duration_ticks),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CCustomChatCompletions(data) => {
@@ -247,7 +247,7 @@ pub fn serialize_java_packet(
                 entries: &vec_entries,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CCustomPayload(data) => {
@@ -256,7 +256,7 @@ pub fn serialize_java_packet(
                 data: &data.data,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CDebugBlockValue(data) => {
@@ -268,7 +268,7 @@ pub fn serialize_java_packet(
                 value: &data.value,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CDebugEntityValue(data) => {
@@ -278,7 +278,7 @@ pub fn serialize_java_packet(
                 value: &data.value,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CDebugEvent(data) => {
@@ -287,7 +287,7 @@ pub fn serialize_java_packet(
                 data: &data.data,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CDebugSample(data) => {
@@ -297,7 +297,7 @@ pub fn serialize_java_packet(
                 sample_type: VarInt(data.sample_type),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CPlayDisconnect(data) => {
@@ -306,7 +306,7 @@ pub fn serialize_java_packet(
                 reason: &component_reason,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CDisplayObjective(data) => {
@@ -315,7 +315,7 @@ pub fn serialize_java_packet(
                 score_name: data.score_name.clone(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CEntityAnimation(data) => {
@@ -324,7 +324,7 @@ pub fn serialize_java_packet(
                 animation: data.animation.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetEntityMetadata(data) => {
@@ -333,7 +333,7 @@ pub fn serialize_java_packet(
                 metadata: data.metadata.clone().into_boxed_slice(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CEntityStatus(data) => {
@@ -342,7 +342,7 @@ pub fn serialize_java_packet(
                 entity_status: data.entity_status.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CEntityVelocity(data) => {
@@ -358,7 +358,7 @@ pub fn serialize_java_packet(
                 ),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CGameEvent(data) => {
@@ -367,7 +367,7 @@ pub fn serialize_java_packet(
                 value: data.value.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CGameTestHighlightPos(data) => {
@@ -380,7 +380,7 @@ pub fn serialize_java_packet(
                 duration_ms: data.duration_ms.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CHeadRot(data) => {
@@ -389,7 +389,7 @@ pub fn serialize_java_packet(
                 head_yaw: data.head_yaw.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CHurtAnimation(data) => {
@@ -398,7 +398,7 @@ pub fn serialize_java_packet(
                 yaw: data.yaw.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CInitializeWorldBorder(data) => {
@@ -413,7 +413,7 @@ pub fn serialize_java_packet(
                 warning_time: VarInt(data.warning_time),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CItemCooldown(data) => {
@@ -422,7 +422,7 @@ pub fn serialize_java_packet(
                 cooldown: VarInt(data.cooldown),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CKeepAlive(data) => {
@@ -430,7 +430,7 @@ pub fn serialize_java_packet(
                 keep_alive_id: data.keep_alive_id.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CLevelEvent(data) => {
@@ -445,7 +445,7 @@ pub fn serialize_java_packet(
                 disable_relative_volume: data.disable_relative_volume.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CMoveVehicle(data) => {
@@ -457,7 +457,7 @@ pub fn serialize_java_packet(
                 pitch: data.pitch.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::COpenBook(data) => {
@@ -465,7 +465,7 @@ pub fn serialize_java_packet(
                 hand: VarInt(data.hand),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::COpenMountScreen(data) => {
@@ -475,7 +475,7 @@ pub fn serialize_java_packet(
                 entity_id: data.entity_id.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::COpenScreen(data) => {
@@ -487,7 +487,7 @@ pub fn serialize_java_packet(
                 window_title: &component_window_title,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::COpenSignEditor(data) => {
@@ -500,7 +500,7 @@ pub fn serialize_java_packet(
                 is_front_text: data.is_front_text.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CParticle(data) => {
@@ -523,7 +523,7 @@ pub fn serialize_java_packet(
                 data: &data.data,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CPlayPing(data) => {
@@ -531,7 +531,7 @@ pub fn serialize_java_packet(
                 id: data.id.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CPingResponse(data) => {
@@ -539,7 +539,7 @@ pub fn serialize_java_packet(
                 payload: data.payload.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CPlaceGhostRecipe(data) => {
@@ -548,7 +548,7 @@ pub fn serialize_java_packet(
                 recipe_id: &data.recipe_id,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CPlayerAbilities(data) => {
@@ -558,7 +558,7 @@ pub fn serialize_java_packet(
                 field_of_view: data.field_of_view.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CRemovePlayerInfo(data) => {
@@ -571,7 +571,7 @@ pub fn serialize_java_packet(
                 players: &vec_players,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CPlayerRotation(data) => {
@@ -580,7 +580,7 @@ pub fn serialize_java_packet(
                 pitch: data.pitch.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CPlayerSpawnPosition(data) => {
@@ -595,7 +595,7 @@ pub fn serialize_java_packet(
                 pitch: data.pitch.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CPostEffects(data) => {
@@ -603,7 +603,7 @@ pub fn serialize_java_packet(
                 effects: &data.effects,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CProjectilePower(data) => {
@@ -614,7 +614,7 @@ pub fn serialize_java_packet(
                 z_power: data.z_power.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CRecipeBookAdd(data) => {
@@ -623,7 +623,7 @@ pub fn serialize_java_packet(
                 dynamic_recipes: &[],
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CRecipeBookRemove(data) => {
@@ -632,7 +632,7 @@ pub fn serialize_java_packet(
                 recipes: &vec_recipes,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CRecipeBookSettings(data) => {
@@ -647,7 +647,7 @@ pub fn serialize_java_packet(
                 smoker_filtering: data.smoker_filtering.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CRemoveEntities(data) => {
@@ -656,7 +656,7 @@ pub fn serialize_java_packet(
                 entity_ids: &vec_entity_ids,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CRemoveMobEffect(data) => {
@@ -665,7 +665,7 @@ pub fn serialize_java_packet(
                 effect_id: VarInt(data.effect_id),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetBorderCenter(data) => {
@@ -674,7 +674,7 @@ pub fn serialize_java_packet(
                 z: data.z.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetBorderLerpSize(data) => {
@@ -684,7 +684,7 @@ pub fn serialize_java_packet(
                 speed: pumpkin_protocol::codec::var_long::VarLong(data.speed.try_into().unwrap()),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetBorderSize(data) => {
@@ -692,7 +692,7 @@ pub fn serialize_java_packet(
                 diameter: data.diameter.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetBorderWarningDelay(data) => {
@@ -700,7 +700,7 @@ pub fn serialize_java_packet(
                 warning_time: VarInt(data.warning_time),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetBorderWarningDistance(data) => {
@@ -708,7 +708,7 @@ pub fn serialize_java_packet(
                 warning_blocks: VarInt(data.warning_blocks),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetCamera(data) => {
@@ -716,7 +716,7 @@ pub fn serialize_java_packet(
                 camera_id: VarInt(data.camera_id),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetChunkCacheRadius(data) => {
@@ -724,7 +724,7 @@ pub fn serialize_java_packet(
                 radius: VarInt(data.radius),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetContainerProperty(data) => {
@@ -734,7 +734,7 @@ pub fn serialize_java_packet(
                 value: data.value.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetEntityLink(data) => {
@@ -744,7 +744,7 @@ pub fn serialize_java_packet(
                 leash: data.leash.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetExperience(data) => {
@@ -754,7 +754,7 @@ pub fn serialize_java_packet(
                 total_experience: VarInt(data.total_experience),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetHealth(data) => {
@@ -764,7 +764,7 @@ pub fn serialize_java_packet(
                 food_saturation: data.food_saturation.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetPassengers(data) => {
@@ -774,7 +774,7 @@ pub fn serialize_java_packet(
                 passengers: &vec_passengers,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSetSimulationDistance(data) => {
@@ -782,7 +782,7 @@ pub fn serialize_java_packet(
                 simulation_distance: VarInt(data.simulation_distance),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CTitleText(data) => {
@@ -791,7 +791,7 @@ pub fn serialize_java_packet(
                 title: &component_title,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CTitleAnimation(data) => {
@@ -801,7 +801,7 @@ pub fn serialize_java_packet(
                 fade_out_ticks: data.fade_out_ticks.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSpawnEntity(data) => {
@@ -830,7 +830,7 @@ pub fn serialize_java_packet(
                 data: VarInt(data.data),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CSubtitle(data) => {
@@ -839,7 +839,7 @@ pub fn serialize_java_packet(
                 subtitle: &component_subtitle,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CTabList(data) => {
@@ -850,7 +850,7 @@ pub fn serialize_java_packet(
                 footer: &component_footer,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CTagQueryResponse(data) => {
@@ -859,7 +859,7 @@ pub fn serialize_java_packet(
                 nbt_bytes: &data.nbt_bytes,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CTakeItemEntity(data) => {
@@ -869,7 +869,7 @@ pub fn serialize_java_packet(
                 stack_amount: VarInt(data.stack_amount),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CTickingState(data) => {
@@ -878,7 +878,7 @@ pub fn serialize_java_packet(
                 is_frozen: data.is_frozen.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CTickingStep(data) => {
@@ -886,7 +886,7 @@ pub fn serialize_java_packet(
                 tick_steps: VarInt(data.tick_steps),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CTransfer(data) => {
@@ -895,7 +895,7 @@ pub fn serialize_java_packet(
                 port: VarInt(data.port),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CUnloadChunk(data) => {
@@ -904,7 +904,7 @@ pub fn serialize_java_packet(
                 z: data.z.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CUpdateEntityPos(data) => {
@@ -918,7 +918,7 @@ pub fn serialize_java_packet(
                 on_ground: data.on_ground.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CUpdateEntityPosRot(data) => {
@@ -934,7 +934,7 @@ pub fn serialize_java_packet(
                 on_ground: data.on_ground.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CUpdateEntityRot(data) => {
@@ -945,7 +945,7 @@ pub fn serialize_java_packet(
                 on_ground: data.on_ground.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CUpdateMobEffect(data) => {
@@ -957,7 +957,7 @@ pub fn serialize_java_packet(
                 flags: data.flags.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CUpdateRecipes(data) => {
@@ -965,7 +965,7 @@ pub fn serialize_java_packet(
                 raw_data: &data.raw_data,
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::CWorldEvent(data) => {
@@ -980,7 +980,7 @@ pub fn serialize_java_packet(
                 disable_relative_volume: data.disable_relative_volume.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::StatusCPingResponse(data) => {
@@ -988,7 +988,7 @@ pub fn serialize_java_packet(
                 payload: data.payload.try_into().unwrap(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         ClientboundPacket::StatusCStatusResponse(data) => {
@@ -996,7 +996,7 @@ pub fn serialize_java_packet(
                 json_response: data.json_response.clone(),
             };
             let mut buf = Vec::new();
-            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).unwrap();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
         _ => None,

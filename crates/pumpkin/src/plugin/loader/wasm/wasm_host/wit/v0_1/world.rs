@@ -246,10 +246,6 @@ pub(crate) const fn to_wit_noteblock_instrument(
         InternalNoteblockInstrument::Bit => WitNoteblockInstrument::Bit,
         InternalNoteblockInstrument::Banjo => WitNoteblockInstrument::Banjo,
         InternalNoteblockInstrument::Pling => WitNoteblockInstrument::Pling,
-        InternalNoteblockInstrument::Trumpet => WitNoteblockInstrument::Trumpet,
-        InternalNoteblockInstrument::TrumpetExposed => WitNoteblockInstrument::TrumpetExposed,
-        InternalNoteblockInstrument::TrumpetOxidized => WitNoteblockInstrument::TrumpetOxidized,
-        InternalNoteblockInstrument::TrumpetWeathered => WitNoteblockInstrument::TrumpetWeathered,
         InternalNoteblockInstrument::Zombie => WitNoteblockInstrument::Zombie,
         InternalNoteblockInstrument::Skeleton => WitNoteblockInstrument::Skeleton,
         InternalNoteblockInstrument::Creeper => WitNoteblockInstrument::Creeper,
@@ -2723,7 +2719,8 @@ pub const fn from_wit_sound_category(
             pumpkin_data::sound::SoundCategory::Ambient
         }
         pumpkin::plugin::sounds::SoundCategory::Voice => pumpkin_data::sound::SoundCategory::Voice,
-        pumpkin::plugin::sounds::SoundCategory::Ui => pumpkin_data::sound::SoundCategory::Ui,
+        // 1.21.1 has no UI category.
+        pumpkin::plugin::sounds::SoundCategory::Ui => pumpkin_data::sound::SoundCategory::Master,
     }
 }
 
@@ -2756,10 +2753,6 @@ mod tests {
             (
                 pumpkin::plugin::particles::Particle::HappyVillager,
                 pumpkin_data::particle::Particle::HappyVillager,
-            ),
-            (
-                pumpkin::plugin::particles::Particle::SulfurCubeGoo,
-                pumpkin_data::particle::Particle::SulfurCubeGoo,
             ),
         ];
 

@@ -522,7 +522,7 @@ impl DispenserBlock {
             return false;
         };
 
-        let entity_type = BoatItem::item_to_entity(item.item);
+        let (entity_type, boat_type) = BoatItem::item_to_entity(item.item);
         let dimensions = EntityDimensions::new(
             entity_type.dimension[0],
             entity_type.dimension[1],
@@ -536,7 +536,9 @@ impl DispenserBlock {
         let facing = to_normal(ctx.facing);
         let entity = Entity::new(ctx.world.clone(), spawn_pos, entity_type);
         entity.set_rotation(facing.x.atan2(facing.z) as f32 * 57.295_776, 0.0);
-        ctx.world.spawn_entity(Arc::new(BoatEntity::new(entity)));
+        let boat = Arc::new(BoatEntity::new(entity));
+        boat.set_boat_type(boat_type);
+        ctx.world.spawn_entity(boat);
 
         ctx.world
             .sync_world_event(WorldEvent::SoundDispenserDispense, *ctx.position, 0);
@@ -667,7 +669,7 @@ impl DispenserBlock {
         let entity = Entity::new(
             ctx.world.clone(),
             Self::projectile_spawn_position(ctx),
-            &EntityType::SPLASH_POTION,
+            &EntityType::POTION,
         );
         let potion = SplashPotionEntity::new(entity);
         potion.set_item_stack(projectile);
@@ -689,7 +691,7 @@ impl DispenserBlock {
         let entity = Entity::new(
             ctx.world.clone(),
             Self::projectile_spawn_position(ctx),
-            &EntityType::LINGERING_POTION,
+            &EntityType::POTION,
         );
         let potion = LingeringPotionEntity::new(entity);
         potion.set_item_stack(projectile);

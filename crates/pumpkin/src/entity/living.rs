@@ -2498,7 +2498,7 @@ impl LivingEntity {
                 self.set_health(1.0);
                 self.entity.world.load().send_entity_status(
                     &self.entity,
-                    EntityStatus::ProtectedFromDeath,
+                    EntityStatus::TalismanActivate,
                     Some(ActorEventID::InstantDeath),
                 );
 
@@ -4025,7 +4025,6 @@ pub(crate) const fn bypasses_armor_durability(damage_type: &DamageType) -> bool 
             && DamageType::WITHER.id < 64
             && DamageType::DRAGON_BREATH.id < 64
             && DamageType::STARVE.id < 64
-            && DamageType::ENDER_PEARL.id < 64
             && DamageType::FREEZE.id < 64
             && DamageType::STALAGMITE.id < 64
             && DamageType::MAGIC.id < 64
@@ -4046,7 +4045,6 @@ pub(crate) const fn bypasses_armor_durability(damage_type: &DamageType) -> bool 
         | (1u64 << DamageType::WITHER.id)
         | (1u64 << DamageType::DRAGON_BREATH.id)
         | (1u64 << DamageType::STARVE.id)
-        | (1u64 << DamageType::ENDER_PEARL.id)
         | (1u64 << DamageType::FREEZE.id)
         | (1u64 << DamageType::STALAGMITE.id)
         | (1u64 << DamageType::MAGIC.id)
@@ -4084,7 +4082,6 @@ mod tests {
             DamageType::DRAGON_BREATH,
             DamageType::STARVE,
             DamageType::FALL,
-            DamageType::ENDER_PEARL,
             DamageType::FREEZE,
             DamageType::STALAGMITE,
             DamageType::MAGIC,
@@ -4159,7 +4156,6 @@ mod tests {
         let cases = [
             (&EntityType::SKELETON, Sound::EntitySkeletonHurt),
             (&EntityType::BOGGED, Sound::EntityBoggedHurt),
-            (&EntityType::PARCHED, Sound::EntityParchedHurt),
             (
                 &EntityType::WITHER_SKELETON,
                 Sound::EntityWitherSkeletonHurt,

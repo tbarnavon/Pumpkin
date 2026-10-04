@@ -3,7 +3,7 @@ use std::sync::Arc;
 use crate::entity::Entity;
 use crate::entity::EntityBase;
 use crate::entity::player::Player;
-use crate::entity::vehicle::boat::BoatEntity;
+use crate::entity::vehicle::boat::{BOAT_TYPES, BoatEntity};
 use crate::item::{ItemBehaviour, ItemMetadata};
 use pumpkin_data::Block;
 use pumpkin_data::entity::EntityType;
@@ -18,36 +18,19 @@ use crate::world::World;
 pub struct BoatItem;
 
 impl BoatItem {
-    /// Maps boat item to corresponding entity type
-    pub(crate) fn item_to_entity(item: &Item) -> &'static EntityType {
-        match item.id {
-            val if val == Item::OAK_BOAT.id => &EntityType::OAK_BOAT,
-            val if val == Item::OAK_CHEST_BOAT.id => &EntityType::OAK_CHEST_BOAT,
-            val if val == Item::SPRUCE_BOAT.id => &EntityType::SPRUCE_BOAT,
-            val if val == Item::SPRUCE_CHEST_BOAT.id => &EntityType::SPRUCE_CHEST_BOAT,
-            val if val == Item::BIRCH_BOAT.id => &EntityType::BIRCH_BOAT,
-            val if val == Item::BIRCH_CHEST_BOAT.id => &EntityType::BIRCH_CHEST_BOAT,
-            val if val == Item::JUNGLE_BOAT.id => &EntityType::JUNGLE_BOAT,
-            val if val == Item::JUNGLE_CHEST_BOAT.id => &EntityType::JUNGLE_CHEST_BOAT,
-            val if val == Item::ACACIA_BOAT.id => &EntityType::ACACIA_BOAT,
-            val if val == Item::ACACIA_CHEST_BOAT.id => &EntityType::ACACIA_CHEST_BOAT,
-            val if val == Item::DARK_OAK_BOAT.id => &EntityType::DARK_OAK_BOAT,
-            val if val == Item::DARK_OAK_CHEST_BOAT.id => &EntityType::DARK_OAK_CHEST_BOAT,
-            val if val == Item::MANGROVE_BOAT.id => &EntityType::MANGROVE_BOAT,
-            val if val == Item::MANGROVE_CHEST_BOAT.id => &EntityType::MANGROVE_CHEST_BOAT,
-            val if val == Item::CHERRY_BOAT.id => &EntityType::CHERRY_BOAT,
-            val if val == Item::CHERRY_CHEST_BOAT.id => &EntityType::CHERRY_CHEST_BOAT,
-            val if val == Item::PALE_OAK_BOAT.id => &EntityType::PALE_OAK_BOAT,
-            val if val == Item::PALE_OAK_CHEST_BOAT.id => &EntityType::PALE_OAK_CHEST_BOAT,
-            val if val == Item::POPLAR_BOAT.id => &EntityType::POPLAR_BOAT,
-            val if val == Item::POPLAR_CHEST_BOAT.id => &EntityType::POPLAR_CHEST_BOAT,
-            val if val == Item::BAMBOO_RAFT.id => &EntityType::BAMBOO_RAFT,
-            val if val == Item::BAMBOO_CHEST_RAFT.id => &EntityType::BAMBOO_CHEST_RAFT,
-            _ => {
-                tracing::error!("Unknown boat item ID: {}", item.id);
-                &EntityType::OAK_BOAT
+    /// The entity a boat item places, `boat` or `chest_boat`, and its type (an index into
+    /// [`BOAT_TYPES`]).
+    pub(crate) fn item_to_entity(item: &Item) -> (&'static EntityType, usize) {
+        for (index, (_, boat, chest_boat)) in BOAT_TYPES.iter().enumerate() {
+            if item.id == boat.id {
+                return (&EntityType::BOAT, index);
+            }
+            if item.id == chest_boat.id {
+                return (&EntityType::CHEST_BOAT, index);
             }
         }
+        tracing::error!("Unknown boat item ID: {}", item.id);
+        (&EntityType::BOAT, 0)
     }
 
     /// Gets entity dimensions for the boat type
@@ -62,31 +45,10 @@ impl BoatItem {
 
 impl ItemMetadata for BoatItem {
     fn ids() -> Box<[u16]> {
-        [
-            Item::OAK_BOAT.id,
-            Item::OAK_CHEST_BOAT.id,
-            Item::SPRUCE_BOAT.id,
-            Item::SPRUCE_CHEST_BOAT.id,
-            Item::BIRCH_BOAT.id,
-            Item::BIRCH_CHEST_BOAT.id,
-            Item::JUNGLE_BOAT.id,
-            Item::JUNGLE_CHEST_BOAT.id,
-            Item::ACACIA_BOAT.id,
-            Item::ACACIA_CHEST_BOAT.id,
-            Item::DARK_OAK_BOAT.id,
-            Item::DARK_OAK_CHEST_BOAT.id,
-            Item::MANGROVE_BOAT.id,
-            Item::MANGROVE_CHEST_BOAT.id,
-            Item::CHERRY_BOAT.id,
-            Item::CHERRY_CHEST_BOAT.id,
-            Item::PALE_OAK_BOAT.id,
-            Item::PALE_OAK_CHEST_BOAT.id,
-            Item::POPLAR_BOAT.id,
-            Item::POPLAR_CHEST_BOAT.id,
-            Item::BAMBOO_RAFT.id,
-            Item::BAMBOO_CHEST_RAFT.id,
-        ]
-        .into()
+        BOAT_TYPES
+            .iter()
+            .flat_map(|(_, boat, chest_boat)| [boat.id, chest_boat.id])
+            .collect()
     }
 }
 
@@ -154,7 +116,7 @@ impl ItemBehaviour for BoatItem {
         }
 
         // Create the boat entity
-        let entity_type = Self::item_to_entity(item);
+        let (entity_type, boat_type) = Self::item_to_entity(item);
         let dimensions = Self::get_entity_dimensions(entity_type);
         let boat_box = BoundingBox::new_from_pos(hit_vec.x, hit_vec.y, hit_vec.z, &dimensions);
 
@@ -176,6 +138,7 @@ impl ItemBehaviour for BoatItem {
         entity.set_rotation(player_yaw, 0.0);
 
         let boat_entity = Arc::new(BoatEntity::new(entity));
+        boat_entity.set_boat_type(boat_type);
         world.spawn_entity(boat_entity);
 
         let mut main_hand = player.inventory.held_item();

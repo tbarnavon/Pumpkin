@@ -213,11 +213,10 @@ impl Mob for ZombieEntityBase {
             0.01f32
         };
         if rand::random::<f32>() < weapon_chance {
-            let r = rand::random_range(0..6);
-            let weapon_item = match r {
-                0 => &Item::IRON_SWORD,
-                1 => &Item::IRON_SPEAR,
-                _ => &Item::IRON_SHOVEL,
+            let weapon_item = if rand::random_range(0..3) == 0 {
+                &Item::IRON_SWORD
+            } else {
+                &Item::IRON_SHOVEL
             };
             let living = &self.mob_entity.living_entity;
             let mut equipment = living

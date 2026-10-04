@@ -30,7 +30,6 @@ const NO_SLEEP_IDS: &[u16] = &[
     EntityType::STRAY.id,
     EntityType::WITHER_SKELETON.id,
     EntityType::BREEZE.id,
-    EntityType::CREAKING.id,
     EntityType::CREEPER.id,
     EntityType::DROWNED.id,
     EntityType::ENDERMITE.id,

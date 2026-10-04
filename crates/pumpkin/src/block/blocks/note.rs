@@ -181,10 +181,6 @@ const fn convert_instrument_to_sound(instrument: NoteblockInstrument) -> Sound {
         NoteblockInstrument::WitherSkeleton => Sound::BlockNoteBlockImitateWitherSkeleton,
         NoteblockInstrument::Piglin => Sound::BlockNoteBlockImitatePiglin,
         NoteblockInstrument::CustomHead => Sound::UiButtonClick,
-        NoteblockInstrument::Trumpet => Sound::BlockNoteBlockTrumpet,
-        NoteblockInstrument::TrumpetExposed => Sound::BlockNoteBlockTrumpetExposed,
-        NoteblockInstrument::TrumpetOxidized => Sound::BlockNoteBlockTrumpetOxidized,
-        NoteblockInstrument::TrumpetWeathered => Sound::BlockNoteBlockTrumpetWeathered,
     }
 }
 

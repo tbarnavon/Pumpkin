@@ -50,7 +50,7 @@ pub const WEARING_ARMOR_CHANCE: f32 = 0.15;
 
 /// Chance per attempt to promote the armor tier to the next material.
 /// From vanilla `Mob.WEARING_ARMOR_UPGRADE_MATERIAL_CHANCE`.
-pub const ARMOR_UPGRADE_MATERIAL_CHANCE: f32 = 0.1087;
+pub const ARMOR_UPGRADE_MATERIAL_CHANCE: f32 = 0.095;
 
 /// Maximum number of upgrade attempts for armor tier selection.
 /// From vanilla `Mob.WEARING_ARMOR_UPGRADE_MATERIAL_ATTEMPTS`.
@@ -79,25 +79,19 @@ pub const MOB_SPAWN_ENCHANT_COST_SPAN: i32 = 17;
 // ══════════════════════════════════════════════════════════════════
 // Armor tiers — exact match to vanilla Mob.getEquipmentForSlot()
 // Vanilla approximation: armor type selection (base 0-2 + 3 upgrade
-// attempts at 10.87% per vanilla Mob.populateDefaultEquipmentSlots) and
+// attempts at 9.5% per vanilla Mob.populateDefaultEquipmentSlots) and
 // partial armor chance (0.1 on Hard / 0.25 otherwise).
-// Type 0=Leather, 1=Copper, 2=Gold, 3=Chainmail, 4=Iron, 5=Diamond
+// Type 0=Leather, 1=Gold, 2=Chainmail, 3=Iron, 4=Diamond (1.21.1)
 // Slot order: HEAD, CHEST, LEGS, FEET
 // ══════════════════════════════════════════════════════════════════
 
-static ARMOR_TIERS: LazyLock<[[&'static Item; 4]; 6]> = LazyLock::new(|| {
+static ARMOR_TIERS: LazyLock<[[&'static Item; 4]; 5]> = LazyLock::new(|| {
     [
         [
             &Item::LEATHER_HELMET,
             &Item::LEATHER_CHESTPLATE,
             &Item::LEATHER_LEGGINGS,
             &Item::LEATHER_BOOTS,
-        ],
-        [
-            &Item::COPPER_HELMET,
-            &Item::COPPER_CHESTPLATE,
-            &Item::COPPER_LEGGINGS,
-            &Item::COPPER_BOOTS,
         ],
         [
             &Item::GOLDEN_HELMET,
@@ -213,18 +207,15 @@ pub struct MobEquipmentDef {
 /// equipment tables).
 pub static EQUIPMENT_REGISTRY: LazyLock<HashMap<&'static str, MobEquipmentDef>> =
     LazyLock::new(|| {
-        static ZOMBIE_WEAPONS: [WeaponEntry; 3] = [
+        // 1.21.1's `Zombie.populateDefaultEquipmentSlots`: a sword one time in three.
+        static ZOMBIE_WEAPONS: [WeaponEntry; 2] = [
             WeaponEntry {
                 item: &Item::IRON_SWORD,
                 weight: 1.0,
             },
             WeaponEntry {
-                item: &Item::IRON_SPEAR,
-                weight: 1.0,
-            },
-            WeaponEntry {
                 item: &Item::IRON_SHOVEL,
-                weight: 4.0,
+                weight: 2.0,
             },
         ];
 
@@ -239,18 +230,14 @@ pub static EQUIPMENT_REGISTRY: LazyLock<HashMap<&'static str, MobEquipmentDef>> 
             },
         ];
 
-        static PIGLIN_WEAPONS: [WeaponEntry; 3] = [
+        static PIGLIN_WEAPONS: [WeaponEntry; 2] = [
             WeaponEntry {
                 item: &Item::CROSSBOW,
                 weight: 5.0,
             },
             WeaponEntry {
                 item: &Item::GOLDEN_SWORD,
-                weight: 4.5,
-            },
-            WeaponEntry {
-                item: &Item::GOLDEN_SPEAR,
-                weight: 0.5,
+                weight: 5.0,
             },
         ];
 
@@ -277,16 +264,10 @@ pub static EQUIPMENT_REGISTRY: LazyLock<HashMap<&'static str, MobEquipmentDef>> 
             },
         ];
 
-        static ZOMBIFIED_PIGLIN_WEAPONS: [WeaponEntry; 2] = [
-            WeaponEntry {
-                item: &Item::GOLDEN_SWORD,
-                weight: 19.0,
-            },
-            WeaponEntry {
-                item: &Item::GOLDEN_SPEAR,
-                weight: 1.0,
-            },
-        ];
+        static ZOMBIFIED_PIGLIN_WEAPONS: [WeaponEntry; 1] = [WeaponEntry {
+            item: &Item::GOLDEN_SWORD,
+            weight: 1.0,
+        }];
 
         let mut m = HashMap::new();
 
@@ -643,7 +624,7 @@ fn weighted_select_item(items: &[WeaponEntry]) -> &'static Item {
 
 /// Selects armor using the vanilla algorithm.
 ///
-/// 1. Random base tier (0-2) with up to 3 upgrade attempts at 10.87% each.
+/// 1. Random base tier (0-1) with up to 3 upgrade attempts at 9.5% each.
 /// 2. Iterates HEAD→CHEST→LEGS→FEET, with a chance to stop early (10% Hard,
 ///    25% otherwise) — higher difficulty produces fewer pieces.
 /// 3. Each piece gets the default equipment drop chance.
@@ -651,7 +632,7 @@ fn weighted_select_item(items: &[WeaponEntry]) -> &'static Item {
 fn select_vanilla_armor(difficulty: &RegionalDifficulty) -> Vec<(EquipmentSlot, ItemStack, f32)> {
     let mut rng = rand::rng();
 
-    let mut armor_type = rng.random_range(0..3);
+    let mut armor_type = rng.random_range(0..2);
     let mut i = 1;
     while (i as f32) <= ARMOR_UPGRADE_MATERIAL_ATTEMPTS {
         if rng.random::<f32>() < ARMOR_UPGRADE_MATERIAL_CHANCE {
@@ -659,7 +640,7 @@ fn select_vanilla_armor(difficulty: &RegionalDifficulty) -> Vec<(EquipmentSlot, 
         }
         i += 1;
     }
-    armor_type = armor_type.min(5);
+    armor_type = armor_type.min(4);
 
     let tier = &ARMOR_TIERS[armor_type];
 

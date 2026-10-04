@@ -2,6 +2,8 @@ use crossbeam::atomic::AtomicCell;
 use std::sync::atomic::{AtomicI32, Ordering};
 
 use crate::entity::Entity;
+use pumpkin_data::item::Item;
+use pumpkin_data::item_stack::ItemStack;
 use pumpkin_protocol::java::client::play::Metadata;
 
 use crate::entity::EntityBase;
@@ -13,6 +15,8 @@ pub struct VehicleEntity {
     pub hurt_time: AtomicI32,
     pub hurt_dir: AtomicI32,
     pub damage: AtomicCell<f32>,
+    /// What the vehicle drops when it has no loot table (1.21.1's vehicles have none).
+    pub drop_item: AtomicCell<Option<&'static Item>>,
 }
 
 impl VehicleEntity {
@@ -22,6 +26,7 @@ impl VehicleEntity {
             hurt_time: AtomicI32::new(0),
             hurt_dir: AtomicI32::new(1),
             damage: AtomicCell::new(0.0),
+            drop_item: AtomicCell::new(None),
         }
     }
 
@@ -174,12 +179,14 @@ impl VehicleEntity {
         if entity_drops {
             let resource_name = self.entity.entity_type.resource_name;
             let key = format!("minecraft:entities/{resource_name}");
+            let pos = self.entity.block_pos.load();
             if let Some(loot_table) = pumpkin_data::loot_table::get_loot_table(&key) {
-                let pos = self.entity.block_pos.load();
                 let seed: i64 = rand::random();
                 for stack in crate::world::loot::generate_loot(loot_table, seed) {
                     world.drop_stack(&pos, stack);
                 }
+            } else if let Some(item) = self.drop_item.load() {
+                world.drop_stack(&pos, ItemStack::new(1, item));
             }
         }
 

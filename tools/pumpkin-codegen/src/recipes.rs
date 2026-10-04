@@ -112,7 +112,10 @@ fn trim_pattern_for_template(template: &str) -> Option<String> {
     let patterns = PATTERNS.get_or_init(|| {
         let dir = std::path::Path::new("../../assets/datapack/data/minecraft/trim_pattern");
         let mut patterns = Vec::new();
-        for entry in fs::read_dir(dir).expect("Missing trim_pattern directory").flatten() {
+        for entry in fs::read_dir(dir)
+            .expect("Missing trim_pattern directory")
+            .flatten()
+        {
             let path = entry.path();
             let Some(stem) = path.file_stem().map(|s| s.to_string_lossy().into_owned()) else {
                 continue;
@@ -137,11 +140,14 @@ impl ToTokens for SmithingTrimRecipeStruct {
         let template = self.template.to_token_stream();
         let base = self.base.to_token_stream();
         let addition = self.addition.to_token_stream();
-        let pattern = self.pattern.clone().unwrap_or_else(|| match &self.template {
-            RecipeIngredientTypes::Simple(item) => trim_pattern_for_template(item)
-                .unwrap_or_else(|| panic!("No trim pattern for template {item}")),
-            RecipeIngredientTypes::OneOf(_) => panic!("Trim recipe with several templates"),
-        });
+        let pattern = self
+            .pattern
+            .clone()
+            .unwrap_or_else(|| match &self.template {
+                RecipeIngredientTypes::Simple(item) => trim_pattern_for_template(item)
+                    .unwrap_or_else(|| panic!("No trim pattern for template {item}")),
+                RecipeIngredientTypes::OneOf(_) => panic!("Trim recipe with several templates"),
+            });
 
         tokens.extend(quote! {
             SmithingTrimRecipe {
@@ -521,8 +527,10 @@ impl<'de> Deserialize<'de> for RecipeIngredientTypes {
         Ok(match Raw::deserialize(deserializer)? {
             Raw::One(value) => Self::Simple(value.into_key()),
             Raw::Many(values) => {
-                let mut keys: Vec<String> =
-                    values.into_iter().map(IngredientValue1_21_1::into_key).collect();
+                let mut keys: Vec<String> = values
+                    .into_iter()
+                    .map(IngredientValue1_21_1::into_key)
+                    .collect();
                 if keys.len() == 1 {
                     Self::Simple(keys.remove(0))
                 } else {

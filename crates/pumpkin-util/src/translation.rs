@@ -41,6 +41,18 @@ static PUMPKIN_VI_VN_JSON: &str = include_str!("../../../assets/translations/vi_
 static PUMPKIN_PT_BR_JSON: &str = include_str!("../../../assets/translations/pt_br.json");
 static PUMPKIN_PL_PL_JSON: &str = include_str!("../../../assets/translations/pl_pl.json");
 static BEDROCK_EN_US_LANG: &str = include_str!("../../../assets/en_us_bedrock.lang");
+static LATER_VANILLA_EN_US_JSON: &str = include_str!("../../../assets/en_us_java_internal.json");
+
+/// English text of the vanilla keys of later versions the server uses, which clients don't have.
+static LATER_VANILLA_EN_US: LazyLock<HashMap<String, String>> =
+    LazyLock::new(|| serde_json::from_str(LATER_VANILLA_EN_US_JSON).unwrap_or_default());
+
+/// The English text of `key` when it is a vanilla key of a later version, for clients to show
+/// instead of the key they don't know.
+#[must_use]
+pub fn later_vanilla_fallback(key: &str) -> Option<&'static str> {
+    LATER_VANILLA_EN_US.get(key).map(String::as_str)
+}
 
 /// A character range representing a substitution placeholder within a translation string.
 ///
@@ -353,6 +365,11 @@ pub static TRANSLATIONS: LazyLock<Mutex<[HashMap<String, String>; Locale::COUNT]
 
         for (key, value) in vanilla_en_us {
             array[Locale::EnUs as usize].insert(format!("minecraft:{key}").to_lowercase(), value);
+        }
+        for (key, value) in LATER_VANILLA_EN_US.iter() {
+            array[Locale::EnUs as usize]
+                .entry(format!("minecraft:{key}").to_lowercase())
+                .or_insert_with(|| value.clone());
         }
         for (key, value) in pumpkin_en_us {
             array[Locale::EnUs as usize].insert(format!("pumpkin:{key}"), value);

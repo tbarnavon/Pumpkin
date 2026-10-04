@@ -3,7 +3,6 @@ use std::sync::Arc;
 use super::{Controls, Goal, to_goal_ticks};
 use crate::entity::EntityBase;
 use crate::entity::{ai::pathfinder::NavigatorGoal, mob::Mob, player::Player};
-use pumpkin_data::attributes::Attributes;
 use pumpkin_data::item::Item;
 use pumpkin_util::math::vector3::Vector3;
 
@@ -69,12 +68,11 @@ impl TemptGoal {
             || self.is_tempt_item(&player.inventory().off_hand_item())
     }
 
-    /// Non-combat, line of sight ignored, ranged by `tempt_range` and filtered on the held item.
+    /// Non-combat, line of sight ignored, within 1.21.1's fixed range of 10 blocks and filtered
+    /// on the held item.
     fn find_tempting_player(&self, mob: &dyn Mob) -> Option<Arc<Player>> {
         let mob_entity = mob.get_mob_entity();
-        let range = mob_entity
-            .living_entity
-            .get_attribute_value(&Attributes::TEMPT_RANGE);
+        let range = 10.0;
         let world = mob_entity.living_entity.entity.world.load();
 
         world.get_nearest_player(

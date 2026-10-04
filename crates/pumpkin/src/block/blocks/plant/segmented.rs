@@ -38,10 +38,6 @@ impl_segment_properties!(
     pumpkin_data::block_properties::PinkPetalsLikeProperties,
     flower_amount
 );
-impl_segment_properties!(
-    pumpkin_data::block_properties::LeafLitterLikeProperties,
-    segment_amount
-);
 
 pub trait Segmented: BlockBehaviour {
     type Properties: BlockProperties + SegmentProperties;

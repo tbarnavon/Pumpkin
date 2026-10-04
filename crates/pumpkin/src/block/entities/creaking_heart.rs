@@ -1,12 +1,7 @@
-use std::sync::Arc;
-
 use crossbeam::atomic::AtomicCell;
-use pumpkin_data::sound::{Sound, SoundCategory};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::math::position::BlockPos;
 use uuid::Uuid;
-
-use crate::world::World;
 
 use super::BlockEntity;
 
@@ -82,13 +77,5 @@ impl CreakingHeartBlockEntity {
 
     pub fn set_creaking_uuid(&self, uuid: Option<Uuid>) {
         self.creaking_uuid.store(uuid);
-    }
-
-    pub fn creaking_hurt(&self, world: &Arc<World>) {
-        world.play_sound(
-            Sound::BlockCreakingHeartHurt,
-            SoundCategory::Blocks,
-            &self.position.to_f64(),
-        );
     }
 }

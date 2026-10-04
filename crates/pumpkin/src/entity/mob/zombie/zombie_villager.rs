@@ -410,7 +410,6 @@ mod tests {
         assert!(speeds_up_conversion(&Block::IRON_BARS));
         assert!(speeds_up_conversion(&Block::RED_BED));
         assert!(speeds_up_conversion(&Block::WHITE_BED));
-        assert!(!speeds_up_conversion(&Block::COPPER_BARS));
         assert!(!speeds_up_conversion(&Block::STONE));
         assert!(!speeds_up_conversion(&Block::RED_WOOL));
     }

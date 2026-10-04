@@ -17,7 +17,9 @@ pub enum RegistryKey {
     PaintingVariant,
     PointOfInterestType,
     Potion,
+    VillagerTrade,
     WorldgenBiome,
+    WorldgenConfiguredFeature,
     WorldgenFlatLevelGeneratorPreset,
     WorldgenStructure,
     WorldgenWorldPreset,
@@ -37,7 +39,9 @@ impl RegistryKey {
         Self::PaintingVariant,
         Self::PointOfInterestType,
         Self::Potion,
+        Self::VillagerTrade,
         Self::WorldgenBiome,
+        Self::WorldgenConfiguredFeature,
         Self::WorldgenFlatLevelGeneratorPreset,
         Self::WorldgenStructure,
         Self::WorldgenWorldPreset,
@@ -61,6 +65,8 @@ impl RegistryKey {
     #[must_use]
     pub const fn is_network_synced(&self) -> bool {
         match self {
+            Self::VillagerTrade => false,
+            Self::WorldgenConfiguredFeature => false,
             Self::WorldgenFlatLevelGeneratorPreset => false,
             Self::WorldgenStructure => false,
             Self::WorldgenWorldPreset => false,
@@ -87,7 +93,9 @@ impl RegistryKey {
             "painting_variant" => Some(Self::PaintingVariant),
             "point_of_interest_type" => Some(Self::PointOfInterestType),
             "potion" => Some(Self::Potion),
+            "villager_trade" => Some(Self::VillagerTrade),
             "worldgen/biome" => Some(Self::WorldgenBiome),
+            "worldgen/configured_feature" => Some(Self::WorldgenConfiguredFeature),
             "worldgen/flat_level_generator_preset" => Some(Self::WorldgenFlatLevelGeneratorPreset),
             "worldgen/structure" => Some(Self::WorldgenStructure),
             "worldgen/world_preset" => Some(Self::WorldgenWorldPreset),
@@ -110,7 +118,9 @@ impl RegistryKey {
             Self::PaintingVariant => "painting_variant",
             Self::PointOfInterestType => "point_of_interest_type",
             Self::Potion => "potion",
+            Self::VillagerTrade => "villager_trade",
             Self::WorldgenBiome => "worldgen/biome",
+            Self::WorldgenConfiguredFeature => "worldgen/configured_feature",
             Self::WorldgenFlatLevelGeneratorPreset => "worldgen/flat_level_generator_preset",
             Self::WorldgenStructure => "worldgen/structure",
             Self::WorldgenWorldPreset => "worldgen/world_preset",
@@ -244,7 +254,19 @@ pub mod Block {
         "c:chains",
     );
     pub const C_CHESTS: Tag = (
-        &["chest", "trapped_chest", "ender_chest"],
+        &[
+            "chest",
+            "trapped_chest",
+            "ender_chest",
+            "copper_chest",
+            "exposed_copper_chest",
+            "weathered_copper_chest",
+            "oxidized_copper_chest",
+            "waxed_copper_chest",
+            "waxed_exposed_copper_chest",
+            "waxed_weathered_copper_chest",
+            "waxed_oxidized_copper_chest",
+        ],
         &[177u16, 411u16, 344u16],
         "c:chests",
     );
@@ -2371,6 +2393,18 @@ pub mod Block {
         &[1u16, 2u16, 4u16, 6u16, 909u16, 1023u16],
         "minecraft:base_stone_overworld",
     );
+    pub const MINECRAFT_BATS_SPAWNABLE_ON: Tag = (
+        &[
+            "stone",
+            "granite",
+            "diorite",
+            "andesite",
+            "tuff",
+            "deepslate",
+        ],
+        &[1u16, 2u16, 4u16, 6u16, 909u16, 1023u16],
+        "minecraft:bats_spawnable_on",
+    );
     pub const MINECRAFT_BEACON_BASE_BLOCKS: Tag = (
         &[
             "netherite_block",
@@ -2431,6 +2465,23 @@ pub mod Block {
         &["bee_nest", "beehive"],
         &[836u16, 837u16],
         "minecraft:beehives",
+    );
+    pub const MINECRAFT_BENEATH_BAMBOO_PODZOL_REPLACEABLE: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16,
+        ],
+        "minecraft:beneath_bamboo_podzol_replaceable",
     );
     pub const MINECRAFT_BIG_DRIPLEAF_PLACEABLE: Tag = (
         &[
@@ -2516,6 +2567,11 @@ pub mod Block {
         ],
         "minecraft:camel_sand_step_sound_blocks",
     );
+    pub const MINECRAFT_CAMELS_SPAWNABLE_ON: Tag = (
+        &["sand", "red_sand", "suspicious_sand"],
+        &[34u16, 36u16, 35u16],
+        "minecraft:camels_spawnable_on",
+    );
     pub const MINECRAFT_CAMPFIRES: Tag = (
         &["campfire", "soul_campfire"],
         &[786u16, 787u16],
@@ -2572,6 +2628,18 @@ pub mod Block {
             880u16, 881u16, 882u16, 883u16, 884u16, 885u16,
         ],
         "minecraft:candles",
+    );
+    pub const MINECRAFT_CANNOT_SUPPORT_KELP: Tag =
+        (&["magma_block"], &[607u16], "minecraft:cannot_support_kelp");
+    pub const MINECRAFT_CANNOT_SUPPORT_SEAGRASS: Tag = (
+        &["magma_block"],
+        &[607u16],
+        "minecraft:cannot_support_seagrass",
+    );
+    pub const MINECRAFT_CANNOT_SUPPORT_SNOW_LAYER: Tag = (
+        &["ice", "packed_ice", "barrier"],
+        &[248u16, 496u16, 464u16],
+        "minecraft:cannot_support_snow_layer",
     );
     pub const MINECRAFT_CAULDRONS: Tag = (
         &[
@@ -2758,11 +2826,42 @@ pub mod Block {
         ],
         "minecraft:concrete_powder",
     );
+    pub const MINECRAFT_CONCRETE_POWDERS: Tag = (
+        &[
+            "white_concrete_powder",
+            "orange_concrete_powder",
+            "magenta_concrete_powder",
+            "light_blue_concrete_powder",
+            "yellow_concrete_powder",
+            "lime_concrete_powder",
+            "pink_concrete_powder",
+            "gray_concrete_powder",
+            "light_gray_concrete_powder",
+            "cyan_concrete_powder",
+            "purple_concrete_powder",
+            "blue_concrete_powder",
+            "brown_concrete_powder",
+            "green_concrete_powder",
+            "red_concrete_powder",
+            "black_concrete_powder",
+        ],
+        &[
+            662u16, 663u16, 664u16, 665u16, 666u16, 667u16, 668u16, 669u16, 670u16, 671u16, 672u16,
+            673u16, 674u16, 675u16, 676u16, 677u16,
+        ],
+        "minecraft:concrete_powders",
+    );
     pub const MINECRAFT_CONVERTABLE_TO_MUD: Tag = (
         &["dirt", "coarse_dirt", "rooted_dirt"],
         &[9u16, 10u16, 1021u16],
         "minecraft:convertable_to_mud",
     );
+    pub const MINECRAFT_CONVERTIBLE_TO_MUD: Tag = (
+        &["dirt", "coarse_dirt", "rooted_dirt"],
+        &[9u16, 10u16, 1021u16],
+        "minecraft:convertible_to_mud",
+    );
+    pub const MINECRAFT_COPPER_CHESTS: Tag = (&[], &[], "minecraft:copper_chests");
     pub const MINECRAFT_COPPER_ORES: Tag = (
         &["copper_ore", "deepslate_copper_ore"],
         &[936u16, 937u16],
@@ -3034,10 +3133,22 @@ pub mod Block {
         &[1u16, 2u16, 4u16, 6u16, 909u16, 1023u16],
         "minecraft:dripstone_replaceable_blocks",
     );
+    pub const MINECRAFT_EDIBLE_FOR_SHEEP: Tag =
+        (&["short_grass"], &[123u16], "minecraft:edible_for_sheep");
     pub const MINECRAFT_EMERALD_ORES: Tag = (
         &["emerald_ore", "deepslate_emerald_ore"],
         &[342u16, 343u16],
         "minecraft:emerald_ores",
+    );
+    pub const MINECRAFT_ENABLES_BUBBLE_COLUMN_DRAG_DOWN: Tag = (
+        &["magma_block"],
+        &[607u16],
+        "minecraft:enables_bubble_column_drag_down",
+    );
+    pub const MINECRAFT_ENABLES_BUBBLE_COLUMN_PUSH_UP: Tag = (
+        &["soul_sand"],
+        &[256u16],
+        "minecraft:enables_bubble_column_push_up",
     );
     pub const MINECRAFT_ENCHANTMENT_POWER_PROVIDER: Tag = (
         &["bookshelf"],
@@ -3327,6 +3438,11 @@ pub mod Block {
         &[39u16, 45u16, 40u16],
         "minecraft:gold_ores",
     );
+    pub const MINECRAFT_GRASS_BLOCKS: Tag = (
+        &["grass_block", "podzol", "mycelium"],
+        &[8u16, 11u16, 323u16],
+        "minecraft:grass_blocks",
+    );
     pub const MINECRAFT_GUARDED_BY_PIGLINS: Tag = (
         &[
             "gold_block",
@@ -3373,6 +3489,44 @@ pub mod Block {
         ],
         &[794u16, 845u16, 263u16, 843u16],
         "minecraft:hoglin_repellents",
+    );
+    pub const MINECRAFT_HUGE_BROWN_MUSHROOM_CAN_PLACE_ON: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "crimson_nylium",
+            "warped_nylium",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 802u16, 793u16,
+        ],
+        "minecraft:huge_brown_mushroom_can_place_on",
+    );
+    pub const MINECRAFT_HUGE_RED_MUSHROOM_CAN_PLACE_ON: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "crimson_nylium",
+            "warped_nylium",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 802u16, 793u16,
+        ],
+        "minecraft:huge_red_mushroom_can_place_on",
     );
     pub const MINECRAFT_ICE: Tag = (
         &["ice", "packed_ice", "blue_ice", "frosted_ice"],
@@ -4927,6 +5081,7 @@ pub mod Block {
         &[323u16],
         "minecraft:mooshrooms_spawnable_on",
     );
+    pub const MINECRAFT_MOSS_BLOCKS: Tag = (&["moss_block"], &[1016u16], "minecraft:moss_blocks");
     pub const MINECRAFT_MOSS_REPLACEABLE: Tag = (
         &[
             "stone",
@@ -4952,6 +5107,11 @@ pub mod Block {
             323u16, 1021u16, 1016u16, 1022u16, 55u16,
         ],
         "minecraft:moss_replaceable",
+    );
+    pub const MINECRAFT_MUD: Tag = (
+        &["mud", "muddy_mangrove_roots"],
+        &[1022u16, 55u16],
+        "minecraft:mud",
     );
     pub const MINECRAFT_MUSHROOM_GROW_BLOCK: Tag = (
         &["mycelium", "podzol", "crimson_nylium", "warped_nylium"],
@@ -5163,6 +5323,11 @@ pub mod Block {
         ],
         "minecraft:occludes_vibration_signals",
     );
+    pub const MINECRAFT_OVERRIDES_MUSHROOM_LIGHT_REQUIREMENT: Tag = (
+        &["mycelium", "podzol", "crimson_nylium", "warped_nylium"],
+        &[323u16, 11u16, 802u16, 793u16],
+        "minecraft:overrides_mushroom_light_requirement",
+    );
     pub const MINECRAFT_OVERWORLD_CARVER_REPLACEABLES: Tag = (
         &[
             "stone",
@@ -5371,6 +5536,57 @@ pub mod Block {
         &[197u16, 119u16, 120u16, 423u16],
         "minecraft:prevent_mob_spawning_inside",
     );
+    pub const MINECRAFT_PREVENTS_NEARBY_LEAF_DECAY: Tag = (
+        &[
+            "dark_oak_log",
+            "dark_oak_wood",
+            "stripped_dark_oak_log",
+            "stripped_dark_oak_wood",
+            "oak_log",
+            "oak_wood",
+            "stripped_oak_log",
+            "stripped_oak_wood",
+            "acacia_log",
+            "acacia_wood",
+            "stripped_acacia_log",
+            "stripped_acacia_wood",
+            "birch_log",
+            "birch_wood",
+            "stripped_birch_log",
+            "stripped_birch_wood",
+            "jungle_log",
+            "jungle_wood",
+            "stripped_jungle_log",
+            "stripped_jungle_wood",
+            "spruce_log",
+            "spruce_wood",
+            "stripped_spruce_log",
+            "stripped_spruce_wood",
+            "mangrove_log",
+            "mangrove_wood",
+            "stripped_mangrove_log",
+            "stripped_mangrove_wood",
+            "cherry_log",
+            "cherry_wood",
+            "stripped_cherry_log",
+            "stripped_cherry_wood",
+            "crimson_stem",
+            "stripped_crimson_stem",
+            "crimson_hyphae",
+            "stripped_crimson_hyphae",
+            "warped_stem",
+            "stripped_warped_stem",
+            "warped_hyphae",
+            "stripped_warped_hyphae",
+        ],
+        &[
+            52u16, 72u16, 62u16, 80u16, 46u16, 66u16, 63u16, 74u16, 50u16, 70u16, 60u16, 78u16,
+            48u16, 68u16, 58u16, 76u16, 49u16, 69u16, 59u16, 77u16, 47u16, 67u16, 57u16, 75u16,
+            53u16, 73u16, 64u16, 81u16, 51u16, 71u16, 61u16, 79u16, 798u16, 799u16, 800u16, 801u16,
+            789u16, 790u16, 791u16, 792u16,
+        ],
+        "minecraft:prevents_nearby_leaf_decay",
+    );
     pub const MINECRAFT_RABBITS_SPAWNABLE_ON: Tag = (
         &["grass_block", "snow", "snow_block", "sand"],
         &[8u16, 247u16, 249u16, 34u16],
@@ -5419,6 +5635,65 @@ pub mod Block {
             809u16, 1020u16,
         ],
         "minecraft:replaceable",
+    );
+    pub const MINECRAFT_REPLACEABLE_BY_MUSHROOMS: Tag = (
+        &[
+            "jungle_leaves",
+            "oak_leaves",
+            "spruce_leaves",
+            "dark_oak_leaves",
+            "acacia_leaves",
+            "birch_leaves",
+            "azalea_leaves",
+            "flowering_azalea_leaves",
+            "mangrove_leaves",
+            "cherry_leaves",
+            "dandelion",
+            "poppy",
+            "blue_orchid",
+            "allium",
+            "azure_bluet",
+            "red_tulip",
+            "orange_tulip",
+            "white_tulip",
+            "pink_tulip",
+            "oxeye_daisy",
+            "cornflower",
+            "lily_of_the_valley",
+            "wither_rose",
+            "torchflower",
+            "short_grass",
+            "fern",
+            "dead_bush",
+            "vine",
+            "glow_lichen",
+            "sunflower",
+            "lilac",
+            "rose_bush",
+            "peony",
+            "tall_grass",
+            "large_fern",
+            "hanging_roots",
+            "pitcher_plant",
+            "water",
+            "seagrass",
+            "tall_seagrass",
+            "brown_mushroom",
+            "red_mushroom",
+            "brown_mushroom_block",
+            "red_mushroom_block",
+            "warped_roots",
+            "nether_sprouts",
+            "crimson_roots",
+        ],
+        &[
+            85u16, 82u16, 83u16, 88u16, 86u16, 84u16, 90u16, 91u16, 89u16, 87u16, 147u16, 149u16,
+            150u16, 151u16, 152u16, 153u16, 154u16, 155u16, 156u16, 157u16, 158u16, 160u16, 159u16,
+            148u16, 123u16, 124u16, 125u16, 317u16, 318u16, 497u16, 498u16, 499u16, 500u16, 501u16,
+            502u16, 1020u16, 600u16, 32u16, 126u16, 127u16, 161u16, 162u16, 305u16, 306u16, 796u16,
+            797u16, 809u16,
+        ],
+        "minecraft:replaceable_by_mushrooms",
     );
     pub const MINECRAFT_REPLACEABLE_BY_TREES: Tag = (
         &[
@@ -5966,6 +6241,377 @@ pub mod Block {
     );
     pub const MINECRAFT_STRIDER_WARM_BLOCKS: Tag =
         (&["lava"], &[33u16], "minecraft:strider_warm_blocks");
+    pub const MINECRAFT_SUBSTRATE_OVERWORLD: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16,
+        ],
+        "minecraft:substrate_overworld",
+    );
+    pub const MINECRAFT_SUPPORT_OVERRIDE_CACTUS_FLOWER: Tag = (
+        &["cactus", "farmland"],
+        &[250u16, 184u16],
+        "minecraft:support_override_cactus_flower",
+    );
+    pub const MINECRAFT_SUPPORT_OVERRIDE_SNOW_LAYER: Tag = (
+        &["honey_block", "soul_sand", "mud"],
+        &[838u16, 256u16, 1022u16],
+        "minecraft:support_override_snow_layer",
+    );
+    pub const MINECRAFT_SUPPORTS_AZALEA: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "farmland",
+            "clay",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 184u16, 251u16,
+        ],
+        "minecraft:supports_azalea",
+    );
+    pub const MINECRAFT_SUPPORTS_BAMBOO: Tag = (
+        &[
+            "sand",
+            "red_sand",
+            "suspicious_sand",
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "bamboo",
+            "bamboo_sapling",
+            "gravel",
+            "suspicious_gravel",
+        ],
+        &[
+            34u16, 36u16, 35u16, 9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16,
+            55u16, 727u16, 726u16, 37u16, 38u16,
+        ],
+        "minecraft:supports_bamboo",
+    );
+    pub const MINECRAFT_SUPPORTS_BIG_DRIPLEAF: Tag = (
+        &[
+            "clay",
+            "moss_block",
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "mud",
+            "muddy_mangrove_roots",
+            "farmland",
+        ],
+        &[
+            251u16, 1016u16, 9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1022u16, 55u16, 184u16,
+        ],
+        "minecraft:supports_big_dripleaf",
+    );
+    pub const MINECRAFT_SUPPORTS_CACTUS: Tag = (
+        &["sand", "red_sand", "suspicious_sand"],
+        &[34u16, 36u16, 35u16],
+        "minecraft:supports_cactus",
+    );
+    pub const MINECRAFT_SUPPORTS_CHORUS_FLOWER: Tag = (
+        &["end_stone"],
+        &[337u16],
+        "minecraft:supports_chorus_flower",
+    );
+    pub const MINECRAFT_SUPPORTS_CHORUS_PLANT: Tag =
+        (&["end_stone"], &[337u16], "minecraft:supports_chorus_plant");
+    pub const MINECRAFT_SUPPORTS_COCOA: Tag = (
+        &[
+            "jungle_log",
+            "jungle_wood",
+            "stripped_jungle_log",
+            "stripped_jungle_wood",
+        ],
+        &[49u16, 69u16, 59u16, 77u16],
+        "minecraft:supports_cocoa",
+    );
+    pub const MINECRAFT_SUPPORTS_CRIMSON_FUNGUS: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "farmland",
+            "crimson_nylium",
+            "warped_nylium",
+            "soul_soil",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 184u16, 802u16,
+            793u16, 257u16,
+        ],
+        "minecraft:supports_crimson_fungus",
+    );
+    pub const MINECRAFT_SUPPORTS_CRIMSON_ROOTS: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "farmland",
+            "crimson_nylium",
+            "warped_nylium",
+            "soul_soil",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 184u16, 802u16,
+            793u16, 257u16,
+        ],
+        "minecraft:supports_crimson_roots",
+    );
+    pub const MINECRAFT_SUPPORTS_CROPS: Tag =
+        (&["farmland"], &[184u16], "minecraft:supports_crops");
+    pub const MINECRAFT_SUPPORTS_DRY_VEGETATION: Tag = (
+        &[
+            "sand",
+            "red_sand",
+            "suspicious_sand",
+            "terracotta",
+            "white_terracotta",
+            "orange_terracotta",
+            "magenta_terracotta",
+            "light_blue_terracotta",
+            "yellow_terracotta",
+            "lime_terracotta",
+            "pink_terracotta",
+            "gray_terracotta",
+            "light_gray_terracotta",
+            "cyan_terracotta",
+            "purple_terracotta",
+            "blue_terracotta",
+            "brown_terracotta",
+            "green_terracotta",
+            "red_terracotta",
+            "black_terracotta",
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "farmland",
+        ],
+        &[
+            34u16, 36u16, 35u16, 494u16, 425u16, 426u16, 427u16, 428u16, 429u16, 430u16, 431u16,
+            432u16, 433u16, 434u16, 435u16, 436u16, 437u16, 438u16, 439u16, 440u16, 9u16, 8u16,
+            11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 184u16,
+        ],
+        "minecraft:supports_dry_vegetation",
+    );
+    pub const MINECRAFT_SUPPORTS_HANGING_MANGROVE_PROPAGULE: Tag = (
+        &["mangrove_leaves"],
+        &[89u16],
+        "minecraft:supports_hanging_mangrove_propagule",
+    );
+    pub const MINECRAFT_SUPPORTS_LILY_PAD: Tag = (
+        &["ice", "frosted_ice"],
+        &[248u16, 606u16],
+        "minecraft:supports_lily_pad",
+    );
+    pub const MINECRAFT_SUPPORTS_MANGROVE_PROPAGULE: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "farmland",
+            "clay",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 184u16, 251u16,
+        ],
+        "minecraft:supports_mangrove_propagule",
+    );
+    pub const MINECRAFT_SUPPORTS_MELON_STEM: Tag =
+        (&["farmland"], &[184u16], "minecraft:supports_melon_stem");
+    pub const MINECRAFT_SUPPORTS_NETHER_SPROUTS: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "farmland",
+            "crimson_nylium",
+            "warped_nylium",
+            "soul_soil",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 184u16, 802u16,
+            793u16, 257u16,
+        ],
+        "minecraft:supports_nether_sprouts",
+    );
+    pub const MINECRAFT_SUPPORTS_NETHER_WART: Tag =
+        (&["soul_sand"], &[256u16], "minecraft:supports_nether_wart");
+    pub const MINECRAFT_SUPPORTS_PUMPKIN_STEM: Tag =
+        (&["farmland"], &[184u16], "minecraft:supports_pumpkin_stem");
+    pub const MINECRAFT_SUPPORTS_SMALL_DRIPLEAF: Tag = (
+        &["clay", "moss_block"],
+        &[251u16, 1016u16],
+        "minecraft:supports_small_dripleaf",
+    );
+    pub const MINECRAFT_SUPPORTS_STEM_CROPS: Tag =
+        (&["farmland"], &[184u16], "minecraft:supports_stem_crops");
+    pub const MINECRAFT_SUPPORTS_SUGAR_CANE: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "sand",
+            "red_sand",
+            "suspicious_sand",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 34u16, 36u16, 35u16,
+        ],
+        "minecraft:supports_sugar_cane",
+    );
+    pub const MINECRAFT_SUPPORTS_SUGAR_CANE_ADJACENTLY: Tag = (
+        &["frosted_ice"],
+        &[606u16],
+        "minecraft:supports_sugar_cane_adjacently",
+    );
+    pub const MINECRAFT_SUPPORTS_VEGETATION: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "farmland",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 184u16,
+        ],
+        "minecraft:supports_vegetation",
+    );
+    pub const MINECRAFT_SUPPORTS_WARPED_FUNGUS: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "farmland",
+            "crimson_nylium",
+            "warped_nylium",
+            "soul_soil",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 184u16, 802u16,
+            793u16, 257u16,
+        ],
+        "minecraft:supports_warped_fungus",
+    );
+    pub const MINECRAFT_SUPPORTS_WARPED_ROOTS: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "farmland",
+            "crimson_nylium",
+            "warped_nylium",
+            "soul_soil",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 184u16, 802u16,
+            793u16, 257u16,
+        ],
+        "minecraft:supports_warped_roots",
+    );
+    pub const MINECRAFT_SUPPORTS_WITHER_ROSE: Tag = (
+        &[
+            "dirt",
+            "grass_block",
+            "podzol",
+            "coarse_dirt",
+            "mycelium",
+            "rooted_dirt",
+            "moss_block",
+            "mud",
+            "muddy_mangrove_roots",
+            "farmland",
+            "netherrack",
+            "soul_sand",
+            "soul_soil",
+        ],
+        &[
+            9u16, 8u16, 11u16, 10u16, 323u16, 1021u16, 1016u16, 1022u16, 55u16, 184u16, 255u16,
+            256u16, 257u16,
+        ],
+        "minecraft:supports_wither_rose",
+    );
     pub const MINECRAFT_SWORD_EFFICIENT: Tag = (
         &[
             "jungle_leaves",
@@ -6586,7 +7232,7 @@ pub mod Block {
         "minecraft:wool_carpets",
     );
 }
-static BLOCK_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf_map! { "c:barrels" => & Block :: C_BARRELS , "c:barrels/wooden" => & Block :: C_BARRELS_WOODEN , "c:bars" => & Block :: C_BARS , "c:bars/copper" => & Block :: C_BARS_COPPER , "c:bars/iron" => & Block :: C_BARS_IRON , "c:bookshelves" => & Block :: C_BOOKSHELVES , "c:budding_blocks" => & Block :: C_BUDDING_BLOCKS , "c:buds" => & Block :: C_BUDS , "c:chains" => & Block :: C_CHAINS , "c:chests" => & Block :: C_CHESTS , "c:chests/ender" => & Block :: C_CHESTS_ENDER , "c:chests/trapped" => & Block :: C_CHESTS_TRAPPED , "c:chests/wooden" => & Block :: C_CHESTS_WOODEN , "c:clusters" => & Block :: C_CLUSTERS , "c:cobblestones" => & Block :: C_COBBLESTONES , "c:cobblestones/deepslate" => & Block :: C_COBBLESTONES_DEEPSLATE , "c:cobblestones/infested" => & Block :: C_COBBLESTONES_INFESTED , "c:cobblestones/mossy" => & Block :: C_COBBLESTONES_MOSSY , "c:cobblestones/normal" => & Block :: C_COBBLESTONES_NORMAL , "c:concretes" => & Block :: C_CONCRETES , "c:dyeable" => & Block :: C_DYEABLE , "c:dyeable/dynamic" => & Block :: C_DYEABLE_DYNAMIC , "c:dyeable/simple" => & Block :: C_DYEABLE_SIMPLE , "c:dyeable/simple/redyeable" => & Block :: C_DYEABLE_SIMPLE_REDYEABLE , "c:dyeable/simple/undyed" => & Block :: C_DYEABLE_SIMPLE_UNDYED , "c:dyed" => & Block :: C_DYED , "c:dyed/black" => & Block :: C_DYED_BLACK , "c:dyed/blue" => & Block :: C_DYED_BLUE , "c:dyed/brown" => & Block :: C_DYED_BROWN , "c:dyed/cyan" => & Block :: C_DYED_CYAN , "c:dyed/gray" => & Block :: C_DYED_GRAY , "c:dyed/green" => & Block :: C_DYED_GREEN , "c:dyed/light_blue" => & Block :: C_DYED_LIGHT_BLUE , "c:dyed/light_gray" => & Block :: C_DYED_LIGHT_GRAY , "c:dyed/lime" => & Block :: C_DYED_LIME , "c:dyed/magenta" => & Block :: C_DYED_MAGENTA , "c:dyed/orange" => & Block :: C_DYED_ORANGE , "c:dyed/pink" => & Block :: C_DYED_PINK , "c:dyed/purple" => & Block :: C_DYED_PURPLE , "c:dyed/red" => & Block :: C_DYED_RED , "c:dyed/white" => & Block :: C_DYED_WHITE , "c:dyed/yellow" => & Block :: C_DYED_YELLOW , "c:end_stones" => & Block :: C_END_STONES , "c:fence_gates" => & Block :: C_FENCE_GATES , "c:fence_gates/wooden" => & Block :: C_FENCE_GATES_WOODEN , "c:fences" => & Block :: C_FENCES , "c:fences/nether_brick" => & Block :: C_FENCES_NETHER_BRICK , "c:fences/wooden" => & Block :: C_FENCES_WOODEN , "c:flowers" => & Block :: C_FLOWERS , "c:flowers/small" => & Block :: C_FLOWERS_SMALL , "c:flowers/tall" => & Block :: C_FLOWERS_TALL , "c:froglights" => & Block :: C_FROGLIGHTS , "c:glass_blocks" => & Block :: C_GLASS_BLOCKS , "c:glass_blocks/cheap" => & Block :: C_GLASS_BLOCKS_CHEAP , "c:glass_blocks/colorless" => & Block :: C_GLASS_BLOCKS_COLORLESS , "c:glass_blocks/tinted" => & Block :: C_GLASS_BLOCKS_TINTED , "c:glass_panes" => & Block :: C_GLASS_PANES , "c:glass_panes/colorless" => & Block :: C_GLASS_PANES_COLORLESS , "c:glazed_terracottas" => & Block :: C_GLAZED_TERRACOTTAS , "c:gravels" => & Block :: C_GRAVELS , "c:hidden_from_recipe_viewers" => & Block :: C_HIDDEN_FROM_RECIPE_VIEWERS , "c:natural_logs" => & Block :: C_NATURAL_LOGS , "c:natural_logs/nether" => & Block :: C_NATURAL_LOGS_NETHER , "c:natural_logs/overworld" => & Block :: C_NATURAL_LOGS_OVERWORLD , "c:natural_woods" => & Block :: C_NATURAL_WOODS , "c:netherracks" => & Block :: C_NETHERRACKS , "c:obsidians" => & Block :: C_OBSIDIANS , "c:obsidians/crying" => & Block :: C_OBSIDIANS_CRYING , "c:obsidians/normal" => & Block :: C_OBSIDIANS_NORMAL , "c:ore_bearing_ground/deepslate" => & Block :: C_ORE_BEARING_GROUND_DEEPSLATE , "c:ore_bearing_ground/netherrack" => & Block :: C_ORE_BEARING_GROUND_NETHERRACK , "c:ore_bearing_ground/stone" => & Block :: C_ORE_BEARING_GROUND_STONE , "c:ore_rates/dense" => & Block :: C_ORE_RATES_DENSE , "c:ore_rates/singular" => & Block :: C_ORE_RATES_SINGULAR , "c:ore_rates/sparse" => & Block :: C_ORE_RATES_SPARSE , "c:ores" => & Block :: C_ORES , "c:ores/coal" => & Block :: C_ORES_COAL , "c:ores/copper" => & Block :: C_ORES_COPPER , "c:ores/diamond" => & Block :: C_ORES_DIAMOND , "c:ores/emerald" => & Block :: C_ORES_EMERALD , "c:ores/gold" => & Block :: C_ORES_GOLD , "c:ores/iron" => & Block :: C_ORES_IRON , "c:ores/lapis" => & Block :: C_ORES_LAPIS , "c:ores/netherite_scrap" => & Block :: C_ORES_NETHERITE_SCRAP , "c:ores/quartz" => & Block :: C_ORES_QUARTZ , "c:ores/redstone" => & Block :: C_ORES_REDSTONE , "c:ores_in_ground/deepslate" => & Block :: C_ORES_IN_GROUND_DEEPSLATE , "c:ores_in_ground/netherrack" => & Block :: C_ORES_IN_GROUND_NETHERRACK , "c:ores_in_ground/stone" => & Block :: C_ORES_IN_GROUND_STONE , "c:player_workstations/crafting_tables" => & Block :: C_PLAYER_WORKSTATIONS_CRAFTING_TABLES , "c:player_workstations/furnaces" => & Block :: C_PLAYER_WORKSTATIONS_FURNACES , "c:pumpkins" => & Block :: C_PUMPKINS , "c:pumpkins/carved" => & Block :: C_PUMPKINS_CARVED , "c:pumpkins/jack_o_lanterns" => & Block :: C_PUMPKINS_JACK_O_LANTERNS , "c:pumpkins/normal" => & Block :: C_PUMPKINS_NORMAL , "c:relocation_not_supported" => & Block :: C_RELOCATION_NOT_SUPPORTED , "c:ropes" => & Block :: C_ROPES , "c:sands" => & Block :: C_SANDS , "c:sands/colorless" => & Block :: C_SANDS_COLORLESS , "c:sands/red" => & Block :: C_SANDS_RED , "c:sandstone/blocks" => & Block :: C_SANDSTONE_BLOCKS , "c:sandstone/red_blocks" => & Block :: C_SANDSTONE_RED_BLOCKS , "c:sandstone/red_slabs" => & Block :: C_SANDSTONE_RED_SLABS , "c:sandstone/red_stairs" => & Block :: C_SANDSTONE_RED_STAIRS , "c:sandstone/slabs" => & Block :: C_SANDSTONE_SLABS , "c:sandstone/stairs" => & Block :: C_SANDSTONE_STAIRS , "c:sandstone/uncolored_blocks" => & Block :: C_SANDSTONE_UNCOLORED_BLOCKS , "c:sandstone/uncolored_slabs" => & Block :: C_SANDSTONE_UNCOLORED_SLABS , "c:sandstone/uncolored_stairs" => & Block :: C_SANDSTONE_UNCOLORED_STAIRS , "c:skulls" => & Block :: C_SKULLS , "c:stones" => & Block :: C_STONES , "c:storage_blocks" => & Block :: C_STORAGE_BLOCKS , "c:storage_blocks/bone_meal" => & Block :: C_STORAGE_BLOCKS_BONE_MEAL , "c:storage_blocks/coal" => & Block :: C_STORAGE_BLOCKS_COAL , "c:storage_blocks/copper" => & Block :: C_STORAGE_BLOCKS_COPPER , "c:storage_blocks/diamond" => & Block :: C_STORAGE_BLOCKS_DIAMOND , "c:storage_blocks/dried_kelp" => & Block :: C_STORAGE_BLOCKS_DRIED_KELP , "c:storage_blocks/emerald" => & Block :: C_STORAGE_BLOCKS_EMERALD , "c:storage_blocks/gold" => & Block :: C_STORAGE_BLOCKS_GOLD , "c:storage_blocks/iron" => & Block :: C_STORAGE_BLOCKS_IRON , "c:storage_blocks/lapis" => & Block :: C_STORAGE_BLOCKS_LAPIS , "c:storage_blocks/netherite" => & Block :: C_STORAGE_BLOCKS_NETHERITE , "c:storage_blocks/raw_copper" => & Block :: C_STORAGE_BLOCKS_RAW_COPPER , "c:storage_blocks/raw_gold" => & Block :: C_STORAGE_BLOCKS_RAW_GOLD , "c:storage_blocks/raw_iron" => & Block :: C_STORAGE_BLOCKS_RAW_IRON , "c:storage_blocks/redstone" => & Block :: C_STORAGE_BLOCKS_REDSTONE , "c:storage_blocks/resin" => & Block :: C_STORAGE_BLOCKS_RESIN , "c:storage_blocks/slime" => & Block :: C_STORAGE_BLOCKS_SLIME , "c:storage_blocks/wheat" => & Block :: C_STORAGE_BLOCKS_WHEAT , "c:stripped_logs" => & Block :: C_STRIPPED_LOGS , "c:stripped_woods" => & Block :: C_STRIPPED_WOODS , "c:villager_job_sites" => & Block :: C_VILLAGER_JOB_SITES , "minecraft:acacia_logs" => & Block :: MINECRAFT_ACACIA_LOGS , "minecraft:air" => & Block :: MINECRAFT_AIR , "minecraft:all_hanging_signs" => & Block :: MINECRAFT_ALL_HANGING_SIGNS , "minecraft:all_signs" => & Block :: MINECRAFT_ALL_SIGNS , "minecraft:ancient_city_replaceable" => & Block :: MINECRAFT_ANCIENT_CITY_REPLACEABLE , "minecraft:animals_spawnable_on" => & Block :: MINECRAFT_ANIMALS_SPAWNABLE_ON , "minecraft:anvil" => & Block :: MINECRAFT_ANVIL , "minecraft:armadillo_spawnable_on" => & Block :: MINECRAFT_ARMADILLO_SPAWNABLE_ON , "minecraft:axolotls_spawnable_on" => & Block :: MINECRAFT_AXOLOTLS_SPAWNABLE_ON , "minecraft:azalea_grows_on" => & Block :: MINECRAFT_AZALEA_GROWS_ON , "minecraft:azalea_root_replaceable" => & Block :: MINECRAFT_AZALEA_ROOT_REPLACEABLE , "minecraft:badlands_terracotta" => & Block :: MINECRAFT_BADLANDS_TERRACOTTA , "minecraft:bamboo_blocks" => & Block :: MINECRAFT_BAMBOO_BLOCKS , "minecraft:bamboo_plantable_on" => & Block :: MINECRAFT_BAMBOO_PLANTABLE_ON , "minecraft:banners" => & Block :: MINECRAFT_BANNERS , "minecraft:base_stone_nether" => & Block :: MINECRAFT_BASE_STONE_NETHER , "minecraft:base_stone_overworld" => & Block :: MINECRAFT_BASE_STONE_OVERWORLD , "minecraft:beacon_base_blocks" => & Block :: MINECRAFT_BEACON_BASE_BLOCKS , "minecraft:beds" => & Block :: MINECRAFT_BEDS , "minecraft:bee_growables" => & Block :: MINECRAFT_BEE_GROWABLES , "minecraft:beehives" => & Block :: MINECRAFT_BEEHIVES , "minecraft:big_dripleaf_placeable" => & Block :: MINECRAFT_BIG_DRIPLEAF_PLACEABLE , "minecraft:birch_logs" => & Block :: MINECRAFT_BIRCH_LOGS , "minecraft:blocks_wind_charge_explosions" => & Block :: MINECRAFT_BLOCKS_WIND_CHARGE_EXPLOSIONS , "minecraft:buttons" => & Block :: MINECRAFT_BUTTONS , "minecraft:camel_sand_step_sound_blocks" => & Block :: MINECRAFT_CAMEL_SAND_STEP_SOUND_BLOCKS , "minecraft:campfires" => & Block :: MINECRAFT_CAMPFIRES , "minecraft:candle_cakes" => & Block :: MINECRAFT_CANDLE_CAKES , "minecraft:candles" => & Block :: MINECRAFT_CANDLES , "minecraft:cauldrons" => & Block :: MINECRAFT_CAULDRONS , "minecraft:cave_vines" => & Block :: MINECRAFT_CAVE_VINES , "minecraft:ceiling_hanging_signs" => & Block :: MINECRAFT_CEILING_HANGING_SIGNS , "minecraft:cherry_logs" => & Block :: MINECRAFT_CHERRY_LOGS , "minecraft:climbable" => & Block :: MINECRAFT_CLIMBABLE , "minecraft:coal_ores" => & Block :: MINECRAFT_COAL_ORES , "minecraft:combination_step_sound_blocks" => & Block :: MINECRAFT_COMBINATION_STEP_SOUND_BLOCKS , "minecraft:completes_find_tree_tutorial" => & Block :: MINECRAFT_COMPLETES_FIND_TREE_TUTORIAL , "minecraft:concrete_powder" => & Block :: MINECRAFT_CONCRETE_POWDER , "minecraft:convertable_to_mud" => & Block :: MINECRAFT_CONVERTABLE_TO_MUD , "minecraft:copper_ores" => & Block :: MINECRAFT_COPPER_ORES , "minecraft:coral_blocks" => & Block :: MINECRAFT_CORAL_BLOCKS , "minecraft:coral_plants" => & Block :: MINECRAFT_CORAL_PLANTS , "minecraft:corals" => & Block :: MINECRAFT_CORALS , "minecraft:crimson_stems" => & Block :: MINECRAFT_CRIMSON_STEMS , "minecraft:crops" => & Block :: MINECRAFT_CROPS , "minecraft:crystal_sound_blocks" => & Block :: MINECRAFT_CRYSTAL_SOUND_BLOCKS , "minecraft:dampens_vibrations" => & Block :: MINECRAFT_DAMPENS_VIBRATIONS , "minecraft:dark_oak_logs" => & Block :: MINECRAFT_DARK_OAK_LOGS , "minecraft:dead_bush_may_place_on" => & Block :: MINECRAFT_DEAD_BUSH_MAY_PLACE_ON , "minecraft:deepslate_ore_replaceables" => & Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES , "minecraft:diamond_ores" => & Block :: MINECRAFT_DIAMOND_ORES , "minecraft:dirt" => & Block :: MINECRAFT_DIRT , "minecraft:does_not_block_hoppers" => & Block :: MINECRAFT_DOES_NOT_BLOCK_HOPPERS , "minecraft:doors" => & Block :: MINECRAFT_DOORS , "minecraft:dragon_immune" => & Block :: MINECRAFT_DRAGON_IMMUNE , "minecraft:dragon_transparent" => & Block :: MINECRAFT_DRAGON_TRANSPARENT , "minecraft:dripstone_replaceable_blocks" => & Block :: MINECRAFT_DRIPSTONE_REPLACEABLE_BLOCKS , "minecraft:emerald_ores" => & Block :: MINECRAFT_EMERALD_ORES , "minecraft:enchantment_power_provider" => & Block :: MINECRAFT_ENCHANTMENT_POWER_PROVIDER , "minecraft:enchantment_power_transmitter" => & Block :: MINECRAFT_ENCHANTMENT_POWER_TRANSMITTER , "minecraft:enderman_holdable" => & Block :: MINECRAFT_ENDERMAN_HOLDABLE , "minecraft:fall_damage_resetting" => & Block :: MINECRAFT_FALL_DAMAGE_RESETTING , "minecraft:features_cannot_replace" => & Block :: MINECRAFT_FEATURES_CANNOT_REPLACE , "minecraft:fence_gates" => & Block :: MINECRAFT_FENCE_GATES , "minecraft:fences" => & Block :: MINECRAFT_FENCES , "minecraft:fire" => & Block :: MINECRAFT_FIRE , "minecraft:flower_pots" => & Block :: MINECRAFT_FLOWER_POTS , "minecraft:flowers" => & Block :: MINECRAFT_FLOWERS , "minecraft:foxes_spawnable_on" => & Block :: MINECRAFT_FOXES_SPAWNABLE_ON , "minecraft:frog_prefer_jump_to" => & Block :: MINECRAFT_FROG_PREFER_JUMP_TO , "minecraft:frogs_spawnable_on" => & Block :: MINECRAFT_FROGS_SPAWNABLE_ON , "minecraft:geode_invalid_blocks" => & Block :: MINECRAFT_GEODE_INVALID_BLOCKS , "minecraft:goats_spawnable_on" => & Block :: MINECRAFT_GOATS_SPAWNABLE_ON , "minecraft:gold_ores" => & Block :: MINECRAFT_GOLD_ORES , "minecraft:guarded_by_piglins" => & Block :: MINECRAFT_GUARDED_BY_PIGLINS , "minecraft:hoglin_repellents" => & Block :: MINECRAFT_HOGLIN_REPELLENTS , "minecraft:ice" => & Block :: MINECRAFT_ICE , "minecraft:impermeable" => & Block :: MINECRAFT_IMPERMEABLE , "minecraft:incorrect_for_diamond_tool" => & Block :: MINECRAFT_INCORRECT_FOR_DIAMOND_TOOL , "minecraft:incorrect_for_gold_tool" => & Block :: MINECRAFT_INCORRECT_FOR_GOLD_TOOL , "minecraft:incorrect_for_iron_tool" => & Block :: MINECRAFT_INCORRECT_FOR_IRON_TOOL , "minecraft:incorrect_for_netherite_tool" => & Block :: MINECRAFT_INCORRECT_FOR_NETHERITE_TOOL , "minecraft:incorrect_for_stone_tool" => & Block :: MINECRAFT_INCORRECT_FOR_STONE_TOOL , "minecraft:incorrect_for_wooden_tool" => & Block :: MINECRAFT_INCORRECT_FOR_WOODEN_TOOL , "minecraft:infiniburn_end" => & Block :: MINECRAFT_INFINIBURN_END , "minecraft:infiniburn_nether" => & Block :: MINECRAFT_INFINIBURN_NETHER , "minecraft:infiniburn_overworld" => & Block :: MINECRAFT_INFINIBURN_OVERWORLD , "minecraft:inside_step_sound_blocks" => & Block :: MINECRAFT_INSIDE_STEP_SOUND_BLOCKS , "minecraft:invalid_spawn_inside" => & Block :: MINECRAFT_INVALID_SPAWN_INSIDE , "minecraft:iron_ores" => & Block :: MINECRAFT_IRON_ORES , "minecraft:jungle_logs" => & Block :: MINECRAFT_JUNGLE_LOGS , "minecraft:lapis_ores" => & Block :: MINECRAFT_LAPIS_ORES , "minecraft:lava_pool_stone_cannot_replace" => & Block :: MINECRAFT_LAVA_POOL_STONE_CANNOT_REPLACE , "minecraft:leaves" => & Block :: MINECRAFT_LEAVES , "minecraft:logs" => & Block :: MINECRAFT_LOGS , "minecraft:logs_that_burn" => & Block :: MINECRAFT_LOGS_THAT_BURN , "minecraft:lush_ground_replaceable" => & Block :: MINECRAFT_LUSH_GROUND_REPLACEABLE , "minecraft:maintains_farmland" => & Block :: MINECRAFT_MAINTAINS_FARMLAND , "minecraft:mangrove_logs" => & Block :: MINECRAFT_MANGROVE_LOGS , "minecraft:mangrove_logs_can_grow_through" => & Block :: MINECRAFT_MANGROVE_LOGS_CAN_GROW_THROUGH , "minecraft:mangrove_roots_can_grow_through" => & Block :: MINECRAFT_MANGROVE_ROOTS_CAN_GROW_THROUGH , "minecraft:mineable/axe" => & Block :: MINECRAFT_MINEABLE_AXE , "minecraft:mineable/hoe" => & Block :: MINECRAFT_MINEABLE_HOE , "minecraft:mineable/pickaxe" => & Block :: MINECRAFT_MINEABLE_PICKAXE , "minecraft:mineable/shovel" => & Block :: MINECRAFT_MINEABLE_SHOVEL , "minecraft:mob_interactable_doors" => & Block :: MINECRAFT_MOB_INTERACTABLE_DOORS , "minecraft:mooshrooms_spawnable_on" => & Block :: MINECRAFT_MOOSHROOMS_SPAWNABLE_ON , "minecraft:moss_replaceable" => & Block :: MINECRAFT_MOSS_REPLACEABLE , "minecraft:mushroom_grow_block" => & Block :: MINECRAFT_MUSHROOM_GROW_BLOCK , "minecraft:needs_diamond_tool" => & Block :: MINECRAFT_NEEDS_DIAMOND_TOOL , "minecraft:needs_iron_tool" => & Block :: MINECRAFT_NEEDS_IRON_TOOL , "minecraft:needs_stone_tool" => & Block :: MINECRAFT_NEEDS_STONE_TOOL , "minecraft:nether_carver_replaceables" => & Block :: MINECRAFT_NETHER_CARVER_REPLACEABLES , "minecraft:nylium" => & Block :: MINECRAFT_NYLIUM , "minecraft:oak_logs" => & Block :: MINECRAFT_OAK_LOGS , "minecraft:occludes_vibration_signals" => & Block :: MINECRAFT_OCCLUDES_VIBRATION_SIGNALS , "minecraft:overworld_carver_replaceables" => & Block :: MINECRAFT_OVERWORLD_CARVER_REPLACEABLES , "minecraft:overworld_natural_logs" => & Block :: MINECRAFT_OVERWORLD_NATURAL_LOGS , "minecraft:parrots_spawnable_on" => & Block :: MINECRAFT_PARROTS_SPAWNABLE_ON , "minecraft:piglin_repellents" => & Block :: MINECRAFT_PIGLIN_REPELLENTS , "minecraft:planks" => & Block :: MINECRAFT_PLANKS , "minecraft:polar_bears_spawnable_on_alternate" => & Block :: MINECRAFT_POLAR_BEARS_SPAWNABLE_ON_ALTERNATE , "minecraft:portals" => & Block :: MINECRAFT_PORTALS , "minecraft:pressure_plates" => & Block :: MINECRAFT_PRESSURE_PLATES , "minecraft:prevent_mob_spawning_inside" => & Block :: MINECRAFT_PREVENT_MOB_SPAWNING_INSIDE , "minecraft:rabbits_spawnable_on" => & Block :: MINECRAFT_RABBITS_SPAWNABLE_ON , "minecraft:rails" => & Block :: MINECRAFT_RAILS , "minecraft:redstone_ores" => & Block :: MINECRAFT_REDSTONE_ORES , "minecraft:replaceable" => & Block :: MINECRAFT_REPLACEABLE , "minecraft:replaceable_by_trees" => & Block :: MINECRAFT_REPLACEABLE_BY_TREES , "minecraft:sand" => & Block :: MINECRAFT_SAND , "minecraft:saplings" => & Block :: MINECRAFT_SAPLINGS , "minecraft:sculk_replaceable" => & Block :: MINECRAFT_SCULK_REPLACEABLE , "minecraft:sculk_replaceable_world_gen" => & Block :: MINECRAFT_SCULK_REPLACEABLE_WORLD_GEN , "minecraft:shulker_boxes" => & Block :: MINECRAFT_SHULKER_BOXES , "minecraft:signs" => & Block :: MINECRAFT_SIGNS , "minecraft:slabs" => & Block :: MINECRAFT_SLABS , "minecraft:small_dripleaf_placeable" => & Block :: MINECRAFT_SMALL_DRIPLEAF_PLACEABLE , "minecraft:small_flowers" => & Block :: MINECRAFT_SMALL_FLOWERS , "minecraft:smelts_to_glass" => & Block :: MINECRAFT_SMELTS_TO_GLASS , "minecraft:snaps_goat_horn" => & Block :: MINECRAFT_SNAPS_GOAT_HORN , "minecraft:sniffer_diggable_block" => & Block :: MINECRAFT_SNIFFER_DIGGABLE_BLOCK , "minecraft:sniffer_egg_hatch_boost" => & Block :: MINECRAFT_SNIFFER_EGG_HATCH_BOOST , "minecraft:snow" => & Block :: MINECRAFT_SNOW , "minecraft:snow_layer_can_survive_on" => & Block :: MINECRAFT_SNOW_LAYER_CAN_SURVIVE_ON , "minecraft:snow_layer_cannot_survive_on" => & Block :: MINECRAFT_SNOW_LAYER_CANNOT_SURVIVE_ON , "minecraft:soul_fire_base_blocks" => & Block :: MINECRAFT_SOUL_FIRE_BASE_BLOCKS , "minecraft:soul_speed_blocks" => & Block :: MINECRAFT_SOUL_SPEED_BLOCKS , "minecraft:spruce_logs" => & Block :: MINECRAFT_SPRUCE_LOGS , "minecraft:stairs" => & Block :: MINECRAFT_STAIRS , "minecraft:standing_signs" => & Block :: MINECRAFT_STANDING_SIGNS , "minecraft:stone_bricks" => & Block :: MINECRAFT_STONE_BRICKS , "minecraft:stone_buttons" => & Block :: MINECRAFT_STONE_BUTTONS , "minecraft:stone_ore_replaceables" => & Block :: MINECRAFT_STONE_ORE_REPLACEABLES , "minecraft:stone_pressure_plates" => & Block :: MINECRAFT_STONE_PRESSURE_PLATES , "minecraft:strider_warm_blocks" => & Block :: MINECRAFT_STRIDER_WARM_BLOCKS , "minecraft:sword_efficient" => & Block :: MINECRAFT_SWORD_EFFICIENT , "minecraft:tall_flowers" => & Block :: MINECRAFT_TALL_FLOWERS , "minecraft:terracotta" => & Block :: MINECRAFT_TERRACOTTA , "minecraft:trail_ruins_replaceable" => & Block :: MINECRAFT_TRAIL_RUINS_REPLACEABLE , "minecraft:trapdoors" => & Block :: MINECRAFT_TRAPDOORS , "minecraft:underwater_bonemeals" => & Block :: MINECRAFT_UNDERWATER_BONEMEALS , "minecraft:unstable_bottom_center" => & Block :: MINECRAFT_UNSTABLE_BOTTOM_CENTER , "minecraft:valid_spawn" => & Block :: MINECRAFT_VALID_SPAWN , "minecraft:vibration_resonators" => & Block :: MINECRAFT_VIBRATION_RESONATORS , "minecraft:wall_corals" => & Block :: MINECRAFT_WALL_CORALS , "minecraft:wall_hanging_signs" => & Block :: MINECRAFT_WALL_HANGING_SIGNS , "minecraft:wall_post_override" => & Block :: MINECRAFT_WALL_POST_OVERRIDE , "minecraft:wall_signs" => & Block :: MINECRAFT_WALL_SIGNS , "minecraft:walls" => & Block :: MINECRAFT_WALLS , "minecraft:warped_stems" => & Block :: MINECRAFT_WARPED_STEMS , "minecraft:wart_blocks" => & Block :: MINECRAFT_WART_BLOCKS , "minecraft:wither_immune" => & Block :: MINECRAFT_WITHER_IMMUNE , "minecraft:wither_summon_base_blocks" => & Block :: MINECRAFT_WITHER_SUMMON_BASE_BLOCKS , "minecraft:wolves_spawnable_on" => & Block :: MINECRAFT_WOLVES_SPAWNABLE_ON , "minecraft:wooden_buttons" => & Block :: MINECRAFT_WOODEN_BUTTONS , "minecraft:wooden_doors" => & Block :: MINECRAFT_WOODEN_DOORS , "minecraft:wooden_fences" => & Block :: MINECRAFT_WOODEN_FENCES , "minecraft:wooden_pressure_plates" => & Block :: MINECRAFT_WOODEN_PRESSURE_PLATES , "minecraft:wooden_slabs" => & Block :: MINECRAFT_WOODEN_SLABS , "minecraft:wooden_stairs" => & Block :: MINECRAFT_WOODEN_STAIRS , "minecraft:wooden_trapdoors" => & Block :: MINECRAFT_WOODEN_TRAPDOORS , "minecraft:wool" => & Block :: MINECRAFT_WOOL , "minecraft:wool_carpets" => & Block :: MINECRAFT_WOOL_CARPETS };
+static BLOCK_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf_map! { "c:barrels" => & Block :: C_BARRELS , "c:barrels/wooden" => & Block :: C_BARRELS_WOODEN , "c:bars" => & Block :: C_BARS , "c:bars/copper" => & Block :: C_BARS_COPPER , "c:bars/iron" => & Block :: C_BARS_IRON , "c:bookshelves" => & Block :: C_BOOKSHELVES , "c:budding_blocks" => & Block :: C_BUDDING_BLOCKS , "c:buds" => & Block :: C_BUDS , "c:chains" => & Block :: C_CHAINS , "c:chests" => & Block :: C_CHESTS , "c:chests/ender" => & Block :: C_CHESTS_ENDER , "c:chests/trapped" => & Block :: C_CHESTS_TRAPPED , "c:chests/wooden" => & Block :: C_CHESTS_WOODEN , "c:clusters" => & Block :: C_CLUSTERS , "c:cobblestones" => & Block :: C_COBBLESTONES , "c:cobblestones/deepslate" => & Block :: C_COBBLESTONES_DEEPSLATE , "c:cobblestones/infested" => & Block :: C_COBBLESTONES_INFESTED , "c:cobblestones/mossy" => & Block :: C_COBBLESTONES_MOSSY , "c:cobblestones/normal" => & Block :: C_COBBLESTONES_NORMAL , "c:concretes" => & Block :: C_CONCRETES , "c:dyeable" => & Block :: C_DYEABLE , "c:dyeable/dynamic" => & Block :: C_DYEABLE_DYNAMIC , "c:dyeable/simple" => & Block :: C_DYEABLE_SIMPLE , "c:dyeable/simple/redyeable" => & Block :: C_DYEABLE_SIMPLE_REDYEABLE , "c:dyeable/simple/undyed" => & Block :: C_DYEABLE_SIMPLE_UNDYED , "c:dyed" => & Block :: C_DYED , "c:dyed/black" => & Block :: C_DYED_BLACK , "c:dyed/blue" => & Block :: C_DYED_BLUE , "c:dyed/brown" => & Block :: C_DYED_BROWN , "c:dyed/cyan" => & Block :: C_DYED_CYAN , "c:dyed/gray" => & Block :: C_DYED_GRAY , "c:dyed/green" => & Block :: C_DYED_GREEN , "c:dyed/light_blue" => & Block :: C_DYED_LIGHT_BLUE , "c:dyed/light_gray" => & Block :: C_DYED_LIGHT_GRAY , "c:dyed/lime" => & Block :: C_DYED_LIME , "c:dyed/magenta" => & Block :: C_DYED_MAGENTA , "c:dyed/orange" => & Block :: C_DYED_ORANGE , "c:dyed/pink" => & Block :: C_DYED_PINK , "c:dyed/purple" => & Block :: C_DYED_PURPLE , "c:dyed/red" => & Block :: C_DYED_RED , "c:dyed/white" => & Block :: C_DYED_WHITE , "c:dyed/yellow" => & Block :: C_DYED_YELLOW , "c:end_stones" => & Block :: C_END_STONES , "c:fence_gates" => & Block :: C_FENCE_GATES , "c:fence_gates/wooden" => & Block :: C_FENCE_GATES_WOODEN , "c:fences" => & Block :: C_FENCES , "c:fences/nether_brick" => & Block :: C_FENCES_NETHER_BRICK , "c:fences/wooden" => & Block :: C_FENCES_WOODEN , "c:flowers" => & Block :: C_FLOWERS , "c:flowers/small" => & Block :: C_FLOWERS_SMALL , "c:flowers/tall" => & Block :: C_FLOWERS_TALL , "c:froglights" => & Block :: C_FROGLIGHTS , "c:glass_blocks" => & Block :: C_GLASS_BLOCKS , "c:glass_blocks/cheap" => & Block :: C_GLASS_BLOCKS_CHEAP , "c:glass_blocks/colorless" => & Block :: C_GLASS_BLOCKS_COLORLESS , "c:glass_blocks/tinted" => & Block :: C_GLASS_BLOCKS_TINTED , "c:glass_panes" => & Block :: C_GLASS_PANES , "c:glass_panes/colorless" => & Block :: C_GLASS_PANES_COLORLESS , "c:glazed_terracottas" => & Block :: C_GLAZED_TERRACOTTAS , "c:gravels" => & Block :: C_GRAVELS , "c:hidden_from_recipe_viewers" => & Block :: C_HIDDEN_FROM_RECIPE_VIEWERS , "c:natural_logs" => & Block :: C_NATURAL_LOGS , "c:natural_logs/nether" => & Block :: C_NATURAL_LOGS_NETHER , "c:natural_logs/overworld" => & Block :: C_NATURAL_LOGS_OVERWORLD , "c:natural_woods" => & Block :: C_NATURAL_WOODS , "c:netherracks" => & Block :: C_NETHERRACKS , "c:obsidians" => & Block :: C_OBSIDIANS , "c:obsidians/crying" => & Block :: C_OBSIDIANS_CRYING , "c:obsidians/normal" => & Block :: C_OBSIDIANS_NORMAL , "c:ore_bearing_ground/deepslate" => & Block :: C_ORE_BEARING_GROUND_DEEPSLATE , "c:ore_bearing_ground/netherrack" => & Block :: C_ORE_BEARING_GROUND_NETHERRACK , "c:ore_bearing_ground/stone" => & Block :: C_ORE_BEARING_GROUND_STONE , "c:ore_rates/dense" => & Block :: C_ORE_RATES_DENSE , "c:ore_rates/singular" => & Block :: C_ORE_RATES_SINGULAR , "c:ore_rates/sparse" => & Block :: C_ORE_RATES_SPARSE , "c:ores" => & Block :: C_ORES , "c:ores/coal" => & Block :: C_ORES_COAL , "c:ores/copper" => & Block :: C_ORES_COPPER , "c:ores/diamond" => & Block :: C_ORES_DIAMOND , "c:ores/emerald" => & Block :: C_ORES_EMERALD , "c:ores/gold" => & Block :: C_ORES_GOLD , "c:ores/iron" => & Block :: C_ORES_IRON , "c:ores/lapis" => & Block :: C_ORES_LAPIS , "c:ores/netherite_scrap" => & Block :: C_ORES_NETHERITE_SCRAP , "c:ores/quartz" => & Block :: C_ORES_QUARTZ , "c:ores/redstone" => & Block :: C_ORES_REDSTONE , "c:ores_in_ground/deepslate" => & Block :: C_ORES_IN_GROUND_DEEPSLATE , "c:ores_in_ground/netherrack" => & Block :: C_ORES_IN_GROUND_NETHERRACK , "c:ores_in_ground/stone" => & Block :: C_ORES_IN_GROUND_STONE , "c:player_workstations/crafting_tables" => & Block :: C_PLAYER_WORKSTATIONS_CRAFTING_TABLES , "c:player_workstations/furnaces" => & Block :: C_PLAYER_WORKSTATIONS_FURNACES , "c:pumpkins" => & Block :: C_PUMPKINS , "c:pumpkins/carved" => & Block :: C_PUMPKINS_CARVED , "c:pumpkins/jack_o_lanterns" => & Block :: C_PUMPKINS_JACK_O_LANTERNS , "c:pumpkins/normal" => & Block :: C_PUMPKINS_NORMAL , "c:relocation_not_supported" => & Block :: C_RELOCATION_NOT_SUPPORTED , "c:ropes" => & Block :: C_ROPES , "c:sands" => & Block :: C_SANDS , "c:sands/colorless" => & Block :: C_SANDS_COLORLESS , "c:sands/red" => & Block :: C_SANDS_RED , "c:sandstone/blocks" => & Block :: C_SANDSTONE_BLOCKS , "c:sandstone/red_blocks" => & Block :: C_SANDSTONE_RED_BLOCKS , "c:sandstone/red_slabs" => & Block :: C_SANDSTONE_RED_SLABS , "c:sandstone/red_stairs" => & Block :: C_SANDSTONE_RED_STAIRS , "c:sandstone/slabs" => & Block :: C_SANDSTONE_SLABS , "c:sandstone/stairs" => & Block :: C_SANDSTONE_STAIRS , "c:sandstone/uncolored_blocks" => & Block :: C_SANDSTONE_UNCOLORED_BLOCKS , "c:sandstone/uncolored_slabs" => & Block :: C_SANDSTONE_UNCOLORED_SLABS , "c:sandstone/uncolored_stairs" => & Block :: C_SANDSTONE_UNCOLORED_STAIRS , "c:skulls" => & Block :: C_SKULLS , "c:stones" => & Block :: C_STONES , "c:storage_blocks" => & Block :: C_STORAGE_BLOCKS , "c:storage_blocks/bone_meal" => & Block :: C_STORAGE_BLOCKS_BONE_MEAL , "c:storage_blocks/coal" => & Block :: C_STORAGE_BLOCKS_COAL , "c:storage_blocks/copper" => & Block :: C_STORAGE_BLOCKS_COPPER , "c:storage_blocks/diamond" => & Block :: C_STORAGE_BLOCKS_DIAMOND , "c:storage_blocks/dried_kelp" => & Block :: C_STORAGE_BLOCKS_DRIED_KELP , "c:storage_blocks/emerald" => & Block :: C_STORAGE_BLOCKS_EMERALD , "c:storage_blocks/gold" => & Block :: C_STORAGE_BLOCKS_GOLD , "c:storage_blocks/iron" => & Block :: C_STORAGE_BLOCKS_IRON , "c:storage_blocks/lapis" => & Block :: C_STORAGE_BLOCKS_LAPIS , "c:storage_blocks/netherite" => & Block :: C_STORAGE_BLOCKS_NETHERITE , "c:storage_blocks/raw_copper" => & Block :: C_STORAGE_BLOCKS_RAW_COPPER , "c:storage_blocks/raw_gold" => & Block :: C_STORAGE_BLOCKS_RAW_GOLD , "c:storage_blocks/raw_iron" => & Block :: C_STORAGE_BLOCKS_RAW_IRON , "c:storage_blocks/redstone" => & Block :: C_STORAGE_BLOCKS_REDSTONE , "c:storage_blocks/resin" => & Block :: C_STORAGE_BLOCKS_RESIN , "c:storage_blocks/slime" => & Block :: C_STORAGE_BLOCKS_SLIME , "c:storage_blocks/wheat" => & Block :: C_STORAGE_BLOCKS_WHEAT , "c:stripped_logs" => & Block :: C_STRIPPED_LOGS , "c:stripped_woods" => & Block :: C_STRIPPED_WOODS , "c:villager_job_sites" => & Block :: C_VILLAGER_JOB_SITES , "minecraft:acacia_logs" => & Block :: MINECRAFT_ACACIA_LOGS , "minecraft:air" => & Block :: MINECRAFT_AIR , "minecraft:all_hanging_signs" => & Block :: MINECRAFT_ALL_HANGING_SIGNS , "minecraft:all_signs" => & Block :: MINECRAFT_ALL_SIGNS , "minecraft:ancient_city_replaceable" => & Block :: MINECRAFT_ANCIENT_CITY_REPLACEABLE , "minecraft:animals_spawnable_on" => & Block :: MINECRAFT_ANIMALS_SPAWNABLE_ON , "minecraft:anvil" => & Block :: MINECRAFT_ANVIL , "minecraft:armadillo_spawnable_on" => & Block :: MINECRAFT_ARMADILLO_SPAWNABLE_ON , "minecraft:axolotls_spawnable_on" => & Block :: MINECRAFT_AXOLOTLS_SPAWNABLE_ON , "minecraft:azalea_grows_on" => & Block :: MINECRAFT_AZALEA_GROWS_ON , "minecraft:azalea_root_replaceable" => & Block :: MINECRAFT_AZALEA_ROOT_REPLACEABLE , "minecraft:badlands_terracotta" => & Block :: MINECRAFT_BADLANDS_TERRACOTTA , "minecraft:bamboo_blocks" => & Block :: MINECRAFT_BAMBOO_BLOCKS , "minecraft:bamboo_plantable_on" => & Block :: MINECRAFT_BAMBOO_PLANTABLE_ON , "minecraft:banners" => & Block :: MINECRAFT_BANNERS , "minecraft:base_stone_nether" => & Block :: MINECRAFT_BASE_STONE_NETHER , "minecraft:base_stone_overworld" => & Block :: MINECRAFT_BASE_STONE_OVERWORLD , "minecraft:bats_spawnable_on" => & Block :: MINECRAFT_BATS_SPAWNABLE_ON , "minecraft:beacon_base_blocks" => & Block :: MINECRAFT_BEACON_BASE_BLOCKS , "minecraft:beds" => & Block :: MINECRAFT_BEDS , "minecraft:bee_growables" => & Block :: MINECRAFT_BEE_GROWABLES , "minecraft:beehives" => & Block :: MINECRAFT_BEEHIVES , "minecraft:beneath_bamboo_podzol_replaceable" => & Block :: MINECRAFT_BENEATH_BAMBOO_PODZOL_REPLACEABLE , "minecraft:big_dripleaf_placeable" => & Block :: MINECRAFT_BIG_DRIPLEAF_PLACEABLE , "minecraft:birch_logs" => & Block :: MINECRAFT_BIRCH_LOGS , "minecraft:blocks_wind_charge_explosions" => & Block :: MINECRAFT_BLOCKS_WIND_CHARGE_EXPLOSIONS , "minecraft:buttons" => & Block :: MINECRAFT_BUTTONS , "minecraft:camel_sand_step_sound_blocks" => & Block :: MINECRAFT_CAMEL_SAND_STEP_SOUND_BLOCKS , "minecraft:camels_spawnable_on" => & Block :: MINECRAFT_CAMELS_SPAWNABLE_ON , "minecraft:campfires" => & Block :: MINECRAFT_CAMPFIRES , "minecraft:candle_cakes" => & Block :: MINECRAFT_CANDLE_CAKES , "minecraft:candles" => & Block :: MINECRAFT_CANDLES , "minecraft:cannot_support_kelp" => & Block :: MINECRAFT_CANNOT_SUPPORT_KELP , "minecraft:cannot_support_seagrass" => & Block :: MINECRAFT_CANNOT_SUPPORT_SEAGRASS , "minecraft:cannot_support_snow_layer" => & Block :: MINECRAFT_CANNOT_SUPPORT_SNOW_LAYER , "minecraft:cauldrons" => & Block :: MINECRAFT_CAULDRONS , "minecraft:cave_vines" => & Block :: MINECRAFT_CAVE_VINES , "minecraft:ceiling_hanging_signs" => & Block :: MINECRAFT_CEILING_HANGING_SIGNS , "minecraft:cherry_logs" => & Block :: MINECRAFT_CHERRY_LOGS , "minecraft:climbable" => & Block :: MINECRAFT_CLIMBABLE , "minecraft:coal_ores" => & Block :: MINECRAFT_COAL_ORES , "minecraft:combination_step_sound_blocks" => & Block :: MINECRAFT_COMBINATION_STEP_SOUND_BLOCKS , "minecraft:completes_find_tree_tutorial" => & Block :: MINECRAFT_COMPLETES_FIND_TREE_TUTORIAL , "minecraft:concrete_powder" => & Block :: MINECRAFT_CONCRETE_POWDER , "minecraft:concrete_powders" => & Block :: MINECRAFT_CONCRETE_POWDERS , "minecraft:convertable_to_mud" => & Block :: MINECRAFT_CONVERTABLE_TO_MUD , "minecraft:convertible_to_mud" => & Block :: MINECRAFT_CONVERTIBLE_TO_MUD , "minecraft:copper_chests" => & Block :: MINECRAFT_COPPER_CHESTS , "minecraft:copper_ores" => & Block :: MINECRAFT_COPPER_ORES , "minecraft:coral_blocks" => & Block :: MINECRAFT_CORAL_BLOCKS , "minecraft:coral_plants" => & Block :: MINECRAFT_CORAL_PLANTS , "minecraft:corals" => & Block :: MINECRAFT_CORALS , "minecraft:crimson_stems" => & Block :: MINECRAFT_CRIMSON_STEMS , "minecraft:crops" => & Block :: MINECRAFT_CROPS , "minecraft:crystal_sound_blocks" => & Block :: MINECRAFT_CRYSTAL_SOUND_BLOCKS , "minecraft:dampens_vibrations" => & Block :: MINECRAFT_DAMPENS_VIBRATIONS , "minecraft:dark_oak_logs" => & Block :: MINECRAFT_DARK_OAK_LOGS , "minecraft:dead_bush_may_place_on" => & Block :: MINECRAFT_DEAD_BUSH_MAY_PLACE_ON , "minecraft:deepslate_ore_replaceables" => & Block :: MINECRAFT_DEEPSLATE_ORE_REPLACEABLES , "minecraft:diamond_ores" => & Block :: MINECRAFT_DIAMOND_ORES , "minecraft:dirt" => & Block :: MINECRAFT_DIRT , "minecraft:does_not_block_hoppers" => & Block :: MINECRAFT_DOES_NOT_BLOCK_HOPPERS , "minecraft:doors" => & Block :: MINECRAFT_DOORS , "minecraft:dragon_immune" => & Block :: MINECRAFT_DRAGON_IMMUNE , "minecraft:dragon_transparent" => & Block :: MINECRAFT_DRAGON_TRANSPARENT , "minecraft:dripstone_replaceable_blocks" => & Block :: MINECRAFT_DRIPSTONE_REPLACEABLE_BLOCKS , "minecraft:edible_for_sheep" => & Block :: MINECRAFT_EDIBLE_FOR_SHEEP , "minecraft:emerald_ores" => & Block :: MINECRAFT_EMERALD_ORES , "minecraft:enables_bubble_column_drag_down" => & Block :: MINECRAFT_ENABLES_BUBBLE_COLUMN_DRAG_DOWN , "minecraft:enables_bubble_column_push_up" => & Block :: MINECRAFT_ENABLES_BUBBLE_COLUMN_PUSH_UP , "minecraft:enchantment_power_provider" => & Block :: MINECRAFT_ENCHANTMENT_POWER_PROVIDER , "minecraft:enchantment_power_transmitter" => & Block :: MINECRAFT_ENCHANTMENT_POWER_TRANSMITTER , "minecraft:enderman_holdable" => & Block :: MINECRAFT_ENDERMAN_HOLDABLE , "minecraft:fall_damage_resetting" => & Block :: MINECRAFT_FALL_DAMAGE_RESETTING , "minecraft:features_cannot_replace" => & Block :: MINECRAFT_FEATURES_CANNOT_REPLACE , "minecraft:fence_gates" => & Block :: MINECRAFT_FENCE_GATES , "minecraft:fences" => & Block :: MINECRAFT_FENCES , "minecraft:fire" => & Block :: MINECRAFT_FIRE , "minecraft:flower_pots" => & Block :: MINECRAFT_FLOWER_POTS , "minecraft:flowers" => & Block :: MINECRAFT_FLOWERS , "minecraft:foxes_spawnable_on" => & Block :: MINECRAFT_FOXES_SPAWNABLE_ON , "minecraft:frog_prefer_jump_to" => & Block :: MINECRAFT_FROG_PREFER_JUMP_TO , "minecraft:frogs_spawnable_on" => & Block :: MINECRAFT_FROGS_SPAWNABLE_ON , "minecraft:geode_invalid_blocks" => & Block :: MINECRAFT_GEODE_INVALID_BLOCKS , "minecraft:goats_spawnable_on" => & Block :: MINECRAFT_GOATS_SPAWNABLE_ON , "minecraft:gold_ores" => & Block :: MINECRAFT_GOLD_ORES , "minecraft:grass_blocks" => & Block :: MINECRAFT_GRASS_BLOCKS , "minecraft:guarded_by_piglins" => & Block :: MINECRAFT_GUARDED_BY_PIGLINS , "minecraft:hoglin_repellents" => & Block :: MINECRAFT_HOGLIN_REPELLENTS , "minecraft:huge_brown_mushroom_can_place_on" => & Block :: MINECRAFT_HUGE_BROWN_MUSHROOM_CAN_PLACE_ON , "minecraft:huge_red_mushroom_can_place_on" => & Block :: MINECRAFT_HUGE_RED_MUSHROOM_CAN_PLACE_ON , "minecraft:ice" => & Block :: MINECRAFT_ICE , "minecraft:impermeable" => & Block :: MINECRAFT_IMPERMEABLE , "minecraft:incorrect_for_diamond_tool" => & Block :: MINECRAFT_INCORRECT_FOR_DIAMOND_TOOL , "minecraft:incorrect_for_gold_tool" => & Block :: MINECRAFT_INCORRECT_FOR_GOLD_TOOL , "minecraft:incorrect_for_iron_tool" => & Block :: MINECRAFT_INCORRECT_FOR_IRON_TOOL , "minecraft:incorrect_for_netherite_tool" => & Block :: MINECRAFT_INCORRECT_FOR_NETHERITE_TOOL , "minecraft:incorrect_for_stone_tool" => & Block :: MINECRAFT_INCORRECT_FOR_STONE_TOOL , "minecraft:incorrect_for_wooden_tool" => & Block :: MINECRAFT_INCORRECT_FOR_WOODEN_TOOL , "minecraft:infiniburn_end" => & Block :: MINECRAFT_INFINIBURN_END , "minecraft:infiniburn_nether" => & Block :: MINECRAFT_INFINIBURN_NETHER , "minecraft:infiniburn_overworld" => & Block :: MINECRAFT_INFINIBURN_OVERWORLD , "minecraft:inside_step_sound_blocks" => & Block :: MINECRAFT_INSIDE_STEP_SOUND_BLOCKS , "minecraft:invalid_spawn_inside" => & Block :: MINECRAFT_INVALID_SPAWN_INSIDE , "minecraft:iron_ores" => & Block :: MINECRAFT_IRON_ORES , "minecraft:jungle_logs" => & Block :: MINECRAFT_JUNGLE_LOGS , "minecraft:lapis_ores" => & Block :: MINECRAFT_LAPIS_ORES , "minecraft:lava_pool_stone_cannot_replace" => & Block :: MINECRAFT_LAVA_POOL_STONE_CANNOT_REPLACE , "minecraft:leaves" => & Block :: MINECRAFT_LEAVES , "minecraft:logs" => & Block :: MINECRAFT_LOGS , "minecraft:logs_that_burn" => & Block :: MINECRAFT_LOGS_THAT_BURN , "minecraft:lush_ground_replaceable" => & Block :: MINECRAFT_LUSH_GROUND_REPLACEABLE , "minecraft:maintains_farmland" => & Block :: MINECRAFT_MAINTAINS_FARMLAND , "minecraft:mangrove_logs" => & Block :: MINECRAFT_MANGROVE_LOGS , "minecraft:mangrove_logs_can_grow_through" => & Block :: MINECRAFT_MANGROVE_LOGS_CAN_GROW_THROUGH , "minecraft:mangrove_roots_can_grow_through" => & Block :: MINECRAFT_MANGROVE_ROOTS_CAN_GROW_THROUGH , "minecraft:mineable/axe" => & Block :: MINECRAFT_MINEABLE_AXE , "minecraft:mineable/hoe" => & Block :: MINECRAFT_MINEABLE_HOE , "minecraft:mineable/pickaxe" => & Block :: MINECRAFT_MINEABLE_PICKAXE , "minecraft:mineable/shovel" => & Block :: MINECRAFT_MINEABLE_SHOVEL , "minecraft:mob_interactable_doors" => & Block :: MINECRAFT_MOB_INTERACTABLE_DOORS , "minecraft:mooshrooms_spawnable_on" => & Block :: MINECRAFT_MOOSHROOMS_SPAWNABLE_ON , "minecraft:moss_blocks" => & Block :: MINECRAFT_MOSS_BLOCKS , "minecraft:moss_replaceable" => & Block :: MINECRAFT_MOSS_REPLACEABLE , "minecraft:mud" => & Block :: MINECRAFT_MUD , "minecraft:mushroom_grow_block" => & Block :: MINECRAFT_MUSHROOM_GROW_BLOCK , "minecraft:needs_diamond_tool" => & Block :: MINECRAFT_NEEDS_DIAMOND_TOOL , "minecraft:needs_iron_tool" => & Block :: MINECRAFT_NEEDS_IRON_TOOL , "minecraft:needs_stone_tool" => & Block :: MINECRAFT_NEEDS_STONE_TOOL , "minecraft:nether_carver_replaceables" => & Block :: MINECRAFT_NETHER_CARVER_REPLACEABLES , "minecraft:nylium" => & Block :: MINECRAFT_NYLIUM , "minecraft:oak_logs" => & Block :: MINECRAFT_OAK_LOGS , "minecraft:occludes_vibration_signals" => & Block :: MINECRAFT_OCCLUDES_VIBRATION_SIGNALS , "minecraft:overrides_mushroom_light_requirement" => & Block :: MINECRAFT_OVERRIDES_MUSHROOM_LIGHT_REQUIREMENT , "minecraft:overworld_carver_replaceables" => & Block :: MINECRAFT_OVERWORLD_CARVER_REPLACEABLES , "minecraft:overworld_natural_logs" => & Block :: MINECRAFT_OVERWORLD_NATURAL_LOGS , "minecraft:parrots_spawnable_on" => & Block :: MINECRAFT_PARROTS_SPAWNABLE_ON , "minecraft:piglin_repellents" => & Block :: MINECRAFT_PIGLIN_REPELLENTS , "minecraft:planks" => & Block :: MINECRAFT_PLANKS , "minecraft:polar_bears_spawnable_on_alternate" => & Block :: MINECRAFT_POLAR_BEARS_SPAWNABLE_ON_ALTERNATE , "minecraft:portals" => & Block :: MINECRAFT_PORTALS , "minecraft:pressure_plates" => & Block :: MINECRAFT_PRESSURE_PLATES , "minecraft:prevent_mob_spawning_inside" => & Block :: MINECRAFT_PREVENT_MOB_SPAWNING_INSIDE , "minecraft:prevents_nearby_leaf_decay" => & Block :: MINECRAFT_PREVENTS_NEARBY_LEAF_DECAY , "minecraft:rabbits_spawnable_on" => & Block :: MINECRAFT_RABBITS_SPAWNABLE_ON , "minecraft:rails" => & Block :: MINECRAFT_RAILS , "minecraft:redstone_ores" => & Block :: MINECRAFT_REDSTONE_ORES , "minecraft:replaceable" => & Block :: MINECRAFT_REPLACEABLE , "minecraft:replaceable_by_mushrooms" => & Block :: MINECRAFT_REPLACEABLE_BY_MUSHROOMS , "minecraft:replaceable_by_trees" => & Block :: MINECRAFT_REPLACEABLE_BY_TREES , "minecraft:sand" => & Block :: MINECRAFT_SAND , "minecraft:saplings" => & Block :: MINECRAFT_SAPLINGS , "minecraft:sculk_replaceable" => & Block :: MINECRAFT_SCULK_REPLACEABLE , "minecraft:sculk_replaceable_world_gen" => & Block :: MINECRAFT_SCULK_REPLACEABLE_WORLD_GEN , "minecraft:shulker_boxes" => & Block :: MINECRAFT_SHULKER_BOXES , "minecraft:signs" => & Block :: MINECRAFT_SIGNS , "minecraft:slabs" => & Block :: MINECRAFT_SLABS , "minecraft:small_dripleaf_placeable" => & Block :: MINECRAFT_SMALL_DRIPLEAF_PLACEABLE , "minecraft:small_flowers" => & Block :: MINECRAFT_SMALL_FLOWERS , "minecraft:smelts_to_glass" => & Block :: MINECRAFT_SMELTS_TO_GLASS , "minecraft:snaps_goat_horn" => & Block :: MINECRAFT_SNAPS_GOAT_HORN , "minecraft:sniffer_diggable_block" => & Block :: MINECRAFT_SNIFFER_DIGGABLE_BLOCK , "minecraft:sniffer_egg_hatch_boost" => & Block :: MINECRAFT_SNIFFER_EGG_HATCH_BOOST , "minecraft:snow" => & Block :: MINECRAFT_SNOW , "minecraft:snow_layer_can_survive_on" => & Block :: MINECRAFT_SNOW_LAYER_CAN_SURVIVE_ON , "minecraft:snow_layer_cannot_survive_on" => & Block :: MINECRAFT_SNOW_LAYER_CANNOT_SURVIVE_ON , "minecraft:soul_fire_base_blocks" => & Block :: MINECRAFT_SOUL_FIRE_BASE_BLOCKS , "minecraft:soul_speed_blocks" => & Block :: MINECRAFT_SOUL_SPEED_BLOCKS , "minecraft:spruce_logs" => & Block :: MINECRAFT_SPRUCE_LOGS , "minecraft:stairs" => & Block :: MINECRAFT_STAIRS , "minecraft:standing_signs" => & Block :: MINECRAFT_STANDING_SIGNS , "minecraft:stone_bricks" => & Block :: MINECRAFT_STONE_BRICKS , "minecraft:stone_buttons" => & Block :: MINECRAFT_STONE_BUTTONS , "minecraft:stone_ore_replaceables" => & Block :: MINECRAFT_STONE_ORE_REPLACEABLES , "minecraft:stone_pressure_plates" => & Block :: MINECRAFT_STONE_PRESSURE_PLATES , "minecraft:strider_warm_blocks" => & Block :: MINECRAFT_STRIDER_WARM_BLOCKS , "minecraft:substrate_overworld" => & Block :: MINECRAFT_SUBSTRATE_OVERWORLD , "minecraft:support_override_cactus_flower" => & Block :: MINECRAFT_SUPPORT_OVERRIDE_CACTUS_FLOWER , "minecraft:support_override_snow_layer" => & Block :: MINECRAFT_SUPPORT_OVERRIDE_SNOW_LAYER , "minecraft:supports_azalea" => & Block :: MINECRAFT_SUPPORTS_AZALEA , "minecraft:supports_bamboo" => & Block :: MINECRAFT_SUPPORTS_BAMBOO , "minecraft:supports_big_dripleaf" => & Block :: MINECRAFT_SUPPORTS_BIG_DRIPLEAF , "minecraft:supports_cactus" => & Block :: MINECRAFT_SUPPORTS_CACTUS , "minecraft:supports_chorus_flower" => & Block :: MINECRAFT_SUPPORTS_CHORUS_FLOWER , "minecraft:supports_chorus_plant" => & Block :: MINECRAFT_SUPPORTS_CHORUS_PLANT , "minecraft:supports_cocoa" => & Block :: MINECRAFT_SUPPORTS_COCOA , "minecraft:supports_crimson_fungus" => & Block :: MINECRAFT_SUPPORTS_CRIMSON_FUNGUS , "minecraft:supports_crimson_roots" => & Block :: MINECRAFT_SUPPORTS_CRIMSON_ROOTS , "minecraft:supports_crops" => & Block :: MINECRAFT_SUPPORTS_CROPS , "minecraft:supports_dry_vegetation" => & Block :: MINECRAFT_SUPPORTS_DRY_VEGETATION , "minecraft:supports_hanging_mangrove_propagule" => & Block :: MINECRAFT_SUPPORTS_HANGING_MANGROVE_PROPAGULE , "minecraft:supports_lily_pad" => & Block :: MINECRAFT_SUPPORTS_LILY_PAD , "minecraft:supports_mangrove_propagule" => & Block :: MINECRAFT_SUPPORTS_MANGROVE_PROPAGULE , "minecraft:supports_melon_stem" => & Block :: MINECRAFT_SUPPORTS_MELON_STEM , "minecraft:supports_nether_sprouts" => & Block :: MINECRAFT_SUPPORTS_NETHER_SPROUTS , "minecraft:supports_nether_wart" => & Block :: MINECRAFT_SUPPORTS_NETHER_WART , "minecraft:supports_pumpkin_stem" => & Block :: MINECRAFT_SUPPORTS_PUMPKIN_STEM , "minecraft:supports_small_dripleaf" => & Block :: MINECRAFT_SUPPORTS_SMALL_DRIPLEAF , "minecraft:supports_stem_crops" => & Block :: MINECRAFT_SUPPORTS_STEM_CROPS , "minecraft:supports_sugar_cane" => & Block :: MINECRAFT_SUPPORTS_SUGAR_CANE , "minecraft:supports_sugar_cane_adjacently" => & Block :: MINECRAFT_SUPPORTS_SUGAR_CANE_ADJACENTLY , "minecraft:supports_vegetation" => & Block :: MINECRAFT_SUPPORTS_VEGETATION , "minecraft:supports_warped_fungus" => & Block :: MINECRAFT_SUPPORTS_WARPED_FUNGUS , "minecraft:supports_warped_roots" => & Block :: MINECRAFT_SUPPORTS_WARPED_ROOTS , "minecraft:supports_wither_rose" => & Block :: MINECRAFT_SUPPORTS_WITHER_ROSE , "minecraft:sword_efficient" => & Block :: MINECRAFT_SWORD_EFFICIENT , "minecraft:tall_flowers" => & Block :: MINECRAFT_TALL_FLOWERS , "minecraft:terracotta" => & Block :: MINECRAFT_TERRACOTTA , "minecraft:trail_ruins_replaceable" => & Block :: MINECRAFT_TRAIL_RUINS_REPLACEABLE , "minecraft:trapdoors" => & Block :: MINECRAFT_TRAPDOORS , "minecraft:underwater_bonemeals" => & Block :: MINECRAFT_UNDERWATER_BONEMEALS , "minecraft:unstable_bottom_center" => & Block :: MINECRAFT_UNSTABLE_BOTTOM_CENTER , "minecraft:valid_spawn" => & Block :: MINECRAFT_VALID_SPAWN , "minecraft:vibration_resonators" => & Block :: MINECRAFT_VIBRATION_RESONATORS , "minecraft:wall_corals" => & Block :: MINECRAFT_WALL_CORALS , "minecraft:wall_hanging_signs" => & Block :: MINECRAFT_WALL_HANGING_SIGNS , "minecraft:wall_post_override" => & Block :: MINECRAFT_WALL_POST_OVERRIDE , "minecraft:wall_signs" => & Block :: MINECRAFT_WALL_SIGNS , "minecraft:walls" => & Block :: MINECRAFT_WALLS , "minecraft:warped_stems" => & Block :: MINECRAFT_WARPED_STEMS , "minecraft:wart_blocks" => & Block :: MINECRAFT_WART_BLOCKS , "minecraft:wither_immune" => & Block :: MINECRAFT_WITHER_IMMUNE , "minecraft:wither_summon_base_blocks" => & Block :: MINECRAFT_WITHER_SUMMON_BASE_BLOCKS , "minecraft:wolves_spawnable_on" => & Block :: MINECRAFT_WOLVES_SPAWNABLE_ON , "minecraft:wooden_buttons" => & Block :: MINECRAFT_WOODEN_BUTTONS , "minecraft:wooden_doors" => & Block :: MINECRAFT_WOODEN_DOORS , "minecraft:wooden_fences" => & Block :: MINECRAFT_WOODEN_FENCES , "minecraft:wooden_pressure_plates" => & Block :: MINECRAFT_WOODEN_PRESSURE_PLATES , "minecraft:wooden_slabs" => & Block :: MINECRAFT_WOODEN_SLABS , "minecraft:wooden_stairs" => & Block :: MINECRAFT_WOODEN_STAIRS , "minecraft:wooden_trapdoors" => & Block :: MINECRAFT_WOODEN_TRAPDOORS , "minecraft:wool" => & Block :: MINECRAFT_WOOL , "minecraft:wool_carpets" => & Block :: MINECRAFT_WOOL_CARPETS };
 #[allow(non_snake_case)]
 pub mod CatVariant {
     use super::Tag;
@@ -7399,6 +8045,17 @@ pub mod EntityType {
     use super::Tag;
     pub const C_BOATS: Tag = (
         &[
+            "oak_boat",
+            "spruce_boat",
+            "birch_boat",
+            "jungle_boat",
+            "acacia_boat",
+            "cherry_boat",
+            "dark_oak_boat",
+            "pale_oak_boat",
+            "mangrove_boat",
+            "bamboo_raft",
+            "poplar_boat",
             "oak_chest_boat",
             "spruce_chest_boat",
             "birch_chest_boat",
@@ -7434,6 +8091,8 @@ pub mod EntityType {
         "c:minecarts",
     );
     pub const C_TELEPORTING_NOT_SUPPORTED: Tag = (&[], &[], "c:teleporting_not_supported");
+    pub const MINECRAFT_ACCEPTS_IRON_GOLEM_GIFT: Tag =
+        (&[], &[], "minecraft:accepts_iron_golem_gift");
     pub const MINECRAFT_AQUATIC: Tag = (
         &[
             "turtle",
@@ -7484,6 +8143,21 @@ pub mod EntityType {
     );
     pub const MINECRAFT_BEEHIVE_INHABITORS: Tag =
         (&["bee"], &[7u16], "minecraft:beehive_inhabitors");
+    pub const MINECRAFT_BOAT: Tag = (&[], &[], "minecraft:boat");
+    pub const MINECRAFT_BURN_IN_DAYLIGHT: Tag = (
+        &[
+            "skeleton",
+            "stray",
+            "wither_skeleton",
+            "bogged",
+            "zombie",
+            "zombie_villager",
+            "drowned",
+            "phantom",
+        ],
+        &[91u16, 102u16, 120u16, 11u16, 124u16, 126u16, 27u16, 76u16],
+        "minecraft:burn_in_daylight",
+    );
     pub const MINECRAFT_CAN_BREATHE_UNDER_WATER: Tag = (
         &[
             "skeleton",
@@ -7523,6 +8197,11 @@ pub mod EntityType {
     );
     pub const MINECRAFT_CAN_TURN_IN_BOATS: Tag =
         (&["breeze"], &[12u16], "minecraft:can_turn_in_boats");
+    pub const MINECRAFT_CANDIDATE_FOR_IRON_GOLEM_GIFT: Tag = (
+        &["villager"],
+        &[113u16],
+        "minecraft:candidate_for_iron_golem_gift",
+    );
     pub const MINECRAFT_DEFLECTS_PROJECTILES: Tag =
         (&["breeze"], &[12u16], "minecraft:deflects_projectiles");
     pub const MINECRAFT_DISMOUNTS_UNDERWATER: Tag = (
@@ -7847,7 +8526,7 @@ pub mod EntityType {
         "minecraft:zombies",
     );
 }
-static ENTITYTYPE_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf_map! { "c:boats" => & EntityType :: C_BOATS , "c:bosses" => & EntityType :: C_BOSSES , "c:capturing_not_supported" => & EntityType :: C_CAPTURING_NOT_SUPPORTED , "c:item_frames" => & EntityType :: C_ITEM_FRAMES , "c:minecarts" => & EntityType :: C_MINECARTS , "c:teleporting_not_supported" => & EntityType :: C_TELEPORTING_NOT_SUPPORTED , "minecraft:aquatic" => & EntityType :: MINECRAFT_AQUATIC , "minecraft:arrows" => & EntityType :: MINECRAFT_ARROWS , "minecraft:arthropod" => & EntityType :: MINECRAFT_ARTHROPOD , "minecraft:axolotl_always_hostiles" => & EntityType :: MINECRAFT_AXOLOTL_ALWAYS_HOSTILES , "minecraft:axolotl_hunt_targets" => & EntityType :: MINECRAFT_AXOLOTL_HUNT_TARGETS , "minecraft:beehive_inhabitors" => & EntityType :: MINECRAFT_BEEHIVE_INHABITORS , "minecraft:can_breathe_under_water" => & EntityType :: MINECRAFT_CAN_BREATHE_UNDER_WATER , "minecraft:can_turn_in_boats" => & EntityType :: MINECRAFT_CAN_TURN_IN_BOATS , "minecraft:deflects_projectiles" => & EntityType :: MINECRAFT_DEFLECTS_PROJECTILES , "minecraft:dismounts_underwater" => & EntityType :: MINECRAFT_DISMOUNTS_UNDERWATER , "minecraft:fall_damage_immune" => & EntityType :: MINECRAFT_FALL_DAMAGE_IMMUNE , "minecraft:freeze_hurts_extra_types" => & EntityType :: MINECRAFT_FREEZE_HURTS_EXTRA_TYPES , "minecraft:freeze_immune_entity_types" => & EntityType :: MINECRAFT_FREEZE_IMMUNE_ENTITY_TYPES , "minecraft:frog_food" => & EntityType :: MINECRAFT_FROG_FOOD , "minecraft:ignores_poison_and_regen" => & EntityType :: MINECRAFT_IGNORES_POISON_AND_REGEN , "minecraft:illager" => & EntityType :: MINECRAFT_ILLAGER , "minecraft:illager_friends" => & EntityType :: MINECRAFT_ILLAGER_FRIENDS , "minecraft:immune_to_infested" => & EntityType :: MINECRAFT_IMMUNE_TO_INFESTED , "minecraft:immune_to_oozing" => & EntityType :: MINECRAFT_IMMUNE_TO_OOZING , "minecraft:impact_projectiles" => & EntityType :: MINECRAFT_IMPACT_PROJECTILES , "minecraft:inverted_healing_and_harm" => & EntityType :: MINECRAFT_INVERTED_HEALING_AND_HARM , "minecraft:no_anger_from_wind_charge" => & EntityType :: MINECRAFT_NO_ANGER_FROM_WIND_CHARGE , "minecraft:non_controlling_rider" => & EntityType :: MINECRAFT_NON_CONTROLLING_RIDER , "minecraft:not_scary_for_pufferfish" => & EntityType :: MINECRAFT_NOT_SCARY_FOR_PUFFERFISH , "minecraft:powder_snow_walkable_mobs" => & EntityType :: MINECRAFT_POWDER_SNOW_WALKABLE_MOBS , "minecraft:raiders" => & EntityType :: MINECRAFT_RAIDERS , "minecraft:redirectable_projectile" => & EntityType :: MINECRAFT_REDIRECTABLE_PROJECTILE , "minecraft:sensitive_to_bane_of_arthropods" => & EntityType :: MINECRAFT_SENSITIVE_TO_BANE_OF_ARTHROPODS , "minecraft:sensitive_to_impaling" => & EntityType :: MINECRAFT_SENSITIVE_TO_IMPALING , "minecraft:sensitive_to_smite" => & EntityType :: MINECRAFT_SENSITIVE_TO_SMITE , "minecraft:skeletons" => & EntityType :: MINECRAFT_SKELETONS , "minecraft:undead" => & EntityType :: MINECRAFT_UNDEAD , "minecraft:wither_friends" => & EntityType :: MINECRAFT_WITHER_FRIENDS , "minecraft:zombies" => & EntityType :: MINECRAFT_ZOMBIES };
+static ENTITYTYPE_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf_map! { "c:boats" => & EntityType :: C_BOATS , "c:bosses" => & EntityType :: C_BOSSES , "c:capturing_not_supported" => & EntityType :: C_CAPTURING_NOT_SUPPORTED , "c:item_frames" => & EntityType :: C_ITEM_FRAMES , "c:minecarts" => & EntityType :: C_MINECARTS , "c:teleporting_not_supported" => & EntityType :: C_TELEPORTING_NOT_SUPPORTED , "minecraft:accepts_iron_golem_gift" => & EntityType :: MINECRAFT_ACCEPTS_IRON_GOLEM_GIFT , "minecraft:aquatic" => & EntityType :: MINECRAFT_AQUATIC , "minecraft:arrows" => & EntityType :: MINECRAFT_ARROWS , "minecraft:arthropod" => & EntityType :: MINECRAFT_ARTHROPOD , "minecraft:axolotl_always_hostiles" => & EntityType :: MINECRAFT_AXOLOTL_ALWAYS_HOSTILES , "minecraft:axolotl_hunt_targets" => & EntityType :: MINECRAFT_AXOLOTL_HUNT_TARGETS , "minecraft:beehive_inhabitors" => & EntityType :: MINECRAFT_BEEHIVE_INHABITORS , "minecraft:boat" => & EntityType :: MINECRAFT_BOAT , "minecraft:burn_in_daylight" => & EntityType :: MINECRAFT_BURN_IN_DAYLIGHT , "minecraft:can_breathe_under_water" => & EntityType :: MINECRAFT_CAN_BREATHE_UNDER_WATER , "minecraft:can_turn_in_boats" => & EntityType :: MINECRAFT_CAN_TURN_IN_BOATS , "minecraft:candidate_for_iron_golem_gift" => & EntityType :: MINECRAFT_CANDIDATE_FOR_IRON_GOLEM_GIFT , "minecraft:deflects_projectiles" => & EntityType :: MINECRAFT_DEFLECTS_PROJECTILES , "minecraft:dismounts_underwater" => & EntityType :: MINECRAFT_DISMOUNTS_UNDERWATER , "minecraft:fall_damage_immune" => & EntityType :: MINECRAFT_FALL_DAMAGE_IMMUNE , "minecraft:freeze_hurts_extra_types" => & EntityType :: MINECRAFT_FREEZE_HURTS_EXTRA_TYPES , "minecraft:freeze_immune_entity_types" => & EntityType :: MINECRAFT_FREEZE_IMMUNE_ENTITY_TYPES , "minecraft:frog_food" => & EntityType :: MINECRAFT_FROG_FOOD , "minecraft:ignores_poison_and_regen" => & EntityType :: MINECRAFT_IGNORES_POISON_AND_REGEN , "minecraft:illager" => & EntityType :: MINECRAFT_ILLAGER , "minecraft:illager_friends" => & EntityType :: MINECRAFT_ILLAGER_FRIENDS , "minecraft:immune_to_infested" => & EntityType :: MINECRAFT_IMMUNE_TO_INFESTED , "minecraft:immune_to_oozing" => & EntityType :: MINECRAFT_IMMUNE_TO_OOZING , "minecraft:impact_projectiles" => & EntityType :: MINECRAFT_IMPACT_PROJECTILES , "minecraft:inverted_healing_and_harm" => & EntityType :: MINECRAFT_INVERTED_HEALING_AND_HARM , "minecraft:no_anger_from_wind_charge" => & EntityType :: MINECRAFT_NO_ANGER_FROM_WIND_CHARGE , "minecraft:non_controlling_rider" => & EntityType :: MINECRAFT_NON_CONTROLLING_RIDER , "minecraft:not_scary_for_pufferfish" => & EntityType :: MINECRAFT_NOT_SCARY_FOR_PUFFERFISH , "minecraft:powder_snow_walkable_mobs" => & EntityType :: MINECRAFT_POWDER_SNOW_WALKABLE_MOBS , "minecraft:raiders" => & EntityType :: MINECRAFT_RAIDERS , "minecraft:redirectable_projectile" => & EntityType :: MINECRAFT_REDIRECTABLE_PROJECTILE , "minecraft:sensitive_to_bane_of_arthropods" => & EntityType :: MINECRAFT_SENSITIVE_TO_BANE_OF_ARTHROPODS , "minecraft:sensitive_to_impaling" => & EntityType :: MINECRAFT_SENSITIVE_TO_IMPALING , "minecraft:sensitive_to_smite" => & EntityType :: MINECRAFT_SENSITIVE_TO_SMITE , "minecraft:skeletons" => & EntityType :: MINECRAFT_SKELETONS , "minecraft:undead" => & EntityType :: MINECRAFT_UNDEAD , "minecraft:wither_friends" => & EntityType :: MINECRAFT_WITHER_FRIENDS , "minecraft:zombies" => & EntityType :: MINECRAFT_ZOMBIES };
 #[allow(non_snake_case)]
 pub mod Fluid {
     use super::Tag;
@@ -7863,14 +8542,23 @@ pub mod Fluid {
     pub const C_RABBIT_STEW: Tag = (&[], &[], "c:rabbit_stew");
     pub const C_SUSPICIOUS_STEW: Tag = (&[], &[], "c:suspicious_stew");
     pub const C_WATER: Tag = (&["water", "flowing_water"], &[2u16, 1u16], "c:water");
+    pub const MINECRAFT_BUBBLE_COLUMN_CAN_OCCUPY: Tag =
+        (&["water"], &[2u16], "minecraft:bubble_column_can_occupy");
     pub const MINECRAFT_LAVA: Tag = (&["lava", "flowing_lava"], &[4u16, 3u16], "minecraft:lava");
+    pub const MINECRAFT_SUPPORTS_LILY_PAD: Tag =
+        (&["water"], &[2u16], "minecraft:supports_lily_pad");
+    pub const MINECRAFT_SUPPORTS_SUGAR_CANE_ADJACENTLY: Tag = (
+        &["water", "flowing_water"],
+        &[2u16, 1u16],
+        "minecraft:supports_sugar_cane_adjacently",
+    );
     pub const MINECRAFT_WATER: Tag = (
         &["water", "flowing_water"],
         &[2u16, 1u16],
         "minecraft:water",
     );
 }
-static FLUID_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf_map! { "c:beetroot_soup" => & Fluid :: C_BEETROOT_SOUP , "c:experience" => & Fluid :: C_EXPERIENCE , "c:gaseous" => & Fluid :: C_GASEOUS , "c:hidden_from_recipe_viewers" => & Fluid :: C_HIDDEN_FROM_RECIPE_VIEWERS , "c:honey" => & Fluid :: C_HONEY , "c:lava" => & Fluid :: C_LAVA , "c:milk" => & Fluid :: C_MILK , "c:mushroom_stew" => & Fluid :: C_MUSHROOM_STEW , "c:potion" => & Fluid :: C_POTION , "c:rabbit_stew" => & Fluid :: C_RABBIT_STEW , "c:suspicious_stew" => & Fluid :: C_SUSPICIOUS_STEW , "c:water" => & Fluid :: C_WATER , "minecraft:lava" => & Fluid :: MINECRAFT_LAVA , "minecraft:water" => & Fluid :: MINECRAFT_WATER };
+static FLUID_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf_map! { "c:beetroot_soup" => & Fluid :: C_BEETROOT_SOUP , "c:experience" => & Fluid :: C_EXPERIENCE , "c:gaseous" => & Fluid :: C_GASEOUS , "c:hidden_from_recipe_viewers" => & Fluid :: C_HIDDEN_FROM_RECIPE_VIEWERS , "c:honey" => & Fluid :: C_HONEY , "c:lava" => & Fluid :: C_LAVA , "c:milk" => & Fluid :: C_MILK , "c:mushroom_stew" => & Fluid :: C_MUSHROOM_STEW , "c:potion" => & Fluid :: C_POTION , "c:rabbit_stew" => & Fluid :: C_RABBIT_STEW , "c:suspicious_stew" => & Fluid :: C_SUSPICIOUS_STEW , "c:water" => & Fluid :: C_WATER , "minecraft:bubble_column_can_occupy" => & Fluid :: MINECRAFT_BUBBLE_COLUMN_CAN_OCCUPY , "minecraft:lava" => & Fluid :: MINECRAFT_LAVA , "minecraft:supports_lily_pad" => & Fluid :: MINECRAFT_SUPPORTS_LILY_PAD , "minecraft:supports_sugar_cane_adjacently" => & Fluid :: MINECRAFT_SUPPORTS_SUGAR_CANE_ADJACENTLY , "minecraft:water" => & Fluid :: MINECRAFT_WATER };
 #[allow(non_snake_case)]
 pub mod GameEvent {
     use super::Tag;
@@ -10702,6 +11390,13 @@ pub mod Item {
             "netherite_shovel",
             "wooden_shovel",
             "iron_shovel",
+            "diamond_spear",
+            "stone_spear",
+            "golden_spear",
+            "netherite_spear",
+            "wooden_spear",
+            "iron_spear",
+            "copper_spear",
             "diamond_sword",
             "stone_sword",
             "golden_sword",
@@ -10720,13 +11415,6 @@ pub mod Item {
             "copper_pickaxe",
             "copper_sword",
             "copper_axe",
-            "wooden_spear",
-            "stone_spear",
-            "copper_spear",
-            "iron_spear",
-            "golden_spear",
-            "diamond_spear",
-            "netherite_spear",
         ],
         &[
             841u16, 826u16, 831u16, 846u16, 821u16, 836u16, 842u16, 827u16, 832u16, 847u16, 822u16,
@@ -11049,6 +11737,7 @@ pub mod Item {
         ],
         "minecraft:breaks_decorated_pots",
     );
+    pub const MINECRAFT_BUNDLES: Tag = (&["bundle"], &[930u16], "minecraft:bundles");
     pub const MINECRAFT_BUTTONS: Tag = (
         &[
             "oak_button",
@@ -11097,6 +11786,31 @@ pub mod Item {
             1250u16, 1251u16, 1252u16, 1253u16, 1254u16, 1255u16, 1256u16, 1257u16,
         ],
         "minecraft:candles",
+    );
+    pub const MINECRAFT_CAT_COLLAR_DYES: Tag = (
+        &[
+            "white_dye",
+            "orange_dye",
+            "magenta_dye",
+            "light_blue_dye",
+            "yellow_dye",
+            "lime_dye",
+            "pink_dye",
+            "gray_dye",
+            "light_gray_dye",
+            "cyan_dye",
+            "purple_dye",
+            "blue_dye",
+            "brown_dye",
+            "green_dye",
+            "red_dye",
+            "black_dye",
+        ],
+        &[
+            944u16, 945u16, 946u16, 947u16, 948u16, 949u16, 950u16, 951u16, 952u16, 953u16, 954u16,
+            955u16, 956u16, 957u16, 958u16, 959u16,
+        ],
+        "minecraft:cat_collar_dyes",
     );
     pub const MINECRAFT_CAT_FOOD: Tag =
         (&["cod", "salmon"], &[935u16, 936u16], "minecraft:cat_food");
@@ -11461,6 +12175,31 @@ pub mod Item {
         ],
         &[856u16, 857u16, 858u16, 859u16, 1127u16, 797u16],
         "minecraft:dyeable",
+    );
+    pub const MINECRAFT_DYES: Tag = (
+        &[
+            "white_dye",
+            "orange_dye",
+            "magenta_dye",
+            "light_blue_dye",
+            "yellow_dye",
+            "lime_dye",
+            "pink_dye",
+            "gray_dye",
+            "light_gray_dye",
+            "cyan_dye",
+            "purple_dye",
+            "blue_dye",
+            "brown_dye",
+            "green_dye",
+            "red_dye",
+            "black_dye",
+        ],
+        &[
+            944u16, 945u16, 946u16, 947u16, 948u16, 949u16, 950u16, 951u16, 952u16, 953u16, 954u16,
+            955u16, 956u16, 957u16, 958u16, 959u16,
+        ],
+        "minecraft:dyes",
     );
     pub const MINECRAFT_EMERALD_ORES: Tag = (
         &["emerald_ore", "deepslate_emerald_ore"],
@@ -12031,6 +12770,11 @@ pub mod Item {
         "minecraft:freeze_immune_wearables",
     );
     pub const MINECRAFT_FROG_FOOD: Tag = (&["slime_ball"], &[926u16], "minecraft:frog_food");
+    pub const MINECRAFT_FURNACE_MINECART_FUEL: Tag = (
+        &["coal", "charcoal"],
+        &[803u16, 804u16],
+        "minecraft:furnace_minecart_fuel",
+    );
     pub const MINECRAFT_GOAT_FOOD: Tag = (&["wheat"], &[854u16], "minecraft:goat_food");
     pub const MINECRAFT_GOLD_ORES: Tag = (
         &["gold_ore", "nether_gold_ore", "deepslate_gold_ore"],
@@ -12056,6 +12800,8 @@ pub mod Item {
         ],
         "minecraft:hanging_signs",
     );
+    pub const MINECRAFT_HAPPY_GHAST_FOOD: Tag =
+        (&["snowball"], &[912u16], "minecraft:happy_ghast_food");
     pub const MINECRAFT_HEAD_ARMOR: Tag = (
         &[
             "leather_helmet",
@@ -12433,10 +13179,25 @@ pub mod Item {
         ],
         "minecraft:piglin_loved",
     );
+    pub const MINECRAFT_PIGLIN_PREFERRED_WEAPONS: Tag = (
+        &["crossbow"],
+        &[1192u16],
+        "minecraft:piglin_preferred_weapons",
+    );
     pub const MINECRAFT_PIGLIN_REPELLENTS: Tag = (
         &["soul_torch", "soul_lantern", "soul_campfire"],
         &[331u16, 1215u16, 1219u16],
         "minecraft:piglin_repellents",
+    );
+    pub const MINECRAFT_PIGLIN_SAFE_ARMOR: Tag = (
+        &[
+            "golden_helmet",
+            "golden_chestplate",
+            "golden_leggings",
+            "golden_boots",
+        ],
+        &[872u16, 873u16, 874u16, 875u16],
+        "minecraft:piglin_safe_armor",
     );
     pub const MINECRAFT_PLANKS: Tag = (
         &[
@@ -12507,6 +13268,32 @@ pub mod Item {
         ],
         &[839u16, 824u16, 829u16, 844u16, 819u16, 834u16],
         "minecraft:shovels",
+    );
+    pub const MINECRAFT_SHULKER_BOXES: Tag = (
+        &[
+            "shulker_box",
+            "white_shulker_box",
+            "orange_shulker_box",
+            "magenta_shulker_box",
+            "light_blue_shulker_box",
+            "yellow_shulker_box",
+            "lime_shulker_box",
+            "pink_shulker_box",
+            "gray_shulker_box",
+            "light_gray_shulker_box",
+            "cyan_shulker_box",
+            "purple_shulker_box",
+            "blue_shulker_box",
+            "brown_shulker_box",
+            "green_shulker_box",
+            "red_shulker_box",
+            "black_shulker_box",
+        ],
+        &[
+            522u16, 523u16, 524u16, 525u16, 526u16, 527u16, 528u16, 529u16, 530u16, 531u16, 532u16,
+            533u16, 534u16, 535u16, 536u16, 537u16, 538u16,
+        ],
+        "minecraft:shulker_boxes",
     );
     pub const MINECRAFT_SIGNS: Tag = (
         &[
@@ -12650,6 +13437,7 @@ pub mod Item {
         &[326u16, 327u16],
         "minecraft:soul_fire_base_blocks",
     );
+    pub const MINECRAFT_SPEARS: Tag = (&[], &[], "minecraft:spears");
     pub const MINECRAFT_SPRUCE_LOGS: Tag = (
         &[
             "spruce_log",
@@ -13180,7 +13968,7 @@ pub mod Item {
         "minecraft:wool_carpets",
     );
 }
-static ITEM_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf_map! { "c:animal_foods" => & Item :: C_ANIMAL_FOODS , "c:armors" => & Item :: C_ARMORS , "c:armors/horse" => & Item :: C_ARMORS_HORSE , "c:armors/humanoid" => & Item :: C_ARMORS_HUMANOID , "c:armors/nautilus" => & Item :: C_ARMORS_NAUTILUS , "c:armors/wolf" => & Item :: C_ARMORS_WOLF , "c:barrels" => & Item :: C_BARRELS , "c:barrels/wooden" => & Item :: C_BARRELS_WOODEN , "c:bars" => & Item :: C_BARS , "c:bars/copper" => & Item :: C_BARS_COPPER , "c:bars/iron" => & Item :: C_BARS_IRON , "c:bones" => & Item :: C_BONES , "c:bookshelves" => & Item :: C_BOOKSHELVES , "c:bricks" => & Item :: C_BRICKS , "c:bricks/nether" => & Item :: C_BRICKS_NETHER , "c:bricks/normal" => & Item :: C_BRICKS_NORMAL , "c:bricks/resin" => & Item :: C_BRICKS_RESIN , "c:buckets" => & Item :: C_BUCKETS , "c:buckets/empty" => & Item :: C_BUCKETS_EMPTY , "c:buckets/entity_dry" => & Item :: C_BUCKETS_ENTITY_DRY , "c:buckets/entity_water" => & Item :: C_BUCKETS_ENTITY_WATER , "c:buckets/lava" => & Item :: C_BUCKETS_LAVA , "c:buckets/milk" => & Item :: C_BUCKETS_MILK , "c:buckets/powder_snow" => & Item :: C_BUCKETS_POWDER_SNOW , "c:buckets/water" => & Item :: C_BUCKETS_WATER , "c:budding_blocks" => & Item :: C_BUDDING_BLOCKS , "c:buds" => & Item :: C_BUDS , "c:chains" => & Item :: C_CHAINS , "c:chests" => & Item :: C_CHESTS , "c:chests/ender" => & Item :: C_CHESTS_ENDER , "c:chests/trapped" => & Item :: C_CHESTS_TRAPPED , "c:chests/wooden" => & Item :: C_CHESTS_WOODEN , "c:clumps" => & Item :: C_CLUMPS , "c:clumps/resin" => & Item :: C_CLUMPS_RESIN , "c:clusters" => & Item :: C_CLUSTERS , "c:cobblestones" => & Item :: C_COBBLESTONES , "c:cobblestones/deepslate" => & Item :: C_COBBLESTONES_DEEPSLATE , "c:cobblestones/infested" => & Item :: C_COBBLESTONES_INFESTED , "c:cobblestones/mossy" => & Item :: C_COBBLESTONES_MOSSY , "c:cobblestones/normal" => & Item :: C_COBBLESTONES_NORMAL , "c:concrete_powders" => & Item :: C_CONCRETE_POWDERS , "c:concretes" => & Item :: C_CONCRETES , "c:crops" => & Item :: C_CROPS , "c:crops/beetroot" => & Item :: C_CROPS_BEETROOT , "c:crops/cactus" => & Item :: C_CROPS_CACTUS , "c:crops/carrot" => & Item :: C_CROPS_CARROT , "c:crops/cocoa_bean" => & Item :: C_CROPS_COCOA_BEAN , "c:crops/melon" => & Item :: C_CROPS_MELON , "c:crops/nether_wart" => & Item :: C_CROPS_NETHER_WART , "c:crops/potato" => & Item :: C_CROPS_POTATO , "c:crops/pumpkin" => & Item :: C_CROPS_PUMPKIN , "c:crops/sugar_cane" => & Item :: C_CROPS_SUGAR_CANE , "c:crops/wheat" => & Item :: C_CROPS_WHEAT , "c:drink_containing/bottle" => & Item :: C_DRINK_CONTAINING_BOTTLE , "c:drink_containing/bucket" => & Item :: C_DRINK_CONTAINING_BUCKET , "c:drinks" => & Item :: C_DRINKS , "c:drinks/honey" => & Item :: C_DRINKS_HONEY , "c:drinks/juice" => & Item :: C_DRINKS_JUICE , "c:drinks/magic" => & Item :: C_DRINKS_MAGIC , "c:drinks/milk" => & Item :: C_DRINKS_MILK , "c:drinks/ominous" => & Item :: C_DRINKS_OMINOUS , "c:drinks/water" => & Item :: C_DRINKS_WATER , "c:drinks/watery" => & Item :: C_DRINKS_WATERY , "c:dusts" => & Item :: C_DUSTS , "c:dusts/glowstone" => & Item :: C_DUSTS_GLOWSTONE , "c:dusts/redstone" => & Item :: C_DUSTS_REDSTONE , "c:dyeable" => & Item :: C_DYEABLE , "c:dyeable/dynamic" => & Item :: C_DYEABLE_DYNAMIC , "c:dyeable/simple" => & Item :: C_DYEABLE_SIMPLE , "c:dyeable/simple/redyeable" => & Item :: C_DYEABLE_SIMPLE_REDYEABLE , "c:dyeable/simple/undyed" => & Item :: C_DYEABLE_SIMPLE_UNDYED , "c:dyed" => & Item :: C_DYED , "c:dyed/black" => & Item :: C_DYED_BLACK , "c:dyed/blue" => & Item :: C_DYED_BLUE , "c:dyed/brown" => & Item :: C_DYED_BROWN , "c:dyed/cyan" => & Item :: C_DYED_CYAN , "c:dyed/gray" => & Item :: C_DYED_GRAY , "c:dyed/green" => & Item :: C_DYED_GREEN , "c:dyed/light_blue" => & Item :: C_DYED_LIGHT_BLUE , "c:dyed/light_gray" => & Item :: C_DYED_LIGHT_GRAY , "c:dyed/lime" => & Item :: C_DYED_LIME , "c:dyed/magenta" => & Item :: C_DYED_MAGENTA , "c:dyed/orange" => & Item :: C_DYED_ORANGE , "c:dyed/pink" => & Item :: C_DYED_PINK , "c:dyed/purple" => & Item :: C_DYED_PURPLE , "c:dyed/red" => & Item :: C_DYED_RED , "c:dyed/white" => & Item :: C_DYED_WHITE , "c:dyed/yellow" => & Item :: C_DYED_YELLOW , "c:dyes" => & Item :: C_DYES , "c:dyes/black" => & Item :: C_DYES_BLACK , "c:dyes/blue" => & Item :: C_DYES_BLUE , "c:dyes/brown" => & Item :: C_DYES_BROWN , "c:dyes/cyan" => & Item :: C_DYES_CYAN , "c:dyes/gray" => & Item :: C_DYES_GRAY , "c:dyes/green" => & Item :: C_DYES_GREEN , "c:dyes/light_blue" => & Item :: C_DYES_LIGHT_BLUE , "c:dyes/light_gray" => & Item :: C_DYES_LIGHT_GRAY , "c:dyes/lime" => & Item :: C_DYES_LIME , "c:dyes/magenta" => & Item :: C_DYES_MAGENTA , "c:dyes/orange" => & Item :: C_DYES_ORANGE , "c:dyes/pink" => & Item :: C_DYES_PINK , "c:dyes/purple" => & Item :: C_DYES_PURPLE , "c:dyes/red" => & Item :: C_DYES_RED , "c:dyes/white" => & Item :: C_DYES_WHITE , "c:dyes/yellow" => & Item :: C_DYES_YELLOW , "c:eggs" => & Item :: C_EGGS , "c:enchantables" => & Item :: C_ENCHANTABLES , "c:end_stones" => & Item :: C_END_STONES , "c:ender_pearls" => & Item :: C_ENDER_PEARLS , "c:feathers" => & Item :: C_FEATHERS , "c:fence_gates" => & Item :: C_FENCE_GATES , "c:fence_gates/wooden" => & Item :: C_FENCE_GATES_WOODEN , "c:fences" => & Item :: C_FENCES , "c:fences/nether_brick" => & Item :: C_FENCES_NETHER_BRICK , "c:fences/wooden" => & Item :: C_FENCES_WOODEN , "c:fertilizers" => & Item :: C_FERTILIZERS , "c:flowers" => & Item :: C_FLOWERS , "c:flowers/small" => & Item :: C_FLOWERS_SMALL , "c:flowers/tall" => & Item :: C_FLOWERS_TALL , "c:foods" => & Item :: C_FOODS , "c:foods/berry" => & Item :: C_FOODS_BERRY , "c:foods/bread" => & Item :: C_FOODS_BREAD , "c:foods/candy" => & Item :: C_FOODS_CANDY , "c:foods/cooked_fish" => & Item :: C_FOODS_COOKED_FISH , "c:foods/cooked_meat" => & Item :: C_FOODS_COOKED_MEAT , "c:foods/cookie" => & Item :: C_FOODS_COOKIE , "c:foods/dough" => & Item :: C_FOODS_DOUGH , "c:foods/edible_when_placed" => & Item :: C_FOODS_EDIBLE_WHEN_PLACED , "c:foods/food_poisoning" => & Item :: C_FOODS_FOOD_POISONING , "c:foods/fruit" => & Item :: C_FOODS_FRUIT , "c:foods/golden" => & Item :: C_FOODS_GOLDEN , "c:foods/pie" => & Item :: C_FOODS_PIE , "c:foods/raw_fish" => & Item :: C_FOODS_RAW_FISH , "c:foods/raw_meat" => & Item :: C_FOODS_RAW_MEAT , "c:foods/soup" => & Item :: C_FOODS_SOUP , "c:foods/vegetable" => & Item :: C_FOODS_VEGETABLE , "c:froglights" => & Item :: C_FROGLIGHTS , "c:gems" => & Item :: C_GEMS , "c:gems/amethyst" => & Item :: C_GEMS_AMETHYST , "c:gems/diamond" => & Item :: C_GEMS_DIAMOND , "c:gems/emerald" => & Item :: C_GEMS_EMERALD , "c:gems/lapis" => & Item :: C_GEMS_LAPIS , "c:gems/prismarine" => & Item :: C_GEMS_PRISMARINE , "c:gems/quartz" => & Item :: C_GEMS_QUARTZ , "c:glass_blocks" => & Item :: C_GLASS_BLOCKS , "c:glass_blocks/cheap" => & Item :: C_GLASS_BLOCKS_CHEAP , "c:glass_blocks/colorless" => & Item :: C_GLASS_BLOCKS_COLORLESS , "c:glass_blocks/tinted" => & Item :: C_GLASS_BLOCKS_TINTED , "c:glass_panes" => & Item :: C_GLASS_PANES , "c:glass_panes/colorless" => & Item :: C_GLASS_PANES_COLORLESS , "c:glazed_terracottas" => & Item :: C_GLAZED_TERRACOTTAS , "c:gravels" => & Item :: C_GRAVELS , "c:gunpowders" => & Item :: C_GUNPOWDERS , "c:hidden_from_recipe_viewers" => & Item :: C_HIDDEN_FROM_RECIPE_VIEWERS , "c:ingots" => & Item :: C_INGOTS , "c:ingots/copper" => & Item :: C_INGOTS_COPPER , "c:ingots/gold" => & Item :: C_INGOTS_GOLD , "c:ingots/iron" => & Item :: C_INGOTS_IRON , "c:ingots/netherite" => & Item :: C_INGOTS_NETHERITE , "c:leathers" => & Item :: C_LEATHERS , "c:mushrooms" => & Item :: C_MUSHROOMS , "c:music_discs" => & Item :: C_MUSIC_DISCS , "c:natural_logs" => & Item :: C_NATURAL_LOGS , "c:natural_logs/nether" => & Item :: C_NATURAL_LOGS_NETHER , "c:natural_logs/overworld" => & Item :: C_NATURAL_LOGS_OVERWORLD , "c:natural_woods" => & Item :: C_NATURAL_WOODS , "c:nether_stars" => & Item :: C_NETHER_STARS , "c:netherracks" => & Item :: C_NETHERRACKS , "c:nuggets" => & Item :: C_NUGGETS , "c:nuggets/copper" => & Item :: C_NUGGETS_COPPER , "c:nuggets/gold" => & Item :: C_NUGGETS_GOLD , "c:nuggets/iron" => & Item :: C_NUGGETS_IRON , "c:obsidians" => & Item :: C_OBSIDIANS , "c:obsidians/crying" => & Item :: C_OBSIDIANS_CRYING , "c:obsidians/normal" => & Item :: C_OBSIDIANS_NORMAL , "c:ore_bearing_ground/deepslate" => & Item :: C_ORE_BEARING_GROUND_DEEPSLATE , "c:ore_bearing_ground/netherrack" => & Item :: C_ORE_BEARING_GROUND_NETHERRACK , "c:ore_bearing_ground/stone" => & Item :: C_ORE_BEARING_GROUND_STONE , "c:ore_rates/dense" => & Item :: C_ORE_RATES_DENSE , "c:ore_rates/singular" => & Item :: C_ORE_RATES_SINGULAR , "c:ore_rates/sparse" => & Item :: C_ORE_RATES_SPARSE , "c:ores" => & Item :: C_ORES , "c:ores/coal" => & Item :: C_ORES_COAL , "c:ores/copper" => & Item :: C_ORES_COPPER , "c:ores/diamond" => & Item :: C_ORES_DIAMOND , "c:ores/emerald" => & Item :: C_ORES_EMERALD , "c:ores/gold" => & Item :: C_ORES_GOLD , "c:ores/iron" => & Item :: C_ORES_IRON , "c:ores/lapis" => & Item :: C_ORES_LAPIS , "c:ores/netherite_scrap" => & Item :: C_ORES_NETHERITE_SCRAP , "c:ores/quartz" => & Item :: C_ORES_QUARTZ , "c:ores/redstone" => & Item :: C_ORES_REDSTONE , "c:ores_in_ground/deepslate" => & Item :: C_ORES_IN_GROUND_DEEPSLATE , "c:ores_in_ground/netherrack" => & Item :: C_ORES_IN_GROUND_NETHERRACK , "c:ores_in_ground/stone" => & Item :: C_ORES_IN_GROUND_STONE , "c:player_workstations/crafting_tables" => & Item :: C_PLAYER_WORKSTATIONS_CRAFTING_TABLES , "c:player_workstations/furnaces" => & Item :: C_PLAYER_WORKSTATIONS_FURNACES , "c:potions" => & Item :: C_POTIONS , "c:potions/bottle" => & Item :: C_POTIONS_BOTTLE , "c:pumpkins" => & Item :: C_PUMPKINS , "c:pumpkins/carved" => & Item :: C_PUMPKINS_CARVED , "c:pumpkins/jack_o_lanterns" => & Item :: C_PUMPKINS_JACK_O_LANTERNS , "c:pumpkins/normal" => & Item :: C_PUMPKINS_NORMAL , "c:raw_materials" => & Item :: C_RAW_MATERIALS , "c:raw_materials/copper" => & Item :: C_RAW_MATERIALS_COPPER , "c:raw_materials/gold" => & Item :: C_RAW_MATERIALS_GOLD , "c:raw_materials/iron" => & Item :: C_RAW_MATERIALS_IRON , "c:rods" => & Item :: C_RODS , "c:rods/blaze" => & Item :: C_RODS_BLAZE , "c:rods/breeze" => & Item :: C_RODS_BREEZE , "c:rods/wooden" => & Item :: C_RODS_WOODEN , "c:ropes" => & Item :: C_ROPES , "c:sands" => & Item :: C_SANDS , "c:sands/colorless" => & Item :: C_SANDS_COLORLESS , "c:sands/red" => & Item :: C_SANDS_RED , "c:sandstone/blocks" => & Item :: C_SANDSTONE_BLOCKS , "c:sandstone/red_blocks" => & Item :: C_SANDSTONE_RED_BLOCKS , "c:sandstone/red_slabs" => & Item :: C_SANDSTONE_RED_SLABS , "c:sandstone/red_stairs" => & Item :: C_SANDSTONE_RED_STAIRS , "c:sandstone/slabs" => & Item :: C_SANDSTONE_SLABS , "c:sandstone/stairs" => & Item :: C_SANDSTONE_STAIRS , "c:sandstone/uncolored_blocks" => & Item :: C_SANDSTONE_UNCOLORED_BLOCKS , "c:sandstone/uncolored_slabs" => & Item :: C_SANDSTONE_UNCOLORED_SLABS , "c:sandstone/uncolored_stairs" => & Item :: C_SANDSTONE_UNCOLORED_STAIRS , "c:seeds" => & Item :: C_SEEDS , "c:seeds/beetroot" => & Item :: C_SEEDS_BEETROOT , "c:seeds/melon" => & Item :: C_SEEDS_MELON , "c:seeds/pitcher_plant" => & Item :: C_SEEDS_PITCHER_PLANT , "c:seeds/pumpkin" => & Item :: C_SEEDS_PUMPKIN , "c:seeds/torchflower" => & Item :: C_SEEDS_TORCHFLOWER , "c:seeds/wheat" => & Item :: C_SEEDS_WHEAT , "c:shulker_boxes" => & Item :: C_SHULKER_BOXES , "c:slime_balls" => & Item :: C_SLIME_BALLS , "c:stones" => & Item :: C_STONES , "c:storage_blocks" => & Item :: C_STORAGE_BLOCKS , "c:storage_blocks/bone_meal" => & Item :: C_STORAGE_BLOCKS_BONE_MEAL , "c:storage_blocks/coal" => & Item :: C_STORAGE_BLOCKS_COAL , "c:storage_blocks/copper" => & Item :: C_STORAGE_BLOCKS_COPPER , "c:storage_blocks/diamond" => & Item :: C_STORAGE_BLOCKS_DIAMOND , "c:storage_blocks/dried_kelp" => & Item :: C_STORAGE_BLOCKS_DRIED_KELP , "c:storage_blocks/emerald" => & Item :: C_STORAGE_BLOCKS_EMERALD , "c:storage_blocks/gold" => & Item :: C_STORAGE_BLOCKS_GOLD , "c:storage_blocks/iron" => & Item :: C_STORAGE_BLOCKS_IRON , "c:storage_blocks/lapis" => & Item :: C_STORAGE_BLOCKS_LAPIS , "c:storage_blocks/netherite" => & Item :: C_STORAGE_BLOCKS_NETHERITE , "c:storage_blocks/raw_copper" => & Item :: C_STORAGE_BLOCKS_RAW_COPPER , "c:storage_blocks/raw_gold" => & Item :: C_STORAGE_BLOCKS_RAW_GOLD , "c:storage_blocks/raw_iron" => & Item :: C_STORAGE_BLOCKS_RAW_IRON , "c:storage_blocks/redstone" => & Item :: C_STORAGE_BLOCKS_REDSTONE , "c:storage_blocks/resin" => & Item :: C_STORAGE_BLOCKS_RESIN , "c:storage_blocks/slime" => & Item :: C_STORAGE_BLOCKS_SLIME , "c:storage_blocks/wheat" => & Item :: C_STORAGE_BLOCKS_WHEAT , "c:strings" => & Item :: C_STRINGS , "c:stripped_logs" => & Item :: C_STRIPPED_LOGS , "c:stripped_woods" => & Item :: C_STRIPPED_WOODS , "c:tools" => & Item :: C_TOOLS , "c:tools/bow" => & Item :: C_TOOLS_BOW , "c:tools/brush" => & Item :: C_TOOLS_BRUSH , "c:tools/crossbow" => & Item :: C_TOOLS_CROSSBOW , "c:tools/fishing_rod" => & Item :: C_TOOLS_FISHING_ROD , "c:tools/igniter" => & Item :: C_TOOLS_IGNITER , "c:tools/mace" => & Item :: C_TOOLS_MACE , "c:tools/melee_weapon" => & Item :: C_TOOLS_MELEE_WEAPON , "c:tools/mining_tool" => & Item :: C_TOOLS_MINING_TOOL , "c:tools/ranged_weapon" => & Item :: C_TOOLS_RANGED_WEAPON , "c:tools/shear" => & Item :: C_TOOLS_SHEAR , "c:tools/shield" => & Item :: C_TOOLS_SHIELD , "c:tools/trident" => & Item :: C_TOOLS_TRIDENT , "c:tools/wrench" => & Item :: C_TOOLS_WRENCH , "c:villager_job_sites" => & Item :: C_VILLAGER_JOB_SITES , "minecraft:acacia_logs" => & Item :: MINECRAFT_ACACIA_LOGS , "minecraft:anvil" => & Item :: MINECRAFT_ANVIL , "minecraft:armadillo_food" => & Item :: MINECRAFT_ARMADILLO_FOOD , "minecraft:arrows" => & Item :: MINECRAFT_ARROWS , "minecraft:axes" => & Item :: MINECRAFT_AXES , "minecraft:axolotl_food" => & Item :: MINECRAFT_AXOLOTL_FOOD , "minecraft:bamboo_blocks" => & Item :: MINECRAFT_BAMBOO_BLOCKS , "minecraft:banners" => & Item :: MINECRAFT_BANNERS , "minecraft:beacon_payment_items" => & Item :: MINECRAFT_BEACON_PAYMENT_ITEMS , "minecraft:beds" => & Item :: MINECRAFT_BEDS , "minecraft:bee_food" => & Item :: MINECRAFT_BEE_FOOD , "minecraft:birch_logs" => & Item :: MINECRAFT_BIRCH_LOGS , "minecraft:boats" => & Item :: MINECRAFT_BOATS , "minecraft:bookshelf_books" => & Item :: MINECRAFT_BOOKSHELF_BOOKS , "minecraft:breaks_decorated_pots" => & Item :: MINECRAFT_BREAKS_DECORATED_POTS , "minecraft:buttons" => & Item :: MINECRAFT_BUTTONS , "minecraft:camel_food" => & Item :: MINECRAFT_CAMEL_FOOD , "minecraft:candles" => & Item :: MINECRAFT_CANDLES , "minecraft:cat_food" => & Item :: MINECRAFT_CAT_FOOD , "minecraft:cherry_logs" => & Item :: MINECRAFT_CHERRY_LOGS , "minecraft:chest_armor" => & Item :: MINECRAFT_CHEST_ARMOR , "minecraft:chest_boats" => & Item :: MINECRAFT_CHEST_BOATS , "minecraft:chicken_food" => & Item :: MINECRAFT_CHICKEN_FOOD , "minecraft:cluster_max_harvestables" => & Item :: MINECRAFT_CLUSTER_MAX_HARVESTABLES , "minecraft:coal_ores" => & Item :: MINECRAFT_COAL_ORES , "minecraft:coals" => & Item :: MINECRAFT_COALS , "minecraft:compasses" => & Item :: MINECRAFT_COMPASSES , "minecraft:completes_find_tree_tutorial" => & Item :: MINECRAFT_COMPLETES_FIND_TREE_TUTORIAL , "minecraft:copper_ores" => & Item :: MINECRAFT_COPPER_ORES , "minecraft:cow_food" => & Item :: MINECRAFT_COW_FOOD , "minecraft:creeper_drop_music_discs" => & Item :: MINECRAFT_CREEPER_DROP_MUSIC_DISCS , "minecraft:creeper_igniters" => & Item :: MINECRAFT_CREEPER_IGNITERS , "minecraft:crimson_stems" => & Item :: MINECRAFT_CRIMSON_STEMS , "minecraft:dampens_vibrations" => & Item :: MINECRAFT_DAMPENS_VIBRATIONS , "minecraft:dark_oak_logs" => & Item :: MINECRAFT_DARK_OAK_LOGS , "minecraft:decorated_pot_ingredients" => & Item :: MINECRAFT_DECORATED_POT_INGREDIENTS , "minecraft:decorated_pot_sherds" => & Item :: MINECRAFT_DECORATED_POT_SHERDS , "minecraft:diamond_ores" => & Item :: MINECRAFT_DIAMOND_ORES , "minecraft:dirt" => & Item :: MINECRAFT_DIRT , "minecraft:doors" => & Item :: MINECRAFT_DOORS , "minecraft:dyeable" => & Item :: MINECRAFT_DYEABLE , "minecraft:emerald_ores" => & Item :: MINECRAFT_EMERALD_ORES , "minecraft:enchantable/armor" => & Item :: MINECRAFT_ENCHANTABLE_ARMOR , "minecraft:enchantable/bow" => & Item :: MINECRAFT_ENCHANTABLE_BOW , "minecraft:enchantable/chest_armor" => & Item :: MINECRAFT_ENCHANTABLE_CHEST_ARMOR , "minecraft:enchantable/crossbow" => & Item :: MINECRAFT_ENCHANTABLE_CROSSBOW , "minecraft:enchantable/durability" => & Item :: MINECRAFT_ENCHANTABLE_DURABILITY , "minecraft:enchantable/equippable" => & Item :: MINECRAFT_ENCHANTABLE_EQUIPPABLE , "minecraft:enchantable/fire_aspect" => & Item :: MINECRAFT_ENCHANTABLE_FIRE_ASPECT , "minecraft:enchantable/fishing" => & Item :: MINECRAFT_ENCHANTABLE_FISHING , "minecraft:enchantable/foot_armor" => & Item :: MINECRAFT_ENCHANTABLE_FOOT_ARMOR , "minecraft:enchantable/head_armor" => & Item :: MINECRAFT_ENCHANTABLE_HEAD_ARMOR , "minecraft:enchantable/leg_armor" => & Item :: MINECRAFT_ENCHANTABLE_LEG_ARMOR , "minecraft:enchantable/mace" => & Item :: MINECRAFT_ENCHANTABLE_MACE , "minecraft:enchantable/mining" => & Item :: MINECRAFT_ENCHANTABLE_MINING , "minecraft:enchantable/mining_loot" => & Item :: MINECRAFT_ENCHANTABLE_MINING_LOOT , "minecraft:enchantable/sharp_weapon" => & Item :: MINECRAFT_ENCHANTABLE_SHARP_WEAPON , "minecraft:enchantable/sword" => & Item :: MINECRAFT_ENCHANTABLE_SWORD , "minecraft:enchantable/trident" => & Item :: MINECRAFT_ENCHANTABLE_TRIDENT , "minecraft:enchantable/vanishing" => & Item :: MINECRAFT_ENCHANTABLE_VANISHING , "minecraft:enchantable/weapon" => & Item :: MINECRAFT_ENCHANTABLE_WEAPON , "minecraft:fence_gates" => & Item :: MINECRAFT_FENCE_GATES , "minecraft:fences" => & Item :: MINECRAFT_FENCES , "minecraft:fishes" => & Item :: MINECRAFT_FISHES , "minecraft:flowers" => & Item :: MINECRAFT_FLOWERS , "minecraft:foot_armor" => & Item :: MINECRAFT_FOOT_ARMOR , "minecraft:fox_food" => & Item :: MINECRAFT_FOX_FOOD , "minecraft:freeze_immune_wearables" => & Item :: MINECRAFT_FREEZE_IMMUNE_WEARABLES , "minecraft:frog_food" => & Item :: MINECRAFT_FROG_FOOD , "minecraft:goat_food" => & Item :: MINECRAFT_GOAT_FOOD , "minecraft:gold_ores" => & Item :: MINECRAFT_GOLD_ORES , "minecraft:hanging_signs" => & Item :: MINECRAFT_HANGING_SIGNS , "minecraft:head_armor" => & Item :: MINECRAFT_HEAD_ARMOR , "minecraft:hoes" => & Item :: MINECRAFT_HOES , "minecraft:hoglin_food" => & Item :: MINECRAFT_HOGLIN_FOOD , "minecraft:horse_food" => & Item :: MINECRAFT_HORSE_FOOD , "minecraft:horse_tempt_items" => & Item :: MINECRAFT_HORSE_TEMPT_ITEMS , "minecraft:ignored_by_piglin_babies" => & Item :: MINECRAFT_IGNORED_BY_PIGLIN_BABIES , "minecraft:iron_ores" => & Item :: MINECRAFT_IRON_ORES , "minecraft:jungle_logs" => & Item :: MINECRAFT_JUNGLE_LOGS , "minecraft:lapis_ores" => & Item :: MINECRAFT_LAPIS_ORES , "minecraft:leaves" => & Item :: MINECRAFT_LEAVES , "minecraft:lectern_books" => & Item :: MINECRAFT_LECTERN_BOOKS , "minecraft:leg_armor" => & Item :: MINECRAFT_LEG_ARMOR , "minecraft:llama_food" => & Item :: MINECRAFT_LLAMA_FOOD , "minecraft:llama_tempt_items" => & Item :: MINECRAFT_LLAMA_TEMPT_ITEMS , "minecraft:logs" => & Item :: MINECRAFT_LOGS , "minecraft:logs_that_burn" => & Item :: MINECRAFT_LOGS_THAT_BURN , "minecraft:mangrove_logs" => & Item :: MINECRAFT_MANGROVE_LOGS , "minecraft:meat" => & Item :: MINECRAFT_MEAT , "minecraft:non_flammable_wood" => & Item :: MINECRAFT_NON_FLAMMABLE_WOOD , "minecraft:noteblock_top_instruments" => & Item :: MINECRAFT_NOTEBLOCK_TOP_INSTRUMENTS , "minecraft:oak_logs" => & Item :: MINECRAFT_OAK_LOGS , "minecraft:ocelot_food" => & Item :: MINECRAFT_OCELOT_FOOD , "minecraft:panda_food" => & Item :: MINECRAFT_PANDA_FOOD , "minecraft:parrot_food" => & Item :: MINECRAFT_PARROT_FOOD , "minecraft:parrot_poisonous_food" => & Item :: MINECRAFT_PARROT_POISONOUS_FOOD , "minecraft:pickaxes" => & Item :: MINECRAFT_PICKAXES , "minecraft:pig_food" => & Item :: MINECRAFT_PIG_FOOD , "minecraft:piglin_food" => & Item :: MINECRAFT_PIGLIN_FOOD , "minecraft:piglin_loved" => & Item :: MINECRAFT_PIGLIN_LOVED , "minecraft:piglin_repellents" => & Item :: MINECRAFT_PIGLIN_REPELLENTS , "minecraft:planks" => & Item :: MINECRAFT_PLANKS , "minecraft:rabbit_food" => & Item :: MINECRAFT_RABBIT_FOOD , "minecraft:rails" => & Item :: MINECRAFT_RAILS , "minecraft:redstone_ores" => & Item :: MINECRAFT_REDSTONE_ORES , "minecraft:sand" => & Item :: MINECRAFT_SAND , "minecraft:saplings" => & Item :: MINECRAFT_SAPLINGS , "minecraft:sheep_food" => & Item :: MINECRAFT_SHEEP_FOOD , "minecraft:shovels" => & Item :: MINECRAFT_SHOVELS , "minecraft:signs" => & Item :: MINECRAFT_SIGNS , "minecraft:skulls" => & Item :: MINECRAFT_SKULLS , "minecraft:slabs" => & Item :: MINECRAFT_SLABS , "minecraft:small_flowers" => & Item :: MINECRAFT_SMALL_FLOWERS , "minecraft:smelts_to_glass" => & Item :: MINECRAFT_SMELTS_TO_GLASS , "minecraft:sniffer_food" => & Item :: MINECRAFT_SNIFFER_FOOD , "minecraft:soul_fire_base_blocks" => & Item :: MINECRAFT_SOUL_FIRE_BASE_BLOCKS , "minecraft:spruce_logs" => & Item :: MINECRAFT_SPRUCE_LOGS , "minecraft:stairs" => & Item :: MINECRAFT_STAIRS , "minecraft:stone_bricks" => & Item :: MINECRAFT_STONE_BRICKS , "minecraft:stone_buttons" => & Item :: MINECRAFT_STONE_BUTTONS , "minecraft:stone_crafting_materials" => & Item :: MINECRAFT_STONE_CRAFTING_MATERIALS , "minecraft:stone_tool_materials" => & Item :: MINECRAFT_STONE_TOOL_MATERIALS , "minecraft:strider_food" => & Item :: MINECRAFT_STRIDER_FOOD , "minecraft:strider_tempt_items" => & Item :: MINECRAFT_STRIDER_TEMPT_ITEMS , "minecraft:swords" => & Item :: MINECRAFT_SWORDS , "minecraft:tall_flowers" => & Item :: MINECRAFT_TALL_FLOWERS , "minecraft:terracotta" => & Item :: MINECRAFT_TERRACOTTA , "minecraft:trapdoors" => & Item :: MINECRAFT_TRAPDOORS , "minecraft:trim_materials" => & Item :: MINECRAFT_TRIM_MATERIALS , "minecraft:trim_templates" => & Item :: MINECRAFT_TRIM_TEMPLATES , "minecraft:trimmable_armor" => & Item :: MINECRAFT_TRIMMABLE_ARMOR , "minecraft:turtle_food" => & Item :: MINECRAFT_TURTLE_FOOD , "minecraft:villager_plantable_seeds" => & Item :: MINECRAFT_VILLAGER_PLANTABLE_SEEDS , "minecraft:walls" => & Item :: MINECRAFT_WALLS , "minecraft:warped_stems" => & Item :: MINECRAFT_WARPED_STEMS , "minecraft:wart_blocks" => & Item :: MINECRAFT_WART_BLOCKS , "minecraft:wolf_food" => & Item :: MINECRAFT_WOLF_FOOD , "minecraft:wooden_buttons" => & Item :: MINECRAFT_WOODEN_BUTTONS , "minecraft:wooden_doors" => & Item :: MINECRAFT_WOODEN_DOORS , "minecraft:wooden_fences" => & Item :: MINECRAFT_WOODEN_FENCES , "minecraft:wooden_pressure_plates" => & Item :: MINECRAFT_WOODEN_PRESSURE_PLATES , "minecraft:wooden_slabs" => & Item :: MINECRAFT_WOODEN_SLABS , "minecraft:wooden_stairs" => & Item :: MINECRAFT_WOODEN_STAIRS , "minecraft:wooden_trapdoors" => & Item :: MINECRAFT_WOODEN_TRAPDOORS , "minecraft:wool" => & Item :: MINECRAFT_WOOL , "minecraft:wool_carpets" => & Item :: MINECRAFT_WOOL_CARPETS };
+static ITEM_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf_map! { "c:animal_foods" => & Item :: C_ANIMAL_FOODS , "c:armors" => & Item :: C_ARMORS , "c:armors/horse" => & Item :: C_ARMORS_HORSE , "c:armors/humanoid" => & Item :: C_ARMORS_HUMANOID , "c:armors/nautilus" => & Item :: C_ARMORS_NAUTILUS , "c:armors/wolf" => & Item :: C_ARMORS_WOLF , "c:barrels" => & Item :: C_BARRELS , "c:barrels/wooden" => & Item :: C_BARRELS_WOODEN , "c:bars" => & Item :: C_BARS , "c:bars/copper" => & Item :: C_BARS_COPPER , "c:bars/iron" => & Item :: C_BARS_IRON , "c:bones" => & Item :: C_BONES , "c:bookshelves" => & Item :: C_BOOKSHELVES , "c:bricks" => & Item :: C_BRICKS , "c:bricks/nether" => & Item :: C_BRICKS_NETHER , "c:bricks/normal" => & Item :: C_BRICKS_NORMAL , "c:bricks/resin" => & Item :: C_BRICKS_RESIN , "c:buckets" => & Item :: C_BUCKETS , "c:buckets/empty" => & Item :: C_BUCKETS_EMPTY , "c:buckets/entity_dry" => & Item :: C_BUCKETS_ENTITY_DRY , "c:buckets/entity_water" => & Item :: C_BUCKETS_ENTITY_WATER , "c:buckets/lava" => & Item :: C_BUCKETS_LAVA , "c:buckets/milk" => & Item :: C_BUCKETS_MILK , "c:buckets/powder_snow" => & Item :: C_BUCKETS_POWDER_SNOW , "c:buckets/water" => & Item :: C_BUCKETS_WATER , "c:budding_blocks" => & Item :: C_BUDDING_BLOCKS , "c:buds" => & Item :: C_BUDS , "c:chains" => & Item :: C_CHAINS , "c:chests" => & Item :: C_CHESTS , "c:chests/ender" => & Item :: C_CHESTS_ENDER , "c:chests/trapped" => & Item :: C_CHESTS_TRAPPED , "c:chests/wooden" => & Item :: C_CHESTS_WOODEN , "c:clumps" => & Item :: C_CLUMPS , "c:clumps/resin" => & Item :: C_CLUMPS_RESIN , "c:clusters" => & Item :: C_CLUSTERS , "c:cobblestones" => & Item :: C_COBBLESTONES , "c:cobblestones/deepslate" => & Item :: C_COBBLESTONES_DEEPSLATE , "c:cobblestones/infested" => & Item :: C_COBBLESTONES_INFESTED , "c:cobblestones/mossy" => & Item :: C_COBBLESTONES_MOSSY , "c:cobblestones/normal" => & Item :: C_COBBLESTONES_NORMAL , "c:concrete_powders" => & Item :: C_CONCRETE_POWDERS , "c:concretes" => & Item :: C_CONCRETES , "c:crops" => & Item :: C_CROPS , "c:crops/beetroot" => & Item :: C_CROPS_BEETROOT , "c:crops/cactus" => & Item :: C_CROPS_CACTUS , "c:crops/carrot" => & Item :: C_CROPS_CARROT , "c:crops/cocoa_bean" => & Item :: C_CROPS_COCOA_BEAN , "c:crops/melon" => & Item :: C_CROPS_MELON , "c:crops/nether_wart" => & Item :: C_CROPS_NETHER_WART , "c:crops/potato" => & Item :: C_CROPS_POTATO , "c:crops/pumpkin" => & Item :: C_CROPS_PUMPKIN , "c:crops/sugar_cane" => & Item :: C_CROPS_SUGAR_CANE , "c:crops/wheat" => & Item :: C_CROPS_WHEAT , "c:drink_containing/bottle" => & Item :: C_DRINK_CONTAINING_BOTTLE , "c:drink_containing/bucket" => & Item :: C_DRINK_CONTAINING_BUCKET , "c:drinks" => & Item :: C_DRINKS , "c:drinks/honey" => & Item :: C_DRINKS_HONEY , "c:drinks/juice" => & Item :: C_DRINKS_JUICE , "c:drinks/magic" => & Item :: C_DRINKS_MAGIC , "c:drinks/milk" => & Item :: C_DRINKS_MILK , "c:drinks/ominous" => & Item :: C_DRINKS_OMINOUS , "c:drinks/water" => & Item :: C_DRINKS_WATER , "c:drinks/watery" => & Item :: C_DRINKS_WATERY , "c:dusts" => & Item :: C_DUSTS , "c:dusts/glowstone" => & Item :: C_DUSTS_GLOWSTONE , "c:dusts/redstone" => & Item :: C_DUSTS_REDSTONE , "c:dyeable" => & Item :: C_DYEABLE , "c:dyeable/dynamic" => & Item :: C_DYEABLE_DYNAMIC , "c:dyeable/simple" => & Item :: C_DYEABLE_SIMPLE , "c:dyeable/simple/redyeable" => & Item :: C_DYEABLE_SIMPLE_REDYEABLE , "c:dyeable/simple/undyed" => & Item :: C_DYEABLE_SIMPLE_UNDYED , "c:dyed" => & Item :: C_DYED , "c:dyed/black" => & Item :: C_DYED_BLACK , "c:dyed/blue" => & Item :: C_DYED_BLUE , "c:dyed/brown" => & Item :: C_DYED_BROWN , "c:dyed/cyan" => & Item :: C_DYED_CYAN , "c:dyed/gray" => & Item :: C_DYED_GRAY , "c:dyed/green" => & Item :: C_DYED_GREEN , "c:dyed/light_blue" => & Item :: C_DYED_LIGHT_BLUE , "c:dyed/light_gray" => & Item :: C_DYED_LIGHT_GRAY , "c:dyed/lime" => & Item :: C_DYED_LIME , "c:dyed/magenta" => & Item :: C_DYED_MAGENTA , "c:dyed/orange" => & Item :: C_DYED_ORANGE , "c:dyed/pink" => & Item :: C_DYED_PINK , "c:dyed/purple" => & Item :: C_DYED_PURPLE , "c:dyed/red" => & Item :: C_DYED_RED , "c:dyed/white" => & Item :: C_DYED_WHITE , "c:dyed/yellow" => & Item :: C_DYED_YELLOW , "c:dyes" => & Item :: C_DYES , "c:dyes/black" => & Item :: C_DYES_BLACK , "c:dyes/blue" => & Item :: C_DYES_BLUE , "c:dyes/brown" => & Item :: C_DYES_BROWN , "c:dyes/cyan" => & Item :: C_DYES_CYAN , "c:dyes/gray" => & Item :: C_DYES_GRAY , "c:dyes/green" => & Item :: C_DYES_GREEN , "c:dyes/light_blue" => & Item :: C_DYES_LIGHT_BLUE , "c:dyes/light_gray" => & Item :: C_DYES_LIGHT_GRAY , "c:dyes/lime" => & Item :: C_DYES_LIME , "c:dyes/magenta" => & Item :: C_DYES_MAGENTA , "c:dyes/orange" => & Item :: C_DYES_ORANGE , "c:dyes/pink" => & Item :: C_DYES_PINK , "c:dyes/purple" => & Item :: C_DYES_PURPLE , "c:dyes/red" => & Item :: C_DYES_RED , "c:dyes/white" => & Item :: C_DYES_WHITE , "c:dyes/yellow" => & Item :: C_DYES_YELLOW , "c:eggs" => & Item :: C_EGGS , "c:enchantables" => & Item :: C_ENCHANTABLES , "c:end_stones" => & Item :: C_END_STONES , "c:ender_pearls" => & Item :: C_ENDER_PEARLS , "c:feathers" => & Item :: C_FEATHERS , "c:fence_gates" => & Item :: C_FENCE_GATES , "c:fence_gates/wooden" => & Item :: C_FENCE_GATES_WOODEN , "c:fences" => & Item :: C_FENCES , "c:fences/nether_brick" => & Item :: C_FENCES_NETHER_BRICK , "c:fences/wooden" => & Item :: C_FENCES_WOODEN , "c:fertilizers" => & Item :: C_FERTILIZERS , "c:flowers" => & Item :: C_FLOWERS , "c:flowers/small" => & Item :: C_FLOWERS_SMALL , "c:flowers/tall" => & Item :: C_FLOWERS_TALL , "c:foods" => & Item :: C_FOODS , "c:foods/berry" => & Item :: C_FOODS_BERRY , "c:foods/bread" => & Item :: C_FOODS_BREAD , "c:foods/candy" => & Item :: C_FOODS_CANDY , "c:foods/cooked_fish" => & Item :: C_FOODS_COOKED_FISH , "c:foods/cooked_meat" => & Item :: C_FOODS_COOKED_MEAT , "c:foods/cookie" => & Item :: C_FOODS_COOKIE , "c:foods/dough" => & Item :: C_FOODS_DOUGH , "c:foods/edible_when_placed" => & Item :: C_FOODS_EDIBLE_WHEN_PLACED , "c:foods/food_poisoning" => & Item :: C_FOODS_FOOD_POISONING , "c:foods/fruit" => & Item :: C_FOODS_FRUIT , "c:foods/golden" => & Item :: C_FOODS_GOLDEN , "c:foods/pie" => & Item :: C_FOODS_PIE , "c:foods/raw_fish" => & Item :: C_FOODS_RAW_FISH , "c:foods/raw_meat" => & Item :: C_FOODS_RAW_MEAT , "c:foods/soup" => & Item :: C_FOODS_SOUP , "c:foods/vegetable" => & Item :: C_FOODS_VEGETABLE , "c:froglights" => & Item :: C_FROGLIGHTS , "c:gems" => & Item :: C_GEMS , "c:gems/amethyst" => & Item :: C_GEMS_AMETHYST , "c:gems/diamond" => & Item :: C_GEMS_DIAMOND , "c:gems/emerald" => & Item :: C_GEMS_EMERALD , "c:gems/lapis" => & Item :: C_GEMS_LAPIS , "c:gems/prismarine" => & Item :: C_GEMS_PRISMARINE , "c:gems/quartz" => & Item :: C_GEMS_QUARTZ , "c:glass_blocks" => & Item :: C_GLASS_BLOCKS , "c:glass_blocks/cheap" => & Item :: C_GLASS_BLOCKS_CHEAP , "c:glass_blocks/colorless" => & Item :: C_GLASS_BLOCKS_COLORLESS , "c:glass_blocks/tinted" => & Item :: C_GLASS_BLOCKS_TINTED , "c:glass_panes" => & Item :: C_GLASS_PANES , "c:glass_panes/colorless" => & Item :: C_GLASS_PANES_COLORLESS , "c:glazed_terracottas" => & Item :: C_GLAZED_TERRACOTTAS , "c:gravels" => & Item :: C_GRAVELS , "c:gunpowders" => & Item :: C_GUNPOWDERS , "c:hidden_from_recipe_viewers" => & Item :: C_HIDDEN_FROM_RECIPE_VIEWERS , "c:ingots" => & Item :: C_INGOTS , "c:ingots/copper" => & Item :: C_INGOTS_COPPER , "c:ingots/gold" => & Item :: C_INGOTS_GOLD , "c:ingots/iron" => & Item :: C_INGOTS_IRON , "c:ingots/netherite" => & Item :: C_INGOTS_NETHERITE , "c:leathers" => & Item :: C_LEATHERS , "c:mushrooms" => & Item :: C_MUSHROOMS , "c:music_discs" => & Item :: C_MUSIC_DISCS , "c:natural_logs" => & Item :: C_NATURAL_LOGS , "c:natural_logs/nether" => & Item :: C_NATURAL_LOGS_NETHER , "c:natural_logs/overworld" => & Item :: C_NATURAL_LOGS_OVERWORLD , "c:natural_woods" => & Item :: C_NATURAL_WOODS , "c:nether_stars" => & Item :: C_NETHER_STARS , "c:netherracks" => & Item :: C_NETHERRACKS , "c:nuggets" => & Item :: C_NUGGETS , "c:nuggets/copper" => & Item :: C_NUGGETS_COPPER , "c:nuggets/gold" => & Item :: C_NUGGETS_GOLD , "c:nuggets/iron" => & Item :: C_NUGGETS_IRON , "c:obsidians" => & Item :: C_OBSIDIANS , "c:obsidians/crying" => & Item :: C_OBSIDIANS_CRYING , "c:obsidians/normal" => & Item :: C_OBSIDIANS_NORMAL , "c:ore_bearing_ground/deepslate" => & Item :: C_ORE_BEARING_GROUND_DEEPSLATE , "c:ore_bearing_ground/netherrack" => & Item :: C_ORE_BEARING_GROUND_NETHERRACK , "c:ore_bearing_ground/stone" => & Item :: C_ORE_BEARING_GROUND_STONE , "c:ore_rates/dense" => & Item :: C_ORE_RATES_DENSE , "c:ore_rates/singular" => & Item :: C_ORE_RATES_SINGULAR , "c:ore_rates/sparse" => & Item :: C_ORE_RATES_SPARSE , "c:ores" => & Item :: C_ORES , "c:ores/coal" => & Item :: C_ORES_COAL , "c:ores/copper" => & Item :: C_ORES_COPPER , "c:ores/diamond" => & Item :: C_ORES_DIAMOND , "c:ores/emerald" => & Item :: C_ORES_EMERALD , "c:ores/gold" => & Item :: C_ORES_GOLD , "c:ores/iron" => & Item :: C_ORES_IRON , "c:ores/lapis" => & Item :: C_ORES_LAPIS , "c:ores/netherite_scrap" => & Item :: C_ORES_NETHERITE_SCRAP , "c:ores/quartz" => & Item :: C_ORES_QUARTZ , "c:ores/redstone" => & Item :: C_ORES_REDSTONE , "c:ores_in_ground/deepslate" => & Item :: C_ORES_IN_GROUND_DEEPSLATE , "c:ores_in_ground/netherrack" => & Item :: C_ORES_IN_GROUND_NETHERRACK , "c:ores_in_ground/stone" => & Item :: C_ORES_IN_GROUND_STONE , "c:player_workstations/crafting_tables" => & Item :: C_PLAYER_WORKSTATIONS_CRAFTING_TABLES , "c:player_workstations/furnaces" => & Item :: C_PLAYER_WORKSTATIONS_FURNACES , "c:potions" => & Item :: C_POTIONS , "c:potions/bottle" => & Item :: C_POTIONS_BOTTLE , "c:pumpkins" => & Item :: C_PUMPKINS , "c:pumpkins/carved" => & Item :: C_PUMPKINS_CARVED , "c:pumpkins/jack_o_lanterns" => & Item :: C_PUMPKINS_JACK_O_LANTERNS , "c:pumpkins/normal" => & Item :: C_PUMPKINS_NORMAL , "c:raw_materials" => & Item :: C_RAW_MATERIALS , "c:raw_materials/copper" => & Item :: C_RAW_MATERIALS_COPPER , "c:raw_materials/gold" => & Item :: C_RAW_MATERIALS_GOLD , "c:raw_materials/iron" => & Item :: C_RAW_MATERIALS_IRON , "c:rods" => & Item :: C_RODS , "c:rods/blaze" => & Item :: C_RODS_BLAZE , "c:rods/breeze" => & Item :: C_RODS_BREEZE , "c:rods/wooden" => & Item :: C_RODS_WOODEN , "c:ropes" => & Item :: C_ROPES , "c:sands" => & Item :: C_SANDS , "c:sands/colorless" => & Item :: C_SANDS_COLORLESS , "c:sands/red" => & Item :: C_SANDS_RED , "c:sandstone/blocks" => & Item :: C_SANDSTONE_BLOCKS , "c:sandstone/red_blocks" => & Item :: C_SANDSTONE_RED_BLOCKS , "c:sandstone/red_slabs" => & Item :: C_SANDSTONE_RED_SLABS , "c:sandstone/red_stairs" => & Item :: C_SANDSTONE_RED_STAIRS , "c:sandstone/slabs" => & Item :: C_SANDSTONE_SLABS , "c:sandstone/stairs" => & Item :: C_SANDSTONE_STAIRS , "c:sandstone/uncolored_blocks" => & Item :: C_SANDSTONE_UNCOLORED_BLOCKS , "c:sandstone/uncolored_slabs" => & Item :: C_SANDSTONE_UNCOLORED_SLABS , "c:sandstone/uncolored_stairs" => & Item :: C_SANDSTONE_UNCOLORED_STAIRS , "c:seeds" => & Item :: C_SEEDS , "c:seeds/beetroot" => & Item :: C_SEEDS_BEETROOT , "c:seeds/melon" => & Item :: C_SEEDS_MELON , "c:seeds/pitcher_plant" => & Item :: C_SEEDS_PITCHER_PLANT , "c:seeds/pumpkin" => & Item :: C_SEEDS_PUMPKIN , "c:seeds/torchflower" => & Item :: C_SEEDS_TORCHFLOWER , "c:seeds/wheat" => & Item :: C_SEEDS_WHEAT , "c:shulker_boxes" => & Item :: C_SHULKER_BOXES , "c:slime_balls" => & Item :: C_SLIME_BALLS , "c:stones" => & Item :: C_STONES , "c:storage_blocks" => & Item :: C_STORAGE_BLOCKS , "c:storage_blocks/bone_meal" => & Item :: C_STORAGE_BLOCKS_BONE_MEAL , "c:storage_blocks/coal" => & Item :: C_STORAGE_BLOCKS_COAL , "c:storage_blocks/copper" => & Item :: C_STORAGE_BLOCKS_COPPER , "c:storage_blocks/diamond" => & Item :: C_STORAGE_BLOCKS_DIAMOND , "c:storage_blocks/dried_kelp" => & Item :: C_STORAGE_BLOCKS_DRIED_KELP , "c:storage_blocks/emerald" => & Item :: C_STORAGE_BLOCKS_EMERALD , "c:storage_blocks/gold" => & Item :: C_STORAGE_BLOCKS_GOLD , "c:storage_blocks/iron" => & Item :: C_STORAGE_BLOCKS_IRON , "c:storage_blocks/lapis" => & Item :: C_STORAGE_BLOCKS_LAPIS , "c:storage_blocks/netherite" => & Item :: C_STORAGE_BLOCKS_NETHERITE , "c:storage_blocks/raw_copper" => & Item :: C_STORAGE_BLOCKS_RAW_COPPER , "c:storage_blocks/raw_gold" => & Item :: C_STORAGE_BLOCKS_RAW_GOLD , "c:storage_blocks/raw_iron" => & Item :: C_STORAGE_BLOCKS_RAW_IRON , "c:storage_blocks/redstone" => & Item :: C_STORAGE_BLOCKS_REDSTONE , "c:storage_blocks/resin" => & Item :: C_STORAGE_BLOCKS_RESIN , "c:storage_blocks/slime" => & Item :: C_STORAGE_BLOCKS_SLIME , "c:storage_blocks/wheat" => & Item :: C_STORAGE_BLOCKS_WHEAT , "c:strings" => & Item :: C_STRINGS , "c:stripped_logs" => & Item :: C_STRIPPED_LOGS , "c:stripped_woods" => & Item :: C_STRIPPED_WOODS , "c:tools" => & Item :: C_TOOLS , "c:tools/bow" => & Item :: C_TOOLS_BOW , "c:tools/brush" => & Item :: C_TOOLS_BRUSH , "c:tools/crossbow" => & Item :: C_TOOLS_CROSSBOW , "c:tools/fishing_rod" => & Item :: C_TOOLS_FISHING_ROD , "c:tools/igniter" => & Item :: C_TOOLS_IGNITER , "c:tools/mace" => & Item :: C_TOOLS_MACE , "c:tools/melee_weapon" => & Item :: C_TOOLS_MELEE_WEAPON , "c:tools/mining_tool" => & Item :: C_TOOLS_MINING_TOOL , "c:tools/ranged_weapon" => & Item :: C_TOOLS_RANGED_WEAPON , "c:tools/shear" => & Item :: C_TOOLS_SHEAR , "c:tools/shield" => & Item :: C_TOOLS_SHIELD , "c:tools/trident" => & Item :: C_TOOLS_TRIDENT , "c:tools/wrench" => & Item :: C_TOOLS_WRENCH , "c:villager_job_sites" => & Item :: C_VILLAGER_JOB_SITES , "minecraft:acacia_logs" => & Item :: MINECRAFT_ACACIA_LOGS , "minecraft:anvil" => & Item :: MINECRAFT_ANVIL , "minecraft:armadillo_food" => & Item :: MINECRAFT_ARMADILLO_FOOD , "minecraft:arrows" => & Item :: MINECRAFT_ARROWS , "minecraft:axes" => & Item :: MINECRAFT_AXES , "minecraft:axolotl_food" => & Item :: MINECRAFT_AXOLOTL_FOOD , "minecraft:bamboo_blocks" => & Item :: MINECRAFT_BAMBOO_BLOCKS , "minecraft:banners" => & Item :: MINECRAFT_BANNERS , "minecraft:beacon_payment_items" => & Item :: MINECRAFT_BEACON_PAYMENT_ITEMS , "minecraft:beds" => & Item :: MINECRAFT_BEDS , "minecraft:bee_food" => & Item :: MINECRAFT_BEE_FOOD , "minecraft:birch_logs" => & Item :: MINECRAFT_BIRCH_LOGS , "minecraft:boats" => & Item :: MINECRAFT_BOATS , "minecraft:bookshelf_books" => & Item :: MINECRAFT_BOOKSHELF_BOOKS , "minecraft:breaks_decorated_pots" => & Item :: MINECRAFT_BREAKS_DECORATED_POTS , "minecraft:bundles" => & Item :: MINECRAFT_BUNDLES , "minecraft:buttons" => & Item :: MINECRAFT_BUTTONS , "minecraft:camel_food" => & Item :: MINECRAFT_CAMEL_FOOD , "minecraft:candles" => & Item :: MINECRAFT_CANDLES , "minecraft:cat_collar_dyes" => & Item :: MINECRAFT_CAT_COLLAR_DYES , "minecraft:cat_food" => & Item :: MINECRAFT_CAT_FOOD , "minecraft:cherry_logs" => & Item :: MINECRAFT_CHERRY_LOGS , "minecraft:chest_armor" => & Item :: MINECRAFT_CHEST_ARMOR , "minecraft:chest_boats" => & Item :: MINECRAFT_CHEST_BOATS , "minecraft:chicken_food" => & Item :: MINECRAFT_CHICKEN_FOOD , "minecraft:cluster_max_harvestables" => & Item :: MINECRAFT_CLUSTER_MAX_HARVESTABLES , "minecraft:coal_ores" => & Item :: MINECRAFT_COAL_ORES , "minecraft:coals" => & Item :: MINECRAFT_COALS , "minecraft:compasses" => & Item :: MINECRAFT_COMPASSES , "minecraft:completes_find_tree_tutorial" => & Item :: MINECRAFT_COMPLETES_FIND_TREE_TUTORIAL , "minecraft:copper_ores" => & Item :: MINECRAFT_COPPER_ORES , "minecraft:cow_food" => & Item :: MINECRAFT_COW_FOOD , "minecraft:creeper_drop_music_discs" => & Item :: MINECRAFT_CREEPER_DROP_MUSIC_DISCS , "minecraft:creeper_igniters" => & Item :: MINECRAFT_CREEPER_IGNITERS , "minecraft:crimson_stems" => & Item :: MINECRAFT_CRIMSON_STEMS , "minecraft:dampens_vibrations" => & Item :: MINECRAFT_DAMPENS_VIBRATIONS , "minecraft:dark_oak_logs" => & Item :: MINECRAFT_DARK_OAK_LOGS , "minecraft:decorated_pot_ingredients" => & Item :: MINECRAFT_DECORATED_POT_INGREDIENTS , "minecraft:decorated_pot_sherds" => & Item :: MINECRAFT_DECORATED_POT_SHERDS , "minecraft:diamond_ores" => & Item :: MINECRAFT_DIAMOND_ORES , "minecraft:dirt" => & Item :: MINECRAFT_DIRT , "minecraft:doors" => & Item :: MINECRAFT_DOORS , "minecraft:dyeable" => & Item :: MINECRAFT_DYEABLE , "minecraft:dyes" => & Item :: MINECRAFT_DYES , "minecraft:emerald_ores" => & Item :: MINECRAFT_EMERALD_ORES , "minecraft:enchantable/armor" => & Item :: MINECRAFT_ENCHANTABLE_ARMOR , "minecraft:enchantable/bow" => & Item :: MINECRAFT_ENCHANTABLE_BOW , "minecraft:enchantable/chest_armor" => & Item :: MINECRAFT_ENCHANTABLE_CHEST_ARMOR , "minecraft:enchantable/crossbow" => & Item :: MINECRAFT_ENCHANTABLE_CROSSBOW , "minecraft:enchantable/durability" => & Item :: MINECRAFT_ENCHANTABLE_DURABILITY , "minecraft:enchantable/equippable" => & Item :: MINECRAFT_ENCHANTABLE_EQUIPPABLE , "minecraft:enchantable/fire_aspect" => & Item :: MINECRAFT_ENCHANTABLE_FIRE_ASPECT , "minecraft:enchantable/fishing" => & Item :: MINECRAFT_ENCHANTABLE_FISHING , "minecraft:enchantable/foot_armor" => & Item :: MINECRAFT_ENCHANTABLE_FOOT_ARMOR , "minecraft:enchantable/head_armor" => & Item :: MINECRAFT_ENCHANTABLE_HEAD_ARMOR , "minecraft:enchantable/leg_armor" => & Item :: MINECRAFT_ENCHANTABLE_LEG_ARMOR , "minecraft:enchantable/mace" => & Item :: MINECRAFT_ENCHANTABLE_MACE , "minecraft:enchantable/mining" => & Item :: MINECRAFT_ENCHANTABLE_MINING , "minecraft:enchantable/mining_loot" => & Item :: MINECRAFT_ENCHANTABLE_MINING_LOOT , "minecraft:enchantable/sharp_weapon" => & Item :: MINECRAFT_ENCHANTABLE_SHARP_WEAPON , "minecraft:enchantable/sword" => & Item :: MINECRAFT_ENCHANTABLE_SWORD , "minecraft:enchantable/trident" => & Item :: MINECRAFT_ENCHANTABLE_TRIDENT , "minecraft:enchantable/vanishing" => & Item :: MINECRAFT_ENCHANTABLE_VANISHING , "minecraft:enchantable/weapon" => & Item :: MINECRAFT_ENCHANTABLE_WEAPON , "minecraft:fence_gates" => & Item :: MINECRAFT_FENCE_GATES , "minecraft:fences" => & Item :: MINECRAFT_FENCES , "minecraft:fishes" => & Item :: MINECRAFT_FISHES , "minecraft:flowers" => & Item :: MINECRAFT_FLOWERS , "minecraft:foot_armor" => & Item :: MINECRAFT_FOOT_ARMOR , "minecraft:fox_food" => & Item :: MINECRAFT_FOX_FOOD , "minecraft:freeze_immune_wearables" => & Item :: MINECRAFT_FREEZE_IMMUNE_WEARABLES , "minecraft:frog_food" => & Item :: MINECRAFT_FROG_FOOD , "minecraft:furnace_minecart_fuel" => & Item :: MINECRAFT_FURNACE_MINECART_FUEL , "minecraft:goat_food" => & Item :: MINECRAFT_GOAT_FOOD , "minecraft:gold_ores" => & Item :: MINECRAFT_GOLD_ORES , "minecraft:hanging_signs" => & Item :: MINECRAFT_HANGING_SIGNS , "minecraft:happy_ghast_food" => & Item :: MINECRAFT_HAPPY_GHAST_FOOD , "minecraft:head_armor" => & Item :: MINECRAFT_HEAD_ARMOR , "minecraft:hoes" => & Item :: MINECRAFT_HOES , "minecraft:hoglin_food" => & Item :: MINECRAFT_HOGLIN_FOOD , "minecraft:horse_food" => & Item :: MINECRAFT_HORSE_FOOD , "minecraft:horse_tempt_items" => & Item :: MINECRAFT_HORSE_TEMPT_ITEMS , "minecraft:ignored_by_piglin_babies" => & Item :: MINECRAFT_IGNORED_BY_PIGLIN_BABIES , "minecraft:iron_ores" => & Item :: MINECRAFT_IRON_ORES , "minecraft:jungle_logs" => & Item :: MINECRAFT_JUNGLE_LOGS , "minecraft:lapis_ores" => & Item :: MINECRAFT_LAPIS_ORES , "minecraft:leaves" => & Item :: MINECRAFT_LEAVES , "minecraft:lectern_books" => & Item :: MINECRAFT_LECTERN_BOOKS , "minecraft:leg_armor" => & Item :: MINECRAFT_LEG_ARMOR , "minecraft:llama_food" => & Item :: MINECRAFT_LLAMA_FOOD , "minecraft:llama_tempt_items" => & Item :: MINECRAFT_LLAMA_TEMPT_ITEMS , "minecraft:logs" => & Item :: MINECRAFT_LOGS , "minecraft:logs_that_burn" => & Item :: MINECRAFT_LOGS_THAT_BURN , "minecraft:mangrove_logs" => & Item :: MINECRAFT_MANGROVE_LOGS , "minecraft:meat" => & Item :: MINECRAFT_MEAT , "minecraft:non_flammable_wood" => & Item :: MINECRAFT_NON_FLAMMABLE_WOOD , "minecraft:noteblock_top_instruments" => & Item :: MINECRAFT_NOTEBLOCK_TOP_INSTRUMENTS , "minecraft:oak_logs" => & Item :: MINECRAFT_OAK_LOGS , "minecraft:ocelot_food" => & Item :: MINECRAFT_OCELOT_FOOD , "minecraft:panda_food" => & Item :: MINECRAFT_PANDA_FOOD , "minecraft:parrot_food" => & Item :: MINECRAFT_PARROT_FOOD , "minecraft:parrot_poisonous_food" => & Item :: MINECRAFT_PARROT_POISONOUS_FOOD , "minecraft:pickaxes" => & Item :: MINECRAFT_PICKAXES , "minecraft:pig_food" => & Item :: MINECRAFT_PIG_FOOD , "minecraft:piglin_food" => & Item :: MINECRAFT_PIGLIN_FOOD , "minecraft:piglin_loved" => & Item :: MINECRAFT_PIGLIN_LOVED , "minecraft:piglin_preferred_weapons" => & Item :: MINECRAFT_PIGLIN_PREFERRED_WEAPONS , "minecraft:piglin_repellents" => & Item :: MINECRAFT_PIGLIN_REPELLENTS , "minecraft:piglin_safe_armor" => & Item :: MINECRAFT_PIGLIN_SAFE_ARMOR , "minecraft:planks" => & Item :: MINECRAFT_PLANKS , "minecraft:rabbit_food" => & Item :: MINECRAFT_RABBIT_FOOD , "minecraft:rails" => & Item :: MINECRAFT_RAILS , "minecraft:redstone_ores" => & Item :: MINECRAFT_REDSTONE_ORES , "minecraft:sand" => & Item :: MINECRAFT_SAND , "minecraft:saplings" => & Item :: MINECRAFT_SAPLINGS , "minecraft:sheep_food" => & Item :: MINECRAFT_SHEEP_FOOD , "minecraft:shovels" => & Item :: MINECRAFT_SHOVELS , "minecraft:shulker_boxes" => & Item :: MINECRAFT_SHULKER_BOXES , "minecraft:signs" => & Item :: MINECRAFT_SIGNS , "minecraft:skulls" => & Item :: MINECRAFT_SKULLS , "minecraft:slabs" => & Item :: MINECRAFT_SLABS , "minecraft:small_flowers" => & Item :: MINECRAFT_SMALL_FLOWERS , "minecraft:smelts_to_glass" => & Item :: MINECRAFT_SMELTS_TO_GLASS , "minecraft:sniffer_food" => & Item :: MINECRAFT_SNIFFER_FOOD , "minecraft:soul_fire_base_blocks" => & Item :: MINECRAFT_SOUL_FIRE_BASE_BLOCKS , "minecraft:spears" => & Item :: MINECRAFT_SPEARS , "minecraft:spruce_logs" => & Item :: MINECRAFT_SPRUCE_LOGS , "minecraft:stairs" => & Item :: MINECRAFT_STAIRS , "minecraft:stone_bricks" => & Item :: MINECRAFT_STONE_BRICKS , "minecraft:stone_buttons" => & Item :: MINECRAFT_STONE_BUTTONS , "minecraft:stone_crafting_materials" => & Item :: MINECRAFT_STONE_CRAFTING_MATERIALS , "minecraft:stone_tool_materials" => & Item :: MINECRAFT_STONE_TOOL_MATERIALS , "minecraft:strider_food" => & Item :: MINECRAFT_STRIDER_FOOD , "minecraft:strider_tempt_items" => & Item :: MINECRAFT_STRIDER_TEMPT_ITEMS , "minecraft:swords" => & Item :: MINECRAFT_SWORDS , "minecraft:tall_flowers" => & Item :: MINECRAFT_TALL_FLOWERS , "minecraft:terracotta" => & Item :: MINECRAFT_TERRACOTTA , "minecraft:trapdoors" => & Item :: MINECRAFT_TRAPDOORS , "minecraft:trim_materials" => & Item :: MINECRAFT_TRIM_MATERIALS , "minecraft:trim_templates" => & Item :: MINECRAFT_TRIM_TEMPLATES , "minecraft:trimmable_armor" => & Item :: MINECRAFT_TRIMMABLE_ARMOR , "minecraft:turtle_food" => & Item :: MINECRAFT_TURTLE_FOOD , "minecraft:villager_plantable_seeds" => & Item :: MINECRAFT_VILLAGER_PLANTABLE_SEEDS , "minecraft:walls" => & Item :: MINECRAFT_WALLS , "minecraft:warped_stems" => & Item :: MINECRAFT_WARPED_STEMS , "minecraft:wart_blocks" => & Item :: MINECRAFT_WART_BLOCKS , "minecraft:wolf_food" => & Item :: MINECRAFT_WOLF_FOOD , "minecraft:wooden_buttons" => & Item :: MINECRAFT_WOODEN_BUTTONS , "minecraft:wooden_doors" => & Item :: MINECRAFT_WOODEN_DOORS , "minecraft:wooden_fences" => & Item :: MINECRAFT_WOODEN_FENCES , "minecraft:wooden_pressure_plates" => & Item :: MINECRAFT_WOODEN_PRESSURE_PLATES , "minecraft:wooden_slabs" => & Item :: MINECRAFT_WOODEN_SLABS , "minecraft:wooden_stairs" => & Item :: MINECRAFT_WOODEN_STAIRS , "minecraft:wooden_trapdoors" => & Item :: MINECRAFT_WOODEN_TRAPDOORS , "minecraft:wool" => & Item :: MINECRAFT_WOOL , "minecraft:wool_carpets" => & Item :: MINECRAFT_WOOL_CARPETS };
 #[allow(non_snake_case)]
 pub mod PaintingVariant {
     use super::Tag;
@@ -13303,9 +14091,836 @@ static POINTOFINTERESTTYPE_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf
 pub mod Potion {
     use super::Tag;
     pub const C_HIDDEN_FROM_RECIPE_VIEWERS: Tag = (&[], &[], "c:hidden_from_recipe_viewers");
+    pub const MINECRAFT_TRADEABLE: Tag = (
+        &[
+            "wind_charged",
+            "oozing",
+            "infested",
+            "weaving",
+            "night_vision",
+            "long_night_vision",
+            "invisibility",
+            "long_invisibility",
+            "fire_resistance",
+            "long_fire_resistance",
+            "leaping",
+            "long_leaping",
+            "strong_leaping",
+            "slowness",
+            "long_slowness",
+            "strong_slowness",
+            "turtle_master",
+            "long_turtle_master",
+            "strong_turtle_master",
+            "swiftness",
+            "long_swiftness",
+            "strong_swiftness",
+            "water_breathing",
+            "long_water_breathing",
+            "healing",
+            "strong_healing",
+            "harming",
+            "strong_harming",
+            "poison",
+            "long_poison",
+            "strong_poison",
+            "regeneration",
+            "long_regeneration",
+            "strong_regeneration",
+            "strength",
+            "long_strength",
+            "strong_strength",
+            "weakness",
+            "long_weakness",
+            "slow_falling",
+            "long_slow_falling",
+        ],
+        &[
+            42u16, 44u16, 45u16, 43u16, 4u16, 5u16, 6u16, 7u16, 11u16, 12u16, 8u16, 9u16, 10u16,
+            16u16, 17u16, 18u16, 19u16, 20u16, 21u16, 13u16, 14u16, 15u16, 22u16, 23u16, 24u16,
+            25u16, 26u16, 27u16, 28u16, 29u16, 30u16, 31u16, 32u16, 33u16, 34u16, 35u16, 36u16,
+            37u16, 38u16, 40u16, 41u16,
+        ],
+        "minecraft:tradeable",
+    );
 }
-static POTION_TAGS: phf::Map<&'static str, &'static Tag> =
-    phf::phf_map! { "c:hidden_from_recipe_viewers" => & Potion :: C_HIDDEN_FROM_RECIPE_VIEWERS };
+static POTION_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf_map! { "c:hidden_from_recipe_viewers" => & Potion :: C_HIDDEN_FROM_RECIPE_VIEWERS , "minecraft:tradeable" => & Potion :: MINECRAFT_TRADEABLE };
+#[allow(non_snake_case)]
+pub mod VillagerTrade {
+    use super::Tag;
+    pub const MINECRAFT_ARMORER_LEVEL_1: Tag = (
+        &[
+            "smith/1/coal_emerald",
+            "armorer/1/emerald_iron_leggings",
+            "armorer/1/emerald_iron_boots",
+            "armorer/1/emerald_iron_helmet",
+            "armorer/1/emerald_iron_chestplate",
+        ],
+        &[],
+        "minecraft:armorer/level_1",
+    );
+    pub const MINECRAFT_ARMORER_LEVEL_2: Tag = (
+        &[
+            "smith/2/iron_ingot_emerald",
+            "smith/2/emerald_bell",
+            "armorer/2/emerald_chainmail_boots",
+            "armorer/2/emerald_chainmail_leggings",
+        ],
+        &[],
+        "minecraft:armorer/level_2",
+    );
+    pub const MINECRAFT_ARMORER_LEVEL_3: Tag = (
+        &[
+            "armorer/3/lava_bucket_emerald",
+            "armorer/3/emerald_chainmail_helmet",
+            "armorer/3/emerald_chainmail_chestplate",
+            "armorer/3/emerald_shield",
+            "armorer/3/diamond_emerald",
+        ],
+        &[],
+        "minecraft:armorer/level_3",
+    );
+    pub const MINECRAFT_ARMORER_LEVEL_4: Tag = (
+        &[
+            "armorer/4/emerald_enchanted_diamond_leggings",
+            "armorer/4/emerald_enchanted_diamond_boots",
+        ],
+        &[],
+        "minecraft:armorer/level_4",
+    );
+    pub const MINECRAFT_ARMORER_LEVEL_5: Tag = (
+        &[
+            "armorer/5/emerald_enchanted_diamond_helmet",
+            "armorer/5/emerald_enchanted_diamond_chestplate",
+        ],
+        &[],
+        "minecraft:armorer/level_5",
+    );
+    pub const MINECRAFT_BUTCHER_LEVEL_1: Tag = (
+        &[
+            "butcher/1/chicken_emerald",
+            "butcher/1/porkchop_emerald",
+            "butcher/1/rabbit_emerald",
+            "butcher/1/emerald_rabbit_stew",
+        ],
+        &[],
+        "minecraft:butcher/level_1",
+    );
+    pub const MINECRAFT_BUTCHER_LEVEL_2: Tag = (
+        &[
+            "butcher/2/coal_emerald",
+            "butcher/2/emerald_cooked_porkchop",
+            "butcher/2/emerald_cooked_chicken",
+        ],
+        &[],
+        "minecraft:butcher/level_2",
+    );
+    pub const MINECRAFT_BUTCHER_LEVEL_3: Tag = (
+        &["butcher/3/mutton_emerald", "butcher/3/beef_emerald"],
+        &[],
+        "minecraft:butcher/level_3",
+    );
+    pub const MINECRAFT_BUTCHER_LEVEL_4: Tag = (
+        &["butcher/4/dried_kelp_block_emerald"],
+        &[],
+        "minecraft:butcher/level_4",
+    );
+    pub const MINECRAFT_BUTCHER_LEVEL_5: Tag = (
+        &["butcher/5/sweet_berries_emerald"],
+        &[],
+        "minecraft:butcher/level_5",
+    );
+    pub const MINECRAFT_CARTOGRAPHER_LEVEL_1: Tag = (
+        &["cartographer/1/paper_emerald", "cartographer/1/emerald_map"],
+        &[],
+        "minecraft:cartographer/level_1",
+    );
+    pub const MINECRAFT_CARTOGRAPHER_LEVEL_2: Tag = (
+        &[
+            "cartographer/2/glass_pane_emerald",
+            "cartographer/2/emerald_and_compass_village_taiga_map",
+            "cartographer/2/emerald_and_compass_explorer_swamp_map",
+            "cartographer/2/emerald_and_compass_village_snowy_map",
+            "cartographer/2/emerald_and_compass_village_savanna_map",
+            "cartographer/2/emerald_and_compass_village_plains_map",
+            "cartographer/2/emerald_and_compass_explorer_jungle_map",
+            "cartographer/2/emerald_and_compass_village_desert_map",
+        ],
+        &[],
+        "minecraft:cartographer/level_2",
+    );
+    pub const MINECRAFT_CARTOGRAPHER_LEVEL_3: Tag = (
+        &[
+            "cartographer/3/compass_emerald",
+            "cartographer/3/emerald_and_compass_ocean_monument_map",
+            "cartographer/3/emerald_and_compass_buried_trial_chambers_map",
+        ],
+        &[],
+        "minecraft:cartographer/level_3",
+    );
+    pub const MINECRAFT_CARTOGRAPHER_LEVEL_4: Tag = (
+        &[
+            "cartographer/4/emerald_item_frame",
+            "cartographer/4/emerald_white_banner",
+            "cartographer/4/emerald_orange_banner",
+            "cartographer/4/emerald_magenta_banner",
+            "cartographer/4/emerald_blue_banner",
+            "cartographer/4/emerald_light_blue_banner",
+            "cartographer/4/emerald_yellow_banner",
+            "cartographer/4/emerald_lime_banner",
+            "cartographer/4/emerald_pink_banner",
+            "cartographer/4/emerald_gray_banner",
+            "cartographer/4/emerald_cyan_banner",
+            "cartographer/4/emerald_purple_banner",
+            "cartographer/4/emerald_brown_banner",
+            "cartographer/4/emerald_green_banner",
+            "cartographer/4/emerald_red_banner",
+            "cartographer/4/emerald_black_banner",
+        ],
+        &[],
+        "minecraft:cartographer/level_4",
+    );
+    pub const MINECRAFT_CARTOGRAPHER_LEVEL_5: Tag = (
+        &[
+            "cartographer/5/emerald_globe_banner_pattern",
+            "cartographer/5/emerald_and_compass_woodland_mansion_map",
+        ],
+        &[],
+        "minecraft:cartographer/level_5",
+    );
+    pub const MINECRAFT_CLERIC_LEVEL_1: Tag = (
+        &["cleric/1/rotten_flesh_emerald", "cleric/1/emerald_redstone"],
+        &[],
+        "minecraft:cleric/level_1",
+    );
+    pub const MINECRAFT_CLERIC_LEVEL_2: Tag = (
+        &[
+            "cleric/2/gold_ingot_emerald",
+            "cleric/2/emerald_lapis_lazuli",
+        ],
+        &[],
+        "minecraft:cleric/level_2",
+    );
+    pub const MINECRAFT_CLERIC_LEVEL_3: Tag = (
+        &["cleric/3/rabbit_foot_emerald", "cleric/3/emerald_glowstone"],
+        &[],
+        "minecraft:cleric/level_3",
+    );
+    pub const MINECRAFT_CLERIC_LEVEL_4: Tag = (
+        &[
+            "cleric/4/turtle_scute_emerald",
+            "cleric/4/glass_bottle_emerald",
+            "cleric/4/emerald_ender_pearl",
+        ],
+        &[],
+        "minecraft:cleric/level_4",
+    );
+    pub const MINECRAFT_CLERIC_LEVEL_5: Tag = (
+        &[
+            "cleric/5/nether_wart_emerald",
+            "cleric/5/emerald_experience_bottle",
+        ],
+        &[],
+        "minecraft:cleric/level_5",
+    );
+    pub const MINECRAFT_COMMON_SMITH_LEVEL_1: Tag = (
+        &["smith/1/coal_emerald"],
+        &[],
+        "minecraft:common_smith/level_1",
+    );
+    pub const MINECRAFT_COMMON_SMITH_LEVEL_2: Tag = (
+        &["smith/2/iron_ingot_emerald", "smith/2/emerald_bell"],
+        &[],
+        "minecraft:common_smith/level_2",
+    );
+    pub const MINECRAFT_COMMON_SMITH_LEVEL_3: Tag = (&[], &[], "minecraft:common_smith/level_3");
+    pub const MINECRAFT_COMMON_SMITH_LEVEL_4: Tag = (&[], &[], "minecraft:common_smith/level_4");
+    pub const MINECRAFT_COMMON_SMITH_LEVEL_5: Tag = (&[], &[], "minecraft:common_smith/level_5");
+    pub const MINECRAFT_FARMER_LEVEL_1: Tag = (
+        &[
+            "farmer/1/wheat_emerald",
+            "farmer/1/potato_emerald",
+            "farmer/1/carrot_emerald",
+            "farmer/1/beetroot_emerald",
+            "farmer/1/emerald_bread",
+        ],
+        &[],
+        "minecraft:farmer/level_1",
+    );
+    pub const MINECRAFT_FARMER_LEVEL_2: Tag = (
+        &[
+            "farmer/2/pumpkin_emerald",
+            "farmer/2/emerald_pumpkin_pie",
+            "farmer/2/emerald_apple",
+        ],
+        &[],
+        "minecraft:farmer/level_2",
+    );
+    pub const MINECRAFT_FARMER_LEVEL_3: Tag = (
+        &["farmer/3/emerald_cookie", "farmer/3/melon_emerald"],
+        &[],
+        "minecraft:farmer/level_3",
+    );
+    pub const MINECRAFT_FARMER_LEVEL_4: Tag = (
+        &["farmer/4/emerald_cake", "farmer/4/emerald_suspicious_stew"],
+        &[],
+        "minecraft:farmer/level_4",
+    );
+    pub const MINECRAFT_FARMER_LEVEL_5: Tag = (
+        &[
+            "farmer/5/emerald_golden_carrot",
+            "farmer/5/emerald_glistening_melon_slice",
+        ],
+        &[],
+        "minecraft:farmer/level_5",
+    );
+    pub const MINECRAFT_FISHERMAN_LEVEL_1: Tag = (
+        &[
+            "fisherman/1/string_emerald",
+            "fisherman/1/coal_emerald",
+            "fisherman/1/raw_cod_and_emerald_cooked_cod",
+            "fisherman/1/emerald_cod_bucket",
+        ],
+        &[],
+        "minecraft:fisherman/level_1",
+    );
+    pub const MINECRAFT_FISHERMAN_LEVEL_2: Tag = (
+        &[
+            "fisherman/2/cod_emerald",
+            "fisherman/2/salmon_and_emerald_cooked_salmon",
+            "fisherman/2/emerald_campfire",
+        ],
+        &[],
+        "minecraft:fisherman/level_2",
+    );
+    pub const MINECRAFT_FISHERMAN_LEVEL_3: Tag = (
+        &[
+            "fisherman/3/salmon_emerald",
+            "fisherman/3/emerald_enchanted_fishing_rod",
+        ],
+        &[],
+        "minecraft:fisherman/level_3",
+    );
+    pub const MINECRAFT_FISHERMAN_LEVEL_4: Tag = (
+        &["fisherman/4/tropical_fish_emerald"],
+        &[],
+        "minecraft:fisherman/level_4",
+    );
+    pub const MINECRAFT_FISHERMAN_LEVEL_5: Tag = (
+        &[
+            "fisherman/5/pufferfish_emerald",
+            "fisherman/5/oak_boat_emerald",
+            "fisherman/5/spruce_boat_emerald",
+            "fisherman/5/jungle_boat_emerald",
+            "fisherman/5/acacia_boat_emerald",
+            "fisherman/5/dark_oak_boat_emerald",
+        ],
+        &[],
+        "minecraft:fisherman/level_5",
+    );
+    pub const MINECRAFT_FLETCHER_LEVEL_1: Tag = (
+        &[
+            "fletcher/1/stick_emerald",
+            "fletcher/1/emerald_arrow",
+            "fletcher/1/gravel_and_emerald_flint",
+        ],
+        &[],
+        "minecraft:fletcher/level_1",
+    );
+    pub const MINECRAFT_FLETCHER_LEVEL_2: Tag = (
+        &["fletcher/2/flint_emerald", "fletcher/2/emerald_bow"],
+        &[],
+        "minecraft:fletcher/level_2",
+    );
+    pub const MINECRAFT_FLETCHER_LEVEL_3: Tag = (
+        &["fletcher/3/string_emerald", "fletcher/3/emerald_crossbow"],
+        &[],
+        "minecraft:fletcher/level_3",
+    );
+    pub const MINECRAFT_FLETCHER_LEVEL_4: Tag = (
+        &[
+            "fletcher/4/feather_emerald",
+            "fletcher/4/emerald_enchanted_bow",
+        ],
+        &[],
+        "minecraft:fletcher/level_4",
+    );
+    pub const MINECRAFT_FLETCHER_LEVEL_5: Tag = (
+        &[
+            "fletcher/5/tripwire_hook_emerald",
+            "fletcher/5/emerald_enchanted_crossbow",
+            "fletcher/5/arrow_and_emerald_tipped_arrow",
+        ],
+        &[],
+        "minecraft:fletcher/level_5",
+    );
+    pub const MINECRAFT_LEATHERWORKER_LEVEL_1: Tag = (
+        &[
+            "leatherworker/1/leather_emerald",
+            "leatherworker/1/emerald_dyed_leather_leggings",
+            "leatherworker/1/emerald_dyed_leather_chestplate",
+        ],
+        &[],
+        "minecraft:leatherworker/level_1",
+    );
+    pub const MINECRAFT_LEATHERWORKER_LEVEL_2: Tag = (
+        &[
+            "leatherworker/2/flint_emerald",
+            "leatherworker/2/emerald_dyed_leather_helmet",
+            "leatherworker/2/emerald_dyed_leather_boots",
+        ],
+        &[],
+        "minecraft:leatherworker/level_2",
+    );
+    pub const MINECRAFT_LEATHERWORKER_LEVEL_3: Tag = (
+        &[
+            "leatherworker/3/rabbit_hide_emerald",
+            "leatherworker/3/emerald_dyed_leather_chestplate",
+        ],
+        &[],
+        "minecraft:leatherworker/level_3",
+    );
+    pub const MINECRAFT_LEATHERWORKER_LEVEL_4: Tag = (
+        &[
+            "leatherworker/4/turtle_scute_emerald",
+            "leatherworker/4/emerald_dyed_leather_horse_armor",
+        ],
+        &[],
+        "minecraft:leatherworker/level_4",
+    );
+    pub const MINECRAFT_LEATHERWORKER_LEVEL_5: Tag = (
+        &[
+            "leatherworker/5/emerald_saddle",
+            "leatherworker/5/emerald_dyed_leather_helmet",
+        ],
+        &[],
+        "minecraft:leatherworker/level_5",
+    );
+    pub const MINECRAFT_LIBRARIAN_LEVEL_1: Tag = (
+        &[
+            "librarian/1/paper_emerald",
+            "librarian/1/emerald_and_book_enchanted_book",
+            "librarian/1/emerald_bookshelf",
+        ],
+        &[],
+        "minecraft:librarian/level_1",
+    );
+    pub const MINECRAFT_LIBRARIAN_LEVEL_2: Tag = (
+        &[
+            "librarian/2/book_emerald",
+            "librarian/2/emerald_and_book_enchanted_book",
+            "librarian/2/emerald_lantern",
+        ],
+        &[],
+        "minecraft:librarian/level_2",
+    );
+    pub const MINECRAFT_LIBRARIAN_LEVEL_3: Tag = (
+        &[
+            "librarian/3/ink_sac_emerald",
+            "librarian/3/emerald_and_book_enchanted_book",
+            "librarian/3/emerald_glass",
+        ],
+        &[],
+        "minecraft:librarian/level_3",
+    );
+    pub const MINECRAFT_LIBRARIAN_LEVEL_4: Tag = (
+        &[
+            "librarian/4/writable_book_emerald",
+            "librarian/4/emerald_book_and_enchanted_book",
+            "librarian/4/emerald_clock",
+            "librarian/4/emerald_compass",
+        ],
+        &[],
+        "minecraft:librarian/level_4",
+    );
+    pub const MINECRAFT_LIBRARIAN_LEVEL_5: Tag = (
+        &[
+            "librarian/5/emerald_yellow_candle",
+            "librarian/5/emerald_red_candle",
+        ],
+        &[],
+        "minecraft:librarian/level_5",
+    );
+    pub const MINECRAFT_MASON_LEVEL_1: Tag = (
+        &["mason/1/clay_ball_emerald", "mason/1/emerald_brick"],
+        &[],
+        "minecraft:mason/level_1",
+    );
+    pub const MINECRAFT_MASON_LEVEL_2: Tag = (
+        &[
+            "mason/2/stone_emerald",
+            "mason/2/emerald_chiseled_stone_bricks",
+        ],
+        &[],
+        "minecraft:mason/level_2",
+    );
+    pub const MINECRAFT_MASON_LEVEL_3: Tag = (
+        &[
+            "mason/3/granite_emerald",
+            "mason/3/andesite_emerald",
+            "mason/3/diorite_emerald",
+            "mason/3/emerald_dripstone_block",
+            "mason/3/emerald_polished_andesite",
+            "mason/3/emerald_polished_diorite",
+            "mason/3/emerald_polished_granite",
+        ],
+        &[],
+        "minecraft:mason/level_3",
+    );
+    pub const MINECRAFT_MASON_LEVEL_4: Tag = (
+        &[
+            "mason/4/quartz_emerald",
+            "mason/4/emerald_white_terracotta",
+            "mason/4/emerald_orange_terracotta",
+            "mason/4/emerald_magenta_terracotta",
+            "mason/4/emerald_light_blue_terracotta",
+            "mason/4/emerald_yellow_terracotta",
+            "mason/4/emerald_lime_terracotta",
+            "mason/4/emerald_pink_terracotta",
+            "mason/4/emerald_gray_terracotta",
+            "mason/4/emerald_light_gray_terracotta",
+            "mason/4/emerald_cyan_terracotta",
+            "mason/4/emerald_purple_terracotta",
+            "mason/4/emerald_blue_terracotta",
+            "mason/4/emerald_brown_terracotta",
+            "mason/4/emerald_green_terracotta",
+            "mason/4/emerald_red_terracotta",
+            "mason/4/emerald_black_terracotta",
+            "mason/4/emerald_white_glazed_terracotta",
+            "mason/4/emerald_orange_glazed_terracotta",
+            "mason/4/emerald_magenta_glazed_terracotta",
+            "mason/4/emerald_light_blue_glazed_terracotta",
+            "mason/4/emerald_yellow_glazed_terracotta",
+            "mason/4/emerald_lime_glazed_terracotta",
+            "mason/4/emerald_pink_glazed_terracotta",
+            "mason/4/emerald_gray_glazed_terracotta",
+            "mason/4/emerald_light_gray_glazed_terracotta",
+            "mason/4/emerald_cyan_glazed_terracotta",
+            "mason/4/emerald_purple_glazed_terracotta",
+            "mason/4/emerald_blue_glazed_terracotta",
+            "mason/4/emerald_brown_glazed_terracotta",
+            "mason/4/emerald_green_glazed_terracotta",
+            "mason/4/emerald_red_glazed_terracotta",
+            "mason/4/emerald_black_glazed_terracotta",
+        ],
+        &[],
+        "minecraft:mason/level_4",
+    );
+    pub const MINECRAFT_MASON_LEVEL_5: Tag = (
+        &[
+            "mason/5/emerald_quartz_pillar",
+            "mason/5/emerald_quartz_block",
+        ],
+        &[],
+        "minecraft:mason/level_5",
+    );
+    pub const MINECRAFT_SHEPHERD_LEVEL_1: Tag = (
+        &[
+            "shepherd/1/white_wool_emerald",
+            "shepherd/1/brown_wool_emerald",
+            "shepherd/1/gray_wool_emerald",
+            "shepherd/1/black_wool_emerald",
+            "shepherd/1/emerald_shears",
+        ],
+        &[],
+        "minecraft:shepherd/level_1",
+    );
+    pub const MINECRAFT_SHEPHERD_LEVEL_2: Tag = (
+        &[
+            "shepherd/2/white_dye_emerald",
+            "shepherd/2/gray_dye_emerald",
+            "shepherd/2/black_dye_emerald",
+            "shepherd/2/light_blue_dye_emerald",
+            "shepherd/2/lime_dye_emerald",
+            "shepherd/2/emerald_white_wool",
+            "shepherd/2/emerald_orange_wool",
+            "shepherd/2/emerald_magenta_wool",
+            "shepherd/2/emerald_light_blue_wool",
+            "shepherd/2/emerald_yellow_wool",
+            "shepherd/2/emerald_lime_wool",
+            "shepherd/2/emerald_pink_wool",
+            "shepherd/2/emerald_gray_wool",
+            "shepherd/2/emerald_light_gray_wool",
+            "shepherd/2/emerald_cyan_wool",
+            "shepherd/2/emerald_purple_wool",
+            "shepherd/2/emerald_blue_wool",
+            "shepherd/2/emerald_brown_wool",
+            "shepherd/2/emerald_green_wool",
+            "shepherd/2/emerald_red_wool",
+            "shepherd/2/emerald_black_wool",
+            "shepherd/2/emerald_white_carpet",
+            "shepherd/2/emerald_orange_carpet",
+            "shepherd/2/emerald_magenta_carpet",
+            "shepherd/2/emerald_light_blue_carpet",
+            "shepherd/2/emerald_yellow_carpet",
+            "shepherd/2/emerald_lime_carpet",
+            "shepherd/2/emerald_pink_carpet",
+            "shepherd/2/emerald_gray_carpet",
+            "shepherd/2/emerald_light_gray_carpet",
+            "shepherd/2/emerald_cyan_carpet",
+            "shepherd/2/emerald_purple_carpet",
+            "shepherd/2/emerald_blue_carpet",
+            "shepherd/2/emerald_brown_carpet",
+            "shepherd/2/emerald_green_carpet",
+            "shepherd/2/emerald_red_carpet",
+            "shepherd/2/emerald_black_carpet",
+        ],
+        &[],
+        "minecraft:shepherd/level_2",
+    );
+    pub const MINECRAFT_SHEPHERD_LEVEL_3: Tag = (
+        &[
+            "shepherd/3/yellow_dye_emerald",
+            "shepherd/3/light_gray_dye_emerald",
+            "shepherd/3/orange_dye_emerald",
+            "shepherd/3/red_dye_emerald",
+            "shepherd/3/pink_dye_emerald",
+            "shepherd/3/emerald_white_bed",
+            "shepherd/3/emerald_orange_bed",
+            "shepherd/3/emerald_magenta_bed",
+            "shepherd/3/emerald_light_blue_bed",
+            "shepherd/3/emerald_yellow_bed",
+            "shepherd/3/emerald_lime_bed",
+            "shepherd/3/emerald_pink_bed",
+            "shepherd/3/emerald_gray_bed",
+            "shepherd/3/emerald_light_gray_bed",
+            "shepherd/3/emerald_cyan_bed",
+            "shepherd/3/emerald_purple_bed",
+            "shepherd/3/emerald_blue_bed",
+            "shepherd/3/emerald_brown_bed",
+            "shepherd/3/emerald_green_bed",
+            "shepherd/3/emerald_red_bed",
+            "shepherd/3/emerald_black_bed",
+        ],
+        &[],
+        "minecraft:shepherd/level_3",
+    );
+    pub const MINECRAFT_SHEPHERD_LEVEL_4: Tag = (
+        &[
+            "shepherd/4/brown_dye_emerald",
+            "shepherd/4/purple_dye_emerald",
+            "shepherd/4/blue_dye_emerald",
+            "shepherd/4/green_dye_emerald",
+            "shepherd/4/magenta_dye_emerald",
+            "shepherd/4/cyan_dye_emerald",
+            "shepherd/4/emerald_white_banner",
+            "shepherd/4/emerald_orange_banner",
+            "shepherd/4/emerald_magenta_banner",
+            "shepherd/4/emerald_light_blue_banner",
+            "shepherd/4/emerald_yellow_banner",
+            "shepherd/4/emerald_lime_banner",
+            "shepherd/4/emerald_pink_banner",
+            "shepherd/4/emerald_gray_banner",
+            "shepherd/4/emerald_light_gray_banner",
+            "shepherd/4/emerald_cyan_banner",
+            "shepherd/4/emerald_purple_banner",
+            "shepherd/4/emerald_blue_banner",
+            "shepherd/4/emerald_brown_banner",
+            "shepherd/4/emerald_green_banner",
+            "shepherd/4/emerald_red_banner",
+            "shepherd/4/emerald_black_banner",
+        ],
+        &[],
+        "minecraft:shepherd/level_4",
+    );
+    pub const MINECRAFT_SHEPHERD_LEVEL_5: Tag = (
+        &["shepherd/5/emerald_painting"],
+        &[],
+        "minecraft:shepherd/level_5",
+    );
+    pub const MINECRAFT_TOOLSMITH_LEVEL_1: Tag = (
+        &[
+            "smith/1/coal_emerald",
+            "toolsmith/1/emerald_stone_axe",
+            "toolsmith/1/emerald_stone_shovel",
+            "toolsmith/1/emerald_stone_pickaxe",
+            "toolsmith/1/emerald_stone_hoe",
+        ],
+        &[],
+        "minecraft:toolsmith/level_1",
+    );
+    pub const MINECRAFT_TOOLSMITH_LEVEL_2: Tag = (
+        &["smith/2/iron_ingot_emerald", "smith/2/emerald_bell"],
+        &[],
+        "minecraft:toolsmith/level_2",
+    );
+    pub const MINECRAFT_TOOLSMITH_LEVEL_3: Tag = (
+        &[
+            "toolsmith/3/flint_emerald",
+            "toolsmith/3/emerald_enchanted_iron_axe",
+            "toolsmith/3/emerald_enchanted_iron_shovel",
+            "toolsmith/3/emerald_enchanted_iron_pickaxe",
+            "toolsmith/3/emerald_diamond_hoe",
+        ],
+        &[],
+        "minecraft:toolsmith/level_3",
+    );
+    pub const MINECRAFT_TOOLSMITH_LEVEL_4: Tag = (
+        &[
+            "toolsmith/4/emerald_enchanted_diamond_axe",
+            "toolsmith/4/emerald_enchanted_diamond_shovel",
+            "toolsmith/4/diamond_emerald",
+        ],
+        &[],
+        "minecraft:toolsmith/level_4",
+    );
+    pub const MINECRAFT_TOOLSMITH_LEVEL_5: Tag = (
+        &["toolsmith/5/emerald_enchanted_diamond_pickaxe"],
+        &[],
+        "minecraft:toolsmith/level_5",
+    );
+    pub const MINECRAFT_WANDERING_TRADER_BUYING: Tag = (
+        &[
+            "wandering_trader/water_bottle_emerald",
+            "wandering_trader/water_bucket_emerald",
+            "wandering_trader/milk_bucket_emerald",
+            "wandering_trader/fermented_spider_eye_emerald",
+            "wandering_trader/baked_potato_emerald",
+            "wandering_trader/hay_block_emerald",
+        ],
+        &[],
+        "minecraft:wandering_trader/buying",
+    );
+    pub const MINECRAFT_WANDERING_TRADER_COMMON: Tag = (
+        &[
+            "wandering_trader/emerald_white_dye",
+            "wandering_trader/emerald_orange_dye",
+            "wandering_trader/emerald_magenta_dye",
+            "wandering_trader/emerald_light_blue_dye",
+            "wandering_trader/emerald_yellow_dye",
+            "wandering_trader/emerald_lime_dye",
+            "wandering_trader/emerald_pink_dye",
+            "wandering_trader/emerald_gray_dye",
+            "wandering_trader/emerald_light_gray_dye",
+            "wandering_trader/emerald_cyan_dye",
+            "wandering_trader/emerald_purple_dye",
+            "wandering_trader/emerald_blue_dye",
+            "wandering_trader/emerald_brown_dye",
+            "wandering_trader/emerald_green_dye",
+            "wandering_trader/emerald_red_dye",
+            "wandering_trader/emerald_black_dye",
+            "wandering_trader/emerald_fish_bucket",
+            "wandering_trader/emerald_pufferfish_bucket",
+            "wandering_trader/emerald_sea_pickle",
+            "wandering_trader/emerald_slime_ball",
+            "wandering_trader/emerald_glowstone",
+            "wandering_trader/emerald_nautilus_shell",
+            "wandering_trader/emerald_fern",
+            "wandering_trader/emerald_sugar_cane",
+            "wandering_trader/emerald_pumpkin",
+            "wandering_trader/emerald_kelp",
+            "wandering_trader/emerald_cactus",
+            "wandering_trader/emerald_dandelion",
+            "wandering_trader/emerald_poppy",
+            "wandering_trader/emerald_blue_orchid",
+            "wandering_trader/emerald_allium",
+            "wandering_trader/emerald_azure_bluet",
+            "wandering_trader/emerald_red_tulip",
+            "wandering_trader/emerald_orange_tulip",
+            "wandering_trader/emerald_white_tulip",
+            "wandering_trader/emerald_pink_tulip",
+            "wandering_trader/emerald_oxeye_daisy",
+            "wandering_trader/emerald_cornflower",
+            "wandering_trader/emerald_lily_of_the_valley",
+            "wandering_trader/emerald_open_eyeblossom",
+            "wandering_trader/emerald_wheat_seeds",
+            "wandering_trader/emerald_beetroot_seeds",
+            "wandering_trader/emerald_pumpkin_seeds",
+            "wandering_trader/emerald_melon_seeds",
+            "wandering_trader/emerald_acacia_sapling",
+            "wandering_trader/emerald_birch_sapling",
+            "wandering_trader/emerald_dark_oak_sapling",
+            "wandering_trader/emerald_jungle_sapling",
+            "wandering_trader/emerald_oak_sapling",
+            "wandering_trader/emerald_spruce_sapling",
+            "wandering_trader/emerald_cherry_sapling",
+            "wandering_trader/emerald_pale_oak_sapling",
+            "wandering_trader/emerald_mangrove_propagule",
+            "wandering_trader/emerald_poplar_sapling",
+            "wandering_trader/emerald_brain_coral_block",
+            "wandering_trader/emerald_bubble_coral_block",
+            "wandering_trader/emerald_fire_coral_block",
+            "wandering_trader/emerald_horn_coral_block",
+            "wandering_trader/emerald_tube_coral_block",
+            "wandering_trader/emerald_vine",
+            "wandering_trader/emerald_pale_hanging_moss",
+            "wandering_trader/emerald_brown_mushroom",
+            "wandering_trader/emerald_red_mushroom",
+            "wandering_trader/emerald_lily_pad",
+            "wandering_trader/emerald_small_dripleaf",
+            "wandering_trader/emerald_sand",
+            "wandering_trader/emerald_red_sand",
+            "wandering_trader/emerald_pointed_dripstone",
+            "wandering_trader/emerald_sulfur_spike",
+            "wandering_trader/emerald_rooted_dirt",
+            "wandering_trader/emerald_moss_block",
+            "wandering_trader/emerald_pale_moss_block",
+            "wandering_trader/emerald_wildflowers",
+            "wandering_trader/emerald_dry_tall_grass",
+            "wandering_trader/emerald_firefly_bush",
+            "wandering_trader/emerald_golden_dandelion",
+            "wandering_trader/emerald_name_tag",
+            "wandering_trader/emerald_shelf_mushroom",
+        ],
+        &[],
+        "minecraft:wandering_trader/common",
+    );
+    pub const MINECRAFT_WANDERING_TRADER_UNCOMMON: Tag = (
+        &[
+            "wandering_trader/emerald_packed_ice",
+            "wandering_trader/emerald_blue_ice",
+            "wandering_trader/emerald_gunpowder",
+            "wandering_trader/emerald_podzol",
+            "wandering_trader/emerald_acacia_log",
+            "wandering_trader/emerald_birch_log",
+            "wandering_trader/emerald_dark_oak_log",
+            "wandering_trader/emerald_jungle_log",
+            "wandering_trader/emerald_oak_log",
+            "wandering_trader/emerald_spruce_log",
+            "wandering_trader/emerald_cherry_log",
+            "wandering_trader/emerald_mangrove_log",
+            "wandering_trader/emerald_pale_oak_log",
+            "wandering_trader/emerald_poplar_log",
+            "wandering_trader/emerald_enchanted_iron_pickaxe",
+            "wandering_trader/emerald_long_invisibility_potion",
+        ],
+        &[],
+        "minecraft:wandering_trader/uncommon",
+    );
+    pub const MINECRAFT_WEAPONSMITH_LEVEL_1: Tag = (
+        &[
+            "smith/1/coal_emerald",
+            "weaponsmith/1/emerald_iron_axe",
+            "weaponsmith/1/emerald_enchanted_iron_sword",
+        ],
+        &[],
+        "minecraft:weaponsmith/level_1",
+    );
+    pub const MINECRAFT_WEAPONSMITH_LEVEL_2: Tag = (
+        &["smith/2/iron_ingot_emerald", "smith/2/emerald_bell"],
+        &[],
+        "minecraft:weaponsmith/level_2",
+    );
+    pub const MINECRAFT_WEAPONSMITH_LEVEL_3: Tag = (
+        &["weaponsmith/3/flint_emerald"],
+        &[],
+        "minecraft:weaponsmith/level_3",
+    );
+    pub const MINECRAFT_WEAPONSMITH_LEVEL_4: Tag = (
+        &[
+            "weaponsmith/4/emerald_enchanted_diamond_axe",
+            "weaponsmith/4/diamond_emerald",
+        ],
+        &[],
+        "minecraft:weaponsmith/level_4",
+    );
+    pub const MINECRAFT_WEAPONSMITH_LEVEL_5: Tag = (
+        &["weaponsmith/5/emerald_enchanted_diamond_sword"],
+        &[],
+        "minecraft:weaponsmith/level_5",
+    );
+}
+static VILLAGERTRADE_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf_map! { "minecraft:armorer/level_1" => & VillagerTrade :: MINECRAFT_ARMORER_LEVEL_1 , "minecraft:armorer/level_2" => & VillagerTrade :: MINECRAFT_ARMORER_LEVEL_2 , "minecraft:armorer/level_3" => & VillagerTrade :: MINECRAFT_ARMORER_LEVEL_3 , "minecraft:armorer/level_4" => & VillagerTrade :: MINECRAFT_ARMORER_LEVEL_4 , "minecraft:armorer/level_5" => & VillagerTrade :: MINECRAFT_ARMORER_LEVEL_5 , "minecraft:butcher/level_1" => & VillagerTrade :: MINECRAFT_BUTCHER_LEVEL_1 , "minecraft:butcher/level_2" => & VillagerTrade :: MINECRAFT_BUTCHER_LEVEL_2 , "minecraft:butcher/level_3" => & VillagerTrade :: MINECRAFT_BUTCHER_LEVEL_3 , "minecraft:butcher/level_4" => & VillagerTrade :: MINECRAFT_BUTCHER_LEVEL_4 , "minecraft:butcher/level_5" => & VillagerTrade :: MINECRAFT_BUTCHER_LEVEL_5 , "minecraft:cartographer/level_1" => & VillagerTrade :: MINECRAFT_CARTOGRAPHER_LEVEL_1 , "minecraft:cartographer/level_2" => & VillagerTrade :: MINECRAFT_CARTOGRAPHER_LEVEL_2 , "minecraft:cartographer/level_3" => & VillagerTrade :: MINECRAFT_CARTOGRAPHER_LEVEL_3 , "minecraft:cartographer/level_4" => & VillagerTrade :: MINECRAFT_CARTOGRAPHER_LEVEL_4 , "minecraft:cartographer/level_5" => & VillagerTrade :: MINECRAFT_CARTOGRAPHER_LEVEL_5 , "minecraft:cleric/level_1" => & VillagerTrade :: MINECRAFT_CLERIC_LEVEL_1 , "minecraft:cleric/level_2" => & VillagerTrade :: MINECRAFT_CLERIC_LEVEL_2 , "minecraft:cleric/level_3" => & VillagerTrade :: MINECRAFT_CLERIC_LEVEL_3 , "minecraft:cleric/level_4" => & VillagerTrade :: MINECRAFT_CLERIC_LEVEL_4 , "minecraft:cleric/level_5" => & VillagerTrade :: MINECRAFT_CLERIC_LEVEL_5 , "minecraft:common_smith/level_1" => & VillagerTrade :: MINECRAFT_COMMON_SMITH_LEVEL_1 , "minecraft:common_smith/level_2" => & VillagerTrade :: MINECRAFT_COMMON_SMITH_LEVEL_2 , "minecraft:common_smith/level_3" => & VillagerTrade :: MINECRAFT_COMMON_SMITH_LEVEL_3 , "minecraft:common_smith/level_4" => & VillagerTrade :: MINECRAFT_COMMON_SMITH_LEVEL_4 , "minecraft:common_smith/level_5" => & VillagerTrade :: MINECRAFT_COMMON_SMITH_LEVEL_5 , "minecraft:farmer/level_1" => & VillagerTrade :: MINECRAFT_FARMER_LEVEL_1 , "minecraft:farmer/level_2" => & VillagerTrade :: MINECRAFT_FARMER_LEVEL_2 , "minecraft:farmer/level_3" => & VillagerTrade :: MINECRAFT_FARMER_LEVEL_3 , "minecraft:farmer/level_4" => & VillagerTrade :: MINECRAFT_FARMER_LEVEL_4 , "minecraft:farmer/level_5" => & VillagerTrade :: MINECRAFT_FARMER_LEVEL_5 , "minecraft:fisherman/level_1" => & VillagerTrade :: MINECRAFT_FISHERMAN_LEVEL_1 , "minecraft:fisherman/level_2" => & VillagerTrade :: MINECRAFT_FISHERMAN_LEVEL_2 , "minecraft:fisherman/level_3" => & VillagerTrade :: MINECRAFT_FISHERMAN_LEVEL_3 , "minecraft:fisherman/level_4" => & VillagerTrade :: MINECRAFT_FISHERMAN_LEVEL_4 , "minecraft:fisherman/level_5" => & VillagerTrade :: MINECRAFT_FISHERMAN_LEVEL_5 , "minecraft:fletcher/level_1" => & VillagerTrade :: MINECRAFT_FLETCHER_LEVEL_1 , "minecraft:fletcher/level_2" => & VillagerTrade :: MINECRAFT_FLETCHER_LEVEL_2 , "minecraft:fletcher/level_3" => & VillagerTrade :: MINECRAFT_FLETCHER_LEVEL_3 , "minecraft:fletcher/level_4" => & VillagerTrade :: MINECRAFT_FLETCHER_LEVEL_4 , "minecraft:fletcher/level_5" => & VillagerTrade :: MINECRAFT_FLETCHER_LEVEL_5 , "minecraft:leatherworker/level_1" => & VillagerTrade :: MINECRAFT_LEATHERWORKER_LEVEL_1 , "minecraft:leatherworker/level_2" => & VillagerTrade :: MINECRAFT_LEATHERWORKER_LEVEL_2 , "minecraft:leatherworker/level_3" => & VillagerTrade :: MINECRAFT_LEATHERWORKER_LEVEL_3 , "minecraft:leatherworker/level_4" => & VillagerTrade :: MINECRAFT_LEATHERWORKER_LEVEL_4 , "minecraft:leatherworker/level_5" => & VillagerTrade :: MINECRAFT_LEATHERWORKER_LEVEL_5 , "minecraft:librarian/level_1" => & VillagerTrade :: MINECRAFT_LIBRARIAN_LEVEL_1 , "minecraft:librarian/level_2" => & VillagerTrade :: MINECRAFT_LIBRARIAN_LEVEL_2 , "minecraft:librarian/level_3" => & VillagerTrade :: MINECRAFT_LIBRARIAN_LEVEL_3 , "minecraft:librarian/level_4" => & VillagerTrade :: MINECRAFT_LIBRARIAN_LEVEL_4 , "minecraft:librarian/level_5" => & VillagerTrade :: MINECRAFT_LIBRARIAN_LEVEL_5 , "minecraft:mason/level_1" => & VillagerTrade :: MINECRAFT_MASON_LEVEL_1 , "minecraft:mason/level_2" => & VillagerTrade :: MINECRAFT_MASON_LEVEL_2 , "minecraft:mason/level_3" => & VillagerTrade :: MINECRAFT_MASON_LEVEL_3 , "minecraft:mason/level_4" => & VillagerTrade :: MINECRAFT_MASON_LEVEL_4 , "minecraft:mason/level_5" => & VillagerTrade :: MINECRAFT_MASON_LEVEL_5 , "minecraft:shepherd/level_1" => & VillagerTrade :: MINECRAFT_SHEPHERD_LEVEL_1 , "minecraft:shepherd/level_2" => & VillagerTrade :: MINECRAFT_SHEPHERD_LEVEL_2 , "minecraft:shepherd/level_3" => & VillagerTrade :: MINECRAFT_SHEPHERD_LEVEL_3 , "minecraft:shepherd/level_4" => & VillagerTrade :: MINECRAFT_SHEPHERD_LEVEL_4 , "minecraft:shepherd/level_5" => & VillagerTrade :: MINECRAFT_SHEPHERD_LEVEL_5 , "minecraft:toolsmith/level_1" => & VillagerTrade :: MINECRAFT_TOOLSMITH_LEVEL_1 , "minecraft:toolsmith/level_2" => & VillagerTrade :: MINECRAFT_TOOLSMITH_LEVEL_2 , "minecraft:toolsmith/level_3" => & VillagerTrade :: MINECRAFT_TOOLSMITH_LEVEL_3 , "minecraft:toolsmith/level_4" => & VillagerTrade :: MINECRAFT_TOOLSMITH_LEVEL_4 , "minecraft:toolsmith/level_5" => & VillagerTrade :: MINECRAFT_TOOLSMITH_LEVEL_5 , "minecraft:wandering_trader/buying" => & VillagerTrade :: MINECRAFT_WANDERING_TRADER_BUYING , "minecraft:wandering_trader/common" => & VillagerTrade :: MINECRAFT_WANDERING_TRADER_COMMON , "minecraft:wandering_trader/uncommon" => & VillagerTrade :: MINECRAFT_WANDERING_TRADER_UNCOMMON , "minecraft:weaponsmith/level_1" => & VillagerTrade :: MINECRAFT_WEAPONSMITH_LEVEL_1 , "minecraft:weaponsmith/level_2" => & VillagerTrade :: MINECRAFT_WEAPONSMITH_LEVEL_2 , "minecraft:weaponsmith/level_3" => & VillagerTrade :: MINECRAFT_WEAPONSMITH_LEVEL_3 , "minecraft:weaponsmith/level_4" => & VillagerTrade :: MINECRAFT_WEAPONSMITH_LEVEL_4 , "minecraft:weaponsmith/level_5" => & VillagerTrade :: MINECRAFT_WEAPONSMITH_LEVEL_5 };
 #[allow(non_snake_case)]
 pub mod WorldgenBiome {
     use super::Tag;
@@ -15050,6 +16665,23 @@ pub mod WorldgenBiome {
 }
 static WORLDGENBIOME_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf_map! { "c:hidden_from_locator_selection" => & WorldgenBiome :: C_HIDDEN_FROM_LOCATOR_SELECTION , "c:is_aquatic" => & WorldgenBiome :: C_IS_AQUATIC , "c:is_aquatic_icy" => & WorldgenBiome :: C_IS_AQUATIC_ICY , "c:is_badlands" => & WorldgenBiome :: C_IS_BADLANDS , "c:is_beach" => & WorldgenBiome :: C_IS_BEACH , "c:is_birch_forest" => & WorldgenBiome :: C_IS_BIRCH_FOREST , "c:is_cave" => & WorldgenBiome :: C_IS_CAVE , "c:is_cold" => & WorldgenBiome :: C_IS_COLD , "c:is_cold/end" => & WorldgenBiome :: C_IS_COLD_END , "c:is_cold/nether" => & WorldgenBiome :: C_IS_COLD_NETHER , "c:is_cold/overworld" => & WorldgenBiome :: C_IS_COLD_OVERWORLD , "c:is_dark_forest" => & WorldgenBiome :: C_IS_DARK_FOREST , "c:is_dead" => & WorldgenBiome :: C_IS_DEAD , "c:is_deep_ocean" => & WorldgenBiome :: C_IS_DEEP_OCEAN , "c:is_dense_vegetation" => & WorldgenBiome :: C_IS_DENSE_VEGETATION , "c:is_dense_vegetation/end" => & WorldgenBiome :: C_IS_DENSE_VEGETATION_END , "c:is_dense_vegetation/nether" => & WorldgenBiome :: C_IS_DENSE_VEGETATION_NETHER , "c:is_dense_vegetation/overworld" => & WorldgenBiome :: C_IS_DENSE_VEGETATION_OVERWORLD , "c:is_desert" => & WorldgenBiome :: C_IS_DESERT , "c:is_dry" => & WorldgenBiome :: C_IS_DRY , "c:is_dry/end" => & WorldgenBiome :: C_IS_DRY_END , "c:is_dry/nether" => & WorldgenBiome :: C_IS_DRY_NETHER , "c:is_dry/overworld" => & WorldgenBiome :: C_IS_DRY_OVERWORLD , "c:is_end" => & WorldgenBiome :: C_IS_END , "c:is_floral" => & WorldgenBiome :: C_IS_FLORAL , "c:is_flower_forest" => & WorldgenBiome :: C_IS_FLOWER_FOREST , "c:is_forest" => & WorldgenBiome :: C_IS_FOREST , "c:is_hill" => & WorldgenBiome :: C_IS_HILL , "c:is_hot" => & WorldgenBiome :: C_IS_HOT , "c:is_hot/end" => & WorldgenBiome :: C_IS_HOT_END , "c:is_hot/nether" => & WorldgenBiome :: C_IS_HOT_NETHER , "c:is_hot/overworld" => & WorldgenBiome :: C_IS_HOT_OVERWORLD , "c:is_icy" => & WorldgenBiome :: C_IS_ICY , "c:is_jungle" => & WorldgenBiome :: C_IS_JUNGLE , "c:is_lush" => & WorldgenBiome :: C_IS_LUSH , "c:is_magical" => & WorldgenBiome :: C_IS_MAGICAL , "c:is_mountain" => & WorldgenBiome :: C_IS_MOUNTAIN , "c:is_mountain/peak" => & WorldgenBiome :: C_IS_MOUNTAIN_PEAK , "c:is_mountain/slope" => & WorldgenBiome :: C_IS_MOUNTAIN_SLOPE , "c:is_mushroom" => & WorldgenBiome :: C_IS_MUSHROOM , "c:is_nether" => & WorldgenBiome :: C_IS_NETHER , "c:is_nether_forest" => & WorldgenBiome :: C_IS_NETHER_FOREST , "c:is_ocean" => & WorldgenBiome :: C_IS_OCEAN , "c:is_old_growth" => & WorldgenBiome :: C_IS_OLD_GROWTH , "c:is_outer_end_island" => & WorldgenBiome :: C_IS_OUTER_END_ISLAND , "c:is_overworld" => & WorldgenBiome :: C_IS_OVERWORLD , "c:is_plains" => & WorldgenBiome :: C_IS_PLAINS , "c:is_plateau" => & WorldgenBiome :: C_IS_PLATEAU , "c:is_rare" => & WorldgenBiome :: C_IS_RARE , "c:is_river" => & WorldgenBiome :: C_IS_RIVER , "c:is_sandy" => & WorldgenBiome :: C_IS_SANDY , "c:is_savanna" => & WorldgenBiome :: C_IS_SAVANNA , "c:is_shallow_ocean" => & WorldgenBiome :: C_IS_SHALLOW_OCEAN , "c:is_snowy" => & WorldgenBiome :: C_IS_SNOWY , "c:is_snowy_plains" => & WorldgenBiome :: C_IS_SNOWY_PLAINS , "c:is_sparse_vegetation" => & WorldgenBiome :: C_IS_SPARSE_VEGETATION , "c:is_sparse_vegetation/end" => & WorldgenBiome :: C_IS_SPARSE_VEGETATION_END , "c:is_sparse_vegetation/nether" => & WorldgenBiome :: C_IS_SPARSE_VEGETATION_NETHER , "c:is_sparse_vegetation/overworld" => & WorldgenBiome :: C_IS_SPARSE_VEGETATION_OVERWORLD , "c:is_spooky" => & WorldgenBiome :: C_IS_SPOOKY , "c:is_stony_shores" => & WorldgenBiome :: C_IS_STONY_SHORES , "c:is_swamp" => & WorldgenBiome :: C_IS_SWAMP , "c:is_taiga" => & WorldgenBiome :: C_IS_TAIGA , "c:is_temperate" => & WorldgenBiome :: C_IS_TEMPERATE , "c:is_temperate/end" => & WorldgenBiome :: C_IS_TEMPERATE_END , "c:is_temperate/nether" => & WorldgenBiome :: C_IS_TEMPERATE_NETHER , "c:is_temperate/overworld" => & WorldgenBiome :: C_IS_TEMPERATE_OVERWORLD , "c:is_tree/coniferous" => & WorldgenBiome :: C_IS_TREE_CONIFEROUS , "c:is_tree/deciduous" => & WorldgenBiome :: C_IS_TREE_DECIDUOUS , "c:is_tree/jungle" => & WorldgenBiome :: C_IS_TREE_JUNGLE , "c:is_tree/savanna" => & WorldgenBiome :: C_IS_TREE_SAVANNA , "c:is_underground" => & WorldgenBiome :: C_IS_UNDERGROUND , "c:is_void" => & WorldgenBiome :: C_IS_VOID , "c:is_wasteland" => & WorldgenBiome :: C_IS_WASTELAND , "c:is_wet" => & WorldgenBiome :: C_IS_WET , "c:is_wet/end" => & WorldgenBiome :: C_IS_WET_END , "c:is_wet/nether" => & WorldgenBiome :: C_IS_WET_NETHER , "c:is_wet/overworld" => & WorldgenBiome :: C_IS_WET_OVERWORLD , "c:is_windswept" => & WorldgenBiome :: C_IS_WINDSWEPT , "c:no_default_monsters" => & WorldgenBiome :: C_NO_DEFAULT_MONSTERS , "c:primary_wood_type" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE , "c:primary_wood_type/acacia" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE_ACACIA , "c:primary_wood_type/bamboo" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE_BAMBOO , "c:primary_wood_type/birch" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE_BIRCH , "c:primary_wood_type/cherry" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE_CHERRY , "c:primary_wood_type/crimson" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE_CRIMSON , "c:primary_wood_type/dark_oak" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE_DARK_OAK , "c:primary_wood_type/jungle" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE_JUNGLE , "c:primary_wood_type/mangrove" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE_MANGROVE , "c:primary_wood_type/oak" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE_OAK , "c:primary_wood_type/pale_oak" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE_PALE_OAK , "c:primary_wood_type/spruce" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE_SPRUCE , "c:primary_wood_type/warped" => & WorldgenBiome :: C_PRIMARY_WOOD_TYPE_WARPED , "minecraft:allows_surface_slime_spawns" => & WorldgenBiome :: MINECRAFT_ALLOWS_SURFACE_SLIME_SPAWNS , "minecraft:allows_tropical_fish_spawns_at_any_height" => & WorldgenBiome :: MINECRAFT_ALLOWS_TROPICAL_FISH_SPAWNS_AT_ANY_HEIGHT , "minecraft:has_closer_water_fog" => & WorldgenBiome :: MINECRAFT_HAS_CLOSER_WATER_FOG , "minecraft:has_structure/ancient_city" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_ANCIENT_CITY , "minecraft:has_structure/bastion_remnant" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_BASTION_REMNANT , "minecraft:has_structure/buried_treasure" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_BURIED_TREASURE , "minecraft:has_structure/desert_pyramid" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_DESERT_PYRAMID , "minecraft:has_structure/end_city" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_END_CITY , "minecraft:has_structure/igloo" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_IGLOO , "minecraft:has_structure/jungle_temple" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_JUNGLE_TEMPLE , "minecraft:has_structure/mineshaft" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_MINESHAFT , "minecraft:has_structure/mineshaft_mesa" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_MINESHAFT_MESA , "minecraft:has_structure/nether_fortress" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_NETHER_FORTRESS , "minecraft:has_structure/nether_fossil" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_NETHER_FOSSIL , "minecraft:has_structure/ocean_monument" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_OCEAN_MONUMENT , "minecraft:has_structure/ocean_ruin_cold" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_OCEAN_RUIN_COLD , "minecraft:has_structure/ocean_ruin_warm" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_OCEAN_RUIN_WARM , "minecraft:has_structure/pillager_outpost" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_PILLAGER_OUTPOST , "minecraft:has_structure/ruined_portal_desert" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_RUINED_PORTAL_DESERT , "minecraft:has_structure/ruined_portal_jungle" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_RUINED_PORTAL_JUNGLE , "minecraft:has_structure/ruined_portal_mountain" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_RUINED_PORTAL_MOUNTAIN , "minecraft:has_structure/ruined_portal_nether" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_RUINED_PORTAL_NETHER , "minecraft:has_structure/ruined_portal_ocean" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_RUINED_PORTAL_OCEAN , "minecraft:has_structure/ruined_portal_standard" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_RUINED_PORTAL_STANDARD , "minecraft:has_structure/ruined_portal_swamp" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_RUINED_PORTAL_SWAMP , "minecraft:has_structure/shipwreck" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_SHIPWRECK , "minecraft:has_structure/shipwreck_beached" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_SHIPWRECK_BEACHED , "minecraft:has_structure/stronghold" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_STRONGHOLD , "minecraft:has_structure/swamp_hut" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_SWAMP_HUT , "minecraft:has_structure/trail_ruins" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_TRAIL_RUINS , "minecraft:has_structure/trial_chambers" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_TRIAL_CHAMBERS , "minecraft:has_structure/village_desert" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_VILLAGE_DESERT , "minecraft:has_structure/village_plains" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_VILLAGE_PLAINS , "minecraft:has_structure/village_savanna" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_VILLAGE_SAVANNA , "minecraft:has_structure/village_snowy" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_VILLAGE_SNOWY , "minecraft:has_structure/village_taiga" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_VILLAGE_TAIGA , "minecraft:has_structure/woodland_mansion" => & WorldgenBiome :: MINECRAFT_HAS_STRUCTURE_WOODLAND_MANSION , "minecraft:increased_fire_burnout" => & WorldgenBiome :: MINECRAFT_INCREASED_FIRE_BURNOUT , "minecraft:is_badlands" => & WorldgenBiome :: MINECRAFT_IS_BADLANDS , "minecraft:is_beach" => & WorldgenBiome :: MINECRAFT_IS_BEACH , "minecraft:is_deep_ocean" => & WorldgenBiome :: MINECRAFT_IS_DEEP_OCEAN , "minecraft:is_end" => & WorldgenBiome :: MINECRAFT_IS_END , "minecraft:is_forest" => & WorldgenBiome :: MINECRAFT_IS_FOREST , "minecraft:is_hill" => & WorldgenBiome :: MINECRAFT_IS_HILL , "minecraft:is_jungle" => & WorldgenBiome :: MINECRAFT_IS_JUNGLE , "minecraft:is_mountain" => & WorldgenBiome :: MINECRAFT_IS_MOUNTAIN , "minecraft:is_nether" => & WorldgenBiome :: MINECRAFT_IS_NETHER , "minecraft:is_ocean" => & WorldgenBiome :: MINECRAFT_IS_OCEAN , "minecraft:is_overworld" => & WorldgenBiome :: MINECRAFT_IS_OVERWORLD , "minecraft:is_river" => & WorldgenBiome :: MINECRAFT_IS_RIVER , "minecraft:is_savanna" => & WorldgenBiome :: MINECRAFT_IS_SAVANNA , "minecraft:is_taiga" => & WorldgenBiome :: MINECRAFT_IS_TAIGA , "minecraft:mineshaft_blocking" => & WorldgenBiome :: MINECRAFT_MINESHAFT_BLOCKING , "minecraft:more_frequent_drowned_spawns" => & WorldgenBiome :: MINECRAFT_MORE_FREQUENT_DROWNED_SPAWNS , "minecraft:plays_underwater_music" => & WorldgenBiome :: MINECRAFT_PLAYS_UNDERWATER_MUSIC , "minecraft:polar_bears_spawn_on_alternate_blocks" => & WorldgenBiome :: MINECRAFT_POLAR_BEARS_SPAWN_ON_ALTERNATE_BLOCKS , "minecraft:produces_corals_from_bonemeal" => & WorldgenBiome :: MINECRAFT_PRODUCES_CORALS_FROM_BONEMEAL , "minecraft:reduce_water_ambient_spawns" => & WorldgenBiome :: MINECRAFT_REDUCE_WATER_AMBIENT_SPAWNS , "minecraft:required_ocean_monument_surrounding" => & WorldgenBiome :: MINECRAFT_REQUIRED_OCEAN_MONUMENT_SURROUNDING , "minecraft:snow_golem_melts" => & WorldgenBiome :: MINECRAFT_SNOW_GOLEM_MELTS , "minecraft:spawns_cold_variant_frogs" => & WorldgenBiome :: MINECRAFT_SPAWNS_COLD_VARIANT_FROGS , "minecraft:spawns_gold_rabbits" => & WorldgenBiome :: MINECRAFT_SPAWNS_GOLD_RABBITS , "minecraft:spawns_snow_foxes" => & WorldgenBiome :: MINECRAFT_SPAWNS_SNOW_FOXES , "minecraft:spawns_warm_variant_frogs" => & WorldgenBiome :: MINECRAFT_SPAWNS_WARM_VARIANT_FROGS , "minecraft:spawns_white_rabbits" => & WorldgenBiome :: MINECRAFT_SPAWNS_WHITE_RABBITS , "minecraft:stronghold_biased_to" => & WorldgenBiome :: MINECRAFT_STRONGHOLD_BIASED_TO , "minecraft:water_on_map_outlines" => & WorldgenBiome :: MINECRAFT_WATER_ON_MAP_OUTLINES , "minecraft:without_patrol_spawns" => & WorldgenBiome :: MINECRAFT_WITHOUT_PATROL_SPAWNS , "minecraft:without_wandering_trader_spawns" => & WorldgenBiome :: MINECRAFT_WITHOUT_WANDERING_TRADER_SPAWNS , "minecraft:without_zombie_sieges" => & WorldgenBiome :: MINECRAFT_WITHOUT_ZOMBIE_SIEGES };
 #[allow(non_snake_case)]
+pub mod WorldgenConfiguredFeature {
+    use super::Tag;
+    pub const MINECRAFT_CAN_SPAWN_FROM_BONE_MEAL: Tag = (
+        &[
+            "flower_default",
+            "flower_flower_forest",
+            "flower_swamp",
+            "flower_plain",
+            "flower_meadow",
+            "flower_cherry",
+        ],
+        &[48u16, 49u16, 52u16, 51u16, 50u16, 47u16],
+        "minecraft:can_spawn_from_bone_meal",
+    );
+}
+static WORLDGENCONFIGUREDFEATURE_TAGS: phf::Map<&'static str, &'static Tag> = phf::phf_map! { "minecraft:can_spawn_from_bone_meal" => & WorldgenConfiguredFeature :: MINECRAFT_CAN_SPAWN_FROM_BONE_MEAL };
+#[allow(non_snake_case)]
 pub mod WorldgenFlatLevelGeneratorPreset {
     use super::Tag;
     pub const MINECRAFT_VISIBLE: Tag = (
@@ -15153,7 +16785,7 @@ pub mod WorldgenWorldPreset {
             "single_biome_surface",
             "debug_all_block_states",
         ],
-        &[4u16, 2u16, 3u16, 0u16, 5u16, 1u16],
+        &[5u16, 2u16, 4u16, 0u16, 6u16, 1u16],
         "minecraft:extended",
     );
     pub const MINECRAFT_NORMAL: Tag = (
@@ -15164,7 +16796,7 @@ pub mod WorldgenWorldPreset {
             "amplified",
             "single_biome_surface",
         ],
-        &[4u16, 2u16, 3u16, 0u16, 5u16],
+        &[5u16, 2u16, 4u16, 0u16, 6u16],
         "minecraft:normal",
     );
 }
@@ -15185,7 +16817,9 @@ pub const fn get_latest_map(key: RegistryKey) -> &'static phf::Map<&'static str,
         RegistryKey::PaintingVariant => &PAINTINGVARIANT_TAGS,
         RegistryKey::PointOfInterestType => &POINTOFINTERESTTYPE_TAGS,
         RegistryKey::Potion => &POTION_TAGS,
+        RegistryKey::VillagerTrade => &VILLAGERTRADE_TAGS,
         RegistryKey::WorldgenBiome => &WORLDGENBIOME_TAGS,
+        RegistryKey::WorldgenConfiguredFeature => &WORLDGENCONFIGUREDFEATURE_TAGS,
         RegistryKey::WorldgenFlatLevelGeneratorPreset => &WORLDGENFLATLEVELGENERATORPRESET_TAGS,
         RegistryKey::WorldgenStructure => &WORLDGENSTRUCTURE_TAGS,
         RegistryKey::WorldgenWorldPreset => &WORLDGENWORLDPRESET_TAGS,
@@ -15210,6 +16844,117 @@ pub const fn get_registry_key_tags(
         return None;
     }
     Some(get_latest_map(tag_category))
+}
+#[doc = r" Whether `tag` is one of later versions' tags the server checks internally, which is"]
+#[doc = r" never sent to clients."]
+#[must_use]
+pub fn is_internal_tag(tag_category: RegistryKey, tag: &str) -> bool {
+    matches!(
+        (tag_category, tag),
+        (RegistryKey::Block, "minecraft:bats_spawnable_on")
+            | (
+                RegistryKey::Block,
+                "minecraft:beneath_bamboo_podzol_replaceable"
+            )
+            | (RegistryKey::Block, "minecraft:camels_spawnable_on")
+            | (RegistryKey::Block, "minecraft:cannot_support_kelp")
+            | (RegistryKey::Block, "minecraft:cannot_support_seagrass")
+            | (RegistryKey::Block, "minecraft:cannot_support_snow_layer")
+            | (RegistryKey::Block, "minecraft:concrete_powders")
+            | (RegistryKey::Block, "minecraft:convertible_to_mud")
+            | (RegistryKey::Block, "minecraft:copper_chests")
+            | (RegistryKey::Block, "minecraft:edible_for_sheep")
+            | (
+                RegistryKey::Block,
+                "minecraft:enables_bubble_column_drag_down"
+            )
+            | (
+                RegistryKey::Block,
+                "minecraft:enables_bubble_column_push_up"
+            )
+            | (RegistryKey::Block, "minecraft:grass_blocks")
+            | (
+                RegistryKey::Block,
+                "minecraft:huge_brown_mushroom_can_place_on"
+            )
+            | (
+                RegistryKey::Block,
+                "minecraft:huge_red_mushroom_can_place_on"
+            )
+            | (RegistryKey::Block, "minecraft:moss_blocks")
+            | (RegistryKey::Block, "minecraft:mud")
+            | (
+                RegistryKey::Block,
+                "minecraft:overrides_mushroom_light_requirement"
+            )
+            | (RegistryKey::Block, "minecraft:prevents_nearby_leaf_decay")
+            | (RegistryKey::Block, "minecraft:replaceable_by_mushrooms")
+            | (RegistryKey::Block, "minecraft:substrate_overworld")
+            | (
+                RegistryKey::Block,
+                "minecraft:support_override_cactus_flower"
+            )
+            | (RegistryKey::Block, "minecraft:support_override_snow_layer")
+            | (RegistryKey::Block, "minecraft:supports_azalea")
+            | (RegistryKey::Block, "minecraft:supports_bamboo")
+            | (RegistryKey::Block, "minecraft:supports_big_dripleaf")
+            | (RegistryKey::Block, "minecraft:supports_cactus")
+            | (RegistryKey::Block, "minecraft:supports_chorus_flower")
+            | (RegistryKey::Block, "minecraft:supports_chorus_plant")
+            | (RegistryKey::Block, "minecraft:supports_cocoa")
+            | (RegistryKey::Block, "minecraft:supports_crimson_fungus")
+            | (RegistryKey::Block, "minecraft:supports_crimson_roots")
+            | (RegistryKey::Block, "minecraft:supports_crops")
+            | (RegistryKey::Block, "minecraft:supports_dry_vegetation")
+            | (
+                RegistryKey::Block,
+                "minecraft:supports_hanging_mangrove_propagule"
+            )
+            | (RegistryKey::Block, "minecraft:supports_lily_pad")
+            | (RegistryKey::Block, "minecraft:supports_mangrove_propagule")
+            | (RegistryKey::Block, "minecraft:supports_melon_stem")
+            | (RegistryKey::Block, "minecraft:supports_nether_sprouts")
+            | (RegistryKey::Block, "minecraft:supports_nether_wart")
+            | (RegistryKey::Block, "minecraft:supports_pumpkin_stem")
+            | (RegistryKey::Block, "minecraft:supports_small_dripleaf")
+            | (RegistryKey::Block, "minecraft:supports_stem_crops")
+            | (RegistryKey::Block, "minecraft:supports_sugar_cane")
+            | (
+                RegistryKey::Block,
+                "minecraft:supports_sugar_cane_adjacently"
+            )
+            | (RegistryKey::Block, "minecraft:supports_vegetation")
+            | (RegistryKey::Block, "minecraft:supports_warped_fungus")
+            | (RegistryKey::Block, "minecraft:supports_warped_roots")
+            | (RegistryKey::Block, "minecraft:supports_wither_rose")
+            | (RegistryKey::EntityType, "minecraft:accepts_iron_golem_gift")
+            | (RegistryKey::EntityType, "minecraft:boat")
+            | (RegistryKey::EntityType, "minecraft:burn_in_daylight")
+            | (
+                RegistryKey::EntityType,
+                "minecraft:candidate_for_iron_golem_gift"
+            )
+            | (RegistryKey::Fluid, "minecraft:bubble_column_can_occupy")
+            | (RegistryKey::Fluid, "minecraft:supports_lily_pad")
+            | (
+                RegistryKey::Fluid,
+                "minecraft:supports_sugar_cane_adjacently"
+            )
+            | (RegistryKey::Item, "minecraft:bundles")
+            | (RegistryKey::Item, "minecraft:cat_collar_dyes")
+            | (RegistryKey::Item, "minecraft:dyes")
+            | (RegistryKey::Item, "minecraft:furnace_minecart_fuel")
+            | (RegistryKey::Item, "minecraft:happy_ghast_food")
+            | (RegistryKey::Item, "minecraft:piglin_preferred_weapons")
+            | (RegistryKey::Item, "minecraft:piglin_safe_armor")
+            | (RegistryKey::Item, "minecraft:shulker_boxes")
+            | (RegistryKey::Item, "minecraft:spears")
+            | (RegistryKey::Potion, "minecraft:tradeable")
+            | (
+                RegistryKey::WorldgenConfiguredFeature,
+                "minecraft:can_spawn_from_bone_meal"
+            )
+    )
 }
 pub trait Taggable {
     fn tag_key() -> RegistryKey;

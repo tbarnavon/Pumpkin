@@ -1,11 +1,9 @@
 use std::sync::Arc;
 
-use pumpkin_data::{Block, BlockDirection, BlockState, Mirror, Rotation};
+use pumpkin_data::{Block, BlockDirection, Mirror, Rotation};
 use pumpkin_util::{
     math::{block_box::BlockBox, position::BlockPos, vector3::Vector3},
-    random::{
-        RandomDeriverImpl, RandomGenerator, RandomImpl, hash_block_pos, legacy_rand::LegacyRand,
-    },
+    random::{RandomGenerator, RandomImpl, hash_block_pos, legacy_rand::LegacyRand},
 };
 
 use crate::{
@@ -213,40 +211,6 @@ impl NetherFossilPiece {
             chunk.set_block_state(world_pos.x, world_pos.y, world_pos.z, final_state);
         }
     }
-
-    fn place_dried_ghast(
-        chunk: &mut ProtoChunk,
-        seed: i64,
-        fossil_bb: &BlockBox,
-        chunk_bb: &BlockBox,
-    ) {
-        use pumpkin_util::random::xoroshiro128::Xoroshiro;
-
-        let center_x = i32::midpoint(fossil_bb.min.x, fossil_bb.max.x);
-        let center_y = i32::midpoint(fossil_bb.min.y, fossil_bb.max.y);
-        let center_z = i32::midpoint(fossil_bb.min.z, fossil_bb.max.z);
-
-        let mut rng = RandomGenerator::Xoroshiro(Xoroshiro::from_seed(seed as u64));
-        let splitter = rng.next_splitter();
-        let mut positional_random = splitter.split_pos(center_x, center_y, center_z);
-
-        if positional_random.next_f32() < 0.5 {
-            let x_span = (fossil_bb.max.x - fossil_bb.min.x + 1).max(1);
-            let z_span = (fossil_bb.max.z - fossil_bb.min.z + 1).max(1);
-            let x = fossil_bb.min.x + positional_random.next_bounded_i32(x_span);
-            let y = fossil_bb.min.y;
-            let z = fossil_bb.min.z + positional_random.next_bounded_i32(z_span);
-            let random_pos = Vector3::new(x, y, z);
-
-            let block_at = chunk.get_block_state(&random_pos);
-            if BlockState::from_id(block_at).is_air() && chunk_bb.contains_pos(&random_pos) {
-                let rot_idx = positional_random.next_bounded_i32(4) as u8;
-                let rot = Rotation::from_index(rot_idx);
-                let state = Block::DRIED_GHAST.default_state.rotate(rot);
-                chunk.set_block_state(random_pos.x, random_pos.y, random_pos.z, state);
-            }
-        }
-    }
 }
 
 impl StructurePieceBase for NetherFossilPiece {
@@ -264,7 +228,7 @@ impl StructurePieceBase for NetherFossilPiece {
         chunk: &mut ProtoChunk,
         _block_registry: &dyn WorldPortalExt,
         _random: &mut RandomGenerator,
-        seed: i64,
+        _seed: i64,
         chunk_box: &BlockBox,
     ) {
         let fossil_bb = self.piece.bounding_box;
@@ -272,7 +236,6 @@ impl StructurePieceBase for NetherFossilPiece {
         enlarged_box.encompass(&fossil_bb);
 
         self.place_blocks(chunk, &enlarged_box);
-        Self::place_dried_ghast(chunk, seed, &fossil_bb, chunk_box);
     }
 }
 
@@ -296,7 +259,7 @@ fn make_settings(rotation: Rotation) -> StructurePlaceSettings {
 mod tests {
     use super::*;
     use crate::generation::structure::structures::HeightSampler;
-    use pumpkin_data::Block;
+    use pumpkin_data::{Block, BlockState};
 
     struct MockColumnSampler {
         ground_y: i32,

@@ -529,8 +529,8 @@ mod tests {
         );
         assert!(tag_values.is_some());
         let values = tag_values.unwrap();
-        assert_eq!(values.len(), 8);
+        assert_eq!(values.len(), 6);
         assert!(values.contains(&"flower_default"));
-        assert!(values.contains(&"wildflower"));
+        assert!(values.contains(&"flower_cherry"));
     }
 }

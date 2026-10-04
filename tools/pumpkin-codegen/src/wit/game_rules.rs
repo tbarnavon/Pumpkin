@@ -20,7 +20,8 @@ pub fn build() -> String {
 
     let mut rule_enum = Enum::empty();
     for raw_name in game_rules.keys() {
-        let name = raw_name.replace('_', "-");
+        // 1.21.1 game rule ids are camelCase (`doDaylightCycle`); WIT wants kebab-case.
+        let name = heck::ToKebabCase::to_kebab_case(raw_name.as_str());
         rule_enum.case(name);
     }
 

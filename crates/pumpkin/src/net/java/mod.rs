@@ -22,8 +22,8 @@ use pumpkin_protocol::java::server::play::{
     SPlayerRotation, SPlayerSession, SRecipeBookChangeSettings, SRecipeBookSeenRecipe, SRenameItem,
     SSeenAdvancement, SSelectTrade, SSetBeacon, SSetCommandBlock, SSetCommandMinecart,
     SSetCreativeSlot, SSetGameRule, SSetHeldItem, SSetJigsawBlock, SSetPlayerGround,
-    SSetStructureBlock, SSetTestBlock, SSpectateEntity, SSwingArm, STeleportToEntity,
-    STestInstanceBlockAction, SUpdateSign, SUseItem, SUseItemOn,
+    SSetStructureBlock, SSpectateEntity, SSwingArm, STeleportToEntity, SUpdateSign, SUseItem,
+    SUseItemOn,
 };
 use pumpkin_protocol::packet::MultiVersionJavaPacket;
 use pumpkin_protocol::{
@@ -884,15 +884,6 @@ impl JavaClient {
             }
             id if id == SClientTickEnd::to_id(version) => {
                 self.handle_client_tick_end(player);
-            }
-            id if id == STestInstanceBlockAction::to_id(version) => {
-                self.handle_test_instance_block_action(
-                    player,
-                    &STestInstanceBlockAction::read(&mut payload, &version)?,
-                );
-            }
-            id if id == SSetTestBlock::to_id(version) => {
-                self.handle_set_test_block(player, &SSetTestBlock::read(&mut payload, &version)?);
             }
             id if id == SDebugSubscriptionRequest::to_id(version) => {
                 self.handle_debug_subscription_request(

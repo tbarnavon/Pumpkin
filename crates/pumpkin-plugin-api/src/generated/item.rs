@@ -3484,7 +3484,9 @@ impl Item {
             Self::NetheriteScrap => "minecraft:netherite_scrap",
             Self::NetheriteShovel => "minecraft:netherite_shovel",
             Self::NetheriteSword => "minecraft:netherite_sword",
-            Self::NetheriteUpgradeSmithingTemplate => "minecraft:netherite_upgrade_smithing_template",
+            Self::NetheriteUpgradeSmithingTemplate => {
+                "minecraft:netherite_upgrade_smithing_template"
+            }
             Self::Netherrack => "minecraft:netherrack",
             Self::NoteBlock => "minecraft:note_block",
             Self::OakBoat => "minecraft:oak_boat",
@@ -3655,7 +3657,9 @@ impl Item {
             Self::RabbitSpawnEgg => "minecraft:rabbit_spawn_egg",
             Self::RabbitStew => "minecraft:rabbit_stew",
             Self::Rail => "minecraft:rail",
-            Self::RaiserArmorTrimSmithingTemplate => "minecraft:raiser_armor_trim_smithing_template",
+            Self::RaiserArmorTrimSmithingTemplate => {
+                "minecraft:raiser_armor_trim_smithing_template"
+            }
             Self::RavagerSpawnEgg => "minecraft:ravager_spawn_egg",
             Self::RawCopper => "minecraft:raw_copper",
             Self::RawCopperBlock => "minecraft:raw_copper_block",
@@ -3721,8 +3725,12 @@ impl Item {
             Self::SeaLantern => "minecraft:sea_lantern",
             Self::SeaPickle => "minecraft:sea_pickle",
             Self::Seagrass => "minecraft:seagrass",
-            Self::SentryArmorTrimSmithingTemplate => "minecraft:sentry_armor_trim_smithing_template",
-            Self::ShaperArmorTrimSmithingTemplate => "minecraft:shaper_armor_trim_smithing_template",
+            Self::SentryArmorTrimSmithingTemplate => {
+                "minecraft:sentry_armor_trim_smithing_template"
+            }
+            Self::ShaperArmorTrimSmithingTemplate => {
+                "minecraft:shaper_armor_trim_smithing_template"
+            }
             Self::SheafPotterySherd => "minecraft:sheaf_pottery_sherd",
             Self::Shears => "minecraft:shears",
             Self::SheepSpawnEgg => "minecraft:sheep_spawn_egg",
@@ -3733,7 +3741,9 @@ impl Item {
             Self::ShulkerBox => "minecraft:shulker_box",
             Self::ShulkerShell => "minecraft:shulker_shell",
             Self::ShulkerSpawnEgg => "minecraft:shulker_spawn_egg",
-            Self::SilenceArmorTrimSmithingTemplate => "minecraft:silence_armor_trim_smithing_template",
+            Self::SilenceArmorTrimSmithingTemplate => {
+                "minecraft:silence_armor_trim_smithing_template"
+            }
             Self::SilverfishSpawnEgg => "minecraft:silverfish_spawn_egg",
             Self::SkeletonHorseSpawnEgg => "minecraft:skeleton_horse_spawn_egg",
             Self::SkeletonSkull => "minecraft:skeleton_skull",
@@ -3953,7 +3963,9 @@ impl Item {
             Self::WaxedWeatheredCutCopper => "minecraft:waxed_weathered_cut_copper",
             Self::WaxedWeatheredCutCopperSlab => "minecraft:waxed_weathered_cut_copper_slab",
             Self::WaxedWeatheredCutCopperStairs => "minecraft:waxed_weathered_cut_copper_stairs",
-            Self::WayfinderArmorTrimSmithingTemplate => "minecraft:wayfinder_armor_trim_smithing_template",
+            Self::WayfinderArmorTrimSmithingTemplate => {
+                "minecraft:wayfinder_armor_trim_smithing_template"
+            }
             Self::WeatheredChiseledCopper => "minecraft:weathered_chiseled_copper",
             Self::WeatheredCopper => "minecraft:weathered_copper",
             Self::WeatheredCopperBulb => "minecraft:weathered_copper_bulb",
@@ -5294,7 +5306,9 @@ impl Item {
             "waxed_weathered_cut_copper" => Some(Self::WaxedWeatheredCutCopper),
             "waxed_weathered_cut_copper_slab" => Some(Self::WaxedWeatheredCutCopperSlab),
             "waxed_weathered_cut_copper_stairs" => Some(Self::WaxedWeatheredCutCopperStairs),
-            "wayfinder_armor_trim_smithing_template" => Some(Self::WayfinderArmorTrimSmithingTemplate),
+            "wayfinder_armor_trim_smithing_template" => {
+                Some(Self::WayfinderArmorTrimSmithingTemplate)
+            }
             "weathered_chiseled_copper" => Some(Self::WeatheredChiseledCopper),
             "weathered_copper" => Some(Self::WeatheredCopper),
             "weathered_copper_bulb" => Some(Self::WeatheredCopperBulb),

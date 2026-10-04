@@ -3721,7 +3721,9 @@ fn build_placed_features()
                 pumpkin_data::configured_feature::ConfiguredFeature::SeagrassSimple,
             ),
             placement: vec![
-                compile_error!("unknown placement modifier: minecraft:carving_mask"),
+                PlacementModifier::Count(CountPlacementModifier {
+                    count: IntProvider::Constant(0i32),
+                }),
                 PlacementModifier::RarityFilter(RarityFilterPlacementModifier { chance: 10u32 }),
                 PlacementModifier::BlockPredicateFilter(BlockFilterPlacementModifier {
                     predicate: BlockPredicate::AllOf(AllOfBlockPredicate {

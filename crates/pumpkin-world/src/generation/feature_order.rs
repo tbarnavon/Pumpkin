@@ -36,7 +36,6 @@ const OVERWORLD_BIOMES: &[&Biome] = &[
     &Biome::FLOWER_FOREST,
     &Biome::BIRCH_FOREST,
     &Biome::DARK_FOREST,
-    &Biome::PALE_GARDEN,
     &Biome::SAVANNA_PLATEAU,
     &Biome::SAVANNA,
     &Biome::JUNGLE,
@@ -59,9 +58,7 @@ const OVERWORLD_BIOMES: &[&Biome] = &[
     &Biome::FROZEN_PEAKS,
     &Biome::DRIPSTONE_CAVES,
     &Biome::LUSH_CAVES,
-    &Biome::SULFUR_CAVES,
     &Biome::DEEP_DARK,
-    &Biome::DAPPLED_FOREST,
 ];
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -204,36 +201,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn dry_grass_uses_vanilla_global_feature_index() {
-        let step = &OVERWORLD_FEATURES_PER_STEP[9];
-        assert_eq!(
-            step.iter()
-                .position(|feature| *feature == PlacedFeature::PatchDryGrassDesert),
-            Some(72)
-        );
-        assert_eq!(
-            step.iter()
-                .position(|feature| *feature == PlacedFeature::PatchDryGrassBadlands),
-            Some(74)
-        );
-    }
-
-    #[test]
     fn biome_selection_keeps_global_indices_and_order() {
         let selected = select_features(&[Biome::SAVANNA.id, Biome::DESERT.id], 9);
         assert!(selected.windows(2).all(|pair| pair[0].0 < pair[1].0));
-        assert!(selected.contains(&(72, PlacedFeature::PatchDryGrassDesert)));
         assert!(
-            !selected
+            selected
                 .iter()
-                .any(|(_, feature)| { *feature == PlacedFeature::PatchDryGrassBadlands })
+                .any(|(_, feature)| *feature == PlacedFeature::PatchGrassSavanna)
         );
-
-        let savanna_grass = selected
-            .iter()
-            .find(|(_, feature)| *feature == PlacedFeature::PatchGrassSavanna)
-            .expect("savanna grass must be selected");
-        assert_eq!(savanna_grass.0, 15);
     }
 
     #[test]

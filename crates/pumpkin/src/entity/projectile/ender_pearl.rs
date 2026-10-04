@@ -157,7 +157,8 @@ impl EntityBase for EnderPearlEntity {
             owner.damage(
                 owner.as_ref(),
                 5.0,
-                pumpkin_data::damage::DamageType::ENDER_PEARL,
+                // 1.21.1's ender pearl deals fall damage.
+                pumpkin_data::damage::DamageType::FALL,
             );
         }
 

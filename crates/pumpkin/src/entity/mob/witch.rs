@@ -170,7 +170,7 @@ impl WitchEntity {
 
         let potion_stack = create_potion_stack(&Item::SPLASH_POTION, potion);
 
-        let splash_entity = Entity::new(world.clone(), witch_pos, &EntityType::SPLASH_POTION);
+        let splash_entity = Entity::new(world.clone(), witch_pos, &EntityType::POTION);
         let splash = SplashPotionEntity::new_shot(splash_entity, entity);
         splash.set_item_stack(potion_stack);
 

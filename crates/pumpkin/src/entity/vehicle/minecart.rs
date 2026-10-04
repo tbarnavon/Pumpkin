@@ -85,10 +85,12 @@ impl MinecartEntity {
             id if id == EntityType::TNT_MINECART.id => MinecartKind::Tnt(TntMinecart::new()),
             _ => MinecartKind::Other,
         };
-        Self {
-            vehicle: VehicleEntity::new(entity),
-            kind,
+        let vehicle = VehicleEntity::new(entity);
+        // 1.21.1's `AbstractMinecart.getDropItem`; container minecarts drop theirs below.
+        if matches!(kind, MinecartKind::Rideable(_) | MinecartKind::Other) {
+            vehicle.drop_item.store(Some(&Item::MINECART));
         }
+        Self { vehicle, kind }
     }
 
     const fn container(&self) -> Option<&Arc<MinecartInventory>> {

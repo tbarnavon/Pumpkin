@@ -584,10 +584,6 @@ mod tests {
         assert_eq!(speleothem_delta.x, 0.25);
         assert_eq!(speleothem_delta.y, 0.0);
         assert_eq!(speleothem_delta.z, 0.25);
-        assert_eq!(
-            Block::SULFUR_SPIKE.shape_offset_delta(&positive_extreme),
-            speleothem_delta
-        );
 
         let xyz_delta = Block::SHORT_GRASS.shape_offset_delta(&positive_extreme);
         assert_eq!(xyz_delta.x, 0.5);

@@ -238,11 +238,6 @@ impl CatEntity {
     pub fn set_sound_variant(&self, sound_variant: CatSoundVariant) {
         self.sound_variant
             .store(sound_variant as u8, Ordering::Relaxed);
-        let entity = self.get_entity();
-        entity.set_synced_data(
-            pumpkin_data::tracked_data::cat::SOUND_VARIANT,
-            VarInt(sound_variant as u8 as i32),
-        );
     }
 
     pub fn play_eating_sound(&self) {
@@ -383,10 +378,6 @@ impl Mob for CatEntity {
         entity.set_synced_data(
             pumpkin_data::tracked_data::cat::CAT_COLLAR_COLOR,
             VarInt(self.collar_color.load(Ordering::Relaxed) as i32),
-        );
-        entity.set_synced_data(
-            pumpkin_data::tracked_data::cat::SOUND_VARIANT,
-            VarInt(self.sound_variant.load(Ordering::Relaxed) as i32),
         );
     }
 

@@ -3,10 +3,19 @@ use quote::{format_ident, quote};
 use std::{collections::BTreeMap, fs};
 
 pub fn build() -> TokenStream {
-    let java_json: BTreeMap<String, String> = serde_json::from_str(
+    let mut java_json: BTreeMap<String, String> = serde_json::from_str(
         &fs::read_to_string("../../assets/en_us_java.json").expect("en_us_java is missing"),
     )
     .unwrap();
+    // Keys of later versions the server uses; sent to clients with their English text as fallback.
+    let internal_json: BTreeMap<String, String> = serde_json::from_str(
+        &fs::read_to_string("../../assets/en_us_java_internal.json")
+            .expect("en_us_java_internal is missing"),
+    )
+    .unwrap();
+    for (key, value) in internal_json {
+        java_json.entry(key).or_insert(value);
+    }
 
     let mut java_constants = TokenStream::new();
     let mut java_match_arms = TokenStream::new();

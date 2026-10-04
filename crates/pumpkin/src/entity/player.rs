@@ -292,7 +292,6 @@ use pumpkin_world::biome;
 use pumpkin_world::cylindrical_chunk_iterator::Cylindrical;
 
 use crate::block;
-use crate::block::blocks::straw_bed::StrawBedBlock;
 use crate::command::context::command_source::CommandSource;
 use crate::command::node::dispatcher::CommandDispatcher;
 use crate::command::{CommandSender, client_suggestions};
@@ -1431,11 +1430,8 @@ impl Player {
         if !victim.damage_with_context(
             victim.as_ref(),
             damage as f32,
-            if is_mace_smash {
-                DamageType::MACE_SMASH
-            } else {
-                DamageType::PLAYER_ATTACK
-            },
+            // 1.21.1's mace smash is a player attack.
+            DamageType::PLAYER_ATTACK,
             None,
             Some(self),
             Some(self),
@@ -2325,9 +2321,7 @@ impl Player {
         }
 
         let (bed, bed_state) = world.get_block_and_state_id(&bed_pos);
-        if bed == &Block::STRAW_BED {
-            StrawBedBlock::destroy_after_use(&world, bed_pos);
-        } else if bed.has_tag(&tag::Block::MINECRAFT_BEDS) {
+        if bed.has_tag(&tag::Block::MINECRAFT_BEDS) {
             crate::block::blocks::bed::BedBlock::set_occupied(
                 false, &world, bed, &bed_pos, bed_state,
             );
@@ -3442,29 +3436,7 @@ impl Player {
                 .unwrap_or_else(std::sync::PoisonError::into_inner);
             if let Some(vehicle) = vehicle.as_ref() {
                 let entity_type = vehicle.get_entity().entity_type;
-                if entity_type.has_tag(&pumpkin_data::tag::EntityType::MINECRAFT_BOAT)
-                    || entity_type.has_tag(&pumpkin_data::tag::EntityType::C_BOATS)
-                    || entity_type == &EntityType::OAK_BOAT
-                    || entity_type == &EntityType::SPRUCE_BOAT
-                    || entity_type == &EntityType::BIRCH_BOAT
-                    || entity_type == &EntityType::JUNGLE_BOAT
-                    || entity_type == &EntityType::ACACIA_BOAT
-                    || entity_type == &EntityType::DARK_OAK_BOAT
-                    || entity_type == &EntityType::MANGROVE_BOAT
-                    || entity_type == &EntityType::CHERRY_BOAT
-                    || entity_type == &EntityType::PALE_OAK_BOAT
-                    || entity_type == &EntityType::BAMBOO_RAFT
-                    || entity_type == &EntityType::OAK_CHEST_BOAT
-                    || entity_type == &EntityType::SPRUCE_CHEST_BOAT
-                    || entity_type == &EntityType::BIRCH_CHEST_BOAT
-                    || entity_type == &EntityType::JUNGLE_CHEST_BOAT
-                    || entity_type == &EntityType::ACACIA_CHEST_BOAT
-                    || entity_type == &EntityType::DARK_OAK_CHEST_BOAT
-                    || entity_type == &EntityType::MANGROVE_CHEST_BOAT
-                    || entity_type == &EntityType::CHERRY_CHEST_BOAT
-                    || entity_type == &EntityType::PALE_OAK_CHEST_BOAT
-                    || entity_type == &EntityType::BAMBOO_CHEST_RAFT
-                {
+                if entity_type == &EntityType::BOAT || entity_type == &EntityType::CHEST_BOAT {
                     return statistics::CustomStatistic::BoatOneCm;
                 }
                 if entity_type.has_tag(&pumpkin_data::tag::EntityType::C_MINECARTS)
@@ -3494,14 +3466,6 @@ impl Player {
                 }
                 if entity_type == &EntityType::STRIDER {
                     return statistics::CustomStatistic::StriderOneCm;
-                }
-                if entity_type == &EntityType::HAPPY_GHAST {
-                    return statistics::CustomStatistic::HappyGhastOneCm;
-                }
-                if entity_type == &EntityType::NAUTILUS
-                    || entity_type == &EntityType::ZOMBIE_NAUTILUS
-                {
-                    return statistics::CustomStatistic::NautilusOneCm;
                 }
             }
         }

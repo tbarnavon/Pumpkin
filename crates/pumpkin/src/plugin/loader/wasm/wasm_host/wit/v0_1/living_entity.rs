@@ -32,24 +32,19 @@ fn active_plugin(
 pub const fn from_wit_attribute(attr: Attribute) -> &'static pumpkin_data::attributes::Attributes {
     use pumpkin_data::attributes::Attributes;
     match attr {
-        Attribute::AirDragModifier => &Attributes::AIR_DRAG_MODIFIER,
         Attribute::Armor => &Attributes::ARMOR,
         Attribute::ArmorToughness => &Attributes::ARMOR_TOUGHNESS,
         Attribute::AttackDamage => &Attributes::ATTACK_DAMAGE,
         Attribute::AttackKnockback => &Attributes::ATTACK_KNOCKBACK,
         Attribute::AttackSpeed => &Attributes::ATTACK_SPEED,
-        Attribute::BelowNameDistance => &Attributes::BELOW_NAME_DISTANCE,
         Attribute::BlockBreakSpeed => &Attributes::BLOCK_BREAK_SPEED,
         Attribute::BlockInteractionRange => &Attributes::BLOCK_INTERACTION_RANGE,
-        Attribute::Bounciness => &Attributes::BOUNCINESS,
         Attribute::BurningTime => &Attributes::BURNING_TIME,
-        Attribute::CameraDistance => &Attributes::CAMERA_DISTANCE,
         Attribute::ExplosionKnockbackResistance => &Attributes::EXPLOSION_KNOCKBACK_RESISTANCE,
         Attribute::EntityInteractionRange => &Attributes::ENTITY_INTERACTION_RANGE,
         Attribute::FallDamageMultiplier => &Attributes::FALL_DAMAGE_MULTIPLIER,
         Attribute::FlyingSpeed => &Attributes::FLYING_SPEED,
         Attribute::FollowRange => &Attributes::FOLLOW_RANGE,
-        Attribute::FrictionModifier => &Attributes::FRICTION_MODIFIER,
         Attribute::Gravity => &Attributes::GRAVITY,
         Attribute::JumpStrength => &Attributes::JUMP_STRENGTH,
         Attribute::KnockbackResistance => &Attributes::KNOCKBACK_RESISTANCE,
@@ -59,7 +54,6 @@ pub const fn from_wit_attribute(attr: Attribute) -> &'static pumpkin_data::attri
         Attribute::MiningEfficiency => &Attributes::MINING_EFFICIENCY,
         Attribute::MovementEfficiency => &Attributes::MOVEMENT_EFFICIENCY,
         Attribute::MovementSpeed => &Attributes::MOVEMENT_SPEED,
-        Attribute::NameTagDistance => &Attributes::NAME_TAG_DISTANCE,
         Attribute::OxygenBonus => &Attributes::OXYGEN_BONUS,
         Attribute::SafeFallDistance => &Attributes::SAFE_FALL_DISTANCE,
         Attribute::Scale => &Attributes::SCALE,
@@ -68,10 +62,7 @@ pub const fn from_wit_attribute(attr: Attribute) -> &'static pumpkin_data::attri
         Attribute::StepHeight => &Attributes::STEP_HEIGHT,
         Attribute::SubmergedMiningSpeed => &Attributes::SUBMERGED_MINING_SPEED,
         Attribute::SweepingDamageRatio => &Attributes::SWEEPING_DAMAGE_RATIO,
-        Attribute::TemptRange => &Attributes::TEMPT_RANGE,
         Attribute::WaterMovementEfficiency => &Attributes::WATER_MOVEMENT_EFFICIENCY,
-        Attribute::WaypointTransmitRange => &Attributes::WAYPOINT_TRANSMIT_RANGE,
-        Attribute::WaypointReceiveRange => &Attributes::WAYPOINT_RECEIVE_RANGE,
     }
 }
 

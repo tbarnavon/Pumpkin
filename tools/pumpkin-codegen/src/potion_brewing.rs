@@ -56,7 +56,6 @@ pub fn build() -> TokenStream {
 
     let mut brewing_tokens = Vec::new();
     for recipe in recipes {
-
         let from_item = format_ident!(
             "{}",
             recipe

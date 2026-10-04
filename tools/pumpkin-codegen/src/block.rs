@@ -61,6 +61,24 @@ fn property_group_name_from_derived_name(name: &str) -> String {
     format!("{name}_properties").to_upper_camel_case()
 }
 
+/// Property groups the game code knows by the name they have in later versions, where the group's
+/// first block is one 1.21.1 doesn't have, with a 1.21.1 block of the same group.
+const LATER_GROUP_NAMES: &[(&str, &str)] = &[
+    ("white_wool_stairs_like", "oak_stairs"),
+    ("white_wool_slab_like", "oak_slab"),
+    ("pale_oak_wood_like", "oak_wood"),
+    ("iron_chain_like", "chain"),
+    ("resin_brick_wall_like", "cobblestone_wall"),
+    ("barrier_like", "barrier"),
+    ("hanging_roots_like", "hanging_roots"),
+];
+
+/// Blocks the game code knows by their later name.
+const LATER_BLOCK_NAMES: &[(&str, &str)] = &[("iron_chain", "chain")];
+
+/// Property enums the game code knows by their later name.
+const LATER_ENUM_NAMES: &[(&str, &str)] = &[("SpeleothemThickness", "DripstoneThickness")];
+
 fn common_suffix_group_alias(blocks: &[(String, u16)]) -> Option<String> {
     if blocks.is_empty() {
         return None;
@@ -1108,6 +1126,18 @@ pub fn build() -> TokenStream {
             pub const #const_ident: Self = #block_id;
         });
 
+        for (later_name, name) in LATER_BLOCK_NAMES {
+            if *name == block.name {
+                let later_ident = format_ident!("{}", const_block_name_from_block_name(later_name));
+                constants_list.push(quote! {
+                    pub const #later_ident: Self = Self::#const_ident;
+                });
+                block_id_constants.push(quote! {
+                    pub const #later_ident: Self = Self::#const_ident;
+                });
+            }
+        }
+
         type_from_raw_id_array.push((block.id.0, quote! { &Block::#const_ident }));
 
         block_from_name_entries.push(quote! {
@@ -1196,6 +1226,19 @@ pub fn build() -> TokenStream {
             }
         }
 
+        for (later_name, block) in LATER_GROUP_NAMES {
+            if property_group
+                .blocks
+                .iter()
+                .any(|(b_name, _)| b_name == block)
+            {
+                let alias_name = property_group_name_from_derived_name(later_name);
+                if emitted_aliases.insert(alias_name.clone()) {
+                    group_aliases.push(Ident::new(&alias_name, Span::call_site()));
+                }
+            }
+        }
+
         for (b_name, _) in &property_group.blocks {
             let alias_name = format!("{}_properties", b_name).to_upper_camel_case();
             if emitted_aliases.insert(alias_name.clone()) {
@@ -1228,7 +1271,14 @@ pub fn build() -> TokenStream {
     let liquid_state_ids = quote! { #(#liquid_states)|* };
 
     let block_props = block_properties.iter().map(ToTokens::to_token_stream);
-    let properties = property_enums.values().map(ToTokens::to_token_stream);
+    let properties = property_enums
+        .values()
+        .map(ToTokens::to_token_stream)
+        .chain(LATER_ENUM_NAMES.iter().map(|(later_name, name)| {
+            let later_ident = format_ident!("{later_name}");
+            let ident = format_ident!("{name}");
+            quote! { pub type #later_ident = #ident; }
+        }));
 
     let block_entity_types = blocks_assets
         .block_entity_types

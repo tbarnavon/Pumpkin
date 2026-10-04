@@ -88,7 +88,7 @@ impl ItemBehaviour for LeadItem {
             if player.gamemode.load() != pumpkin_util::GameMode::Creative {
                 item.decrement(1);
             }
-            world.play_sound(Sound::ItemLeadTied, SoundCategory::Neutral, &center);
+            world.play_sound(Sound::EntityLeashKnotPlace, SoundCategory::Neutral, &center);
             BlockActionResult::Success
         } else {
             BlockActionResult::Pass

@@ -38,7 +38,6 @@ pub mod bat;
 pub mod blaze;
 pub mod breeze;
 pub mod cave_spider;
-pub mod creaking;
 pub mod creeper;
 pub mod crossbow_attack_mob;
 pub mod elder_guardian;
@@ -103,7 +102,7 @@ impl MobEntity {
     const CAN_PICK_UP_LOOT_FLAG: u8 = 8;
 
     pub const MAX_WEARING_ARMOR_CHANCE: f32 = 0.15;
-    pub const WEARING_ARMOR_UPGRADE_MATERIAL_CHANCE: f32 = 0.1087;
+    pub const WEARING_ARMOR_UPGRADE_MATERIAL_CHANCE: f32 = 0.095;
     pub const WEARING_ARMOR_UPGRADE_MATERIAL_ATTEMPTS: f32 = 3.0;
     pub const MAX_PICKUP_LOOT_CHANCE: f32 = 0.55;
     pub const MAX_ENCHANTED_ARMOR_CHANCE: f32 = 0.5;
@@ -124,38 +123,34 @@ impl MobEntity {
         match slot {
             EquipmentSlot::Head(_) => match armor_type {
                 0 => Some(&Item::LEATHER_HELMET),
-                1 => Some(&Item::COPPER_HELMET),
-                2 => Some(&Item::GOLDEN_HELMET),
-                3 => Some(&Item::CHAINMAIL_HELMET),
-                4 => Some(&Item::IRON_HELMET),
-                5 => Some(&Item::DIAMOND_HELMET),
+                1 => Some(&Item::GOLDEN_HELMET),
+                2 => Some(&Item::CHAINMAIL_HELMET),
+                3 => Some(&Item::IRON_HELMET),
+                4 => Some(&Item::DIAMOND_HELMET),
                 _ => None,
             },
             EquipmentSlot::Chest(_) => match armor_type {
                 0 => Some(&Item::LEATHER_CHESTPLATE),
-                1 => Some(&Item::COPPER_CHESTPLATE),
-                2 => Some(&Item::GOLDEN_CHESTPLATE),
-                3 => Some(&Item::CHAINMAIL_CHESTPLATE),
-                4 => Some(&Item::IRON_CHESTPLATE),
-                5 => Some(&Item::DIAMOND_CHESTPLATE),
+                1 => Some(&Item::GOLDEN_CHESTPLATE),
+                2 => Some(&Item::CHAINMAIL_CHESTPLATE),
+                3 => Some(&Item::IRON_CHESTPLATE),
+                4 => Some(&Item::DIAMOND_CHESTPLATE),
                 _ => None,
             },
             EquipmentSlot::Legs(_) => match armor_type {
                 0 => Some(&Item::LEATHER_LEGGINGS),
-                1 => Some(&Item::COPPER_LEGGINGS),
-                2 => Some(&Item::GOLDEN_LEGGINGS),
-                3 => Some(&Item::CHAINMAIL_LEGGINGS),
-                4 => Some(&Item::IRON_LEGGINGS),
-                5 => Some(&Item::DIAMOND_LEGGINGS),
+                1 => Some(&Item::GOLDEN_LEGGINGS),
+                2 => Some(&Item::CHAINMAIL_LEGGINGS),
+                3 => Some(&Item::IRON_LEGGINGS),
+                4 => Some(&Item::DIAMOND_LEGGINGS),
                 _ => None,
             },
             EquipmentSlot::Feet(_) => match armor_type {
                 0 => Some(&Item::LEATHER_BOOTS),
-                1 => Some(&Item::COPPER_BOOTS),
-                2 => Some(&Item::GOLDEN_BOOTS),
-                3 => Some(&Item::CHAINMAIL_BOOTS),
-                4 => Some(&Item::IRON_BOOTS),
-                5 => Some(&Item::DIAMOND_BOOTS),
+                1 => Some(&Item::GOLDEN_BOOTS),
+                2 => Some(&Item::CHAINMAIL_BOOTS),
+                3 => Some(&Item::IRON_BOOTS),
+                4 => Some(&Item::DIAMOND_BOOTS),
                 _ => None,
             },
             _ => None,
@@ -1049,7 +1044,7 @@ pub trait Mob: EntityBase + Send + Sync {
         if rand::random::<f32>()
             < MobEntity::MAX_WEARING_ARMOR_CHANCE * difficulty.special_multiplier
         {
-            let mut armor_type = rand::random_range(0..3);
+            let mut armor_type = rand::random_range(0..2);
             for _ in 1..=3 {
                 if rand::random::<f32>() < MobEntity::WEARING_ARMOR_UPGRADE_MATERIAL_CHANCE {
                     armor_type += 1;

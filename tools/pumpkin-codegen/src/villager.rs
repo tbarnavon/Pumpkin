@@ -162,10 +162,27 @@ pub fn build() -> TokenStream {
     }
 
     // Load individual villager trades from datapack
+    let items: IndexMap<String, Value> =
+        serde_json::from_str(&crate::item::load_items_json()).expect("Failed to parse items.json");
     let trades_dir = std::path::Path::new("../../assets/datapack/data/minecraft/villager_trade");
     let mut villager_trades: IndexMap<String, TradeJson> = IndexMap::new();
     walk_json_files(trades_dir, trades_dir, &mut |key, content| {
-        if let Ok(trade) = serde_json::from_str::<TradeJson>(&content) {
+        if let Ok(mut trade) = serde_json::from_str::<TradeJson>(&content) {
+            // The trades are later versions'. Their explorer maps are 1.21.1's filled maps;
+            // trades of items 1.21.1 doesn't have are left out.
+            let known = |item: &mut TradeItemJson| {
+                let name = item.id.strip_prefix("minecraft:").unwrap_or(&item.id);
+                if !items.contains_key(name) && name.ends_with("_map") {
+                    item.id = "minecraft:filled_map".to_string();
+                }
+                items.contains_key(item.id.strip_prefix("minecraft:").unwrap_or(&item.id))
+            };
+            if !known(&mut trade.wants)
+                || !trade.additional_wants.as_mut().is_none_or(known)
+                || !known(&mut trade.gives)
+            {
+                return;
+            }
             villager_trades.insert(format!("minecraft:{key}"), trade.clone());
             villager_trades.insert(key, trade);
         }

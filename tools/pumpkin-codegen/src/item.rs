@@ -1481,7 +1481,10 @@ pub(crate) fn load_items_json() -> String {
         };
         // 1.21.1: `{"modifiers": [...], "show_in_tooltip": ...}`; later a plain list.
         if let Some(Value::Object(modifiers)) = components.get("minecraft:attribute_modifiers") {
-            let list = modifiers.get("modifiers").cloned().unwrap_or(Value::Array(Vec::new()));
+            let list = modifiers
+                .get("modifiers")
+                .cloned()
+                .unwrap_or(Value::Array(Vec::new()));
             components.insert("minecraft:attribute_modifiers".into(), list);
         }
         // 1.21.1: `{"song": ..., "show_in_tooltip": ...}`; later the song alone.
@@ -1492,7 +1495,9 @@ pub(crate) fn load_items_json() -> String {
         }
         if let Some(Value::Object(extra)) = internal.get(name) {
             for (key, value) in extra {
-                components.entry(key.clone()).or_insert_with(|| value.clone());
+                components
+                    .entry(key.clone())
+                    .or_insert_with(|| value.clone());
             }
         }
     }

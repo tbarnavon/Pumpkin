@@ -144,6 +144,13 @@ fn generate_struct<T>(_versions: &BTreeMap<JavaMinecraftVersion, T>) -> TokenStr
             pub const fn to_id(&self, _version: JavaMinecraftVersion) -> i32 {
                 self.0
             }
+
+            /// Whether this version has the packet; later versions' packets are -1 and are
+            /// not sent.
+            #[must_use]
+            pub const fn exists(&self) -> bool {
+                self.0 >= 0
+            }
         }
 
         impl PartialEq<i32> for PacketId {
@@ -348,6 +355,60 @@ fn generate_phase_modules(
                 ("TAGS", "UPDATE_TAGS"),
             ],
         );
+    }
+
+    // 1.21.1: packets later versions renamed keep the later name the shared code uses, with
+    // 1.21.1's id (same payload).
+    let renames: &[(&str, &str, &str)] = if is_serverbound {
+        &[
+            ("play", "PUNCH", "SWING"),
+            ("play", "SPECTATE_ENTITY", "TELEPORT_TO_ENTITY"),
+        ]
+    } else {
+        &[
+            ("login", "LOGIN_FINISHED", "GAME_PROFILE"),
+            ("play", "SET_HELD_SLOT", "SET_CARRIED_ITEM"),
+            ("play", "MOUNT_SCREEN_OPEN", "HORSE_SCREEN_OPEN"),
+        ]
+    };
+    for (phase, later, older) in renames {
+        if let Some(packets) = phase_packets.get_mut(*phase)
+            && !packets.contains_key(*later)
+            && let Some(ids) = packets.get(*older).cloned()
+        {
+            packets.insert((*later).to_string(), ids);
+        }
+    }
+    // Packets of later versions that 1.21.1 doesn't have get id -1: the shared code still names
+    // them, and the sender drops them (`PacketId::exists`).
+    let internal = parse_packets(
+        "../../assets/packets_internal.json",
+        &fs::read_to_string("../../assets/packets_internal.json")
+            .expect("Failed to read packets_internal.json"),
+    );
+    let Packets(internal_phases) = internal;
+    for (phase, phase_data) in internal_phases {
+        let packets = if is_serverbound {
+            phase_data.serverbound
+        } else {
+            phase_data.clientbound
+        };
+        let phase_module = if phase == "configuration" {
+            "config".to_string()
+        } else {
+            phase
+        };
+        for full_name in packets.keys() {
+            let name = full_name.strip_prefix("minecraft:").unwrap_or(full_name);
+            let sanitized_name = name.replace(['/', '-'], "_").to_uppercase();
+            phase_packets
+                .entry(phase_module.clone())
+                .or_default()
+                .entry(sanitized_name)
+                .or_default()
+                .entry(&LATEST_VERSION)
+                .or_insert(-1);
+        }
     }
 
     let mut output = TokenStream::new();

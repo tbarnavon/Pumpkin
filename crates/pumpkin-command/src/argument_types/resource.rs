@@ -19,7 +19,7 @@ pub static ENCHANTMENT_REGISTRY: &Identifier = &Identifier::vanilla_static("ench
 pub static MOB_EFFECT_REGISTRY: &Identifier = &Identifier::vanilla_static("mob_effect");
 pub static DAMAGE_TYPE_REGISTRY: &Identifier = &Identifier::vanilla_static("damage_type");
 
-static DAMAGE_TYPES: [pumpkin_data::damage::DamageType; 51] = [
+static DAMAGE_TYPES: [pumpkin_data::damage::DamageType; 47] = [
     pumpkin_data::damage::DamageType::ARROW,
     pumpkin_data::damage::DamageType::BAD_RESPAWN_POINT,
     pumpkin_data::damage::DamageType::CACTUS,
@@ -28,7 +28,6 @@ static DAMAGE_TYPES: [pumpkin_data::damage::DamageType; 51] = [
     pumpkin_data::damage::DamageType::DRAGON_BREATH,
     pumpkin_data::damage::DamageType::DROWN,
     pumpkin_data::damage::DamageType::DRY_OUT,
-    pumpkin_data::damage::DamageType::ENDER_PEARL,
     pumpkin_data::damage::DamageType::EXPLOSION,
     pumpkin_data::damage::DamageType::FALL,
     pumpkin_data::damage::DamageType::FALLING_ANVIL,
@@ -46,7 +45,6 @@ static DAMAGE_TYPES: [pumpkin_data::damage::DamageType; 51] = [
     pumpkin_data::damage::DamageType::INDIRECT_MAGIC,
     pumpkin_data::damage::DamageType::LAVA,
     pumpkin_data::damage::DamageType::LIGHTNING_BOLT,
-    pumpkin_data::damage::DamageType::MACE_SMASH,
     pumpkin_data::damage::DamageType::MAGIC,
     pumpkin_data::damage::DamageType::MOB_ATTACK,
     pumpkin_data::damage::DamageType::MOB_ATTACK_NO_AGGRO,
@@ -57,12 +55,10 @@ static DAMAGE_TYPES: [pumpkin_data::damage::DamageType; 51] = [
     pumpkin_data::damage::DamageType::PLAYER_ATTACK,
     pumpkin_data::damage::DamageType::PLAYER_EXPLOSION,
     pumpkin_data::damage::DamageType::SONIC_BOOM,
-    pumpkin_data::damage::DamageType::SPEAR,
     pumpkin_data::damage::DamageType::SPIT,
     pumpkin_data::damage::DamageType::STALAGMITE,
     pumpkin_data::damage::DamageType::STARVE,
     pumpkin_data::damage::DamageType::STING,
-    pumpkin_data::damage::DamageType::SULFUR_CUBE_HOT,
     pumpkin_data::damage::DamageType::SWEET_BERRY_BUSH,
     pumpkin_data::damage::DamageType::THORNS,
     pumpkin_data::damage::DamageType::THROWN,
@@ -189,7 +185,6 @@ impl<S: crate::source::CommandSource> ArgumentType<S> for ResourceArgument {
                 &pumpkin_data::effect::StatusEffect::ABSORPTION,
                 &pumpkin_data::effect::StatusEffect::BAD_OMEN,
                 &pumpkin_data::effect::StatusEffect::BLINDNESS,
-                &pumpkin_data::effect::StatusEffect::BREATH_OF_THE_NAUTILUS,
                 &pumpkin_data::effect::StatusEffect::CONDUIT_POWER,
                 &pumpkin_data::effect::StatusEffect::DARKNESS,
                 &pumpkin_data::effect::StatusEffect::DOLPHINS_GRACE,

@@ -171,8 +171,7 @@ impl pumpkin::plugin::command::HostConsumedArgs for PluginHostState {
                 }
             }),
             OwnedArg::SoundCategory(s) => Arg::SoundCategory(match s {
-                pumpkin_data::sound::SoundCategory::Master
-                | pumpkin_data::sound::SoundCategory::Ui => {
+                pumpkin_data::sound::SoundCategory::Master => {
                     pumpkin::plugin::command::SoundCategory::Master
                 }
                 pumpkin_data::sound::SoundCategory::Music => {

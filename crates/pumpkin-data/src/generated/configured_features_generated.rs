@@ -46,8 +46,7 @@ fn build_configured_features()
             TreeDecorator, alter_ground::AlterGroundTreeDecorator,
             attached_to_leaves::AttachedToLeavesTreeDecorator,
             attached_to_logs::AttachedToLogsTreeDecorator, beehive::BeehiveTreeDecorator,
-            cocoa::CocoaTreeDecorator, creaking_heart::CreakingHeartTreeDecorator,
-            leave_vine::LeavesVineTreeDecorator, pale_moss::PaleMossTreeDecorator,
+            cocoa::CocoaTreeDecorator, leave_vine::LeavesVineTreeDecorator,
             place_on_ground::PlaceOnGroundTreeDecorator, trunk_vine::TrunkVineTreeDecorator,
         },
         tree::foliage::{
@@ -2913,7 +2912,11 @@ fn build_configured_features()
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::ForestRock,
-        compile_error!("unknown configured feature type: minecraft:forest_rock"),
+        ConfiguredFeature::ForestRock(
+            crate::generation::feature::features::forest_rock::ForestRockFeature {
+                state: pumpkin_data::Block::MOSSY_COBBLESTONE.default_state,
+            },
+        ),
     );
     map.insert(
         pumpkin_data::configured_feature::ConfiguredFeature::FossilCoal,

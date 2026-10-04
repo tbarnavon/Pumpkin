@@ -55,7 +55,7 @@ impl ItemBehaviour for SplashPotionItem {
             pumpkin_data::sound::SoundCategory::Neutral,
             &position,
         );
-        let entity = Entity::new(world.clone(), position, &EntityType::SPLASH_POTION);
+        let entity = Entity::new(world.clone(), position, &EntityType::POTION);
         let splash = SplashPotionEntity::new_shot(entity, player.get_entity());
 
         // Copy the held item stack data into the projectile
@@ -107,7 +107,7 @@ impl ItemBehaviour for LingeringPotionItem {
             pumpkin_data::sound::SoundCategory::Neutral,
             &position,
         );
-        let entity = Entity::new(world.clone(), position, &EntityType::LINGERING_POTION);
+        let entity = Entity::new(world.clone(), position, &EntityType::POTION);
         let ling = LingeringPotionEntity::new_shot(entity, player.get_entity());
 
         // Copy the held item stack data into the projectile

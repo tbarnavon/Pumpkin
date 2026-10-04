@@ -1,4 +1,4 @@
-use pumpkin_data::{Block, BlockStateId};
+use pumpkin_data::BlockStateId;
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_util::math::position::BlockPos;
 use pumpkin_world::tick::TickPriority;
@@ -41,21 +41,10 @@ impl TestBlockMode {
     }
 
     /// Vanilla stores the test-block mode in the block state and mirrors it in the
-    /// block entity. Treat the block state as authoritative so redstone behavior
-    /// cannot diverge from the mode used to discover START/ACCEPT/FAIL/LOG blocks.
+    /// block entity. 1.21.1 has no test block, so there is no state to read it from.
     #[must_use]
-    pub fn from_block_state(state_id: BlockStateId) -> Option<Self> {
-        Block::TEST_BLOCK
-            .properties(state_id)?
-            .to_props()
-            .into_iter()
-            .find_map(|(name, value)| {
-                if name == "mode" {
-                    Self::from_serialized_name(value)
-                } else {
-                    None
-                }
-            })
+    pub const fn from_block_state(_state_id: BlockStateId) -> Option<Self> {
+        None
     }
 }
 

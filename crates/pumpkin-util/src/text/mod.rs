@@ -119,6 +119,9 @@ impl TextComponentBase {
                 translate, with, ..
             } => {
                 compound.put_string("translate", translate.to_string());
+                if let Some(fallback) = crate::translation::later_vanilla_fallback(translate) {
+                    compound.put_string("fallback", fallback.to_string());
+                }
                 if !with.is_empty() {
                     let list = with
                         .iter()

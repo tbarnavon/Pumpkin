@@ -8,7 +8,7 @@ use std::collections::{HashMap, HashSet};
 use std::sync::OnceLock;
 
 use super::{FreezeError, leak_str};
-use crate::tag::{RegistryKey, get_latest_map};
+use crate::tag::{RegistryKey, get_latest_map, is_internal_tag};
 
 /// Entries to add to one tag.
 #[derive(Debug, Clone)]
@@ -173,11 +173,13 @@ pub fn modded_tags(registry: RegistryKey) -> impl Iterator<Item = (&'static str,
 
 /// Every tag of `registry` as clients should see it: vanilla tags with mod additions applied,
 /// followed by tags only mods define. Same as the vanilla tags when no mod touched `registry`.
+/// Leaves out the server's internal tags.
 #[must_use]
 pub fn merged(registry: RegistryKey) -> Vec<(&'static str, &'static [u16])> {
     let vanilla = get_latest_map(registry);
     let mut tags: Vec<(&'static str, &'static [u16])> = vanilla
         .entries()
+        .filter(|(name, _)| !is_internal_tag(registry, name))
         .map(|(name, tag)| (*name, ids(registry, name).unwrap_or(tag.1)))
         .collect();
     tags.extend(modded_tags(registry).filter(|(name, _)| !vanilla.contains_key(name)));

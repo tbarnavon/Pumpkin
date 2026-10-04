@@ -14,7 +14,7 @@ pub struct EggItem;
 
 impl ItemMetadata for EggItem {
     fn ids() -> Box<[u16]> {
-        [Item::EGG.id, Item::BLUE_EGG.id, Item::BROWN_EGG.id].into()
+        [Item::EGG.id].into()
     }
 }
 

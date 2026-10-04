@@ -17,7 +17,7 @@ pub struct FlowerbedBlock;
 
 impl BlockMetadata for FlowerbedBlock {
     fn ids() -> Box<[BlockId]> {
-        [BlockId::PINK_PETALS, BlockId::WILDFLOWERS].into()
+        [BlockId::PINK_PETALS].into()
     }
 }
 

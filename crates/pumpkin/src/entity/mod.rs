@@ -117,7 +117,8 @@ pub const fn equipment_break_status(slot: &EquipmentSlot) -> EntityStatus {
         EquipmentSlot::Legs(_) => EntityStatus::LegsBreak,
         EquipmentSlot::Feet(_) => EntityStatus::FeetBreak,
         EquipmentSlot::Body(_) => EntityStatus::BodyBreak,
-        EquipmentSlot::Saddle(_) => EntityStatus::SaddleBreak,
+        // 1.21.1 has no saddle slot.
+        EquipmentSlot::Saddle(_) => EntityStatus::BodyBreak,
     }
 }
 
@@ -4264,7 +4265,7 @@ mod tests {
             (&EquipmentSlot::LEGS, EntityStatus::LegsBreak as u8),
             (&EquipmentSlot::FEET, EntityStatus::FeetBreak as u8),
             (&EquipmentSlot::BODY, EntityStatus::BodyBreak as u8),
-            (&EquipmentSlot::SADDLE, EntityStatus::SaddleBreak as u8),
+            (&EquipmentSlot::SADDLE, EntityStatus::BodyBreak as u8),
         ];
         for (i, (slot, expected)) in cases.iter().enumerate() {
             assert_eq!(
