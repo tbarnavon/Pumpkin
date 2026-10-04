@@ -23,7 +23,10 @@ Core can't name Wasm host types, so it calls plugin content through traits in
 Upstream branched a `pumpkin:plugin@0.2.0` API from v0.1 (`361c34c4d`). Every fork addition to
 the v0.1 WIT and host is mirrored in `pumpkin-plugin-wit/v0.2` and `pumpkin-wasm-host-v0_2`: the
 v0.2 crate is v0.1's with upstream's renames (`v0_1` to `v0_2`, `@0.1.0` to `@0.2.0`, `_v0_2` on
-`PluginHostState` methods), so add to v0.1 and mirror. Block, item and menu behaviour
+`PluginHostState` methods), so add to v0.1 and mirror. Since `8adc29feb` v0.2 also has
+upstream's v0.2-only API (GameTest: `pumpkin-plugin-wit/v0.2/gametest.wit`,
+`pumpkin-wasm-host-v0_2/src/gametest.rs`), so mirror by hand; regenerating v0_2 from v0_1 would
+drop it. Block, item and menu behaviour
 (`PluginBlock`, `PluginItem`, `PluginMenuHandler`) is shared by both versions in
 `pumpkin-wasm-host-common/src/modded/`; `WH/{modded,menu}.rs` only build each version's calls,
 behind the `GuestCalls` table each version exports as `GUEST`.
