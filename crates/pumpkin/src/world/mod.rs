@@ -102,7 +102,7 @@ use pumpkin_protocol::java::client::play::{
     PlayerSpawnData,
 };
 use pumpkin_protocol::java::client::play::{
-    CPlayerSpawnPosition, CRecipeBookAdd, CRecipeBookSettings, CSystemChatMessage,
+    CPlayerSpawnPosition, CRecipeBookAdd, CRecipeBookSettings, CSystemChatMessage, CUpdateRecipes,
 };
 use pumpkin_protocol::java::client::play::{CSetEntityMetadata, Metadata};
 use pumpkin_protocol::{
@@ -3303,6 +3303,18 @@ impl World {
 
             client_suggestions::send_c_commands_packet(player, server, &command_dispatcher);
         };
+        // Before 1.21.2 the client builds its recipe book and stonecutter lists from every recipe.
+        if client.version.load() < JavaMinecraftVersion::V_1_21_2
+            && client.version.load() >= JavaMinecraftVersion::V_1_21
+        {
+            match CUpdateRecipes::before_1_21_2() {
+                Ok(packet) => client.send_packet(&packet).await,
+                Err(error) => warn!(
+                    "Failed to encode the recipes for {}: {error}",
+                    player.gameprofile.name
+                ),
+            }
+        }
         if client.version.load() < JavaMinecraftVersion::V_1_20_2
             && client.version.load() >= JavaMinecraftVersion::V_1_13
         {
