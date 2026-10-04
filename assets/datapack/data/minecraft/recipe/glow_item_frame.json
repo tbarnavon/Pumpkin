@@ -1,10 +1,16 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "ingredients": [
-    "minecraft:item_frame",
-    "minecraft:glow_ink_sac"
+    {
+      "item": "minecraft:item_frame"
+    },
+    {
+      "item": "minecraft:glow_ink_sac"
+    }
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:glow_item_frame"
   }
 }

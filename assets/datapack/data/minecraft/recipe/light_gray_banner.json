@@ -1,9 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "group": "banner",
   "key": {
-    "#": "minecraft:light_gray_wool",
-    "|": "minecraft:stick"
+    "#": {
+      "item": "minecraft:light_gray_wool"
+    },
+    "|": {
+      "item": "minecraft:stick"
+    }
   },
   "pattern": [
     "###",
@@ -11,6 +16,7 @@
     " | "
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:light_gray_banner"
   }
 }

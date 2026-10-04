@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:white_bed"
+        "recipe": "minecraft:white_bed"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

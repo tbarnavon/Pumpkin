@@ -1,8 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
-    "#": "minecraft:nautilus_shell",
-    "X": "minecraft:heart_of_the_sea"
+    "#": {
+      "item": "minecraft:nautilus_shell"
+    },
+    "X": {
+      "item": "minecraft:heart_of_the_sea"
+    }
   },
   "pattern": [
     "###",
@@ -10,6 +15,7 @@
     "###"
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:conduit"
   }
 }

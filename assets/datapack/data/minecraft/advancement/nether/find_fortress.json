@@ -3,15 +3,17 @@
   "criteria": {
     "fortress": {
       "conditions": {
-        "player": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:location": {
-              "structures": "minecraft:fortress"
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structures": "minecraft:fortress"
+              }
             }
           }
-        }
+        ]
       },
       "trigger": "minecraft:location"
     }
@@ -21,6 +23,7 @@
       "translate": "advancements.nether.find_fortress.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:nether_bricks"
     },
     "title": {

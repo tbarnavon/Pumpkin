@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:red_nether_brick_wall_from_red_nether_bricks_stonecutting"
+        "recipe": "minecraft:red_nether_brick_wall_from_red_nether_bricks_stonecutting"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

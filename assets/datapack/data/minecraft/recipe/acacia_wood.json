@@ -3,7 +3,9 @@
   "category": "building",
   "group": "bark",
   "key": {
-    "#": "minecraft:acacia_log"
+    "#": {
+      "item": "minecraft:acacia_log"
+    }
   },
   "pattern": [
     "##",

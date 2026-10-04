@@ -1,8 +1,11 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "group": "yellow_dye",
   "ingredients": [
-    "minecraft:sunflower"
+    {
+      "item": "minecraft:sunflower"
+    }
   ],
   "result": {
     "count": 2,

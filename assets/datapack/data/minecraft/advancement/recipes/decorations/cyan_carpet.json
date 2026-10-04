@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:cyan_carpet"
+        "recipe": "minecraft:cyan_carpet"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

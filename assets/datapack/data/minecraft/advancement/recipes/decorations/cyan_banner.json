@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:cyan_banner"
+        "recipe": "minecraft:cyan_banner"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

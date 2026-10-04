@@ -325,51 +325,6 @@ impl MapDecorationType {
         exploration_map_element: false,
         track_count: false,
     };
-    pub const ABANDONED_CAMP: MapDecorationType = MapDecorationType {
-        id: 35u32,
-        name: "abandoned_camp",
-        asset_name: "abandoned_camp",
-        show_on_item_frame: true,
-        map_color: -1i32,
-        exploration_map_element: false,
-        track_count: false,
-    };
-    pub const ANCIENT_CITY: MapDecorationType = MapDecorationType {
-        id: 36u32,
-        name: "ancient_city",
-        asset_name: "ancient_city",
-        show_on_item_frame: true,
-        map_color: -1i32,
-        exploration_map_element: false,
-        track_count: false,
-    };
-    pub const DESERT_PYRAMID: MapDecorationType = MapDecorationType {
-        id: 37u32,
-        name: "desert_pyramid",
-        asset_name: "desert_pyramid",
-        show_on_item_frame: true,
-        map_color: -1i32,
-        exploration_map_element: false,
-        track_count: false,
-    };
-    pub const MINESHAFT: MapDecorationType = MapDecorationType {
-        id: 38u32,
-        name: "mineshaft",
-        asset_name: "mineshaft",
-        show_on_item_frame: true,
-        map_color: -1i32,
-        exploration_map_element: false,
-        track_count: false,
-    };
-    pub const OCEAN_RUIN_WARM: MapDecorationType = MapDecorationType {
-        id: 39u32,
-        name: "ocean_ruin_warm",
-        asset_name: "warm_ocean_ruins",
-        show_on_item_frame: true,
-        map_color: -1i32,
-        exploration_map_element: false,
-        track_count: false,
-    };
     pub const ALL: &'static [MapDecorationType] = &[
         MapDecorationType::PLAYER,
         MapDecorationType::FRAME,
@@ -406,11 +361,6 @@ impl MapDecorationType {
         MapDecorationType::JUNGLE_TEMPLE,
         MapDecorationType::SWAMP_HUT,
         MapDecorationType::TRIAL_CHAMBERS,
-        MapDecorationType::ABANDONED_CAMP,
-        MapDecorationType::ANCIENT_CITY,
-        MapDecorationType::DESERT_PYRAMID,
-        MapDecorationType::MINESHAFT,
-        MapDecorationType::OCEAN_RUIN_WARM,
     ];
     #[must_use]
     pub const fn from_id(id: u32) -> Option<&'static MapDecorationType> {
@@ -458,11 +408,6 @@ impl MapDecorationType {
             "jungle_temple" => Some(&Self::JUNGLE_TEMPLE),
             "swamp_hut" => Some(&Self::SWAMP_HUT),
             "trial_chambers" => Some(&Self::TRIAL_CHAMBERS),
-            "abandoned_camp" => Some(&Self::ABANDONED_CAMP),
-            "ancient_city" => Some(&Self::ANCIENT_CITY),
-            "desert_pyramid" => Some(&Self::DESERT_PYRAMID),
-            "mineshaft" => Some(&Self::MINESHAFT),
-            "ocean_ruin_warm" => Some(&Self::OCEAN_RUIN_WARM),
             _ => None,
         }
     }

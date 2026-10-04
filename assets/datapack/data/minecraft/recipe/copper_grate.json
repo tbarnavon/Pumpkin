@@ -1,9 +1,10 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "building",
-  "group": "copper_grate",
   "key": {
-    "M": "minecraft:copper_block"
+    "M": {
+      "item": "minecraft:copper_block"
+    }
   },
   "pattern": [
     " M ",

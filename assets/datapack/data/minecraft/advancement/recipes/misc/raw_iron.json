@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:raw_iron"
+        "recipe": "minecraft:raw_iron"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

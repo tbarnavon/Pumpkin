@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:sandstone_wall"
+        "recipe": "minecraft:sandstone_wall"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:blackstone_stairs"
+        "recipe": "minecraft:blackstone_stairs"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

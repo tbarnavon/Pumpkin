@@ -3,10 +3,15 @@
   "category": "building",
   "group": "mossy_stone_bricks",
   "ingredients": [
-    "minecraft:stone_bricks",
-    "minecraft:moss_block"
+    {
+      "item": "minecraft:stone_bricks"
+    },
+    {
+      "item": "minecraft:moss_block"
+    }
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:mossy_stone_bricks"
   }
 }

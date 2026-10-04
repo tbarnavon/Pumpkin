@@ -3,9 +3,12 @@
   "category": "redstone",
   "group": "wooden_button",
   "ingredients": [
-    "minecraft:warped_planks"
+    {
+      "item": "minecraft:warped_planks"
+    }
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:warped_button"
   }
 }

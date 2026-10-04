@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:purple_banner"
+        "recipe": "minecraft:purple_banner"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

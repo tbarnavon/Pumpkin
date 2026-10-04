@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:chiseled_bookshelf"
+        "recipe": "minecraft:chiseled_bookshelf"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

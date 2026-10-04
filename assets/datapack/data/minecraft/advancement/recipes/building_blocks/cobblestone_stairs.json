@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:cobblestone_stairs"
+        "recipe": "minecraft:cobblestone_stairs"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

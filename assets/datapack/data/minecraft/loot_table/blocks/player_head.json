@@ -2,22 +2,25 @@
   "type": "minecraft:block",
   "pools": [
     {
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "modifier": {
-            "type": "minecraft:copy_components",
-            "include": [
-              "minecraft:profile",
-              "minecraft:note_block_sound",
-              "minecraft:custom_name"
-            ],
-            "source": "block_entity"
-          },
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:profile",
+                "minecraft:note_block_sound",
+                "minecraft:custom_name"
+              ],
+              "source": "block_entity"
+            }
+          ],
           "name": "minecraft:player_head"
         }
       ],
-      "rolls": 1
+      "rolls": 1.0
     }
   ],
   "random_sequence": "minecraft:blocks/player_head"

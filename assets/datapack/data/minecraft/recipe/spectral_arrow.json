@@ -2,8 +2,12 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "#": "minecraft:glowstone_dust",
-    "X": "minecraft:arrow"
+    "#": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "X": {
+      "item": "minecraft:arrow"
+    }
   },
   "pattern": [
     " # ",

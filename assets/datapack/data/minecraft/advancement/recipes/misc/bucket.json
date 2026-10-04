@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:bucket"
+        "recipe": "minecraft:bucket"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -1,8 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
-    "G": "minecraft:glowstone",
-    "O": "minecraft:crying_obsidian"
+    "G": {
+      "item": "minecraft:glowstone"
+    },
+    "O": {
+      "item": "minecraft:crying_obsidian"
+    }
   },
   "pattern": [
     "OOO",
@@ -10,6 +15,7 @@
     "OOO"
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:respawn_anchor"
   }
 }

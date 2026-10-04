@@ -4,13 +4,15 @@
     "struck_villager": {
       "conditions": {
         "victims": [
-          {
-            "type": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "minecraft:entity_type": "minecraft:villager"
+          [
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "type": "minecraft:villager"
+              }
             }
-          }
+          ]
         ]
       },
       "trigger": "minecraft:channeled_lightning"
@@ -21,6 +23,7 @@
       "translate": "advancements.adventure.very_very_frightening.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:trident"
     },
     "title": {

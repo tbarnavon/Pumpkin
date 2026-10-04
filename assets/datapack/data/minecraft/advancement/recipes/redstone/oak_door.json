@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:oak_door"
+        "recipe": "minecraft:oak_door"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

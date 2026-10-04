@@ -3,13 +3,15 @@
   "criteria": {
     "summoned": {
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:entity_type": "minecraft:wither"
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:wither"
+            }
           }
-        }
+        ]
       },
       "trigger": "minecraft:summoned_entity"
     }
@@ -19,6 +21,7 @@
       "translate": "advancements.nether.summon_wither.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:nether_star"
     },
     "title": {

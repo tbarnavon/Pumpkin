@@ -3,7 +3,9 @@
   "category": "building",
   "group": "planks",
   "ingredients": [
-    "#minecraft:spruce_logs"
+    {
+      "tag": "minecraft:spruce_logs"
+    }
   ],
   "result": {
     "count": 4,

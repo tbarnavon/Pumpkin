@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:granite_wall"
+        "recipe": "minecraft:granite_wall"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

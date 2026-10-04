@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:copper_ingot_from_blasting_deepslate_copper_ore"
+        "recipe": "minecraft:copper_ingot_from_blasting_deepslate_copper_ore"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:prismarine_wall"
+        "recipe": "minecraft:prismarine_wall"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

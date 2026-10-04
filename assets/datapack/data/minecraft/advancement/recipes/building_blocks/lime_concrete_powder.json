@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:lime_concrete_powder"
+        "recipe": "minecraft:lime_concrete_powder"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

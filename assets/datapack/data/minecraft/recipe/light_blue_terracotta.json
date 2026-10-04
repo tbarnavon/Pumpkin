@@ -3,8 +3,12 @@
   "category": "building",
   "group": "stained_terracotta",
   "key": {
-    "#": "minecraft:terracotta",
-    "X": "minecraft:light_blue_dye"
+    "#": {
+      "item": "minecraft:terracotta"
+    },
+    "X": {
+      "item": "minecraft:light_blue_dye"
+    }
   },
   "pattern": [
     "###",

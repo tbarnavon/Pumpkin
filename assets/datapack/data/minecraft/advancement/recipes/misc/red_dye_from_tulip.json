@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:red_dye_from_tulip"
+        "recipe": "minecraft:red_dye_from_tulip"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

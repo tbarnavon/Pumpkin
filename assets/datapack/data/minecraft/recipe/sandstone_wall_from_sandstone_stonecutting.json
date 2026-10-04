@@ -1,7 +1,10 @@
 {
   "type": "minecraft:stonecutting",
-  "ingredient": "minecraft:sandstone",
+  "ingredient": {
+    "item": "minecraft:sandstone"
+  },
   "result": {
+    "count": 1,
     "id": "minecraft:sandstone_wall"
   }
 }

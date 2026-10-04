@@ -1,12 +1,17 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "redstone",
-  "group": "waxed_copper_trapdoor",
+  "category": "building",
+  "group": "waxed_weathered_copper_trapdoor",
   "ingredients": [
-    "minecraft:weathered_copper_trapdoor",
-    "minecraft:honeycomb"
+    {
+      "item": "minecraft:weathered_copper_trapdoor"
+    },
+    {
+      "item": "minecraft:honeycomb"
+    }
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:waxed_weathered_copper_trapdoor"
   }
 }

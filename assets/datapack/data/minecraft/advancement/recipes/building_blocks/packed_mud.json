@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:packed_mud"
+        "recipe": "minecraft:packed_mud"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

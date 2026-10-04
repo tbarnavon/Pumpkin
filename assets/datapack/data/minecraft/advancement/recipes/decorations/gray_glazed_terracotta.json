@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:gray_glazed_terracotta"
+        "recipe": "minecraft:gray_glazed_terracotta"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

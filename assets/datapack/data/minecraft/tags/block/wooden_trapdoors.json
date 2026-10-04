@@ -3,7 +3,6 @@
     "minecraft:acacia_trapdoor",
     "minecraft:birch_trapdoor",
     "minecraft:dark_oak_trapdoor",
-    "minecraft:pale_oak_trapdoor",
     "minecraft:jungle_trapdoor",
     "minecraft:oak_trapdoor",
     "minecraft:spruce_trapdoor",
@@ -11,7 +10,6 @@
     "minecraft:warped_trapdoor",
     "minecraft:mangrove_trapdoor",
     "minecraft:bamboo_trapdoor",
-    "minecraft:cherry_trapdoor",
-    "minecraft:poplar_trapdoor"
+    "minecraft:cherry_trapdoor"
   ]
 }

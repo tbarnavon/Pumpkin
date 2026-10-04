@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:pink_dye_from_pink_petals"
+        "recipe": "minecraft:pink_dye_from_pink_petals"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:melon"
+        "recipe": "minecraft:melon"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

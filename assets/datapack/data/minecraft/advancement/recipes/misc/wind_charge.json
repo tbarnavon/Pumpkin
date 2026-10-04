@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:wind_charge"
+        "recipe": "minecraft:wind_charge"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

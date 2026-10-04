@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:prismarine"
+        "recipe": "minecraft:prismarine"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

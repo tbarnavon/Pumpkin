@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:spruce_stairs"
+        "recipe": "minecraft:spruce_stairs"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

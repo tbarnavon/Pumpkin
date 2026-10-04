@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:brick_wall"
+        "recipe": "minecraft:brick_wall"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -3,19 +3,23 @@
   "criteria": {
     "pitcher_pod": {
       "conditions": {
-        "location": {
-          "type": "minecraft:match_block",
-          "blocks": "minecraft:pitcher_crop"
-        }
+        "location": [
+          {
+            "block": "minecraft:pitcher_crop",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
       },
       "trigger": "minecraft:placed_block"
     },
     "torchflower": {
       "conditions": {
-        "location": {
-          "type": "minecraft:match_block",
-          "blocks": "minecraft:torchflower_crop"
-        }
+        "location": [
+          {
+            "block": "minecraft:torchflower_crop",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
       },
       "trigger": "minecraft:placed_block"
     }
@@ -26,6 +30,7 @@
     },
     "hidden": true,
     "icon": {
+      "count": 1,
       "id": "minecraft:pitcher_pod"
     },
     "title": {

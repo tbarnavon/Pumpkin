@@ -2,8 +2,12 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "#": "minecraft:amethyst_shard",
-    "X": "minecraft:copper_ingot"
+    "#": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "X": {
+      "item": "minecraft:copper_ingot"
+    }
   },
   "pattern": [
     " # ",
@@ -11,6 +15,7 @@
     " X "
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:spyglass"
   }
 }

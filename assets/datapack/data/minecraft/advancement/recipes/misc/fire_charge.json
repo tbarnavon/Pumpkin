@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:fire_charge"
+        "recipe": "minecraft:fire_charge"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

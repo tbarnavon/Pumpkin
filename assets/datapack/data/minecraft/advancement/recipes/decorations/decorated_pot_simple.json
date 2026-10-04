@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:decorated_pot_simple"
+        "recipe": "minecraft:decorated_pot_simple"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

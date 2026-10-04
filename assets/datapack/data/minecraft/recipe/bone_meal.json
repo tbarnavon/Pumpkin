@@ -1,8 +1,11 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "group": "bonemeal",
   "ingredients": [
-    "minecraft:bone"
+    {
+      "item": "minecraft:bone"
+    }
   ],
   "result": {
     "count": 3,

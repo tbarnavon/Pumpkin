@@ -3,7 +3,9 @@
   "category": "building",
   "group": "waxed_cut_copper_slab",
   "key": {
-    "#": "minecraft:waxed_cut_copper"
+    "#": {
+      "item": "minecraft:waxed_cut_copper"
+    }
   },
   "pattern": [
     "###"

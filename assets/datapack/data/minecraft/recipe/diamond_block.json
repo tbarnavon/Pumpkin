@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": "minecraft:diamond"
+    "#": {
+      "item": "minecraft:diamond"
+    }
   },
   "pattern": [
     "###",
@@ -10,6 +12,7 @@
     "###"
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:diamond_block"
   }
 }

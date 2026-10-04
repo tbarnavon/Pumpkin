@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:blackstone_slab_from_blackstone_stonecutting"
+        "recipe": "minecraft:blackstone_slab_from_blackstone_stonecutting"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

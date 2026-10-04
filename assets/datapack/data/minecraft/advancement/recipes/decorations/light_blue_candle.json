@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:light_blue_candle"
+        "recipe": "minecraft:light_blue_candle"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

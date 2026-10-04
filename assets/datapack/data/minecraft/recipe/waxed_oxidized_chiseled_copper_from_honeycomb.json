@@ -3,10 +3,15 @@
   "category": "building",
   "group": "waxed_oxidized_chiseled_copper",
   "ingredients": [
-    "minecraft:oxidized_chiseled_copper",
-    "minecraft:honeycomb"
+    {
+      "item": "minecraft:oxidized_chiseled_copper"
+    },
+    {
+      "item": "minecraft:honeycomb"
+    }
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:waxed_oxidized_chiseled_copper"
   }
 }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:dye_red_wool"
+        "recipe": "minecraft:dye_red_wool"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

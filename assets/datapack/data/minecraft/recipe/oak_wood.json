@@ -3,7 +3,9 @@
   "category": "building",
   "group": "bark",
   "key": {
-    "#": "minecraft:oak_log"
+    "#": {
+      "item": "minecraft:oak_log"
+    }
   },
   "pattern": [
     "##",

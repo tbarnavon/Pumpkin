@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:leather"
+        "recipe": "minecraft:leather"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

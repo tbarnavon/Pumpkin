@@ -95,21 +95,13 @@ impl DamageType {
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
         id: 7,
     };
-    pub const ENDER_PEARL: DamageType = DamageType {
-        death_message_type: DeathMessageType::FallVariants,
-        exhaustion: 0f32,
-        effects: None,
-        message_id: "fall",
-        scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 8,
-    };
     pub const EXPLOSION: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
         exhaustion: 0.1f32,
         effects: None,
         message_id: "explosion",
         scaling: DamageScaling::Always,
-        id: 9,
+        id: 8,
     };
     pub const FALL: DamageType = DamageType {
         death_message_type: DeathMessageType::FallVariants,
@@ -117,7 +109,7 @@ impl DamageType {
         effects: None,
         message_id: "fall",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 10,
+        id: 9,
     };
     pub const FALLING_ANVIL: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -125,7 +117,7 @@ impl DamageType {
         effects: None,
         message_id: "anvil",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 11,
+        id: 10,
     };
     pub const FALLING_BLOCK: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -133,7 +125,7 @@ impl DamageType {
         effects: None,
         message_id: "fallingBlock",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 12,
+        id: 11,
     };
     pub const FALLING_STALACTITE: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -141,7 +133,7 @@ impl DamageType {
         effects: None,
         message_id: "fallingStalactite",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 13,
+        id: 12,
     };
     pub const FIREBALL: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -149,7 +141,7 @@ impl DamageType {
         effects: Some(DamageEffects::Burning),
         message_id: "fireball",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 14,
+        id: 13,
     };
     pub const FIREWORKS: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -157,7 +149,7 @@ impl DamageType {
         effects: None,
         message_id: "fireworks",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 15,
+        id: 14,
     };
     pub const FLY_INTO_WALL: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -165,7 +157,7 @@ impl DamageType {
         effects: None,
         message_id: "flyIntoWall",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 16,
+        id: 15,
     };
     pub const FREEZE: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -173,7 +165,7 @@ impl DamageType {
         effects: Some(DamageEffects::Freezing),
         message_id: "freeze",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 17,
+        id: 16,
     };
     pub const GENERIC: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -181,7 +173,7 @@ impl DamageType {
         effects: None,
         message_id: "generic",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 18,
+        id: 17,
     };
     pub const GENERIC_KILL: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -189,7 +181,7 @@ impl DamageType {
         effects: None,
         message_id: "genericKill",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 19,
+        id: 18,
     };
     pub const HOT_FLOOR: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -197,7 +189,7 @@ impl DamageType {
         effects: Some(DamageEffects::Burning),
         message_id: "hotFloor",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 20,
+        id: 19,
     };
     pub const IN_FIRE: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -205,7 +197,7 @@ impl DamageType {
         effects: Some(DamageEffects::Burning),
         message_id: "inFire",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 21,
+        id: 20,
     };
     pub const IN_WALL: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -213,7 +205,7 @@ impl DamageType {
         effects: None,
         message_id: "inWall",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 22,
+        id: 21,
     };
     pub const INDIRECT_MAGIC: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -221,7 +213,7 @@ impl DamageType {
         effects: None,
         message_id: "indirectMagic",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 23,
+        id: 22,
     };
     pub const LAVA: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -229,7 +221,7 @@ impl DamageType {
         effects: Some(DamageEffects::Burning),
         message_id: "lava",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 24,
+        id: 23,
     };
     pub const LIGHTNING_BOLT: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -237,15 +229,7 @@ impl DamageType {
         effects: None,
         message_id: "lightningBolt",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 25,
-    };
-    pub const MACE_SMASH: DamageType = DamageType {
-        death_message_type: DeathMessageType::Default,
-        exhaustion: 0.1f32,
-        effects: None,
-        message_id: "mace_smash",
-        scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 26,
+        id: 24,
     };
     pub const MAGIC: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -253,7 +237,7 @@ impl DamageType {
         effects: None,
         message_id: "magic",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 27,
+        id: 25,
     };
     pub const MOB_ATTACK: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -261,7 +245,7 @@ impl DamageType {
         effects: None,
         message_id: "mob",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 28,
+        id: 26,
     };
     pub const MOB_ATTACK_NO_AGGRO: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -269,7 +253,7 @@ impl DamageType {
         effects: None,
         message_id: "mob",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 29,
+        id: 27,
     };
     pub const MOB_PROJECTILE: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -277,7 +261,7 @@ impl DamageType {
         effects: None,
         message_id: "mob",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 30,
+        id: 28,
     };
     pub const ON_FIRE: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -285,7 +269,7 @@ impl DamageType {
         effects: Some(DamageEffects::Burning),
         message_id: "onFire",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 31,
+        id: 29,
     };
     pub const OUT_OF_WORLD: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -293,7 +277,7 @@ impl DamageType {
         effects: None,
         message_id: "outOfWorld",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 32,
+        id: 30,
     };
     pub const OUTSIDE_BORDER: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -301,7 +285,7 @@ impl DamageType {
         effects: None,
         message_id: "outsideBorder",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 33,
+        id: 31,
     };
     pub const PLAYER_ATTACK: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -309,7 +293,7 @@ impl DamageType {
         effects: None,
         message_id: "player",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 34,
+        id: 32,
     };
     pub const PLAYER_EXPLOSION: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -317,7 +301,7 @@ impl DamageType {
         effects: None,
         message_id: "explosion.player",
         scaling: DamageScaling::Always,
-        id: 35,
+        id: 33,
     };
     pub const SONIC_BOOM: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -325,15 +309,7 @@ impl DamageType {
         effects: None,
         message_id: "sonic_boom",
         scaling: DamageScaling::Always,
-        id: 36,
-    };
-    pub const SPEAR: DamageType = DamageType {
-        death_message_type: DeathMessageType::Default,
-        exhaustion: 0.1f32,
-        effects: None,
-        message_id: "spear",
-        scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 37,
+        id: 34,
     };
     pub const SPIT: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -341,7 +317,7 @@ impl DamageType {
         effects: None,
         message_id: "mob",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 38,
+        id: 35,
     };
     pub const STALAGMITE: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -349,7 +325,7 @@ impl DamageType {
         effects: None,
         message_id: "stalagmite",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 39,
+        id: 36,
     };
     pub const STARVE: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -357,7 +333,7 @@ impl DamageType {
         effects: None,
         message_id: "starve",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 40,
+        id: 37,
     };
     pub const STING: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -365,15 +341,7 @@ impl DamageType {
         effects: None,
         message_id: "sting",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 41,
-    };
-    pub const SULFUR_CUBE_HOT: DamageType = DamageType {
-        death_message_type: DeathMessageType::Default,
-        exhaustion: 0.1f32,
-        effects: Some(DamageEffects::Burning),
-        message_id: "sulfurCubeHot",
-        scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 42,
+        id: 38,
     };
     pub const SWEET_BERRY_BUSH: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -381,7 +349,7 @@ impl DamageType {
         effects: Some(DamageEffects::Poking),
         message_id: "sweetBerryBush",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 43,
+        id: 39,
     };
     pub const THORNS: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -389,7 +357,7 @@ impl DamageType {
         effects: Some(DamageEffects::Thorns),
         message_id: "thorns",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 44,
+        id: 40,
     };
     pub const THROWN: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -397,7 +365,7 @@ impl DamageType {
         effects: None,
         message_id: "thrown",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 45,
+        id: 41,
     };
     pub const TRIDENT: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -405,7 +373,7 @@ impl DamageType {
         effects: None,
         message_id: "trident",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 46,
+        id: 42,
     };
     pub const UNATTRIBUTED_FIREBALL: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -413,7 +381,7 @@ impl DamageType {
         effects: Some(DamageEffects::Burning),
         message_id: "onFire",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 47,
+        id: 43,
     };
     pub const WIND_CHARGE: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -421,7 +389,7 @@ impl DamageType {
         effects: None,
         message_id: "mob",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 48,
+        id: 44,
     };
     pub const WITHER: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -429,7 +397,7 @@ impl DamageType {
         effects: None,
         message_id: "wither",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 49,
+        id: 45,
     };
     pub const WITHER_SKULL: DamageType = DamageType {
         death_message_type: DeathMessageType::Default,
@@ -437,7 +405,7 @@ impl DamageType {
         effects: None,
         message_id: "witherSkull",
         scaling: DamageScaling::WhenCausedByLivingNonPlayer,
-        id: 50,
+        id: 46,
     };
     #[doc = r" Try to parse a damage type from a resource location string."]
     pub fn from_name(name: &str) -> Option<Self> {
@@ -450,7 +418,6 @@ impl DamageType {
             "dragon_breath" => Some(Self::DRAGON_BREATH),
             "drown" => Some(Self::DROWN),
             "dry_out" => Some(Self::DRY_OUT),
-            "ender_pearl" => Some(Self::ENDER_PEARL),
             "explosion" => Some(Self::EXPLOSION),
             "fall" => Some(Self::FALL),
             "falling_anvil" => Some(Self::FALLING_ANVIL),
@@ -468,7 +435,6 @@ impl DamageType {
             "indirect_magic" => Some(Self::INDIRECT_MAGIC),
             "lava" => Some(Self::LAVA),
             "lightning_bolt" => Some(Self::LIGHTNING_BOLT),
-            "mace_smash" => Some(Self::MACE_SMASH),
             "magic" => Some(Self::MAGIC),
             "mob_attack" => Some(Self::MOB_ATTACK),
             "mob_attack_no_aggro" => Some(Self::MOB_ATTACK_NO_AGGRO),
@@ -479,12 +445,10 @@ impl DamageType {
             "player_attack" => Some(Self::PLAYER_ATTACK),
             "player_explosion" => Some(Self::PLAYER_EXPLOSION),
             "sonic_boom" => Some(Self::SONIC_BOOM),
-            "spear" => Some(Self::SPEAR),
             "spit" => Some(Self::SPIT),
             "stalagmite" => Some(Self::STALAGMITE),
             "starve" => Some(Self::STARVE),
             "sting" => Some(Self::STING),
-            "sulfur_cube_hot" => Some(Self::SULFUR_CUBE_HOT),
             "sweet_berry_bush" => Some(Self::SWEET_BERRY_BUSH),
             "thorns" => Some(Self::THORNS),
             "thrown" => Some(Self::THROWN),
@@ -507,49 +471,45 @@ impl DamageType {
             5 => Some(Self::DRAGON_BREATH),
             6 => Some(Self::DROWN),
             7 => Some(Self::DRY_OUT),
-            8 => Some(Self::ENDER_PEARL),
-            9 => Some(Self::EXPLOSION),
-            10 => Some(Self::FALL),
-            11 => Some(Self::FALLING_ANVIL),
-            12 => Some(Self::FALLING_BLOCK),
-            13 => Some(Self::FALLING_STALACTITE),
-            14 => Some(Self::FIREBALL),
-            15 => Some(Self::FIREWORKS),
-            16 => Some(Self::FLY_INTO_WALL),
-            17 => Some(Self::FREEZE),
-            18 => Some(Self::GENERIC),
-            19 => Some(Self::GENERIC_KILL),
-            20 => Some(Self::HOT_FLOOR),
-            21 => Some(Self::IN_FIRE),
-            22 => Some(Self::IN_WALL),
-            23 => Some(Self::INDIRECT_MAGIC),
-            24 => Some(Self::LAVA),
-            25 => Some(Self::LIGHTNING_BOLT),
-            26 => Some(Self::MACE_SMASH),
-            27 => Some(Self::MAGIC),
-            28 => Some(Self::MOB_ATTACK),
-            29 => Some(Self::MOB_ATTACK_NO_AGGRO),
-            30 => Some(Self::MOB_PROJECTILE),
-            31 => Some(Self::ON_FIRE),
-            32 => Some(Self::OUT_OF_WORLD),
-            33 => Some(Self::OUTSIDE_BORDER),
-            34 => Some(Self::PLAYER_ATTACK),
-            35 => Some(Self::PLAYER_EXPLOSION),
-            36 => Some(Self::SONIC_BOOM),
-            37 => Some(Self::SPEAR),
-            38 => Some(Self::SPIT),
-            39 => Some(Self::STALAGMITE),
-            40 => Some(Self::STARVE),
-            41 => Some(Self::STING),
-            42 => Some(Self::SULFUR_CUBE_HOT),
-            43 => Some(Self::SWEET_BERRY_BUSH),
-            44 => Some(Self::THORNS),
-            45 => Some(Self::THROWN),
-            46 => Some(Self::TRIDENT),
-            47 => Some(Self::UNATTRIBUTED_FIREBALL),
-            48 => Some(Self::WIND_CHARGE),
-            49 => Some(Self::WITHER),
-            50 => Some(Self::WITHER_SKULL),
+            8 => Some(Self::EXPLOSION),
+            9 => Some(Self::FALL),
+            10 => Some(Self::FALLING_ANVIL),
+            11 => Some(Self::FALLING_BLOCK),
+            12 => Some(Self::FALLING_STALACTITE),
+            13 => Some(Self::FIREBALL),
+            14 => Some(Self::FIREWORKS),
+            15 => Some(Self::FLY_INTO_WALL),
+            16 => Some(Self::FREEZE),
+            17 => Some(Self::GENERIC),
+            18 => Some(Self::GENERIC_KILL),
+            19 => Some(Self::HOT_FLOOR),
+            20 => Some(Self::IN_FIRE),
+            21 => Some(Self::IN_WALL),
+            22 => Some(Self::INDIRECT_MAGIC),
+            23 => Some(Self::LAVA),
+            24 => Some(Self::LIGHTNING_BOLT),
+            25 => Some(Self::MAGIC),
+            26 => Some(Self::MOB_ATTACK),
+            27 => Some(Self::MOB_ATTACK_NO_AGGRO),
+            28 => Some(Self::MOB_PROJECTILE),
+            29 => Some(Self::ON_FIRE),
+            30 => Some(Self::OUT_OF_WORLD),
+            31 => Some(Self::OUTSIDE_BORDER),
+            32 => Some(Self::PLAYER_ATTACK),
+            33 => Some(Self::PLAYER_EXPLOSION),
+            34 => Some(Self::SONIC_BOOM),
+            35 => Some(Self::SPIT),
+            36 => Some(Self::STALAGMITE),
+            37 => Some(Self::STARVE),
+            38 => Some(Self::STING),
+            39 => Some(Self::SWEET_BERRY_BUSH),
+            40 => Some(Self::THORNS),
+            41 => Some(Self::THROWN),
+            42 => Some(Self::TRIDENT),
+            43 => Some(Self::UNATTRIBUTED_FIREBALL),
+            44 => Some(Self::WIND_CHARGE),
+            45 => Some(Self::WITHER),
+            46 => Some(Self::WITHER_SKULL),
             _ => None,
         }
     }

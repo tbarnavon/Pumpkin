@@ -2,14 +2,19 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "#": "minecraft:heavy_core",
-    "I": "minecraft:breeze_rod"
+    "#": {
+      "item": "minecraft:heavy_core"
+    },
+    "I": {
+      "item": "minecraft:breeze_rod"
+    }
   },
   "pattern": [
     " # ",
     " I "
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:mace"
   }
 }

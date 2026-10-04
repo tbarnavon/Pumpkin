@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:detector_rail"
+        "recipe": "minecraft:detector_rail"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

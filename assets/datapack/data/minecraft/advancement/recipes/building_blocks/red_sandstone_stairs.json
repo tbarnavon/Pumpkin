@@ -33,7 +33,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:red_sandstone_stairs"
+        "recipe": "minecraft:red_sandstone_stairs"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

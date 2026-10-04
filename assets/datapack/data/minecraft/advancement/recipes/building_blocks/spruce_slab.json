@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:spruce_slab"
+        "recipe": "minecraft:spruce_slab"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

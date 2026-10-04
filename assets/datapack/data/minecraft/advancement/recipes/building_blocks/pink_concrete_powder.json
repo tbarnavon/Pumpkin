@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:pink_concrete_powder"
+        "recipe": "minecraft:pink_concrete_powder"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

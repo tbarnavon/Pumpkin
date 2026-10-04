@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:beacon"
+        "recipe": "minecraft:beacon"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

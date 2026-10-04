@@ -3,9 +3,15 @@
   "category": "building",
   "key": {
     "#": [
-      "minecraft:chiseled_quartz_block",
-      "minecraft:quartz_block",
-      "minecraft:quartz_pillar"
+      {
+        "item": "minecraft:chiseled_quartz_block"
+      },
+      {
+        "item": "minecraft:quartz_block"
+      },
+      {
+        "item": "minecraft:quartz_pillar"
+      }
     ]
   },
   "pattern": [

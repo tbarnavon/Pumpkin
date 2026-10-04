@@ -1,13 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
-    "#": "minecraft:honeycomb"
+    "#": {
+      "item": "minecraft:honeycomb"
+    }
   },
   "pattern": [
     "##",
     "##"
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:honeycomb_block"
   }
 }

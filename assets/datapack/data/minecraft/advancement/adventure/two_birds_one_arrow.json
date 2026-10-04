@@ -3,27 +3,28 @@
   "criteria": {
     "two_birds": {
       "conditions": {
-        "fired_from_weapon": {
-          "items": "minecraft:crossbow"
-        },
         "victims": [
-          {
-            "type": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "minecraft:entity_type": "minecraft:phantom"
+          [
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "type": "minecraft:phantom"
+              }
             }
-          },
-          {
-            "type": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "minecraft:entity_type": "minecraft:phantom"
+          ],
+          [
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "type": "minecraft:phantom"
+              }
             }
-          }
+          ]
         ]
       },
-      "trigger": "minecraft:killed_by_arrow"
+      "trigger": "minecraft:killed_by_crossbow"
     }
   },
   "display": {
@@ -32,6 +33,7 @@
     },
     "frame": "challenge",
     "icon": {
+      "count": 1,
       "id": "minecraft:crossbow"
     },
     "title": {

@@ -93,7 +93,6 @@ impl EnchantmentProvider {
                 &Enchantment::LOOTING,
                 &Enchantment::LOYALTY,
                 &Enchantment::LUCK_OF_THE_SEA,
-                &Enchantment::LUNGE,
                 &Enchantment::LURE,
                 &Enchantment::MULTISHOT,
                 &Enchantment::PIERCING,

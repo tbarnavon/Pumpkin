@@ -4,7 +4,9 @@
   "cookingtime": 200,
   "experience": 0.7,
   "group": "redstone",
-  "ingredient": "minecraft:redstone_ore",
+  "ingredient": {
+    "item": "minecraft:redstone_ore"
+  },
   "result": {
     "id": "minecraft:redstone"
   }

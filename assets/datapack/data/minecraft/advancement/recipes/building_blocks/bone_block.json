@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:bone_block"
+        "recipe": "minecraft:bone_block"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

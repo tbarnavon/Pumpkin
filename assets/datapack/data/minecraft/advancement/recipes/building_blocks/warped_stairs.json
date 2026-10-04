@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:warped_stairs"
+        "recipe": "minecraft:warped_stairs"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

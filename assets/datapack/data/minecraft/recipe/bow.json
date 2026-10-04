@@ -2,8 +2,12 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "#": "minecraft:stick",
-    "X": "minecraft:string"
+    "#": {
+      "item": "minecraft:stick"
+    },
+    "X": {
+      "item": "minecraft:string"
+    }
   },
   "pattern": [
     " #X",
@@ -11,6 +15,7 @@
     " #X"
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:bow"
   }
 }

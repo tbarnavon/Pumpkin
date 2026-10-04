@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:soul_torch"
+        "recipe": "minecraft:soul_torch"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

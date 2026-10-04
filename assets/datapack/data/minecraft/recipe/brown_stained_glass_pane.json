@@ -1,8 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "group": "stained_glass_pane",
   "key": {
-    "#": "minecraft:brown_stained_glass"
+    "#": {
+      "item": "minecraft:brown_stained_glass"
+    }
   },
   "pattern": [
     "###",

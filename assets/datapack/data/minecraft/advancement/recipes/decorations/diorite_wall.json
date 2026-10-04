@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:diorite_wall"
+        "recipe": "minecraft:diorite_wall"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -3,15 +3,33 @@
   "category": "building",
   "group": "concrete_powder",
   "ingredients": [
-    "minecraft:red_dye",
-    "minecraft:sand",
-    "minecraft:sand",
-    "minecraft:sand",
-    "minecraft:sand",
-    "minecraft:gravel",
-    "minecraft:gravel",
-    "minecraft:gravel",
-    "minecraft:gravel"
+    {
+      "item": "minecraft:red_dye"
+    },
+    {
+      "item": "minecraft:sand"
+    },
+    {
+      "item": "minecraft:sand"
+    },
+    {
+      "item": "minecraft:sand"
+    },
+    {
+      "item": "minecraft:sand"
+    },
+    {
+      "item": "minecraft:gravel"
+    },
+    {
+      "item": "minecraft:gravel"
+    },
+    {
+      "item": "minecraft:gravel"
+    },
+    {
+      "item": "minecraft:gravel"
+    }
   ],
   "result": {
     "count": 8,

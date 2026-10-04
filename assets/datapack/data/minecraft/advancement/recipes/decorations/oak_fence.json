@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:oak_fence"
+        "recipe": "minecraft:oak_fence"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

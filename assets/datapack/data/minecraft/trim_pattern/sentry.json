@@ -3,5 +3,6 @@
   "decal": false,
   "description": {
     "translate": "trim_pattern.minecraft.sentry"
-  }
+  },
+  "template_item": "minecraft:sentry_armor_trim_smithing_template"
 }

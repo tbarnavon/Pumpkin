@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "S": "minecraft:tuff"
+    "S": {
+      "item": "minecraft:tuff"
+    }
   },
   "pattern": [
     "SS",

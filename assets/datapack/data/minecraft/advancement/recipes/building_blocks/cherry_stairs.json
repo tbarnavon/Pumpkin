@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:cherry_stairs"
+        "recipe": "minecraft:cherry_stairs"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

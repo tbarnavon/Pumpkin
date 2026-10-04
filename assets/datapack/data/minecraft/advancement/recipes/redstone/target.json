@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:target"
+        "recipe": "minecraft:target"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

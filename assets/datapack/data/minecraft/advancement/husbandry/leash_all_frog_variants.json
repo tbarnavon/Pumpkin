@@ -3,16 +3,19 @@
   "criteria": {
     "minecraft:cold": {
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:components": {
-              "minecraft:frog/variant": "minecraft:cold"
-            },
-            "minecraft:entity_type": "minecraft:frog"
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:frog",
+              "type_specific": {
+                "type": "minecraft:frog",
+                "variant": "minecraft:cold"
+              }
+            }
           }
-        },
+        ],
         "item": {
           "items": "minecraft:lead"
         }
@@ -21,16 +24,19 @@
     },
     "minecraft:temperate": {
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:components": {
-              "minecraft:frog/variant": "minecraft:temperate"
-            },
-            "minecraft:entity_type": "minecraft:frog"
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:frog",
+              "type_specific": {
+                "type": "minecraft:frog",
+                "variant": "minecraft:temperate"
+              }
+            }
           }
-        },
+        ],
         "item": {
           "items": "minecraft:lead"
         }
@@ -39,16 +45,19 @@
     },
     "minecraft:warm": {
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:components": {
-              "minecraft:frog/variant": "minecraft:warm"
-            },
-            "minecraft:entity_type": "minecraft:frog"
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:frog",
+              "type_specific": {
+                "type": "minecraft:frog",
+                "variant": "minecraft:warm"
+              }
+            }
           }
-        },
+        ],
         "item": {
           "items": "minecraft:lead"
         }
@@ -61,6 +70,7 @@
       "translate": "advancements.husbandry.leash_all_frog_variants.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:lead"
     },
     "title": {
@@ -69,13 +79,13 @@
   },
   "requirements": [
     [
-      "minecraft:cold"
-    ],
-    [
       "minecraft:temperate"
     ],
     [
       "minecraft:warm"
+    ],
+    [
+      "minecraft:cold"
     ]
   ],
   "sends_telemetry_event": true

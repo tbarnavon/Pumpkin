@@ -10,15 +10,15 @@
           "type": "minecraft:add",
           "value": {
             "type": "minecraft:linear",
-            "base": 1.0,
+            "base": 0.5,
             "per_level_above_first": 0.5
           }
         },
         "requirements": {
-          "type": "minecraft:entity_properties",
+          "condition": "minecraft:entity_properties",
           "entity": "direct_attacker",
           "predicate": {
-            "minecraft:entity_type": "#minecraft:arrows"
+            "type": "#minecraft:arrows"
           }
         }
       }

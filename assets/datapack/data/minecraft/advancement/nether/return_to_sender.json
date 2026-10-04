@@ -3,21 +3,23 @@
   "criteria": {
     "killed_ghast": {
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:entity_type": "minecraft:ghast"
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:ghast"
+            }
           }
-        },
+        ],
         "killing_blow": {
           "direct_entity": {
-            "minecraft:entity_type": "minecraft:fireball"
+            "type": "minecraft:fireball"
           },
           "tags": [
             {
               "expected": true,
-              "id": "#minecraft:is_projectile"
+              "id": "minecraft:is_projectile"
             }
           ]
         }
@@ -31,6 +33,7 @@
     },
     "frame": "challenge",
     "icon": {
+      "count": 1,
       "id": "minecraft:fire_charge"
     },
     "title": {

@@ -3,7 +3,9 @@
   "category": "building",
   "group": "planks",
   "ingredients": [
-    "#minecraft:birch_logs"
+    {
+      "tag": "minecraft:birch_logs"
+    }
   ],
   "result": {
     "count": 4,

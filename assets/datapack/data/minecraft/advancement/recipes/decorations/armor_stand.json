@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:armor_stand"
+        "recipe": "minecraft:armor_stand"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

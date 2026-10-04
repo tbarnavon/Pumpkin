@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:daylight_detector"
+        "recipe": "minecraft:daylight_detector"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

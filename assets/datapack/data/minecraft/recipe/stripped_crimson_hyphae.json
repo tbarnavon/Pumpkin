@@ -3,7 +3,9 @@
   "category": "building",
   "group": "bark",
   "key": {
-    "#": "minecraft:stripped_crimson_stem"
+    "#": {
+      "item": "minecraft:stripped_crimson_stem"
+    }
   },
   "pattern": [
     "##",

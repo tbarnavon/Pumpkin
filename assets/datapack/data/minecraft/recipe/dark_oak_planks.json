@@ -3,7 +3,9 @@
   "category": "building",
   "group": "planks",
   "ingredients": [
-    "#minecraft:dark_oak_logs"
+    {
+      "tag": "minecraft:dark_oak_logs"
+    }
   ],
   "result": {
     "count": 4,

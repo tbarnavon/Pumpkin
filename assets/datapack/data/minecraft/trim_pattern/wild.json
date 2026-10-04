@@ -3,5 +3,6 @@
   "decal": false,
   "description": {
     "translate": "trim_pattern.minecraft.wild"
-  }
+  },
+  "template_item": "minecraft:wild_armor_trim_smithing_template"
 }

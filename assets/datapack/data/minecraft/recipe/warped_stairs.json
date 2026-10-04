@@ -3,7 +3,9 @@
   "category": "building",
   "group": "wooden_stairs",
   "key": {
-    "#": "minecraft:warped_planks"
+    "#": {
+      "item": "minecraft:warped_planks"
+    }
   },
   "pattern": [
     "#  ",

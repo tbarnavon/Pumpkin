@@ -2,51 +2,61 @@
   "type": "minecraft:block",
   "pools": [
     {
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "modifier": [
+          "functions": [
             {
-              "type": "minecraft:set_count",
-              "condition": {
-                "type": "minecraft:match_block",
-                "blocks": "minecraft:sea_pickle",
-                "state": {
-                  "pickles": "2"
+              "add": false,
+              "conditions": [
+                {
+                  "block": "minecraft:sea_pickle",
+                  "condition": "minecraft:block_state_property",
+                  "properties": {
+                    "pickles": "2"
+                  }
                 }
-              },
-              "count": 2
+              ],
+              "count": 2.0,
+              "function": "minecraft:set_count"
             },
             {
-              "type": "minecraft:set_count",
-              "condition": {
-                "type": "minecraft:match_block",
-                "blocks": "minecraft:sea_pickle",
-                "state": {
-                  "pickles": "3"
+              "add": false,
+              "conditions": [
+                {
+                  "block": "minecraft:sea_pickle",
+                  "condition": "minecraft:block_state_property",
+                  "properties": {
+                    "pickles": "3"
+                  }
                 }
-              },
-              "count": 3
+              ],
+              "count": 3.0,
+              "function": "minecraft:set_count"
             },
             {
-              "type": "minecraft:set_count",
-              "condition": {
-                "type": "minecraft:match_block",
-                "blocks": "minecraft:sea_pickle",
-                "state": {
-                  "pickles": "4"
+              "add": false,
+              "conditions": [
+                {
+                  "block": "minecraft:sea_pickle",
+                  "condition": "minecraft:block_state_property",
+                  "properties": {
+                    "pickles": "4"
+                  }
                 }
-              },
-              "count": 4
+              ],
+              "count": 4.0,
+              "function": "minecraft:set_count"
             },
             {
-              "type": "minecraft:explosion_decay"
+              "function": "minecraft:explosion_decay"
             }
           ],
           "name": "minecraft:sea_pickle"
         }
       ],
-      "rolls": 1
+      "rolls": 1.0
     }
   ],
   "random_sequence": "minecraft:blocks/sea_pickle"

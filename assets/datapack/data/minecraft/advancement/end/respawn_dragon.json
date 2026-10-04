@@ -3,13 +3,15 @@
   "criteria": {
     "summoned_dragon": {
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:entity_type": "minecraft:ender_dragon"
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:ender_dragon"
+            }
           }
-        }
+        ]
       },
       "trigger": "minecraft:summoned_entity"
     }
@@ -20,6 +22,7 @@
     },
     "frame": "goal",
     "icon": {
+      "count": 1,
       "id": "minecraft:end_crystal"
     },
     "title": {

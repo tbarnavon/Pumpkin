@@ -3,7 +3,9 @@
   "category": "building",
   "group": "planks",
   "ingredients": [
-    "#minecraft:bamboo_blocks"
+    {
+      "tag": "minecraft:bamboo_blocks"
+    }
   ],
   "result": {
     "count": 2,

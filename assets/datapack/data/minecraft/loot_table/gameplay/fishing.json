@@ -2,6 +2,7 @@
   "type": "minecraft:fishing",
   "pools": [
     {
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:loot_table",
@@ -11,15 +12,18 @@
         },
         {
           "type": "minecraft:loot_table",
-          "condition": {
-            "type": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "minecraft:type_specific/fishing_hook": {
-                "in_open_water": true
+          "conditions": [
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "type_specific": {
+                  "type": "minecraft:fishing_hook",
+                  "in_open_water": true
+                }
               }
             }
-          },
+          ],
           "quality": 2,
           "value": "minecraft:gameplay/fishing/treasure",
           "weight": 5
@@ -31,7 +35,7 @@
           "weight": 85
         }
       ],
-      "rolls": 1
+      "rolls": 1.0
     }
   ],
   "random_sequence": "minecraft:gameplay/fishing"

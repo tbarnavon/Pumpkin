@@ -1,9 +1,12 @@
 {
   "type": "minecraft:smelting",
+  "category": "misc",
   "cookingtime": 200,
   "experience": 1.0,
   "group": "emerald",
-  "ingredient": "minecraft:deepslate_emerald_ore",
+  "ingredient": {
+    "item": "minecraft:deepslate_emerald_ore"
+  },
   "result": {
     "id": "minecraft:emerald"
   }

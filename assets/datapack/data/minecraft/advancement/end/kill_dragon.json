@@ -3,13 +3,15 @@
   "criteria": {
     "killed_dragon": {
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:entity_type": "minecraft:ender_dragon"
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:ender_dragon"
+            }
           }
-        }
+        ]
       },
       "trigger": "minecraft:player_killed_entity"
     }
@@ -19,6 +21,7 @@
       "translate": "advancements.end.kill_dragon.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:dragon_head"
     },
     "title": {

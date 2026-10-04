@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:acacia_planks"
+        "recipe": "minecraft:acacia_planks"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

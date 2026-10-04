@@ -3,10 +3,15 @@
   "category": "building",
   "group": "mossy_cobblestone",
   "ingredients": [
-    "minecraft:cobblestone",
-    "minecraft:moss_block"
+    {
+      "item": "minecraft:cobblestone"
+    },
+    {
+      "item": "minecraft:moss_block"
+    }
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:mossy_cobblestone"
   }
 }

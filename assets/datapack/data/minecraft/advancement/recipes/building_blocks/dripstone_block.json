@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:dripstone_block"
+        "recipe": "minecraft:dripstone_block"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

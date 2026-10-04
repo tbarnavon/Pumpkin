@@ -6,7 +6,7 @@ use std::{collections::BTreeMap, fs};
 use crate::version::JavaMinecraftVersion;
 
 /// The newest protocol version used as the fallback for unknown versions in `PacketId::to_id`.
-const LATEST_VERSION: JavaMinecraftVersion = JavaMinecraftVersion::V_26_3;
+const LATEST_VERSION: JavaMinecraftVersion = JavaMinecraftVersion::V_1_21;
 
 /// Represents the protocol_id object within the JSON.
 #[derive(Deserialize)]
@@ -94,7 +94,7 @@ fn parse_packets(path: &str, content: &str) -> Packets {
 /// Generates the `TokenStream` for the `PacketId` struct, `CURRENT_MC_VERSION`, and
 /// all `serverbound`/`clientbound` packet ID constants.
 pub(crate) fn build() -> TokenStream {
-    let assets = [(JavaMinecraftVersion::V_26_3, "26_3_packets.json")];
+    let assets = [(JavaMinecraftVersion::V_1_21, "26_3_packets.json")];
 
     // Parse available packet files into a BTreeMap keyed by JavaMinecraftVersion
     let mut versions = BTreeMap::new();

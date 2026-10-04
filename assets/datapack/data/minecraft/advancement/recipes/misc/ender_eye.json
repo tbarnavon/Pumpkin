@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:ender_eye"
+        "recipe": "minecraft:ender_eye"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -3,15 +3,17 @@
   "criteria": {
     "in_stronghold": {
       "conditions": {
-        "player": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:location": {
-              "structures": "minecraft:stronghold"
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structures": "minecraft:stronghold"
+              }
             }
           }
-        }
+        ]
       },
       "trigger": "minecraft:location"
     }
@@ -21,6 +23,7 @@
       "translate": "advancements.story.follow_ender_eye.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:ender_eye"
     },
     "title": {

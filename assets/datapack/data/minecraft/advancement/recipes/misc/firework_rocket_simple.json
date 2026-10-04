@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:firework_rocket_simple"
+        "recipe": "minecraft:firework_rocket_simple"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

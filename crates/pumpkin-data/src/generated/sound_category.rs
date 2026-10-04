@@ -11,7 +11,6 @@ pub enum SoundCategory {
     Players,
     Ambient,
     Voice,
-    Ui,
 }
 impl SoundCategory {
     pub fn from_name(name: &str) -> Option<Self> {
@@ -26,7 +25,6 @@ impl SoundCategory {
             "players" => Some(Self::Players),
             "ambient" => Some(Self::Ambient),
             "voice" => Some(Self::Voice),
-            "ui" => Some(Self::Ui),
             _ => None,
         }
     }
@@ -42,7 +40,6 @@ impl SoundCategory {
             Self::Players => "players",
             Self::Ambient => "ambient",
             Self::Voice => "voice",
-            Self::Ui => "ui",
         }
     }
 }

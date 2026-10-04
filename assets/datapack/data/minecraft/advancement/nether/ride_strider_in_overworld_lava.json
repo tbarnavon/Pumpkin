@@ -8,18 +8,20 @@
             "min": 50.0
           }
         },
-        "player": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:location": {
-              "dimension": "minecraft:overworld"
-            },
-            "minecraft:vehicle": {
-              "minecraft:entity_type": "minecraft:strider"
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "dimension": "minecraft:overworld"
+              },
+              "vehicle": {
+                "type": "minecraft:strider"
+              }
             }
           }
-        }
+        ]
       },
       "trigger": "minecraft:ride_entity_in_lava"
     }
@@ -29,6 +31,7 @@
       "translate": "advancements.nether.ride_strider_in_overworld_lava.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:warped_fungus_on_a_stick"
     },
     "title": {

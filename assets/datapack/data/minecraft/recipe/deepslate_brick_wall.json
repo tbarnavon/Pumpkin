@@ -1,7 +1,10 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
-    "#": "minecraft:deepslate_bricks"
+    "#": {
+      "item": "minecraft:deepslate_bricks"
+    }
   },
   "pattern": [
     "###",

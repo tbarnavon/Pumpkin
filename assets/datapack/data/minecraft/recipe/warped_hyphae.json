@@ -3,7 +3,9 @@
   "category": "building",
   "group": "bark",
   "key": {
-    "#": "minecraft:warped_stem"
+    "#": {
+      "item": "minecraft:warped_stem"
+    }
   },
   "pattern": [
     "##",

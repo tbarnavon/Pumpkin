@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:rail"
+        "recipe": "minecraft:rail"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

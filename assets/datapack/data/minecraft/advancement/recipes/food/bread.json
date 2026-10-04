@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:bread"
+        "recipe": "minecraft:bread"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

@@ -3,10 +3,15 @@
   "category": "building",
   "group": "waxed_copper_block",
   "ingredients": [
-    "minecraft:copper_block",
-    "minecraft:honeycomb"
+    {
+      "item": "minecraft:copper_block"
+    },
+    {
+      "item": "minecraft:honeycomb"
+    }
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:waxed_copper_block"
   }
 }

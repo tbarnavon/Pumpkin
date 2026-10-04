@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:netherite_block"
+        "recipe": "minecraft:netherite_block"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -33,7 +33,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:sandstone_stairs"
+        "recipe": "minecraft:sandstone_stairs"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

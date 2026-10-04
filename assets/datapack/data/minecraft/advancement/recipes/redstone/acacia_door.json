@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:acacia_door"
+        "recipe": "minecraft:acacia_door"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

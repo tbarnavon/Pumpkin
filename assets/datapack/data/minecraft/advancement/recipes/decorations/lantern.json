@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:lantern"
+        "recipe": "minecraft:lantern"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

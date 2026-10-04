@@ -3,7 +3,9 @@
   "category": "blocks",
   "cookingtime": 200,
   "experience": 0.1,
-  "ingredient": "minecraft:pink_terracotta",
+  "ingredient": {
+    "item": "minecraft:pink_terracotta"
+  },
   "result": {
     "id": "minecraft:pink_glazed_terracotta"
   }

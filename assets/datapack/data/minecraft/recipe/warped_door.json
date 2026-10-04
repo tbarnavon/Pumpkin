@@ -3,7 +3,9 @@
   "category": "redstone",
   "group": "wooden_door",
   "key": {
-    "#": "minecraft:warped_planks"
+    "#": {
+      "item": "minecraft:warped_planks"
+    }
   },
   "pattern": [
     "##",

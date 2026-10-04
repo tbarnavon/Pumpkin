@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:copper_grate"
+        "recipe": "minecraft:copper_grate"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

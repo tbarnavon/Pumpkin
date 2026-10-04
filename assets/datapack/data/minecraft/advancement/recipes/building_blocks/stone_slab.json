@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:stone_slab"
+        "recipe": "minecraft:stone_slab"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

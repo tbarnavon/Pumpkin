@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:white_candle"
+        "recipe": "minecraft:white_candle"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

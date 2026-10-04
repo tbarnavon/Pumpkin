@@ -3,7 +3,9 @@
   "category": "blocks",
   "cookingtime": 200,
   "experience": 0.1,
-  "ingredient": "minecraft:black_terracotta",
+  "ingredient": {
+    "item": "minecraft:black_terracotta"
+  },
   "result": {
     "id": "minecraft:black_glazed_terracotta"
   }

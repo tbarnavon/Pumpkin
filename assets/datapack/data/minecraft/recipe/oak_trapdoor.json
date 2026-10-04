@@ -3,7 +3,9 @@
   "category": "redstone",
   "group": "wooden_trapdoor",
   "key": {
-    "#": "minecraft:oak_planks"
+    "#": {
+      "item": "minecraft:oak_planks"
+    }
   },
   "pattern": [
     "###",

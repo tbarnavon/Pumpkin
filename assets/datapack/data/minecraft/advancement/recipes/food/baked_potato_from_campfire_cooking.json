@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:baked_potato_from_campfire_cooking"
+        "recipe": "minecraft:baked_potato_from_campfire_cooking"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

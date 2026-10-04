@@ -3,9 +3,12 @@
   "category": "redstone",
   "group": "wooden_button",
   "ingredients": [
-    "minecraft:spruce_planks"
+    {
+      "item": "minecraft:spruce_planks"
+    }
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:spruce_button"
   }
 }

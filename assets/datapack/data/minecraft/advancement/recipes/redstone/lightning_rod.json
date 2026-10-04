@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:lightning_rod"
+        "recipe": "minecraft:lightning_rod"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

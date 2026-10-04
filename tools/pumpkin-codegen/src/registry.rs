@@ -7,46 +7,27 @@ use std::fs;
 use crate::version::JavaMinecraftVersion;
 
 /// The newest protocol version whose registry data is used as the fallback for unknown versions.
-const LATEST_VERSION: JavaMinecraftVersion = JavaMinecraftVersion::V_26_3;
+const LATEST_VERSION: JavaMinecraftVersion = JavaMinecraftVersion::V_1_21;
 
 /// Generates the `TokenStream` for the `Registry` and `StaticRegistry` structs, version-keyed
 /// static registry data, and the `Registry::get_synced` method.
 pub(crate) fn build() -> TokenStream {
-    let versions = [("26_3", "V_26_3")];
+    let versions = [("1_21_1", "V_1_21")];
 
+    // `RegistryDataLoader.SYNCHRONIZED_REGISTRIES` of 1.21.1, in its order: the registries a
+    // 1.21.1 client receives during configuration.
     const SYNCED_REGISTRIES: &[&str] = &[
         "worldgen/biome",
         "chat_type",
         "trim_pattern",
         "trim_material",
         "wolf_variant",
-        "wolf_sound_variant",
-        "pig_variant",
-        "pig_sound_variant",
-        "frog_variant",
-        "cat_variant",
-        "cat_sound_variant",
-        "cow_variant",
-        "cow_sound_variant",
-        "chicken_variant",
-        "chicken_sound_variant",
-        "zombie_nautilus_variant",
         "painting_variant",
         "dimension_type",
         "damage_type",
-        "jukebox_song",
         "banner_pattern",
-        "instrument",
         "enchantment",
-        "timeline",
-        "dialog",
-        "world_clock",
-        "test_environment",
-        "test_instance",
-        "sulfur_cube_archetype",
-        "decorated_pot_pattern",
-        "block_transformer",
-        "worldgen/block_state_provider",
+        "jukebox_song",
     ];
 
     let process_version = |ver_folder: &str| -> TokenStream {
@@ -207,7 +188,7 @@ pub(crate) fn build() -> TokenStream {
         impl Registry {
             #[must_use]
             pub fn get_synced(_version: JavaMinecraftVersion) -> Vec<Self> {
-                let static_regs = REGISTRY_V_26_3;
+                let static_regs = REGISTRY_V_1_21;
 
                 static_regs.iter().map(|static_reg| {
                     let registry_id = if static_reg.registry_id.contains(':') {

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:mangrove_trapdoor"
+        "recipe": "minecraft:mangrove_trapdoor"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

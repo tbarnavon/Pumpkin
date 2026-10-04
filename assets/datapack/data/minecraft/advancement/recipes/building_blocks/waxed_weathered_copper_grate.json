@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:waxed_weathered_copper_grate"
+        "recipe": "minecraft:waxed_weathered_copper_grate"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

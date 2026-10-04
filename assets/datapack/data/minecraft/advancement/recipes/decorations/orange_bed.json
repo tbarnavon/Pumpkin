@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:orange_bed"
+        "recipe": "minecraft:orange_bed"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

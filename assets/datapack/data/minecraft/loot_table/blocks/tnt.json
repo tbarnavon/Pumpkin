@@ -2,23 +2,28 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "condition": {
-        "type": "minecraft:survives_explosion"
-      },
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:item",
-          "condition": {
-            "type": "minecraft:match_block",
-            "blocks": "minecraft:tnt",
-            "state": {
-              "unstable": "false"
+          "conditions": [
+            {
+              "block": "minecraft:tnt",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "unstable": "false"
+              }
             }
-          },
+          ],
           "name": "minecraft:tnt"
         }
       ],
-      "rolls": 1
+      "rolls": 1.0
     }
   ],
   "random_sequence": "minecraft:blocks/tnt"

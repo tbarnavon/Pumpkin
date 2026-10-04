@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:magenta_dye_from_lilac"
+        "recipe": "minecraft:magenta_dye_from_lilac"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

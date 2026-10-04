@@ -41,7 +41,6 @@ interface enchantments {
     looting,
     loyalty,
     luck-of-the-sea,
-    lunge,
     lure,
     mending,
     multishot,

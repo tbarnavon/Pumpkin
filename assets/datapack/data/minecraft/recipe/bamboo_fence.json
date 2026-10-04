@@ -1,9 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "group": "wooden_fence",
   "key": {
-    "#": "minecraft:stick",
-    "W": "minecraft:bamboo_planks"
+    "#": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "item": "minecraft:bamboo_planks"
+    }
   },
   "pattern": [
     "W#W",

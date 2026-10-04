@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:stone_brick_stairs"
+        "recipe": "minecraft:stone_brick_stairs"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

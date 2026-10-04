@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:cyan_candle"
+        "recipe": "minecraft:cyan_candle"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

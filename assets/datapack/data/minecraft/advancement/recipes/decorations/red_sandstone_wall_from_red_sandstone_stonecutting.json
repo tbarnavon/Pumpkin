@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:red_sandstone_wall_from_red_sandstone_stonecutting"
+        "recipe": "minecraft:red_sandstone_wall_from_red_sandstone_stonecutting"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

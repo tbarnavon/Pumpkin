@@ -1,8 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
-  "group": "woolen_carpet",
+  "category": "misc",
+  "group": "carpet",
   "key": {
-    "#": "minecraft:lime_wool"
+    "#": {
+      "item": "minecraft:lime_wool"
+    }
   },
   "pattern": [
     "##"

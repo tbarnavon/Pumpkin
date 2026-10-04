@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:stick_from_bamboo_item"
+        "recipe": "minecraft:stick_from_bamboo_item"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

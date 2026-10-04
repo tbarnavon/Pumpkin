@@ -3,7 +3,9 @@
   "category": "building",
   "group": "bark",
   "key": {
-    "#": "minecraft:jungle_log"
+    "#": {
+      "item": "minecraft:jungle_log"
+    }
   },
   "pattern": [
     "##",

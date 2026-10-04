@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:black_carpet"
+        "recipe": "minecraft:black_carpet"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

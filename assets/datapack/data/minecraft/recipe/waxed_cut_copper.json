@@ -3,7 +3,9 @@
   "category": "building",
   "group": "waxed_cut_copper",
   "key": {
-    "#": "minecraft:waxed_copper_block"
+    "#": {
+      "item": "minecraft:waxed_copper_block"
+    }
   },
   "pattern": [
     "##",

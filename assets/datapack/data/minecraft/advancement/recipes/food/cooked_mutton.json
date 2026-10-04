@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:cooked_mutton"
+        "recipe": "minecraft:cooked_mutton"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

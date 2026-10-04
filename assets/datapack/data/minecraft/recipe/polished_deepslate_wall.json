@@ -1,7 +1,10 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
-    "#": "minecraft:polished_deepslate"
+    "#": {
+      "item": "minecraft:polished_deepslate"
+    }
   },
   "pattern": [
     "###",

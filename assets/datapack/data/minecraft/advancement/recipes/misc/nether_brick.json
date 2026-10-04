@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:nether_brick"
+        "recipe": "minecraft:nether_brick"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:iron_door"
+        "recipe": "minecraft:iron_door"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

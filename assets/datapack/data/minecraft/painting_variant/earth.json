@@ -1,9 +1,5 @@
 {
   "asset_id": "minecraft:earth",
   "height": 2,
-  "title": {
-    "color": "yellow",
-    "translate": "painting.minecraft.earth.title"
-  },
   "width": 2
 }

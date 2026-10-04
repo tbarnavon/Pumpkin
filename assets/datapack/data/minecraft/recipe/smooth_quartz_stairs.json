@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": "minecraft:smooth_quartz"
+    "#": {
+      "item": "minecraft:smooth_quartz"
+    }
   },
   "pattern": [
     "#  ",

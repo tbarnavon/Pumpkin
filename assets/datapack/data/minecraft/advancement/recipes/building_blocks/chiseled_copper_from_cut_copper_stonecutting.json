@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:chiseled_copper_from_cut_copper_stonecutting"
+        "recipe": "minecraft:chiseled_copper_from_cut_copper_stonecutting"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

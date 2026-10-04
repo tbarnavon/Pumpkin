@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:polished_tuff"
+        "recipe": "minecraft:polished_tuff"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

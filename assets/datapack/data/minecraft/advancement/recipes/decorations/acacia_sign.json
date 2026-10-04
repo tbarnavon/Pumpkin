@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:acacia_sign"
+        "recipe": "minecraft:acacia_sign"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

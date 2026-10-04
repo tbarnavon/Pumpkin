@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:lime_candle"
+        "recipe": "minecraft:lime_candle"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

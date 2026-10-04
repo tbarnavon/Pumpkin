@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:glow_item_frame"
+        "recipe": "minecraft:glow_item_frame"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -3,20 +3,19 @@
   "criteria": {
     "kill_pillager": {
       "conditions": {
-        "fired_from_weapon": {
-          "items": "minecraft:crossbow"
-        },
         "victims": [
-          {
-            "type": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "minecraft:entity_type": "minecraft:pillager"
+          [
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "type": "minecraft:pillager"
+              }
             }
-          }
+          ]
         ]
       },
-      "trigger": "minecraft:killed_by_arrow"
+      "trigger": "minecraft:killed_by_crossbow"
     }
   },
   "display": {
@@ -24,6 +23,7 @@
       "translate": "advancements.adventure.whos_the_pillager_now.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:crossbow"
     },
     "title": {

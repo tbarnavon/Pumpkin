@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:andesite"
+        "recipe": "minecraft:andesite"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

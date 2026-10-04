@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:quartz_bricks"
+        "recipe": "minecraft:quartz_bricks"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

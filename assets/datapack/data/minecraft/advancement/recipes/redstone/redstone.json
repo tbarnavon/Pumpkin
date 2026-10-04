@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:redstone"
+        "recipe": "minecraft:redstone"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

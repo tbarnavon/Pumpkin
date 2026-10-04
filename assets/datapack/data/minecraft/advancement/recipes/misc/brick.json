@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:brick"
+        "recipe": "minecraft:brick"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

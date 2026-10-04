@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:exposed_copper_bulb"
+        "recipe": "minecraft:exposed_copper_bulb"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:yellow_banner"
+        "recipe": "minecraft:yellow_banner"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

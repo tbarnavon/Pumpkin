@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:iron_leggings"
+        "recipe": "minecraft:iron_leggings"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

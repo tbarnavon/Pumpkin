@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:mangrove_planks"
+        "recipe": "minecraft:mangrove_planks"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

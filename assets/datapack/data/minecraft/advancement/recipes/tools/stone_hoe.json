@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:stone_hoe"
+        "recipe": "minecraft:stone_hoe"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

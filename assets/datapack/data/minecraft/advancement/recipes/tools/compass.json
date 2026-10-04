@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:compass"
+        "recipe": "minecraft:compass"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

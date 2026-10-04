@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:bamboo_block"
+        "recipe": "minecraft:bamboo_block"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:netherite_scrap"
+        "recipe": "minecraft:netherite_scrap"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

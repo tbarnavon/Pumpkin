@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:white_glazed_terracotta"
+        "recipe": "minecraft:white_glazed_terracotta"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

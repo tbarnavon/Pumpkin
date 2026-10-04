@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:mangrove_fence_gate"
+        "recipe": "minecraft:mangrove_fence_gate"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:cherry_fence"
+        "recipe": "minecraft:cherry_fence"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

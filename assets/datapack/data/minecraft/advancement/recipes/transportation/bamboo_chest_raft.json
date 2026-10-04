@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:bamboo_chest_raft"
+        "recipe": "minecraft:bamboo_chest_raft"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

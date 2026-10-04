@@ -3,7 +3,7 @@
   "criteria": {
     "silk_touch_nest": {
       "conditions": {
-        "blocks": "minecraft:bee_nest",
+        "block": "minecraft:bee_nest",
         "item": {
           "predicates": {
             "minecraft:enchantments": [
@@ -26,6 +26,7 @@
       "translate": "advancements.husbandry.silk_touch_nest.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:bee_nest"
     },
     "title": {

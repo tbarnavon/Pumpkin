@@ -1,12 +1,17 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "building",
-  "group": "waxed_copper_block",
+  "group": "waxed_oxidized_copper",
   "ingredients": [
-    "minecraft:oxidized_copper",
-    "minecraft:honeycomb"
+    {
+      "item": "minecraft:oxidized_copper"
+    },
+    {
+      "item": "minecraft:honeycomb"
+    }
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:waxed_oxidized_copper"
   }
 }

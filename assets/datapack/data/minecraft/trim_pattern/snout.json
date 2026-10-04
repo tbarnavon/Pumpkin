@@ -3,5 +3,6 @@
   "decal": false,
   "description": {
     "translate": "trim_pattern.minecraft.snout"
-  }
+  },
+  "template_item": "minecraft:snout_armor_trim_smithing_template"
 }

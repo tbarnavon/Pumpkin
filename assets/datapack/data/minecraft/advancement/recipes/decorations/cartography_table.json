@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:cartography_table"
+        "recipe": "minecraft:cartography_table"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

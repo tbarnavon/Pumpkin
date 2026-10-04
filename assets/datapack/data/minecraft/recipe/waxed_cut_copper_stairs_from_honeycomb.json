@@ -3,10 +3,15 @@
   "category": "building",
   "group": "waxed_cut_copper_stairs",
   "ingredients": [
-    "minecraft:cut_copper_stairs",
-    "minecraft:honeycomb"
+    {
+      "item": "minecraft:cut_copper_stairs"
+    },
+    {
+      "item": "minecraft:honeycomb"
+    }
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:waxed_cut_copper_stairs"
   }
 }

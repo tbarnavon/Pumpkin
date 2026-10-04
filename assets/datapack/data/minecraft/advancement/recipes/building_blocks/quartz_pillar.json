@@ -33,7 +33,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:quartz_pillar"
+        "recipe": "minecraft:quartz_pillar"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

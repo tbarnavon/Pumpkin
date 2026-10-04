@@ -3,7 +3,9 @@
   "category": "building",
   "group": "bark",
   "key": {
-    "#": "minecraft:mangrove_log"
+    "#": {
+      "item": "minecraft:mangrove_log"
+    }
   },
   "pattern": [
     "##",

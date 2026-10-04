@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:furnace"
+        "recipe": "minecraft:furnace"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

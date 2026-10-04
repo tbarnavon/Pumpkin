@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:raw_gold"
+        "recipe": "minecraft:raw_gold"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -15,10 +15,10 @@
           }
         },
         "requirements": {
-          "type": "minecraft:entity_properties",
+          "condition": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "minecraft:entity_type": "#minecraft:sensitive_to_bane_of_arthropods"
+            "type": "#minecraft:sensitive_to_bane_of_arthropods"
           }
         }
       }
@@ -40,17 +40,17 @@
         },
         "enchanted": "attacker",
         "requirements": {
-          "type": "minecraft:all_of",
+          "condition": "minecraft:all_of",
           "terms": [
             {
-              "type": "minecraft:entity_properties",
+              "condition": "minecraft:entity_properties",
               "entity": "this",
               "predicate": {
-                "minecraft:entity_type": "#minecraft:sensitive_to_bane_of_arthropods"
+                "type": "#minecraft:sensitive_to_bane_of_arthropods"
               }
             },
             {
-              "type": "minecraft:damage_source_properties",
+              "condition": "minecraft:damage_source_properties",
               "predicate": {
                 "is_direct": true
               }
@@ -70,7 +70,7 @@
     "base": 5,
     "per_level_above_first": 8
   },
-  "primary_items": "#minecraft:enchantable/melee_weapon",
+  "primary_items": "#minecraft:enchantable/sword",
   "slots": [
     "mainhand"
   ],

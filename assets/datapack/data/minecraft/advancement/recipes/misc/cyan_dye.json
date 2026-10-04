@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:cyan_dye"
+        "recipe": "minecraft:cyan_dye"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

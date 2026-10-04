@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:spruce_planks"
+        "recipe": "minecraft:spruce_planks"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:carrot_on_a_stick"
+        "recipe": "minecraft:carrot_on_a_stick"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -2,9 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "#": "minecraft:redstone_torch",
-    "I": "minecraft:stone",
-    "X": "minecraft:quartz"
+    "#": {
+      "item": "minecraft:redstone_torch"
+    },
+    "I": {
+      "item": "minecraft:stone"
+    },
+    "X": {
+      "item": "minecraft:quartz"
+    }
   },
   "pattern": [
     " # ",
@@ -12,6 +18,7 @@
     "III"
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:comparator"
   }
 }

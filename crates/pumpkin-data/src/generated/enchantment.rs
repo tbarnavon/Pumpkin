@@ -437,7 +437,6 @@ impl Enchantment {
         &Self::LOOTING,
         &Self::LOYALTY,
         &Self::LUCK_OF_THE_SEA,
-        &Self::LUNGE,
         &Self::LURE,
         &Self::MENDING,
         &Self::MULTISHOT,
@@ -518,7 +517,7 @@ impl Enchantment {
         description: "enchantment.minecraft.bane_of_arthropods",
         anvil_cost: 2u32,
         supported_items: &ItemTag::MINECRAFT_ENCHANTABLE_WEAPON,
-        primary_items: Some(&ItemTag::MINECRAFT_ENCHANTABLE_MELEE_WEAPON),
+        primary_items: Some(&ItemTag::MINECRAFT_ENCHANTABLE_SWORD),
         exclusive_set: Some(&EnchantmentTag::MINECRAFT_EXCLUSIVE_SET_DAMAGE),
         max_level: 5i32,
         slots: &[AttributeModifierSlot::MainHand],
@@ -1010,7 +1009,7 @@ impl Enchantment {
         registry_key: "fire_aspect",
         anvil_cost: 4u32,
         supported_items: &ItemTag::MINECRAFT_ENCHANTABLE_FIRE_ASPECT,
-        primary_items: Some(&ItemTag::MINECRAFT_ENCHANTABLE_MELEE_WEAPON),
+        primary_items: Some(&ItemTag::MINECRAFT_ENCHANTABLE_SWORD),
         exclusive_set: None,
         max_level: 2i32,
         slots: &[AttributeModifierSlot::MainHand],
@@ -1285,7 +1284,7 @@ impl Enchantment {
                         },
                         ReplaceDiskPredicate::Unobstructed,
                     ])),
-                    block_state: crate::Block::AIR.default_state,
+                    block_state: crate::Block::FROSTED_ICE.default_state,
                     trigger_game_event: Some(crate::game_event::GameEvent::BlockPlace),
                 },
             }],
@@ -1402,7 +1401,7 @@ impl Enchantment {
         description: "enchantment.minecraft.knockback",
         registry_key: "knockback",
         anvil_cost: 2u32,
-        supported_items: &ItemTag::MINECRAFT_ENCHANTABLE_MELEE_WEAPON,
+        supported_items: &ItemTag::MINECRAFT_ENCHANTABLE_SWORD,
         primary_items: None,
         exclusive_set: None,
         max_level: 2i32,
@@ -1455,7 +1454,7 @@ impl Enchantment {
         description: "enchantment.minecraft.looting",
         registry_key: "looting",
         anvil_cost: 4u32,
-        supported_items: &ItemTag::MINECRAFT_ENCHANTABLE_MELEE_WEAPON,
+        supported_items: &ItemTag::MINECRAFT_ENCHANTABLE_SWORD,
         primary_items: None,
         exclusive_set: None,
         max_level: 3i32,
@@ -1610,56 +1609,8 @@ impl Enchantment {
             prevent_equipment_drop: false,
         },
     };
-    pub const LUNGE: Self = Self {
-        id: 21u8,
-        name: "minecraft:lunge",
-        description: "enchantment.minecraft.lunge",
-        registry_key: "lunge",
-        anvil_cost: 2u32,
-        supported_items: &ItemTag::MINECRAFT_ENCHANTABLE_LUNGE,
-        primary_items: None,
-        exclusive_set: None,
-        max_level: 3i32,
-        slots: &[AttributeModifierSlot::Hand],
-        weight: 5i32,
-        min_cost: Cost {
-            base: 5i32,
-            per_level_above_first: 8i32,
-        },
-        max_cost: Cost {
-            base: 25i32,
-            per_level_above_first: 8i32,
-        },
-        effects: EnchantmentEffects {
-            projectile_spawned: &[],
-            post_attack: &[],
-            projectile_count: &[],
-            projectile_spread: &[],
-            projectile_piercing: &[],
-            ammo_use: &[],
-            damage: &[],
-            knockback: &[],
-            armor_effectiveness: &[],
-            damage_protection: &[],
-            hit_block: &[],
-            item_damage: &[],
-            equipment_drops: &[],
-            fishing_time_reduction: &[],
-            fishing_luck_bonus: &[],
-            block_experience: &[],
-            mob_experience: &[],
-            repair_with_xp: &[],
-            smash_damage_per_fallen_block: &[],
-            trident_return_acceleration: &[],
-            trident_spin_attack_strength: None,
-            crossbow_charge_time: None,
-            location_changed: &[],
-            prevent_armor_change: false,
-            prevent_equipment_drop: false,
-        },
-    };
     pub const LURE: Self = Self {
-        id: 22u8,
+        id: 21u8,
         name: "minecraft:lure",
         description: "enchantment.minecraft.lure",
         registry_key: "lure",
@@ -1712,7 +1663,7 @@ impl Enchantment {
         },
     };
     pub const MENDING: Self = Self {
-        id: 23u8,
+        id: 22u8,
         name: "minecraft:mending",
         description: "enchantment.minecraft.mending",
         registry_key: "mending",
@@ -1762,7 +1713,7 @@ impl Enchantment {
         },
     };
     pub const MULTISHOT: Self = Self {
-        id: 24u8,
+        id: 23u8,
         name: "minecraft:multishot",
         registry_key: "multishot",
         description: "enchantment.minecraft.multishot",
@@ -1820,7 +1771,7 @@ impl Enchantment {
         },
     };
     pub const PIERCING: Self = Self {
-        id: 25u8,
+        id: 24u8,
         name: "minecraft:piercing",
         registry_key: "piercing",
         description: "enchantment.minecraft.piercing",
@@ -1873,7 +1824,7 @@ impl Enchantment {
         },
     };
     pub const POWER: Self = Self {
-        id: 26u8,
+        id: 25u8,
         name: "minecraft:power",
         description: "enchantment.minecraft.power",
         registry_key: "power",
@@ -1901,7 +1852,7 @@ impl Enchantment {
             ammo_use: &[],
             damage: &[ConditionalEffect {
                 effect: EnchantmentValueEffect::Add(LevelBasedValue::Linear {
-                    base: 1f32,
+                    base: 0.5f32,
                     per_level_above_first: 0.5f32,
                 }),
             }],
@@ -1926,7 +1877,7 @@ impl Enchantment {
         },
     };
     pub const PROJECTILE_PROTECTION: Self = Self {
-        id: 27u8,
+        id: 26u8,
         name: "minecraft:projectile_protection",
         registry_key: "projectile_protection",
         description: "enchantment.minecraft.projectile_protection",
@@ -1979,7 +1930,7 @@ impl Enchantment {
         },
     };
     pub const PROTECTION: Self = Self {
-        id: 28u8,
+        id: 27u8,
         name: "minecraft:protection",
         registry_key: "protection",
         description: "enchantment.minecraft.protection",
@@ -2032,7 +1983,7 @@ impl Enchantment {
         },
     };
     pub const PUNCH: Self = Self {
-        id: 29u8,
+        id: 28u8,
         name: "minecraft:punch",
         description: "enchantment.minecraft.punch",
         registry_key: "punch",
@@ -2085,7 +2036,7 @@ impl Enchantment {
         },
     };
     pub const QUICK_CHARGE: Self = Self {
-        id: 30u8,
+        id: 29u8,
         name: "minecraft:quick_charge",
         description: "enchantment.minecraft.quick_charge",
         registry_key: "quick_charge",
@@ -2139,7 +2090,7 @@ impl Enchantment {
         },
     };
     pub const RESPIRATION: Self = Self {
-        id: 31u8,
+        id: 30u8,
         name: "minecraft:respiration",
         description: "enchantment.minecraft.respiration",
         registry_key: "respiration",
@@ -2187,7 +2138,7 @@ impl Enchantment {
         },
     };
     pub const RIPTIDE: Self = Self {
-        id: 32u8,
+        id: 31u8,
         name: "minecraft:riptide",
         registry_key: "riptide",
         description: "enchantment.minecraft.riptide",
@@ -2240,13 +2191,13 @@ impl Enchantment {
         },
     };
     pub const SHARPNESS: Self = Self {
-        id: 33u8,
+        id: 32u8,
         name: "minecraft:sharpness",
         registry_key: "sharpness",
         description: "enchantment.minecraft.sharpness",
         anvil_cost: 1u32,
         supported_items: &ItemTag::MINECRAFT_ENCHANTABLE_SHARP_WEAPON,
-        primary_items: Some(&ItemTag::MINECRAFT_ENCHANTABLE_MELEE_WEAPON),
+        primary_items: Some(&ItemTag::MINECRAFT_ENCHANTABLE_SWORD),
         exclusive_set: Some(&EnchantmentTag::MINECRAFT_EXCLUSIVE_SET_DAMAGE),
         max_level: 5i32,
         slots: &[AttributeModifierSlot::MainHand],
@@ -2293,7 +2244,7 @@ impl Enchantment {
         },
     };
     pub const SILK_TOUCH: Self = Self {
-        id: 34u8,
+        id: 33u8,
         name: "minecraft:silk_touch",
         registry_key: "silk_touch",
         description: "enchantment.minecraft.silk_touch",
@@ -2343,13 +2294,13 @@ impl Enchantment {
         },
     };
     pub const SMITE: Self = Self {
-        id: 35u8,
+        id: 34u8,
         name: "minecraft:smite",
         registry_key: "smite",
         description: "enchantment.minecraft.smite",
         anvil_cost: 2u32,
         supported_items: &ItemTag::MINECRAFT_ENCHANTABLE_WEAPON,
-        primary_items: Some(&ItemTag::MINECRAFT_ENCHANTABLE_MELEE_WEAPON),
+        primary_items: Some(&ItemTag::MINECRAFT_ENCHANTABLE_SWORD),
         exclusive_set: Some(&EnchantmentTag::MINECRAFT_EXCLUSIVE_SET_DAMAGE),
         max_level: 5i32,
         slots: &[AttributeModifierSlot::MainHand],
@@ -2396,7 +2347,7 @@ impl Enchantment {
         },
     };
     pub const SOUL_SPEED: Self = Self {
-        id: 36u8,
+        id: 35u8,
         name: "minecraft:soul_speed",
         description: "enchantment.minecraft.soul_speed",
         registry_key: "soul_speed",
@@ -2440,15 +2391,13 @@ impl Enchantment {
             crossbow_charge_time: None,
             location_changed: &[
                 ConditionalEffect {
-                    effect: EnchantmentEntityEffect::AllOf(&[
-                        EnchantmentEntityEffect::Other,
-                        EnchantmentEntityEffect::Other,
-                    ]),
+                    effect: EnchantmentEntityEffect::Other,
                 },
                 ConditionalEffect {
-                    effect: EnchantmentEntityEffect::ChangeItemDamage {
-                        amount: LevelBasedValue::Constant(1f32),
-                    },
+                    effect: EnchantmentEntityEffect::Other,
+                },
+                ConditionalEffect {
+                    effect: EnchantmentEntityEffect::Other,
                 },
             ],
             prevent_armor_change: false,
@@ -2456,12 +2405,12 @@ impl Enchantment {
         },
     };
     pub const SWEEPING_EDGE: Self = Self {
-        id: 37u8,
+        id: 36u8,
         name: "minecraft:sweeping_edge",
         description: "enchantment.minecraft.sweeping_edge",
         registry_key: "sweeping_edge",
         anvil_cost: 4u32,
-        supported_items: &ItemTag::MINECRAFT_ENCHANTABLE_SWEEPING,
+        supported_items: &ItemTag::MINECRAFT_ENCHANTABLE_SWORD,
         primary_items: None,
         exclusive_set: None,
         max_level: 3i32,
@@ -2504,7 +2453,7 @@ impl Enchantment {
         },
     };
     pub const SWIFT_SNEAK: Self = Self {
-        id: 38u8,
+        id: 37u8,
         name: "minecraft:swift_sneak",
         description: "enchantment.minecraft.swift_sneak",
         registry_key: "swift_sneak",
@@ -2552,7 +2501,7 @@ impl Enchantment {
         },
     };
     pub const THORNS: Self = Self {
-        id: 39u8,
+        id: 38u8,
         name: "minecraft:thorns",
         description: "enchantment.minecraft.thorns",
         registry_key: "thorns",
@@ -2582,9 +2531,7 @@ impl Enchantment {
                         max_damage: LevelBasedValue::Constant(5f32),
                         damage_type: Some(&crate::damage::DamageType::THORNS),
                     },
-                    EnchantmentEntityEffect::ChangeItemDamage {
-                        amount: LevelBasedValue::Constant(2f32),
-                    },
+                    EnchantmentEntityEffect::Other,
                 ]),
             }],
             projectile_count: &[],
@@ -2613,7 +2560,7 @@ impl Enchantment {
         },
     };
     pub const UNBREAKING: Self = Self {
-        id: 40u8,
+        id: 39u8,
         name: "minecraft:unbreaking",
         description: "enchantment.minecraft.unbreaking",
         registry_key: "unbreaking",
@@ -2686,7 +2633,7 @@ impl Enchantment {
         },
     };
     pub const VANISHING_CURSE: Self = Self {
-        id: 41u8,
+        id: 40u8,
         name: "minecraft:vanishing_curse",
         description: "enchantment.minecraft.vanishing_curse",
         registry_key: "vanishing_curse",
@@ -2734,7 +2681,7 @@ impl Enchantment {
         },
     };
     pub const WIND_BURST: Self = Self {
-        id: 42u8,
+        id: 41u8,
         name: "minecraft:wind_burst",
         description: "enchantment.minecraft.wind_burst",
         registry_key: "wind_burst",
@@ -2830,7 +2777,6 @@ impl Enchantment {
             "minecraft:looting" | "looting" => Some(&Self::LOOTING),
             "minecraft:loyalty" | "loyalty" => Some(&Self::LOYALTY),
             "minecraft:luck_of_the_sea" | "luck_of_the_sea" => Some(&Self::LUCK_OF_THE_SEA),
-            "minecraft:lunge" | "lunge" => Some(&Self::LUNGE),
             "minecraft:lure" | "lure" => Some(&Self::LURE),
             "minecraft:mending" | "mending" => Some(&Self::MENDING),
             "minecraft:multishot" | "multishot" => Some(&Self::MULTISHOT),
@@ -2880,28 +2826,27 @@ impl Enchantment {
             18u8 => Some(&Self::LOOTING),
             19u8 => Some(&Self::LOYALTY),
             20u8 => Some(&Self::LUCK_OF_THE_SEA),
-            21u8 => Some(&Self::LUNGE),
-            22u8 => Some(&Self::LURE),
-            23u8 => Some(&Self::MENDING),
-            24u8 => Some(&Self::MULTISHOT),
-            25u8 => Some(&Self::PIERCING),
-            26u8 => Some(&Self::POWER),
-            27u8 => Some(&Self::PROJECTILE_PROTECTION),
-            28u8 => Some(&Self::PROTECTION),
-            29u8 => Some(&Self::PUNCH),
-            30u8 => Some(&Self::QUICK_CHARGE),
-            31u8 => Some(&Self::RESPIRATION),
-            32u8 => Some(&Self::RIPTIDE),
-            33u8 => Some(&Self::SHARPNESS),
-            34u8 => Some(&Self::SILK_TOUCH),
-            35u8 => Some(&Self::SMITE),
-            36u8 => Some(&Self::SOUL_SPEED),
-            37u8 => Some(&Self::SWEEPING_EDGE),
-            38u8 => Some(&Self::SWIFT_SNEAK),
-            39u8 => Some(&Self::THORNS),
-            40u8 => Some(&Self::UNBREAKING),
-            41u8 => Some(&Self::VANISHING_CURSE),
-            42u8 => Some(&Self::WIND_BURST),
+            21u8 => Some(&Self::LURE),
+            22u8 => Some(&Self::MENDING),
+            23u8 => Some(&Self::MULTISHOT),
+            24u8 => Some(&Self::PIERCING),
+            25u8 => Some(&Self::POWER),
+            26u8 => Some(&Self::PROJECTILE_PROTECTION),
+            27u8 => Some(&Self::PROTECTION),
+            28u8 => Some(&Self::PUNCH),
+            29u8 => Some(&Self::QUICK_CHARGE),
+            30u8 => Some(&Self::RESPIRATION),
+            31u8 => Some(&Self::RIPTIDE),
+            32u8 => Some(&Self::SHARPNESS),
+            33u8 => Some(&Self::SILK_TOUCH),
+            34u8 => Some(&Self::SMITE),
+            35u8 => Some(&Self::SOUL_SPEED),
+            36u8 => Some(&Self::SWEEPING_EDGE),
+            37u8 => Some(&Self::SWIFT_SNEAK),
+            38u8 => Some(&Self::THORNS),
+            39u8 => Some(&Self::UNBREAKING),
+            40u8 => Some(&Self::VANISHING_CURSE),
+            41u8 => Some(&Self::WIND_BURST),
             _ => None,
         }
     }

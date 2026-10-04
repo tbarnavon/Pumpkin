@@ -475,7 +475,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::BEETROOTS.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -488,7 +488,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::MELON_STEM.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -503,7 +503,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::CARROTS.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -516,7 +516,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::POTATOES.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -529,7 +529,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::BEETROOTS.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -544,7 +544,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::MELON_STEM.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         }])];
@@ -558,7 +558,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::CARROTS.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -571,7 +571,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::POTATOES.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -586,7 +586,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::PUMPKIN_STEM.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -599,7 +599,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::POTATOES.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -1095,7 +1095,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::GRASS_BLOCK.default_state,
-                properties: &[],
+                properties: &[("snowy", "false")],
             },
             block_entity_modifier: None,
         },
@@ -1105,7 +1105,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::BlockMatch(crate::Block::WATER.id),
             output_state: StaticOutputState {
                 default_state: crate::Block::WATER.default_state,
-                properties: &[],
+                properties: &[("level", "0")],
             },
             block_entity_modifier: None,
         },
@@ -1115,7 +1115,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::BlockMatch(crate::Block::WATER.id),
             output_state: StaticOutputState {
                 default_state: crate::Block::WATER.default_state,
-                properties: &[],
+                properties: &[("level", "0")],
             },
             block_entity_modifier: None,
         },
@@ -1140,7 +1140,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::GRASS_BLOCK.default_state,
-                properties: &[],
+                properties: &[("snowy", "false")],
             },
             block_entity_modifier: None,
         },
@@ -1150,7 +1150,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::BlockMatch(crate::Block::WATER.id),
             output_state: StaticOutputState {
                 default_state: crate::Block::WATER.default_state,
-                properties: &[],
+                properties: &[("level", "0")],
             },
             block_entity_modifier: None,
         },
@@ -1160,7 +1160,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::BlockMatch(crate::Block::WATER.id),
             output_state: StaticOutputState {
                 default_state: crate::Block::WATER.default_state,
-                properties: &[],
+                properties: &[("level", "0")],
             },
             block_entity_modifier: None,
         },
@@ -1195,7 +1195,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::GRASS_BLOCK.default_state,
-                properties: &[],
+                properties: &[("snowy", "false")],
             },
             block_entity_modifier: None,
         },
@@ -1205,7 +1205,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::BlockMatch(crate::Block::WATER.id),
             output_state: StaticOutputState {
                 default_state: crate::Block::WATER.default_state,
-                properties: &[],
+                properties: &[("level", "0")],
             },
             block_entity_modifier: None,
         },
@@ -1215,7 +1215,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::BlockMatch(crate::Block::WATER.id),
             output_state: StaticOutputState {
                 default_state: crate::Block::WATER.default_state,
-                properties: &[],
+                properties: &[("level", "0")],
             },
             block_entity_modifier: None,
         },
@@ -1270,7 +1270,7 @@ impl StaticProcessorList {
                 location_predicate: StaticRuleTest::AlwaysTrue,
                 output_state: StaticOutputState {
                     default_state: crate::Block::SUSPICIOUS_GRAVEL.default_state,
-                    properties: &[],
+                    properties: &[("dusted", "0")],
                 },
                 block_entity_modifier: Some(StaticBlockEntityModifier::AppendLoot {
                     loot_table: "minecraft:archaeology/trail_ruins_common",
@@ -1285,7 +1285,7 @@ impl StaticProcessorList {
                 location_predicate: StaticRuleTest::AlwaysTrue,
                 output_state: StaticOutputState {
                     default_state: crate::Block::SUSPICIOUS_GRAVEL.default_state,
-                    properties: &[],
+                    properties: &[("dusted", "0")],
                 },
                 block_entity_modifier: Some(StaticBlockEntityModifier::AppendLoot {
                     loot_table: "minecraft:archaeology/trail_ruins_rare",
@@ -1343,7 +1343,7 @@ impl StaticProcessorList {
                 location_predicate: StaticRuleTest::AlwaysTrue,
                 output_state: StaticOutputState {
                     default_state: crate::Block::SUSPICIOUS_GRAVEL.default_state,
-                    properties: &[],
+                    properties: &[("dusted", "0")],
                 },
                 block_entity_modifier: Some(StaticBlockEntityModifier::AppendLoot {
                     loot_table: "minecraft:archaeology/trail_ruins_common",
@@ -1360,7 +1360,7 @@ impl StaticProcessorList {
                 location_predicate: StaticRuleTest::AlwaysTrue,
                 output_state: StaticOutputState {
                     default_state: crate::Block::SUSPICIOUS_GRAVEL.default_state,
-                    properties: &[],
+                    properties: &[("dusted", "0")],
                 },
                 block_entity_modifier: Some(StaticBlockEntityModifier::AppendLoot {
                     loot_table: "minecraft:archaeology/trail_ruins_common",
@@ -1432,7 +1432,7 @@ impl StaticProcessorList {
                 location_predicate: StaticRuleTest::AlwaysTrue,
                 output_state: StaticOutputState {
                     default_state: crate::Block::WAXED_OXIDIZED_COPPER_BULB.default_state,
-                    properties: &[],
+                    properties: &[("lit", "true"), ("powered", "false")],
                 },
                 block_entity_modifier: None,
             },
@@ -1445,7 +1445,7 @@ impl StaticProcessorList {
                 location_predicate: StaticRuleTest::AlwaysTrue,
                 output_state: StaticOutputState {
                     default_state: crate::Block::WAXED_WEATHERED_COPPER_BULB.default_state,
-                    properties: &[],
+                    properties: &[("lit", "true"), ("powered", "false")],
                 },
                 block_entity_modifier: None,
             },
@@ -1458,7 +1458,7 @@ impl StaticProcessorList {
                 location_predicate: StaticRuleTest::AlwaysTrue,
                 output_state: StaticOutputState {
                     default_state: crate::Block::WAXED_EXPOSED_COPPER_BULB.default_state,
-                    properties: &[],
+                    properties: &[("lit", "true"), ("powered", "false")],
                 },
                 block_entity_modifier: None,
             },
@@ -1570,7 +1570,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::BEETROOTS.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -1583,7 +1583,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::MELON_STEM.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -1740,12 +1740,24 @@ impl StaticProcessorList {
             position_predicate: StaticPosRuleTest::AlwaysTrue,
             input_predicate: StaticRuleTest::BlockStateMatch {
                 block_id: crate::Block::GLASS_PANE.id,
-                properties: &[],
+                properties: &[
+                    ("east", "false"),
+                    ("north", "true"),
+                    ("south", "true"),
+                    ("waterlogged", "false"),
+                    ("west", "false"),
+                ],
             },
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::BROWN_STAINED_GLASS_PANE.default_state,
-                properties: &[],
+                properties: &[
+                    ("east", "false"),
+                    ("north", "true"),
+                    ("south", "true"),
+                    ("waterlogged", "false"),
+                    ("west", "false"),
+                ],
             },
             block_entity_modifier: None,
         },
@@ -1753,12 +1765,24 @@ impl StaticProcessorList {
             position_predicate: StaticPosRuleTest::AlwaysTrue,
             input_predicate: StaticRuleTest::BlockStateMatch {
                 block_id: crate::Block::GLASS_PANE.id,
-                properties: &[],
+                properties: &[
+                    ("east", "true"),
+                    ("north", "false"),
+                    ("south", "false"),
+                    ("waterlogged", "false"),
+                    ("west", "true"),
+                ],
             },
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::BROWN_STAINED_GLASS_PANE.default_state,
-                properties: &[],
+                properties: &[
+                    ("east", "true"),
+                    ("north", "false"),
+                    ("south", "false"),
+                    ("waterlogged", "false"),
+                    ("west", "true"),
+                ],
             },
             block_entity_modifier: None,
         },
@@ -1771,7 +1795,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::CARROTS.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -1784,7 +1808,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::POTATOES.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -1797,7 +1821,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::BEETROOTS.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -1941,12 +1965,24 @@ impl StaticProcessorList {
             position_predicate: StaticPosRuleTest::AlwaysTrue,
             input_predicate: StaticRuleTest::BlockStateMatch {
                 block_id: crate::Block::GLASS_PANE.id,
-                properties: &[],
+                properties: &[
+                    ("east", "false"),
+                    ("north", "true"),
+                    ("south", "true"),
+                    ("waterlogged", "false"),
+                    ("west", "false"),
+                ],
             },
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::BROWN_STAINED_GLASS_PANE.default_state,
-                properties: &[],
+                properties: &[
+                    ("east", "false"),
+                    ("north", "true"),
+                    ("south", "true"),
+                    ("waterlogged", "false"),
+                    ("west", "false"),
+                ],
             },
             block_entity_modifier: None,
         },
@@ -1954,12 +1990,24 @@ impl StaticProcessorList {
             position_predicate: StaticPosRuleTest::AlwaysTrue,
             input_predicate: StaticRuleTest::BlockStateMatch {
                 block_id: crate::Block::GLASS_PANE.id,
-                properties: &[],
+                properties: &[
+                    ("east", "true"),
+                    ("north", "false"),
+                    ("south", "false"),
+                    ("waterlogged", "false"),
+                    ("west", "true"),
+                ],
             },
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::BROWN_STAINED_GLASS_PANE.default_state,
-                properties: &[],
+                properties: &[
+                    ("east", "true"),
+                    ("north", "false"),
+                    ("south", "false"),
+                    ("waterlogged", "false"),
+                    ("west", "true"),
+                ],
             },
             block_entity_modifier: None,
         },
@@ -1972,7 +2020,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::MELON_STEM.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -2087,12 +2135,24 @@ impl StaticProcessorList {
             position_predicate: StaticPosRuleTest::AlwaysTrue,
             input_predicate: StaticRuleTest::BlockStateMatch {
                 block_id: crate::Block::GLASS_PANE.id,
-                properties: &[],
+                properties: &[
+                    ("east", "false"),
+                    ("north", "true"),
+                    ("south", "true"),
+                    ("waterlogged", "false"),
+                    ("west", "false"),
+                ],
             },
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::BROWN_STAINED_GLASS_PANE.default_state,
-                properties: &[],
+                properties: &[
+                    ("east", "false"),
+                    ("north", "true"),
+                    ("south", "true"),
+                    ("waterlogged", "false"),
+                    ("west", "false"),
+                ],
             },
             block_entity_modifier: None,
         },
@@ -2100,12 +2160,24 @@ impl StaticProcessorList {
             position_predicate: StaticPosRuleTest::AlwaysTrue,
             input_predicate: StaticRuleTest::BlockStateMatch {
                 block_id: crate::Block::GLASS_PANE.id,
-                properties: &[],
+                properties: &[
+                    ("east", "true"),
+                    ("north", "false"),
+                    ("south", "false"),
+                    ("waterlogged", "false"),
+                    ("west", "true"),
+                ],
             },
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::BROWN_STAINED_GLASS_PANE.default_state,
-                properties: &[],
+                properties: &[
+                    ("east", "true"),
+                    ("north", "false"),
+                    ("south", "false"),
+                    ("waterlogged", "false"),
+                    ("west", "true"),
+                ],
             },
             block_entity_modifier: None,
         },
@@ -2118,7 +2190,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::CARROTS.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -2131,7 +2203,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::POTATOES.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -2186,7 +2258,12 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::CAMPFIRE.default_state,
-                properties: &[],
+                properties: &[
+                    ("facing", "north"),
+                    ("lit", "false"),
+                    ("signal_fire", "false"),
+                    ("waterlogged", "false"),
+                ],
             },
             block_entity_modifier: None,
         },
@@ -2233,12 +2310,24 @@ impl StaticProcessorList {
             position_predicate: StaticPosRuleTest::AlwaysTrue,
             input_predicate: StaticRuleTest::BlockStateMatch {
                 block_id: crate::Block::GLASS_PANE.id,
-                properties: &[],
+                properties: &[
+                    ("east", "false"),
+                    ("north", "true"),
+                    ("south", "true"),
+                    ("waterlogged", "false"),
+                    ("west", "false"),
+                ],
             },
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::BROWN_STAINED_GLASS_PANE.default_state,
-                properties: &[],
+                properties: &[
+                    ("east", "false"),
+                    ("north", "true"),
+                    ("south", "true"),
+                    ("waterlogged", "false"),
+                    ("west", "false"),
+                ],
             },
             block_entity_modifier: None,
         },
@@ -2246,12 +2335,24 @@ impl StaticProcessorList {
             position_predicate: StaticPosRuleTest::AlwaysTrue,
             input_predicate: StaticRuleTest::BlockStateMatch {
                 block_id: crate::Block::GLASS_PANE.id,
-                properties: &[],
+                properties: &[
+                    ("east", "true"),
+                    ("north", "false"),
+                    ("south", "false"),
+                    ("waterlogged", "false"),
+                    ("west", "true"),
+                ],
             },
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::BROWN_STAINED_GLASS_PANE.default_state,
-                properties: &[],
+                properties: &[
+                    ("east", "true"),
+                    ("north", "false"),
+                    ("south", "false"),
+                    ("waterlogged", "false"),
+                    ("west", "true"),
+                ],
             },
             block_entity_modifier: None,
         },
@@ -2264,7 +2365,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::PUMPKIN_STEM.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },
@@ -2277,7 +2378,7 @@ impl StaticProcessorList {
             location_predicate: StaticRuleTest::AlwaysTrue,
             output_state: StaticOutputState {
                 default_state: crate::Block::POTATOES.default_state,
-                properties: &[],
+                properties: &[("age", "0")],
             },
             block_entity_modifier: None,
         },

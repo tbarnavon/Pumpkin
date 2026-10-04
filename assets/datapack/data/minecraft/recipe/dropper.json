@@ -2,8 +2,12 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "#": "minecraft:cobblestone",
-    "R": "minecraft:redstone"
+    "#": {
+      "item": "minecraft:cobblestone"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
   },
   "pattern": [
     "###",
@@ -11,6 +15,7 @@
     "#R#"
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:dropper"
   }
 }

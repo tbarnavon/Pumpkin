@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:magenta_candle"
+        "recipe": "minecraft:magenta_candle"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

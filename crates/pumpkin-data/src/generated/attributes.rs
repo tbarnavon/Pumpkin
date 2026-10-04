@@ -18,246 +18,192 @@ impl Hash for Attributes {
     }
 }
 impl Attributes {
-    pub const AIR_DRAG_MODIFIER: Self = Self {
+    pub const GENERIC_ARMOR: Self = Self {
         id: 0,
-        default_value: 1f64,
-        name: "minecraft:air_drag_modifier",
+        default_value: 0f64,
+        name: "minecraft:generic.armor",
     };
-    pub const ARMOR: Self = Self {
+    pub const GENERIC_ARMOR_TOUGHNESS: Self = Self {
         id: 1,
         default_value: 0f64,
-        name: "minecraft:armor",
+        name: "minecraft:generic.armor_toughness",
     };
-    pub const ARMOR_TOUGHNESS: Self = Self {
+    pub const GENERIC_ATTACK_DAMAGE: Self = Self {
         id: 2,
-        default_value: 0f64,
-        name: "minecraft:armor_toughness",
-    };
-    pub const ATTACK_DAMAGE: Self = Self {
-        id: 3,
         default_value: 2f64,
-        name: "minecraft:attack_damage",
+        name: "minecraft:generic.attack_damage",
     };
-    pub const ATTACK_KNOCKBACK: Self = Self {
-        id: 4,
+    pub const GENERIC_ATTACK_KNOCKBACK: Self = Self {
+        id: 3,
         default_value: 0f64,
-        name: "minecraft:attack_knockback",
+        name: "minecraft:generic.attack_knockback",
     };
-    pub const ATTACK_SPEED: Self = Self {
-        id: 5,
+    pub const GENERIC_ATTACK_SPEED: Self = Self {
+        id: 4,
         default_value: 4f64,
-        name: "minecraft:attack_speed",
+        name: "minecraft:generic.attack_speed",
     };
-    pub const BELOW_NAME_DISTANCE: Self = Self {
+    pub const PLAYER_BLOCK_BREAK_SPEED: Self = Self {
+        id: 5,
+        default_value: 1f64,
+        name: "minecraft:player.block_break_speed",
+    };
+    pub const PLAYER_BLOCK_INTERACTION_RANGE: Self = Self {
         id: 6,
-        default_value: 10f64,
-        name: "minecraft:below_name_distance",
+        default_value: 4.5f64,
+        name: "minecraft:player.block_interaction_range",
     };
-    pub const BLOCK_BREAK_SPEED: Self = Self {
+    pub const GENERIC_BURNING_TIME: Self = Self {
         id: 7,
         default_value: 1f64,
-        name: "minecraft:block_break_speed",
+        name: "minecraft:generic.burning_time",
     };
-    pub const BLOCK_INTERACTION_RANGE: Self = Self {
+    pub const GENERIC_EXPLOSION_KNOCKBACK_RESISTANCE: Self = Self {
         id: 8,
-        default_value: 4.5f64,
-        name: "minecraft:block_interaction_range",
-    };
-    pub const BOUNCINESS: Self = Self {
-        id: 9,
         default_value: 0f64,
-        name: "minecraft:bounciness",
+        name: "minecraft:generic.explosion_knockback_resistance",
     };
-    pub const BURNING_TIME: Self = Self {
+    pub const PLAYER_ENTITY_INTERACTION_RANGE: Self = Self {
+        id: 9,
+        default_value: 3f64,
+        name: "minecraft:player.entity_interaction_range",
+    };
+    pub const GENERIC_FALL_DAMAGE_MULTIPLIER: Self = Self {
         id: 10,
         default_value: 1f64,
-        name: "minecraft:burning_time",
+        name: "minecraft:generic.fall_damage_multiplier",
     };
-    pub const CAMERA_DISTANCE: Self = Self {
+    pub const GENERIC_FLYING_SPEED: Self = Self {
         id: 11,
-        default_value: 4f64,
-        name: "minecraft:camera_distance",
-    };
-    pub const EXPLOSION_KNOCKBACK_RESISTANCE: Self = Self {
-        id: 12,
-        default_value: 0f64,
-        name: "minecraft:explosion_knockback_resistance",
-    };
-    pub const ENTITY_INTERACTION_RANGE: Self = Self {
-        id: 13,
-        default_value: 3f64,
-        name: "minecraft:entity_interaction_range",
-    };
-    pub const FALL_DAMAGE_MULTIPLIER: Self = Self {
-        id: 14,
-        default_value: 1f64,
-        name: "minecraft:fall_damage_multiplier",
-    };
-    pub const FLYING_SPEED: Self = Self {
-        id: 15,
         default_value: 0.4f64,
-        name: "minecraft:flying_speed",
+        name: "minecraft:generic.flying_speed",
     };
-    pub const FOLLOW_RANGE: Self = Self {
-        id: 16,
+    pub const GENERIC_FOLLOW_RANGE: Self = Self {
+        id: 12,
         default_value: 32f64,
-        name: "minecraft:follow_range",
+        name: "minecraft:generic.follow_range",
     };
-    pub const FRICTION_MODIFIER: Self = Self {
-        id: 17,
-        default_value: 1f64,
-        name: "minecraft:friction_modifier",
-    };
-    pub const GRAVITY: Self = Self {
-        id: 18,
+    pub const GENERIC_GRAVITY: Self = Self {
+        id: 13,
         default_value: 0.08f64,
-        name: "minecraft:gravity",
+        name: "minecraft:generic.gravity",
     };
-    pub const JUMP_STRENGTH: Self = Self {
-        id: 19,
+    pub const GENERIC_JUMP_STRENGTH: Self = Self {
+        id: 14,
         default_value: 0.41999998688697815f64,
-        name: "minecraft:jump_strength",
+        name: "minecraft:generic.jump_strength",
     };
-    pub const KNOCKBACK_RESISTANCE: Self = Self {
+    pub const GENERIC_KNOCKBACK_RESISTANCE: Self = Self {
+        id: 15,
+        default_value: 0f64,
+        name: "minecraft:generic.knockback_resistance",
+    };
+    pub const GENERIC_LUCK: Self = Self {
+        id: 16,
+        default_value: 0f64,
+        name: "minecraft:generic.luck",
+    };
+    pub const GENERIC_MAX_ABSORPTION: Self = Self {
+        id: 17,
+        default_value: 0f64,
+        name: "minecraft:generic.max_absorption",
+    };
+    pub const GENERIC_MAX_HEALTH: Self = Self {
+        id: 18,
+        default_value: 20f64,
+        name: "minecraft:generic.max_health",
+    };
+    pub const PLAYER_MINING_EFFICIENCY: Self = Self {
+        id: 19,
+        default_value: 0f64,
+        name: "minecraft:player.mining_efficiency",
+    };
+    pub const GENERIC_MOVEMENT_EFFICIENCY: Self = Self {
         id: 20,
         default_value: 0f64,
-        name: "minecraft:knockback_resistance",
+        name: "minecraft:generic.movement_efficiency",
     };
-    pub const LUCK: Self = Self {
+    pub const GENERIC_MOVEMENT_SPEED: Self = Self {
         id: 21,
-        default_value: 0f64,
-        name: "minecraft:luck",
+        default_value: 0.7f64,
+        name: "minecraft:generic.movement_speed",
     };
-    pub const MAX_ABSORPTION: Self = Self {
+    pub const GENERIC_OXYGEN_BONUS: Self = Self {
         id: 22,
         default_value: 0f64,
-        name: "minecraft:max_absorption",
+        name: "minecraft:generic.oxygen_bonus",
     };
-    pub const MAX_HEALTH: Self = Self {
+    pub const GENERIC_SAFE_FALL_DISTANCE: Self = Self {
         id: 23,
-        default_value: 20f64,
-        name: "minecraft:max_health",
-    };
-    pub const MINING_EFFICIENCY: Self = Self {
-        id: 24,
-        default_value: 0f64,
-        name: "minecraft:mining_efficiency",
-    };
-    pub const MOVEMENT_EFFICIENCY: Self = Self {
-        id: 25,
-        default_value: 0f64,
-        name: "minecraft:movement_efficiency",
-    };
-    pub const MOVEMENT_SPEED: Self = Self {
-        id: 26,
-        default_value: 0.7f64,
-        name: "minecraft:movement_speed",
-    };
-    pub const NAME_TAG_DISTANCE: Self = Self {
-        id: 27,
-        default_value: 64f64,
-        name: "minecraft:name_tag_distance",
-    };
-    pub const OXYGEN_BONUS: Self = Self {
-        id: 28,
-        default_value: 0f64,
-        name: "minecraft:oxygen_bonus",
-    };
-    pub const SAFE_FALL_DISTANCE: Self = Self {
-        id: 29,
         default_value: 3f64,
-        name: "minecraft:safe_fall_distance",
+        name: "minecraft:generic.safe_fall_distance",
     };
-    pub const SCALE: Self = Self {
-        id: 30,
+    pub const GENERIC_SCALE: Self = Self {
+        id: 24,
         default_value: 1f64,
-        name: "minecraft:scale",
+        name: "minecraft:generic.scale",
     };
-    pub const SNEAKING_SPEED: Self = Self {
-        id: 31,
+    pub const PLAYER_SNEAKING_SPEED: Self = Self {
+        id: 25,
         default_value: 0.3f64,
-        name: "minecraft:sneaking_speed",
+        name: "minecraft:player.sneaking_speed",
     };
-    pub const SPAWN_REINFORCEMENTS: Self = Self {
-        id: 32,
+    pub const ZOMBIE_SPAWN_REINFORCEMENTS: Self = Self {
+        id: 26,
         default_value: 0f64,
-        name: "minecraft:spawn_reinforcements",
+        name: "minecraft:zombie.spawn_reinforcements",
     };
-    pub const STEP_HEIGHT: Self = Self {
-        id: 33,
+    pub const GENERIC_STEP_HEIGHT: Self = Self {
+        id: 27,
         default_value: 0.6f64,
-        name: "minecraft:step_height",
+        name: "minecraft:generic.step_height",
     };
-    pub const SUBMERGED_MINING_SPEED: Self = Self {
-        id: 34,
+    pub const PLAYER_SUBMERGED_MINING_SPEED: Self = Self {
+        id: 28,
         default_value: 0.2f64,
-        name: "minecraft:submerged_mining_speed",
+        name: "minecraft:player.submerged_mining_speed",
     };
-    pub const SWEEPING_DAMAGE_RATIO: Self = Self {
-        id: 35,
+    pub const PLAYER_SWEEPING_DAMAGE_RATIO: Self = Self {
+        id: 29,
         default_value: 0f64,
-        name: "minecraft:sweeping_damage_ratio",
+        name: "minecraft:player.sweeping_damage_ratio",
     };
-    pub const TEMPT_RANGE: Self = Self {
-        id: 36,
-        default_value: 10f64,
-        name: "minecraft:tempt_range",
-    };
-    pub const WATER_MOVEMENT_EFFICIENCY: Self = Self {
-        id: 37,
+    pub const GENERIC_WATER_MOVEMENT_EFFICIENCY: Self = Self {
+        id: 30,
         default_value: 0f64,
-        name: "minecraft:water_movement_efficiency",
-    };
-    pub const WAYPOINT_TRANSMIT_RANGE: Self = Self {
-        id: 38,
-        default_value: 0f64,
-        name: "minecraft:waypoint_transmit_range",
-    };
-    pub const WAYPOINT_RECEIVE_RANGE: Self = Self {
-        id: 39,
-        default_value: 0f64,
-        name: "minecraft:waypoint_receive_range",
+        name: "minecraft:generic.water_movement_efficiency",
     };
     pub const ALL: &'static [Self] = &[
-        Self::AIR_DRAG_MODIFIER,
-        Self::ARMOR,
-        Self::ARMOR_TOUGHNESS,
-        Self::ATTACK_DAMAGE,
-        Self::ATTACK_KNOCKBACK,
-        Self::ATTACK_SPEED,
-        Self::BELOW_NAME_DISTANCE,
-        Self::BLOCK_BREAK_SPEED,
-        Self::BLOCK_INTERACTION_RANGE,
-        Self::BOUNCINESS,
-        Self::BURNING_TIME,
-        Self::CAMERA_DISTANCE,
-        Self::EXPLOSION_KNOCKBACK_RESISTANCE,
-        Self::ENTITY_INTERACTION_RANGE,
-        Self::FALL_DAMAGE_MULTIPLIER,
-        Self::FLYING_SPEED,
-        Self::FOLLOW_RANGE,
-        Self::FRICTION_MODIFIER,
-        Self::GRAVITY,
-        Self::JUMP_STRENGTH,
-        Self::KNOCKBACK_RESISTANCE,
-        Self::LUCK,
-        Self::MAX_ABSORPTION,
-        Self::MAX_HEALTH,
-        Self::MINING_EFFICIENCY,
-        Self::MOVEMENT_EFFICIENCY,
-        Self::MOVEMENT_SPEED,
-        Self::NAME_TAG_DISTANCE,
-        Self::OXYGEN_BONUS,
-        Self::SAFE_FALL_DISTANCE,
-        Self::SCALE,
-        Self::SNEAKING_SPEED,
-        Self::SPAWN_REINFORCEMENTS,
-        Self::STEP_HEIGHT,
-        Self::SUBMERGED_MINING_SPEED,
-        Self::SWEEPING_DAMAGE_RATIO,
-        Self::TEMPT_RANGE,
-        Self::WATER_MOVEMENT_EFFICIENCY,
-        Self::WAYPOINT_TRANSMIT_RANGE,
-        Self::WAYPOINT_RECEIVE_RANGE,
+        Self::GENERIC_ARMOR,
+        Self::GENERIC_ARMOR_TOUGHNESS,
+        Self::GENERIC_ATTACK_DAMAGE,
+        Self::GENERIC_ATTACK_KNOCKBACK,
+        Self::GENERIC_ATTACK_SPEED,
+        Self::PLAYER_BLOCK_BREAK_SPEED,
+        Self::PLAYER_BLOCK_INTERACTION_RANGE,
+        Self::GENERIC_BURNING_TIME,
+        Self::GENERIC_EXPLOSION_KNOCKBACK_RESISTANCE,
+        Self::PLAYER_ENTITY_INTERACTION_RANGE,
+        Self::GENERIC_FALL_DAMAGE_MULTIPLIER,
+        Self::GENERIC_FLYING_SPEED,
+        Self::GENERIC_FOLLOW_RANGE,
+        Self::GENERIC_GRAVITY,
+        Self::GENERIC_JUMP_STRENGTH,
+        Self::GENERIC_KNOCKBACK_RESISTANCE,
+        Self::GENERIC_LUCK,
+        Self::GENERIC_MAX_ABSORPTION,
+        Self::GENERIC_MAX_HEALTH,
+        Self::PLAYER_MINING_EFFICIENCY,
+        Self::GENERIC_MOVEMENT_EFFICIENCY,
+        Self::GENERIC_MOVEMENT_SPEED,
+        Self::GENERIC_OXYGEN_BONUS,
+        Self::GENERIC_SAFE_FALL_DISTANCE,
+        Self::GENERIC_SCALE,
+        Self::PLAYER_SNEAKING_SPEED,
+        Self::ZOMBIE_SPAWN_REINFORCEMENTS,
+        Self::GENERIC_STEP_HEIGHT,
+        Self::PLAYER_SUBMERGED_MINING_SPEED,
+        Self::PLAYER_SWEEPING_DAMAGE_RATIO,
+        Self::GENERIC_WATER_MOVEMENT_EFFICIENCY,
     ];
 }

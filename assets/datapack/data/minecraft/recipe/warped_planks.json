@@ -3,7 +3,9 @@
   "category": "building",
   "group": "planks",
   "ingredients": [
-    "#minecraft:warped_stems"
+    {
+      "tag": "minecraft:warped_stems"
+    }
   ],
   "result": {
     "count": 4,

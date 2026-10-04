@@ -7,7 +7,6 @@
           "minecraft:absorption": {},
           "minecraft:bad_omen": {},
           "minecraft:blindness": {},
-          "minecraft:breath_of_the_nautilus": {},
           "minecraft:conduit_power": {},
           "minecraft:darkness": {},
           "minecraft:dolphins_grace": {},
@@ -50,6 +49,7 @@
     "frame": "challenge",
     "hidden": true,
     "icon": {
+      "count": 1,
       "id": "minecraft:bucket"
     },
     "title": {

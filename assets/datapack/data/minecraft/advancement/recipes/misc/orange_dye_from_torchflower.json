@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:orange_dye_from_torchflower"
+        "recipe": "minecraft:orange_dye_from_torchflower"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

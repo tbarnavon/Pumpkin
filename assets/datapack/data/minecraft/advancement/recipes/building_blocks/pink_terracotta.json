@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:pink_terracotta"
+        "recipe": "minecraft:pink_terracotta"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:lime_dye_from_smelting"
+        "recipe": "minecraft:lime_dye_from_smelting"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

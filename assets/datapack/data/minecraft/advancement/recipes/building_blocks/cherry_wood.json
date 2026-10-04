@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:cherry_wood"
+        "recipe": "minecraft:cherry_wood"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

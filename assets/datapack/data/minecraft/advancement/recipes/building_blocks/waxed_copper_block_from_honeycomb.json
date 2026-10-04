@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:waxed_copper_block_from_honeycomb"
+        "recipe": "minecraft:waxed_copper_block_from_honeycomb"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

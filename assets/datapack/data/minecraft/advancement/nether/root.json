@@ -9,11 +9,12 @@
   },
   "display": {
     "announce_to_chat": false,
-    "background": "minecraft:gui/advancements/backgrounds/nether",
+    "background": "minecraft:textures/gui/advancements/backgrounds/nether.png",
     "description": {
       "translate": "advancements.nether.root.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:red_nether_bricks"
     },
     "show_toast": false,

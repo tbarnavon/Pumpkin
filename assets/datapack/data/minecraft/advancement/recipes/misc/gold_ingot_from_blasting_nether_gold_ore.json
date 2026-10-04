@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:gold_ingot_from_blasting_nether_gold_ore"
+        "recipe": "minecraft:gold_ingot_from_blasting_nether_gold_ore"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

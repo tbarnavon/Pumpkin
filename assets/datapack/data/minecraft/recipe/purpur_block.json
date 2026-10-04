@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "F": "minecraft:popped_chorus_fruit"
+    "F": {
+      "item": "minecraft:popped_chorus_fruit"
+    }
   },
   "pattern": [
     "FF",

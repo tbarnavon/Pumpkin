@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:scaffolding"
+        "recipe": "minecraft:scaffolding"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

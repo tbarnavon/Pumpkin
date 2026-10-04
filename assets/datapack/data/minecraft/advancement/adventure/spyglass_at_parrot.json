@@ -6,17 +6,20 @@
         "item": {
           "items": "minecraft:spyglass"
         },
-        "player": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:type_specific/player": {
-              "looking_at": {
-                "minecraft:entity_type": "minecraft:parrot"
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type_specific": {
+                "type": "minecraft:player",
+                "looking_at": {
+                  "type": "minecraft:parrot"
+                }
               }
             }
           }
-        }
+        ]
       },
       "trigger": "minecraft:using_item"
     }
@@ -26,6 +29,7 @@
       "translate": "advancements.adventure.spyglass_at_parrot.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:spyglass"
     },
     "title": {

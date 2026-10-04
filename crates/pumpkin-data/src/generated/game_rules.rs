@@ -3,62 +3,54 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum GameRule {
-    AdvanceTime,
-    AdvanceWeather,
-    AllowEnteringNetherUsingPortals,
-    BlockDrops,
+    AnnounceAdvancements,
     BlockExplosionDropDecay,
     CommandBlockOutput,
-    CommandBlocksWork,
+    CommandModificationBlockLimit,
+    DisableElytraMovementCheck,
+    DisableRaids,
+    DoDaylightCycle,
+    DoEntityDrops,
+    DoFireTick,
+    DoImmediateRespawn,
+    DoInsomnia,
+    DoLimitedCrafting,
+    DoMobLoot,
+    DoMobSpawning,
+    DoPatrolSpawning,
+    DoTileDrops,
+    DoTraderSpawning,
+    DoVinesSpread,
+    DoWardenSpawning,
+    DoWeatherCycle,
     DrowningDamage,
-    ElytraMovementCheck,
     EnderPearlsVanishOnDeath,
-    EntityDrops,
     FallDamage,
     FireDamage,
-    FireSpreadRadiusAroundPlayer,
     ForgiveDeadPlayers,
     FreezeDamage,
     GlobalSoundEvents,
-    ImmediateRespawn,
     KeepInventory,
     LavaSourceConversion,
-    LimitedCrafting,
-    LocatorBar,
     LogAdminCommands,
-    MaxBlockModifications,
-    MaxCommandForks,
-    MaxCommandSequenceLength,
+    MaxCommandChainLength,
+    MaxCommandForkCount,
     MaxEntityCramming,
-    MaxMinecartSpeed,
-    MaxSnowAccumulationHeight,
-    MobDrops,
     MobExplosionDropDecay,
     MobGriefing,
-    NaturalHealthRegeneration,
-    PlayerMovementCheck,
+    NaturalRegeneration,
     PlayersNetherPortalCreativeDelay,
     PlayersNetherPortalDefaultDelay,
     PlayersSleepingPercentage,
     ProjectilesCanBreakBlocks,
-    Pvp,
-    Raids,
     RandomTickSpeed,
     ReducedDebugInfo,
-    RespawnRadius,
     SendCommandFeedback,
-    ShowAdvancementMessages,
     ShowDeathMessages,
-    SpawnMobs,
-    SpawnMonsters,
-    SpawnPatrols,
-    SpawnPhantoms,
-    SpawnWanderingTraders,
-    SpawnWardens,
-    SpawnerBlocksWork,
+    SnowAccumulationHeight,
+    SpawnChunkRadius,
+    SpawnRadius,
     SpectatorsGenerateChunks,
-    SpreadVines,
-    TntExplodes,
     TntExplosionDropDecay,
     UniversalAnger,
     WaterSourceConversion,
@@ -66,62 +58,54 @@ pub enum GameRule {
 impl GameRule {
     pub const fn all() -> &'static [Self] {
         &[
-            Self::AdvanceTime,
-            Self::AdvanceWeather,
-            Self::AllowEnteringNetherUsingPortals,
-            Self::BlockDrops,
+            Self::AnnounceAdvancements,
             Self::BlockExplosionDropDecay,
             Self::CommandBlockOutput,
-            Self::CommandBlocksWork,
+            Self::CommandModificationBlockLimit,
+            Self::DisableElytraMovementCheck,
+            Self::DisableRaids,
+            Self::DoDaylightCycle,
+            Self::DoEntityDrops,
+            Self::DoFireTick,
+            Self::DoImmediateRespawn,
+            Self::DoInsomnia,
+            Self::DoLimitedCrafting,
+            Self::DoMobLoot,
+            Self::DoMobSpawning,
+            Self::DoPatrolSpawning,
+            Self::DoTileDrops,
+            Self::DoTraderSpawning,
+            Self::DoVinesSpread,
+            Self::DoWardenSpawning,
+            Self::DoWeatherCycle,
             Self::DrowningDamage,
-            Self::ElytraMovementCheck,
             Self::EnderPearlsVanishOnDeath,
-            Self::EntityDrops,
             Self::FallDamage,
             Self::FireDamage,
-            Self::FireSpreadRadiusAroundPlayer,
             Self::ForgiveDeadPlayers,
             Self::FreezeDamage,
             Self::GlobalSoundEvents,
-            Self::ImmediateRespawn,
             Self::KeepInventory,
             Self::LavaSourceConversion,
-            Self::LimitedCrafting,
-            Self::LocatorBar,
             Self::LogAdminCommands,
-            Self::MaxBlockModifications,
-            Self::MaxCommandForks,
-            Self::MaxCommandSequenceLength,
+            Self::MaxCommandChainLength,
+            Self::MaxCommandForkCount,
             Self::MaxEntityCramming,
-            Self::MaxMinecartSpeed,
-            Self::MaxSnowAccumulationHeight,
-            Self::MobDrops,
             Self::MobExplosionDropDecay,
             Self::MobGriefing,
-            Self::NaturalHealthRegeneration,
-            Self::PlayerMovementCheck,
+            Self::NaturalRegeneration,
             Self::PlayersNetherPortalCreativeDelay,
             Self::PlayersNetherPortalDefaultDelay,
             Self::PlayersSleepingPercentage,
             Self::ProjectilesCanBreakBlocks,
-            Self::Pvp,
-            Self::Raids,
             Self::RandomTickSpeed,
             Self::ReducedDebugInfo,
-            Self::RespawnRadius,
             Self::SendCommandFeedback,
-            Self::ShowAdvancementMessages,
             Self::ShowDeathMessages,
-            Self::SpawnMobs,
-            Self::SpawnMonsters,
-            Self::SpawnPatrols,
-            Self::SpawnPhantoms,
-            Self::SpawnWanderingTraders,
-            Self::SpawnWardens,
-            Self::SpawnerBlocksWork,
+            Self::SnowAccumulationHeight,
+            Self::SpawnChunkRadius,
+            Self::SpawnRadius,
             Self::SpectatorsGenerateChunks,
-            Self::SpreadVines,
-            Self::TntExplodes,
             Self::TntExplosionDropDecay,
             Self::UniversalAnger,
             Self::WaterSourceConversion,
@@ -131,309 +115,263 @@ impl GameRule {
 impl fmt::Display for GameRule {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Self::AdvanceTime => write!(f, "advance_time"),
-            Self::AdvanceWeather => write!(f, "advance_weather"),
-            Self::AllowEnteringNetherUsingPortals => {
-                write!(f, "allow_entering_nether_using_portals")
-            }
-            Self::BlockDrops => write!(f, "block_drops"),
-            Self::BlockExplosionDropDecay => write!(f, "block_explosion_drop_decay"),
-            Self::CommandBlockOutput => write!(f, "command_block_output"),
-            Self::CommandBlocksWork => write!(f, "command_blocks_work"),
-            Self::DrowningDamage => write!(f, "drowning_damage"),
-            Self::ElytraMovementCheck => write!(f, "elytra_movement_check"),
-            Self::EnderPearlsVanishOnDeath => write!(f, "ender_pearls_vanish_on_death"),
-            Self::EntityDrops => write!(f, "entity_drops"),
-            Self::FallDamage => write!(f, "fall_damage"),
-            Self::FireDamage => write!(f, "fire_damage"),
-            Self::FireSpreadRadiusAroundPlayer => write!(f, "fire_spread_radius_around_player"),
-            Self::ForgiveDeadPlayers => write!(f, "forgive_dead_players"),
-            Self::FreezeDamage => write!(f, "freeze_damage"),
-            Self::GlobalSoundEvents => write!(f, "global_sound_events"),
-            Self::ImmediateRespawn => write!(f, "immediate_respawn"),
-            Self::KeepInventory => write!(f, "keep_inventory"),
-            Self::LavaSourceConversion => write!(f, "lava_source_conversion"),
-            Self::LimitedCrafting => write!(f, "limited_crafting"),
-            Self::LocatorBar => write!(f, "locator_bar"),
-            Self::LogAdminCommands => write!(f, "log_admin_commands"),
-            Self::MaxBlockModifications => write!(f, "max_block_modifications"),
-            Self::MaxCommandForks => write!(f, "max_command_forks"),
-            Self::MaxCommandSequenceLength => write!(f, "max_command_sequence_length"),
-            Self::MaxEntityCramming => write!(f, "max_entity_cramming"),
-            Self::MaxMinecartSpeed => write!(f, "max_minecart_speed"),
-            Self::MaxSnowAccumulationHeight => write!(f, "max_snow_accumulation_height"),
-            Self::MobDrops => write!(f, "mob_drops"),
-            Self::MobExplosionDropDecay => write!(f, "mob_explosion_drop_decay"),
-            Self::MobGriefing => write!(f, "mob_griefing"),
-            Self::NaturalHealthRegeneration => write!(f, "natural_health_regeneration"),
-            Self::PlayerMovementCheck => write!(f, "player_movement_check"),
-            Self::PlayersNetherPortalCreativeDelay => {
-                write!(f, "players_nether_portal_creative_delay")
-            }
-            Self::PlayersNetherPortalDefaultDelay => {
-                write!(f, "players_nether_portal_default_delay")
-            }
-            Self::PlayersSleepingPercentage => write!(f, "players_sleeping_percentage"),
-            Self::ProjectilesCanBreakBlocks => write!(f, "projectiles_can_break_blocks"),
-            Self::Pvp => write!(f, "pvp"),
-            Self::Raids => write!(f, "raids"),
-            Self::RandomTickSpeed => write!(f, "random_tick_speed"),
-            Self::ReducedDebugInfo => write!(f, "reduced_debug_info"),
-            Self::RespawnRadius => write!(f, "respawn_radius"),
-            Self::SendCommandFeedback => write!(f, "send_command_feedback"),
-            Self::ShowAdvancementMessages => write!(f, "show_advancement_messages"),
-            Self::ShowDeathMessages => write!(f, "show_death_messages"),
-            Self::SpawnMobs => write!(f, "spawn_mobs"),
-            Self::SpawnMonsters => write!(f, "spawn_monsters"),
-            Self::SpawnPatrols => write!(f, "spawn_patrols"),
-            Self::SpawnPhantoms => write!(f, "spawn_phantoms"),
-            Self::SpawnWanderingTraders => write!(f, "spawn_wandering_traders"),
-            Self::SpawnWardens => write!(f, "spawn_wardens"),
-            Self::SpawnerBlocksWork => write!(f, "spawner_blocks_work"),
-            Self::SpectatorsGenerateChunks => write!(f, "spectators_generate_chunks"),
-            Self::SpreadVines => write!(f, "spread_vines"),
-            Self::TntExplodes => write!(f, "tnt_explodes"),
-            Self::TntExplosionDropDecay => write!(f, "tnt_explosion_drop_decay"),
-            Self::UniversalAnger => write!(f, "universal_anger"),
-            Self::WaterSourceConversion => write!(f, "water_source_conversion"),
+            Self::AnnounceAdvancements => write!(f, "announceAdvancements"),
+            Self::BlockExplosionDropDecay => write!(f, "blockExplosionDropDecay"),
+            Self::CommandBlockOutput => write!(f, "commandBlockOutput"),
+            Self::CommandModificationBlockLimit => write!(f, "commandModificationBlockLimit"),
+            Self::DisableElytraMovementCheck => write!(f, "disableElytraMovementCheck"),
+            Self::DisableRaids => write!(f, "disableRaids"),
+            Self::DoDaylightCycle => write!(f, "doDaylightCycle"),
+            Self::DoEntityDrops => write!(f, "doEntityDrops"),
+            Self::DoFireTick => write!(f, "doFireTick"),
+            Self::DoImmediateRespawn => write!(f, "doImmediateRespawn"),
+            Self::DoInsomnia => write!(f, "doInsomnia"),
+            Self::DoLimitedCrafting => write!(f, "doLimitedCrafting"),
+            Self::DoMobLoot => write!(f, "doMobLoot"),
+            Self::DoMobSpawning => write!(f, "doMobSpawning"),
+            Self::DoPatrolSpawning => write!(f, "doPatrolSpawning"),
+            Self::DoTileDrops => write!(f, "doTileDrops"),
+            Self::DoTraderSpawning => write!(f, "doTraderSpawning"),
+            Self::DoVinesSpread => write!(f, "doVinesSpread"),
+            Self::DoWardenSpawning => write!(f, "doWardenSpawning"),
+            Self::DoWeatherCycle => write!(f, "doWeatherCycle"),
+            Self::DrowningDamage => write!(f, "drowningDamage"),
+            Self::EnderPearlsVanishOnDeath => write!(f, "enderPearlsVanishOnDeath"),
+            Self::FallDamage => write!(f, "fallDamage"),
+            Self::FireDamage => write!(f, "fireDamage"),
+            Self::ForgiveDeadPlayers => write!(f, "forgiveDeadPlayers"),
+            Self::FreezeDamage => write!(f, "freezeDamage"),
+            Self::GlobalSoundEvents => write!(f, "globalSoundEvents"),
+            Self::KeepInventory => write!(f, "keepInventory"),
+            Self::LavaSourceConversion => write!(f, "lavaSourceConversion"),
+            Self::LogAdminCommands => write!(f, "logAdminCommands"),
+            Self::MaxCommandChainLength => write!(f, "maxCommandChainLength"),
+            Self::MaxCommandForkCount => write!(f, "maxCommandForkCount"),
+            Self::MaxEntityCramming => write!(f, "maxEntityCramming"),
+            Self::MobExplosionDropDecay => write!(f, "mobExplosionDropDecay"),
+            Self::MobGriefing => write!(f, "mobGriefing"),
+            Self::NaturalRegeneration => write!(f, "naturalRegeneration"),
+            Self::PlayersNetherPortalCreativeDelay => write!(f, "playersNetherPortalCreativeDelay"),
+            Self::PlayersNetherPortalDefaultDelay => write!(f, "playersNetherPortalDefaultDelay"),
+            Self::PlayersSleepingPercentage => write!(f, "playersSleepingPercentage"),
+            Self::ProjectilesCanBreakBlocks => write!(f, "projectilesCanBreakBlocks"),
+            Self::RandomTickSpeed => write!(f, "randomTickSpeed"),
+            Self::ReducedDebugInfo => write!(f, "reducedDebugInfo"),
+            Self::SendCommandFeedback => write!(f, "sendCommandFeedback"),
+            Self::ShowDeathMessages => write!(f, "showDeathMessages"),
+            Self::SnowAccumulationHeight => write!(f, "snowAccumulationHeight"),
+            Self::SpawnChunkRadius => write!(f, "spawnChunkRadius"),
+            Self::SpawnRadius => write!(f, "spawnRadius"),
+            Self::SpectatorsGenerateChunks => write!(f, "spectatorsGenerateChunks"),
+            Self::TntExplosionDropDecay => write!(f, "tntExplosionDropDecay"),
+            Self::UniversalAnger => write!(f, "universalAnger"),
+            Self::WaterSourceConversion => write!(f, "waterSourceConversion"),
         }
     }
 }
 #[derive(Serialize, Deserialize, PartialEq, Eq, Clone, Debug)]
 pub struct GameRuleRegistry {
-    #[serde(rename = "advance_time")]
-    #[serde(default = "default_advance_time")]
+    #[serde(rename = "announceAdvancements")]
+    #[serde(default = "default_announce_advancements")]
     #[serde(with = "as_string")]
-    pub advance_time: bool,
-    #[serde(rename = "advance_weather")]
-    #[serde(default = "default_advance_weather")]
-    #[serde(with = "as_string")]
-    pub advance_weather: bool,
-    #[serde(rename = "allow_entering_nether_using_portals")]
-    #[serde(default = "default_allow_entering_nether_using_portals")]
-    #[serde(with = "as_string")]
-    pub allow_entering_nether_using_portals: bool,
-    #[serde(rename = "block_drops")]
-    #[serde(default = "default_block_drops")]
-    #[serde(with = "as_string")]
-    pub block_drops: bool,
-    #[serde(rename = "block_explosion_drop_decay")]
+    pub announce_advancements: bool,
+    #[serde(rename = "blockExplosionDropDecay")]
     #[serde(default = "default_block_explosion_drop_decay")]
     #[serde(with = "as_string")]
     pub block_explosion_drop_decay: bool,
-    #[serde(rename = "command_block_output")]
+    #[serde(rename = "commandBlockOutput")]
     #[serde(default = "default_command_block_output")]
     #[serde(with = "as_string")]
     pub command_block_output: bool,
-    #[serde(rename = "command_blocks_work")]
-    #[serde(default = "default_command_blocks_work")]
+    #[serde(rename = "commandModificationBlockLimit")]
+    #[serde(default = "default_command_modification_block_limit")]
     #[serde(with = "as_string")]
-    pub command_blocks_work: bool,
-    #[serde(rename = "drowning_damage")]
+    pub command_modification_block_limit: i64,
+    #[serde(rename = "disableElytraMovementCheck")]
+    #[serde(default = "default_disable_elytra_movement_check")]
+    #[serde(with = "as_string")]
+    pub disable_elytra_movement_check: bool,
+    #[serde(rename = "disableRaids")]
+    #[serde(default = "default_disable_raids")]
+    #[serde(with = "as_string")]
+    pub disable_raids: bool,
+    #[serde(rename = "doDaylightCycle")]
+    #[serde(default = "default_do_daylight_cycle")]
+    #[serde(with = "as_string")]
+    pub do_daylight_cycle: bool,
+    #[serde(rename = "doEntityDrops")]
+    #[serde(default = "default_do_entity_drops")]
+    #[serde(with = "as_string")]
+    pub do_entity_drops: bool,
+    #[serde(rename = "doFireTick")]
+    #[serde(default = "default_do_fire_tick")]
+    #[serde(with = "as_string")]
+    pub do_fire_tick: bool,
+    #[serde(rename = "doImmediateRespawn")]
+    #[serde(default = "default_do_immediate_respawn")]
+    #[serde(with = "as_string")]
+    pub do_immediate_respawn: bool,
+    #[serde(rename = "doInsomnia")]
+    #[serde(default = "default_do_insomnia")]
+    #[serde(with = "as_string")]
+    pub do_insomnia: bool,
+    #[serde(rename = "doLimitedCrafting")]
+    #[serde(default = "default_do_limited_crafting")]
+    #[serde(with = "as_string")]
+    pub do_limited_crafting: bool,
+    #[serde(rename = "doMobLoot")]
+    #[serde(default = "default_do_mob_loot")]
+    #[serde(with = "as_string")]
+    pub do_mob_loot: bool,
+    #[serde(rename = "doMobSpawning")]
+    #[serde(default = "default_do_mob_spawning")]
+    #[serde(with = "as_string")]
+    pub do_mob_spawning: bool,
+    #[serde(rename = "doPatrolSpawning")]
+    #[serde(default = "default_do_patrol_spawning")]
+    #[serde(with = "as_string")]
+    pub do_patrol_spawning: bool,
+    #[serde(rename = "doTileDrops")]
+    #[serde(default = "default_do_tile_drops")]
+    #[serde(with = "as_string")]
+    pub do_tile_drops: bool,
+    #[serde(rename = "doTraderSpawning")]
+    #[serde(default = "default_do_trader_spawning")]
+    #[serde(with = "as_string")]
+    pub do_trader_spawning: bool,
+    #[serde(rename = "doVinesSpread")]
+    #[serde(default = "default_do_vines_spread")]
+    #[serde(with = "as_string")]
+    pub do_vines_spread: bool,
+    #[serde(rename = "doWardenSpawning")]
+    #[serde(default = "default_do_warden_spawning")]
+    #[serde(with = "as_string")]
+    pub do_warden_spawning: bool,
+    #[serde(rename = "doWeatherCycle")]
+    #[serde(default = "default_do_weather_cycle")]
+    #[serde(with = "as_string")]
+    pub do_weather_cycle: bool,
+    #[serde(rename = "drowningDamage")]
     #[serde(default = "default_drowning_damage")]
     #[serde(with = "as_string")]
     pub drowning_damage: bool,
-    #[serde(rename = "elytra_movement_check")]
-    #[serde(default = "default_elytra_movement_check")]
-    #[serde(with = "as_string")]
-    pub elytra_movement_check: bool,
-    #[serde(rename = "ender_pearls_vanish_on_death")]
+    #[serde(rename = "enderPearlsVanishOnDeath")]
     #[serde(default = "default_ender_pearls_vanish_on_death")]
     #[serde(with = "as_string")]
     pub ender_pearls_vanish_on_death: bool,
-    #[serde(rename = "entity_drops")]
-    #[serde(default = "default_entity_drops")]
-    #[serde(with = "as_string")]
-    pub entity_drops: bool,
-    #[serde(rename = "fall_damage")]
+    #[serde(rename = "fallDamage")]
     #[serde(default = "default_fall_damage")]
     #[serde(with = "as_string")]
     pub fall_damage: bool,
-    #[serde(rename = "fire_damage")]
+    #[serde(rename = "fireDamage")]
     #[serde(default = "default_fire_damage")]
     #[serde(with = "as_string")]
     pub fire_damage: bool,
-    #[serde(rename = "fire_spread_radius_around_player")]
-    #[serde(default = "default_fire_spread_radius_around_player")]
-    #[serde(with = "as_string")]
-    pub fire_spread_radius_around_player: i64,
-    #[serde(rename = "forgive_dead_players")]
+    #[serde(rename = "forgiveDeadPlayers")]
     #[serde(default = "default_forgive_dead_players")]
     #[serde(with = "as_string")]
     pub forgive_dead_players: bool,
-    #[serde(rename = "freeze_damage")]
+    #[serde(rename = "freezeDamage")]
     #[serde(default = "default_freeze_damage")]
     #[serde(with = "as_string")]
     pub freeze_damage: bool,
-    #[serde(rename = "global_sound_events")]
+    #[serde(rename = "globalSoundEvents")]
     #[serde(default = "default_global_sound_events")]
     #[serde(with = "as_string")]
     pub global_sound_events: bool,
-    #[serde(rename = "immediate_respawn")]
-    #[serde(default = "default_immediate_respawn")]
-    #[serde(with = "as_string")]
-    pub immediate_respawn: bool,
-    #[serde(rename = "keep_inventory")]
+    #[serde(rename = "keepInventory")]
     #[serde(default = "default_keep_inventory")]
     #[serde(with = "as_string")]
     pub keep_inventory: bool,
-    #[serde(rename = "lava_source_conversion")]
+    #[serde(rename = "lavaSourceConversion")]
     #[serde(default = "default_lava_source_conversion")]
     #[serde(with = "as_string")]
     pub lava_source_conversion: bool,
-    #[serde(rename = "limited_crafting")]
-    #[serde(default = "default_limited_crafting")]
-    #[serde(with = "as_string")]
-    pub limited_crafting: bool,
-    #[serde(rename = "locator_bar")]
-    #[serde(default = "default_locator_bar")]
-    #[serde(with = "as_string")]
-    pub locator_bar: bool,
-    #[serde(rename = "log_admin_commands")]
+    #[serde(rename = "logAdminCommands")]
     #[serde(default = "default_log_admin_commands")]
     #[serde(with = "as_string")]
     pub log_admin_commands: bool,
-    #[serde(rename = "max_block_modifications")]
-    #[serde(default = "default_max_block_modifications")]
+    #[serde(rename = "maxCommandChainLength")]
+    #[serde(default = "default_max_command_chain_length")]
     #[serde(with = "as_string")]
-    pub max_block_modifications: i64,
-    #[serde(rename = "max_command_forks")]
-    #[serde(default = "default_max_command_forks")]
+    pub max_command_chain_length: i64,
+    #[serde(rename = "maxCommandForkCount")]
+    #[serde(default = "default_max_command_fork_count")]
     #[serde(with = "as_string")]
-    pub max_command_forks: i64,
-    #[serde(rename = "max_command_sequence_length")]
-    #[serde(default = "default_max_command_sequence_length")]
-    #[serde(with = "as_string")]
-    pub max_command_sequence_length: i64,
-    #[serde(rename = "max_entity_cramming")]
+    pub max_command_fork_count: i64,
+    #[serde(rename = "maxEntityCramming")]
     #[serde(default = "default_max_entity_cramming")]
     #[serde(with = "as_string")]
     pub max_entity_cramming: i64,
-    #[serde(rename = "max_minecart_speed")]
-    #[serde(default = "default_max_minecart_speed")]
-    #[serde(with = "as_string")]
-    pub max_minecart_speed: i64,
-    #[serde(rename = "max_snow_accumulation_height")]
-    #[serde(default = "default_max_snow_accumulation_height")]
-    #[serde(with = "as_string")]
-    pub max_snow_accumulation_height: i64,
-    #[serde(rename = "mob_drops")]
-    #[serde(default = "default_mob_drops")]
-    #[serde(with = "as_string")]
-    pub mob_drops: bool,
-    #[serde(rename = "mob_explosion_drop_decay")]
+    #[serde(rename = "mobExplosionDropDecay")]
     #[serde(default = "default_mob_explosion_drop_decay")]
     #[serde(with = "as_string")]
     pub mob_explosion_drop_decay: bool,
-    #[serde(rename = "mob_griefing")]
+    #[serde(rename = "mobGriefing")]
     #[serde(default = "default_mob_griefing")]
     #[serde(with = "as_string")]
     pub mob_griefing: bool,
-    #[serde(rename = "natural_health_regeneration")]
-    #[serde(default = "default_natural_health_regeneration")]
+    #[serde(rename = "naturalRegeneration")]
+    #[serde(default = "default_natural_regeneration")]
     #[serde(with = "as_string")]
-    pub natural_health_regeneration: bool,
-    #[serde(rename = "player_movement_check")]
-    #[serde(default = "default_player_movement_check")]
-    #[serde(with = "as_string")]
-    pub player_movement_check: bool,
-    #[serde(rename = "players_nether_portal_creative_delay")]
+    pub natural_regeneration: bool,
+    #[serde(rename = "playersNetherPortalCreativeDelay")]
     #[serde(default = "default_players_nether_portal_creative_delay")]
     #[serde(with = "as_string")]
     pub players_nether_portal_creative_delay: i64,
-    #[serde(rename = "players_nether_portal_default_delay")]
+    #[serde(rename = "playersNetherPortalDefaultDelay")]
     #[serde(default = "default_players_nether_portal_default_delay")]
     #[serde(with = "as_string")]
     pub players_nether_portal_default_delay: i64,
-    #[serde(rename = "players_sleeping_percentage")]
+    #[serde(rename = "playersSleepingPercentage")]
     #[serde(default = "default_players_sleeping_percentage")]
     #[serde(with = "as_string")]
     pub players_sleeping_percentage: i64,
-    #[serde(rename = "projectiles_can_break_blocks")]
+    #[serde(rename = "projectilesCanBreakBlocks")]
     #[serde(default = "default_projectiles_can_break_blocks")]
     #[serde(with = "as_string")]
     pub projectiles_can_break_blocks: bool,
-    #[serde(rename = "pvp")]
-    #[serde(default = "default_pvp")]
-    #[serde(with = "as_string")]
-    pub pvp: bool,
-    #[serde(rename = "raids")]
-    #[serde(default = "default_raids")]
-    #[serde(with = "as_string")]
-    pub raids: bool,
-    #[serde(rename = "random_tick_speed")]
+    #[serde(rename = "randomTickSpeed")]
     #[serde(default = "default_random_tick_speed")]
     #[serde(with = "as_string")]
     pub random_tick_speed: i64,
-    #[serde(rename = "reduced_debug_info")]
+    #[serde(rename = "reducedDebugInfo")]
     #[serde(default = "default_reduced_debug_info")]
     #[serde(with = "as_string")]
     pub reduced_debug_info: bool,
-    #[serde(rename = "respawn_radius")]
-    #[serde(default = "default_respawn_radius")]
-    #[serde(with = "as_string")]
-    pub respawn_radius: i64,
-    #[serde(rename = "send_command_feedback")]
+    #[serde(rename = "sendCommandFeedback")]
     #[serde(default = "default_send_command_feedback")]
     #[serde(with = "as_string")]
     pub send_command_feedback: bool,
-    #[serde(rename = "show_advancement_messages")]
-    #[serde(default = "default_show_advancement_messages")]
-    #[serde(with = "as_string")]
-    pub show_advancement_messages: bool,
-    #[serde(rename = "show_death_messages")]
+    #[serde(rename = "showDeathMessages")]
     #[serde(default = "default_show_death_messages")]
     #[serde(with = "as_string")]
     pub show_death_messages: bool,
-    #[serde(rename = "spawn_mobs")]
-    #[serde(default = "default_spawn_mobs")]
+    #[serde(rename = "snowAccumulationHeight")]
+    #[serde(default = "default_snow_accumulation_height")]
     #[serde(with = "as_string")]
-    pub spawn_mobs: bool,
-    #[serde(rename = "spawn_monsters")]
-    #[serde(default = "default_spawn_monsters")]
+    pub snow_accumulation_height: i64,
+    #[serde(rename = "spawnChunkRadius")]
+    #[serde(default = "default_spawn_chunk_radius")]
     #[serde(with = "as_string")]
-    pub spawn_monsters: bool,
-    #[serde(rename = "spawn_patrols")]
-    #[serde(default = "default_spawn_patrols")]
+    pub spawn_chunk_radius: i64,
+    #[serde(rename = "spawnRadius")]
+    #[serde(default = "default_spawn_radius")]
     #[serde(with = "as_string")]
-    pub spawn_patrols: bool,
-    #[serde(rename = "spawn_phantoms")]
-    #[serde(default = "default_spawn_phantoms")]
-    #[serde(with = "as_string")]
-    pub spawn_phantoms: bool,
-    #[serde(rename = "spawn_wandering_traders")]
-    #[serde(default = "default_spawn_wandering_traders")]
-    #[serde(with = "as_string")]
-    pub spawn_wandering_traders: bool,
-    #[serde(rename = "spawn_wardens")]
-    #[serde(default = "default_spawn_wardens")]
-    #[serde(with = "as_string")]
-    pub spawn_wardens: bool,
-    #[serde(rename = "spawner_blocks_work")]
-    #[serde(default = "default_spawner_blocks_work")]
-    #[serde(with = "as_string")]
-    pub spawner_blocks_work: bool,
-    #[serde(rename = "spectators_generate_chunks")]
+    pub spawn_radius: i64,
+    #[serde(rename = "spectatorsGenerateChunks")]
     #[serde(default = "default_spectators_generate_chunks")]
     #[serde(with = "as_string")]
     pub spectators_generate_chunks: bool,
-    #[serde(rename = "spread_vines")]
-    #[serde(default = "default_spread_vines")]
-    #[serde(with = "as_string")]
-    pub spread_vines: bool,
-    #[serde(rename = "tnt_explodes")]
-    #[serde(default = "default_tnt_explodes")]
-    #[serde(with = "as_string")]
-    pub tnt_explodes: bool,
-    #[serde(rename = "tnt_explosion_drop_decay")]
+    #[serde(rename = "tntExplosionDropDecay")]
     #[serde(default = "default_tnt_explosion_drop_decay")]
     #[serde(with = "as_string")]
     pub tnt_explosion_drop_decay: bool,
-    #[serde(rename = "universal_anger")]
+    #[serde(rename = "universalAnger")]
     #[serde(default = "default_universal_anger")]
     #[serde(with = "as_string")]
     pub universal_anger: bool,
-    #[serde(rename = "water_source_conversion")]
+    #[serde(rename = "waterSourceConversion")]
     #[serde(default = "default_water_source_conversion")]
     #[serde(with = "as_string")]
     pub water_source_conversion: bool,
@@ -453,54 +391,50 @@ impl<I: fmt::Display, B: fmt::Display> fmt::Display for GameRuleValue<I, B> {
 impl GameRuleRegistry {
     pub fn get(&self, rule: &GameRule) -> GameRuleValue<&i64, &bool> {
         match rule {
-            GameRule::AdvanceTime => GameRuleValue::Bool(&self.advance_time),
-            GameRule::AdvanceWeather => GameRuleValue::Bool(&self.advance_weather),
-            GameRule::AllowEnteringNetherUsingPortals => {
-                GameRuleValue::Bool(&self.allow_entering_nether_using_portals)
-            }
-            GameRule::BlockDrops => GameRuleValue::Bool(&self.block_drops),
+            GameRule::AnnounceAdvancements => GameRuleValue::Bool(&self.announce_advancements),
             GameRule::BlockExplosionDropDecay => {
                 GameRuleValue::Bool(&self.block_explosion_drop_decay)
             }
             GameRule::CommandBlockOutput => GameRuleValue::Bool(&self.command_block_output),
-            GameRule::CommandBlocksWork => GameRuleValue::Bool(&self.command_blocks_work),
+            GameRule::CommandModificationBlockLimit => {
+                GameRuleValue::Int(&self.command_modification_block_limit)
+            }
+            GameRule::DisableElytraMovementCheck => {
+                GameRuleValue::Bool(&self.disable_elytra_movement_check)
+            }
+            GameRule::DisableRaids => GameRuleValue::Bool(&self.disable_raids),
+            GameRule::DoDaylightCycle => GameRuleValue::Bool(&self.do_daylight_cycle),
+            GameRule::DoEntityDrops => GameRuleValue::Bool(&self.do_entity_drops),
+            GameRule::DoFireTick => GameRuleValue::Bool(&self.do_fire_tick),
+            GameRule::DoImmediateRespawn => GameRuleValue::Bool(&self.do_immediate_respawn),
+            GameRule::DoInsomnia => GameRuleValue::Bool(&self.do_insomnia),
+            GameRule::DoLimitedCrafting => GameRuleValue::Bool(&self.do_limited_crafting),
+            GameRule::DoMobLoot => GameRuleValue::Bool(&self.do_mob_loot),
+            GameRule::DoMobSpawning => GameRuleValue::Bool(&self.do_mob_spawning),
+            GameRule::DoPatrolSpawning => GameRuleValue::Bool(&self.do_patrol_spawning),
+            GameRule::DoTileDrops => GameRuleValue::Bool(&self.do_tile_drops),
+            GameRule::DoTraderSpawning => GameRuleValue::Bool(&self.do_trader_spawning),
+            GameRule::DoVinesSpread => GameRuleValue::Bool(&self.do_vines_spread),
+            GameRule::DoWardenSpawning => GameRuleValue::Bool(&self.do_warden_spawning),
+            GameRule::DoWeatherCycle => GameRuleValue::Bool(&self.do_weather_cycle),
             GameRule::DrowningDamage => GameRuleValue::Bool(&self.drowning_damage),
-            GameRule::ElytraMovementCheck => GameRuleValue::Bool(&self.elytra_movement_check),
             GameRule::EnderPearlsVanishOnDeath => {
                 GameRuleValue::Bool(&self.ender_pearls_vanish_on_death)
             }
-            GameRule::EntityDrops => GameRuleValue::Bool(&self.entity_drops),
             GameRule::FallDamage => GameRuleValue::Bool(&self.fall_damage),
             GameRule::FireDamage => GameRuleValue::Bool(&self.fire_damage),
-            GameRule::FireSpreadRadiusAroundPlayer => {
-                GameRuleValue::Int(&self.fire_spread_radius_around_player)
-            }
             GameRule::ForgiveDeadPlayers => GameRuleValue::Bool(&self.forgive_dead_players),
             GameRule::FreezeDamage => GameRuleValue::Bool(&self.freeze_damage),
             GameRule::GlobalSoundEvents => GameRuleValue::Bool(&self.global_sound_events),
-            GameRule::ImmediateRespawn => GameRuleValue::Bool(&self.immediate_respawn),
             GameRule::KeepInventory => GameRuleValue::Bool(&self.keep_inventory),
             GameRule::LavaSourceConversion => GameRuleValue::Bool(&self.lava_source_conversion),
-            GameRule::LimitedCrafting => GameRuleValue::Bool(&self.limited_crafting),
-            GameRule::LocatorBar => GameRuleValue::Bool(&self.locator_bar),
             GameRule::LogAdminCommands => GameRuleValue::Bool(&self.log_admin_commands),
-            GameRule::MaxBlockModifications => GameRuleValue::Int(&self.max_block_modifications),
-            GameRule::MaxCommandForks => GameRuleValue::Int(&self.max_command_forks),
-            GameRule::MaxCommandSequenceLength => {
-                GameRuleValue::Int(&self.max_command_sequence_length)
-            }
+            GameRule::MaxCommandChainLength => GameRuleValue::Int(&self.max_command_chain_length),
+            GameRule::MaxCommandForkCount => GameRuleValue::Int(&self.max_command_fork_count),
             GameRule::MaxEntityCramming => GameRuleValue::Int(&self.max_entity_cramming),
-            GameRule::MaxMinecartSpeed => GameRuleValue::Int(&self.max_minecart_speed),
-            GameRule::MaxSnowAccumulationHeight => {
-                GameRuleValue::Int(&self.max_snow_accumulation_height)
-            }
-            GameRule::MobDrops => GameRuleValue::Bool(&self.mob_drops),
             GameRule::MobExplosionDropDecay => GameRuleValue::Bool(&self.mob_explosion_drop_decay),
             GameRule::MobGriefing => GameRuleValue::Bool(&self.mob_griefing),
-            GameRule::NaturalHealthRegeneration => {
-                GameRuleValue::Bool(&self.natural_health_regeneration)
-            }
-            GameRule::PlayerMovementCheck => GameRuleValue::Bool(&self.player_movement_check),
+            GameRule::NaturalRegeneration => GameRuleValue::Bool(&self.natural_regeneration),
             GameRule::PlayersNetherPortalCreativeDelay => {
                 GameRuleValue::Int(&self.players_nether_portal_creative_delay)
             }
@@ -513,28 +447,16 @@ impl GameRuleRegistry {
             GameRule::ProjectilesCanBreakBlocks => {
                 GameRuleValue::Bool(&self.projectiles_can_break_blocks)
             }
-            GameRule::Pvp => GameRuleValue::Bool(&self.pvp),
-            GameRule::Raids => GameRuleValue::Bool(&self.raids),
             GameRule::RandomTickSpeed => GameRuleValue::Int(&self.random_tick_speed),
             GameRule::ReducedDebugInfo => GameRuleValue::Bool(&self.reduced_debug_info),
-            GameRule::RespawnRadius => GameRuleValue::Int(&self.respawn_radius),
             GameRule::SendCommandFeedback => GameRuleValue::Bool(&self.send_command_feedback),
-            GameRule::ShowAdvancementMessages => {
-                GameRuleValue::Bool(&self.show_advancement_messages)
-            }
             GameRule::ShowDeathMessages => GameRuleValue::Bool(&self.show_death_messages),
-            GameRule::SpawnMobs => GameRuleValue::Bool(&self.spawn_mobs),
-            GameRule::SpawnMonsters => GameRuleValue::Bool(&self.spawn_monsters),
-            GameRule::SpawnPatrols => GameRuleValue::Bool(&self.spawn_patrols),
-            GameRule::SpawnPhantoms => GameRuleValue::Bool(&self.spawn_phantoms),
-            GameRule::SpawnWanderingTraders => GameRuleValue::Bool(&self.spawn_wandering_traders),
-            GameRule::SpawnWardens => GameRuleValue::Bool(&self.spawn_wardens),
-            GameRule::SpawnerBlocksWork => GameRuleValue::Bool(&self.spawner_blocks_work),
+            GameRule::SnowAccumulationHeight => GameRuleValue::Int(&self.snow_accumulation_height),
+            GameRule::SpawnChunkRadius => GameRuleValue::Int(&self.spawn_chunk_radius),
+            GameRule::SpawnRadius => GameRuleValue::Int(&self.spawn_radius),
             GameRule::SpectatorsGenerateChunks => {
                 GameRuleValue::Bool(&self.spectators_generate_chunks)
             }
-            GameRule::SpreadVines => GameRuleValue::Bool(&self.spread_vines),
-            GameRule::TntExplodes => GameRuleValue::Bool(&self.tnt_explodes),
             GameRule::TntExplosionDropDecay => GameRuleValue::Bool(&self.tnt_explosion_drop_decay),
             GameRule::UniversalAnger => GameRuleValue::Bool(&self.universal_anger),
             GameRule::WaterSourceConversion => GameRuleValue::Bool(&self.water_source_conversion),
@@ -542,58 +464,54 @@ impl GameRuleRegistry {
     }
     pub fn get_mut(&mut self, rule: &GameRule) -> GameRuleValue<&mut i64, &mut bool> {
         match rule {
-            GameRule::AdvanceTime => GameRuleValue::Bool(&mut self.advance_time),
-            GameRule::AdvanceWeather => GameRuleValue::Bool(&mut self.advance_weather),
-            GameRule::AllowEnteringNetherUsingPortals => {
-                GameRuleValue::Bool(&mut self.allow_entering_nether_using_portals)
-            }
-            GameRule::BlockDrops => GameRuleValue::Bool(&mut self.block_drops),
+            GameRule::AnnounceAdvancements => GameRuleValue::Bool(&mut self.announce_advancements),
             GameRule::BlockExplosionDropDecay => {
                 GameRuleValue::Bool(&mut self.block_explosion_drop_decay)
             }
             GameRule::CommandBlockOutput => GameRuleValue::Bool(&mut self.command_block_output),
-            GameRule::CommandBlocksWork => GameRuleValue::Bool(&mut self.command_blocks_work),
+            GameRule::CommandModificationBlockLimit => {
+                GameRuleValue::Int(&mut self.command_modification_block_limit)
+            }
+            GameRule::DisableElytraMovementCheck => {
+                GameRuleValue::Bool(&mut self.disable_elytra_movement_check)
+            }
+            GameRule::DisableRaids => GameRuleValue::Bool(&mut self.disable_raids),
+            GameRule::DoDaylightCycle => GameRuleValue::Bool(&mut self.do_daylight_cycle),
+            GameRule::DoEntityDrops => GameRuleValue::Bool(&mut self.do_entity_drops),
+            GameRule::DoFireTick => GameRuleValue::Bool(&mut self.do_fire_tick),
+            GameRule::DoImmediateRespawn => GameRuleValue::Bool(&mut self.do_immediate_respawn),
+            GameRule::DoInsomnia => GameRuleValue::Bool(&mut self.do_insomnia),
+            GameRule::DoLimitedCrafting => GameRuleValue::Bool(&mut self.do_limited_crafting),
+            GameRule::DoMobLoot => GameRuleValue::Bool(&mut self.do_mob_loot),
+            GameRule::DoMobSpawning => GameRuleValue::Bool(&mut self.do_mob_spawning),
+            GameRule::DoPatrolSpawning => GameRuleValue::Bool(&mut self.do_patrol_spawning),
+            GameRule::DoTileDrops => GameRuleValue::Bool(&mut self.do_tile_drops),
+            GameRule::DoTraderSpawning => GameRuleValue::Bool(&mut self.do_trader_spawning),
+            GameRule::DoVinesSpread => GameRuleValue::Bool(&mut self.do_vines_spread),
+            GameRule::DoWardenSpawning => GameRuleValue::Bool(&mut self.do_warden_spawning),
+            GameRule::DoWeatherCycle => GameRuleValue::Bool(&mut self.do_weather_cycle),
             GameRule::DrowningDamage => GameRuleValue::Bool(&mut self.drowning_damage),
-            GameRule::ElytraMovementCheck => GameRuleValue::Bool(&mut self.elytra_movement_check),
             GameRule::EnderPearlsVanishOnDeath => {
                 GameRuleValue::Bool(&mut self.ender_pearls_vanish_on_death)
             }
-            GameRule::EntityDrops => GameRuleValue::Bool(&mut self.entity_drops),
             GameRule::FallDamage => GameRuleValue::Bool(&mut self.fall_damage),
             GameRule::FireDamage => GameRuleValue::Bool(&mut self.fire_damage),
-            GameRule::FireSpreadRadiusAroundPlayer => {
-                GameRuleValue::Int(&mut self.fire_spread_radius_around_player)
-            }
             GameRule::ForgiveDeadPlayers => GameRuleValue::Bool(&mut self.forgive_dead_players),
             GameRule::FreezeDamage => GameRuleValue::Bool(&mut self.freeze_damage),
             GameRule::GlobalSoundEvents => GameRuleValue::Bool(&mut self.global_sound_events),
-            GameRule::ImmediateRespawn => GameRuleValue::Bool(&mut self.immediate_respawn),
             GameRule::KeepInventory => GameRuleValue::Bool(&mut self.keep_inventory),
             GameRule::LavaSourceConversion => GameRuleValue::Bool(&mut self.lava_source_conversion),
-            GameRule::LimitedCrafting => GameRuleValue::Bool(&mut self.limited_crafting),
-            GameRule::LocatorBar => GameRuleValue::Bool(&mut self.locator_bar),
             GameRule::LogAdminCommands => GameRuleValue::Bool(&mut self.log_admin_commands),
-            GameRule::MaxBlockModifications => {
-                GameRuleValue::Int(&mut self.max_block_modifications)
+            GameRule::MaxCommandChainLength => {
+                GameRuleValue::Int(&mut self.max_command_chain_length)
             }
-            GameRule::MaxCommandForks => GameRuleValue::Int(&mut self.max_command_forks),
-            GameRule::MaxCommandSequenceLength => {
-                GameRuleValue::Int(&mut self.max_command_sequence_length)
-            }
+            GameRule::MaxCommandForkCount => GameRuleValue::Int(&mut self.max_command_fork_count),
             GameRule::MaxEntityCramming => GameRuleValue::Int(&mut self.max_entity_cramming),
-            GameRule::MaxMinecartSpeed => GameRuleValue::Int(&mut self.max_minecart_speed),
-            GameRule::MaxSnowAccumulationHeight => {
-                GameRuleValue::Int(&mut self.max_snow_accumulation_height)
-            }
-            GameRule::MobDrops => GameRuleValue::Bool(&mut self.mob_drops),
             GameRule::MobExplosionDropDecay => {
                 GameRuleValue::Bool(&mut self.mob_explosion_drop_decay)
             }
             GameRule::MobGriefing => GameRuleValue::Bool(&mut self.mob_griefing),
-            GameRule::NaturalHealthRegeneration => {
-                GameRuleValue::Bool(&mut self.natural_health_regeneration)
-            }
-            GameRule::PlayerMovementCheck => GameRuleValue::Bool(&mut self.player_movement_check),
+            GameRule::NaturalRegeneration => GameRuleValue::Bool(&mut self.natural_regeneration),
             GameRule::PlayersNetherPortalCreativeDelay => {
                 GameRuleValue::Int(&mut self.players_nether_portal_creative_delay)
             }
@@ -606,30 +524,18 @@ impl GameRuleRegistry {
             GameRule::ProjectilesCanBreakBlocks => {
                 GameRuleValue::Bool(&mut self.projectiles_can_break_blocks)
             }
-            GameRule::Pvp => GameRuleValue::Bool(&mut self.pvp),
-            GameRule::Raids => GameRuleValue::Bool(&mut self.raids),
             GameRule::RandomTickSpeed => GameRuleValue::Int(&mut self.random_tick_speed),
             GameRule::ReducedDebugInfo => GameRuleValue::Bool(&mut self.reduced_debug_info),
-            GameRule::RespawnRadius => GameRuleValue::Int(&mut self.respawn_radius),
             GameRule::SendCommandFeedback => GameRuleValue::Bool(&mut self.send_command_feedback),
-            GameRule::ShowAdvancementMessages => {
-                GameRuleValue::Bool(&mut self.show_advancement_messages)
-            }
             GameRule::ShowDeathMessages => GameRuleValue::Bool(&mut self.show_death_messages),
-            GameRule::SpawnMobs => GameRuleValue::Bool(&mut self.spawn_mobs),
-            GameRule::SpawnMonsters => GameRuleValue::Bool(&mut self.spawn_monsters),
-            GameRule::SpawnPatrols => GameRuleValue::Bool(&mut self.spawn_patrols),
-            GameRule::SpawnPhantoms => GameRuleValue::Bool(&mut self.spawn_phantoms),
-            GameRule::SpawnWanderingTraders => {
-                GameRuleValue::Bool(&mut self.spawn_wandering_traders)
+            GameRule::SnowAccumulationHeight => {
+                GameRuleValue::Int(&mut self.snow_accumulation_height)
             }
-            GameRule::SpawnWardens => GameRuleValue::Bool(&mut self.spawn_wardens),
-            GameRule::SpawnerBlocksWork => GameRuleValue::Bool(&mut self.spawner_blocks_work),
+            GameRule::SpawnChunkRadius => GameRuleValue::Int(&mut self.spawn_chunk_radius),
+            GameRule::SpawnRadius => GameRuleValue::Int(&mut self.spawn_radius),
             GameRule::SpectatorsGenerateChunks => {
                 GameRuleValue::Bool(&mut self.spectators_generate_chunks)
             }
-            GameRule::SpreadVines => GameRuleValue::Bool(&mut self.spread_vines),
-            GameRule::TntExplodes => GameRuleValue::Bool(&mut self.tnt_explodes),
             GameRule::TntExplosionDropDecay => {
                 GameRuleValue::Bool(&mut self.tnt_explosion_drop_decay)
             }
@@ -643,79 +549,62 @@ impl GameRuleRegistry {
 impl Default for GameRuleRegistry {
     fn default() -> Self {
         Self {
-            advance_time: true,
-            advance_weather: true,
-            allow_entering_nether_using_portals: true,
-            block_drops: true,
+            announce_advancements: true,
             block_explosion_drop_decay: true,
             command_block_output: true,
-            command_blocks_work: true,
+            command_modification_block_limit: 32768i64,
+            disable_elytra_movement_check: false,
+            disable_raids: false,
+            do_daylight_cycle: true,
+            do_entity_drops: true,
+            do_fire_tick: true,
+            do_immediate_respawn: false,
+            do_insomnia: true,
+            do_limited_crafting: false,
+            do_mob_loot: true,
+            do_mob_spawning: true,
+            do_patrol_spawning: true,
+            do_tile_drops: true,
+            do_trader_spawning: true,
+            do_vines_spread: true,
+            do_warden_spawning: true,
+            do_weather_cycle: true,
             drowning_damage: true,
-            elytra_movement_check: true,
             ender_pearls_vanish_on_death: true,
-            entity_drops: true,
             fall_damage: true,
             fire_damage: true,
-            fire_spread_radius_around_player: 128i64,
             forgive_dead_players: true,
             freeze_damage: true,
             global_sound_events: true,
-            immediate_respawn: false,
             keep_inventory: false,
             lava_source_conversion: false,
-            limited_crafting: false,
-            locator_bar: true,
             log_admin_commands: true,
-            max_block_modifications: 32768i64,
-            max_command_forks: 65536i64,
-            max_command_sequence_length: 65536i64,
+            max_command_chain_length: 65536i64,
+            max_command_fork_count: 65536i64,
             max_entity_cramming: 24i64,
-            max_minecart_speed: 8i64,
-            max_snow_accumulation_height: 1i64,
-            mob_drops: true,
             mob_explosion_drop_decay: true,
             mob_griefing: true,
-            natural_health_regeneration: true,
-            player_movement_check: true,
-            players_nether_portal_creative_delay: 0i64,
+            natural_regeneration: true,
+            players_nether_portal_creative_delay: 1i64,
             players_nether_portal_default_delay: 80i64,
             players_sleeping_percentage: 100i64,
             projectiles_can_break_blocks: true,
-            pvp: true,
-            raids: true,
             random_tick_speed: 3i64,
             reduced_debug_info: false,
-            respawn_radius: 10i64,
             send_command_feedback: true,
-            show_advancement_messages: true,
             show_death_messages: true,
-            spawn_mobs: true,
-            spawn_monsters: true,
-            spawn_patrols: true,
-            spawn_phantoms: true,
-            spawn_wandering_traders: true,
-            spawn_wardens: true,
-            spawner_blocks_work: true,
+            snow_accumulation_height: 1i64,
+            spawn_chunk_radius: 2i64,
+            spawn_radius: 10i64,
             spectators_generate_chunks: true,
-            spread_vines: true,
-            tnt_explodes: true,
             tnt_explosion_drop_decay: false,
             universal_anger: false,
             water_source_conversion: true,
         }
     }
 }
-fn default_advance_time() -> bool {
-    GameRuleRegistry::default().advance_time
-}
-fn default_advance_weather() -> bool {
-    GameRuleRegistry::default().advance_weather
-}
-fn default_allow_entering_nether_using_portals() -> bool {
-    GameRuleRegistry::default().allow_entering_nether_using_portals
-}
-fn default_block_drops() -> bool {
-    GameRuleRegistry::default().block_drops
+fn default_announce_advancements() -> bool {
+    GameRuleRegistry::default().announce_advancements
 }
 fn default_block_explosion_drop_decay() -> bool {
     GameRuleRegistry::default().block_explosion_drop_decay
@@ -723,29 +612,68 @@ fn default_block_explosion_drop_decay() -> bool {
 fn default_command_block_output() -> bool {
     GameRuleRegistry::default().command_block_output
 }
-fn default_command_blocks_work() -> bool {
-    GameRuleRegistry::default().command_blocks_work
+fn default_command_modification_block_limit() -> i64 {
+    GameRuleRegistry::default().command_modification_block_limit
+}
+fn default_disable_elytra_movement_check() -> bool {
+    GameRuleRegistry::default().disable_elytra_movement_check
+}
+fn default_disable_raids() -> bool {
+    GameRuleRegistry::default().disable_raids
+}
+fn default_do_daylight_cycle() -> bool {
+    GameRuleRegistry::default().do_daylight_cycle
+}
+fn default_do_entity_drops() -> bool {
+    GameRuleRegistry::default().do_entity_drops
+}
+fn default_do_fire_tick() -> bool {
+    GameRuleRegistry::default().do_fire_tick
+}
+fn default_do_immediate_respawn() -> bool {
+    GameRuleRegistry::default().do_immediate_respawn
+}
+fn default_do_insomnia() -> bool {
+    GameRuleRegistry::default().do_insomnia
+}
+fn default_do_limited_crafting() -> bool {
+    GameRuleRegistry::default().do_limited_crafting
+}
+fn default_do_mob_loot() -> bool {
+    GameRuleRegistry::default().do_mob_loot
+}
+fn default_do_mob_spawning() -> bool {
+    GameRuleRegistry::default().do_mob_spawning
+}
+fn default_do_patrol_spawning() -> bool {
+    GameRuleRegistry::default().do_patrol_spawning
+}
+fn default_do_tile_drops() -> bool {
+    GameRuleRegistry::default().do_tile_drops
+}
+fn default_do_trader_spawning() -> bool {
+    GameRuleRegistry::default().do_trader_spawning
+}
+fn default_do_vines_spread() -> bool {
+    GameRuleRegistry::default().do_vines_spread
+}
+fn default_do_warden_spawning() -> bool {
+    GameRuleRegistry::default().do_warden_spawning
+}
+fn default_do_weather_cycle() -> bool {
+    GameRuleRegistry::default().do_weather_cycle
 }
 fn default_drowning_damage() -> bool {
     GameRuleRegistry::default().drowning_damage
 }
-fn default_elytra_movement_check() -> bool {
-    GameRuleRegistry::default().elytra_movement_check
-}
 fn default_ender_pearls_vanish_on_death() -> bool {
     GameRuleRegistry::default().ender_pearls_vanish_on_death
-}
-fn default_entity_drops() -> bool {
-    GameRuleRegistry::default().entity_drops
 }
 fn default_fall_damage() -> bool {
     GameRuleRegistry::default().fall_damage
 }
 fn default_fire_damage() -> bool {
     GameRuleRegistry::default().fire_damage
-}
-fn default_fire_spread_radius_around_player() -> i64 {
-    GameRuleRegistry::default().fire_spread_radius_around_player
 }
 fn default_forgive_dead_players() -> bool {
     GameRuleRegistry::default().forgive_dead_players
@@ -756,44 +684,23 @@ fn default_freeze_damage() -> bool {
 fn default_global_sound_events() -> bool {
     GameRuleRegistry::default().global_sound_events
 }
-fn default_immediate_respawn() -> bool {
-    GameRuleRegistry::default().immediate_respawn
-}
 fn default_keep_inventory() -> bool {
     GameRuleRegistry::default().keep_inventory
 }
 fn default_lava_source_conversion() -> bool {
     GameRuleRegistry::default().lava_source_conversion
 }
-fn default_limited_crafting() -> bool {
-    GameRuleRegistry::default().limited_crafting
-}
-fn default_locator_bar() -> bool {
-    GameRuleRegistry::default().locator_bar
-}
 fn default_log_admin_commands() -> bool {
     GameRuleRegistry::default().log_admin_commands
 }
-fn default_max_block_modifications() -> i64 {
-    GameRuleRegistry::default().max_block_modifications
+fn default_max_command_chain_length() -> i64 {
+    GameRuleRegistry::default().max_command_chain_length
 }
-fn default_max_command_forks() -> i64 {
-    GameRuleRegistry::default().max_command_forks
-}
-fn default_max_command_sequence_length() -> i64 {
-    GameRuleRegistry::default().max_command_sequence_length
+fn default_max_command_fork_count() -> i64 {
+    GameRuleRegistry::default().max_command_fork_count
 }
 fn default_max_entity_cramming() -> i64 {
     GameRuleRegistry::default().max_entity_cramming
-}
-fn default_max_minecart_speed() -> i64 {
-    GameRuleRegistry::default().max_minecart_speed
-}
-fn default_max_snow_accumulation_height() -> i64 {
-    GameRuleRegistry::default().max_snow_accumulation_height
-}
-fn default_mob_drops() -> bool {
-    GameRuleRegistry::default().mob_drops
 }
 fn default_mob_explosion_drop_decay() -> bool {
     GameRuleRegistry::default().mob_explosion_drop_decay
@@ -801,11 +708,8 @@ fn default_mob_explosion_drop_decay() -> bool {
 fn default_mob_griefing() -> bool {
     GameRuleRegistry::default().mob_griefing
 }
-fn default_natural_health_regeneration() -> bool {
-    GameRuleRegistry::default().natural_health_regeneration
-}
-fn default_player_movement_check() -> bool {
-    GameRuleRegistry::default().player_movement_check
+fn default_natural_regeneration() -> bool {
+    GameRuleRegistry::default().natural_regeneration
 }
 fn default_players_nether_portal_creative_delay() -> i64 {
     GameRuleRegistry::default().players_nether_portal_creative_delay
@@ -819,59 +723,29 @@ fn default_players_sleeping_percentage() -> i64 {
 fn default_projectiles_can_break_blocks() -> bool {
     GameRuleRegistry::default().projectiles_can_break_blocks
 }
-fn default_pvp() -> bool {
-    GameRuleRegistry::default().pvp
-}
-fn default_raids() -> bool {
-    GameRuleRegistry::default().raids
-}
 fn default_random_tick_speed() -> i64 {
     GameRuleRegistry::default().random_tick_speed
 }
 fn default_reduced_debug_info() -> bool {
     GameRuleRegistry::default().reduced_debug_info
 }
-fn default_respawn_radius() -> i64 {
-    GameRuleRegistry::default().respawn_radius
-}
 fn default_send_command_feedback() -> bool {
     GameRuleRegistry::default().send_command_feedback
-}
-fn default_show_advancement_messages() -> bool {
-    GameRuleRegistry::default().show_advancement_messages
 }
 fn default_show_death_messages() -> bool {
     GameRuleRegistry::default().show_death_messages
 }
-fn default_spawn_mobs() -> bool {
-    GameRuleRegistry::default().spawn_mobs
+fn default_snow_accumulation_height() -> i64 {
+    GameRuleRegistry::default().snow_accumulation_height
 }
-fn default_spawn_monsters() -> bool {
-    GameRuleRegistry::default().spawn_monsters
+fn default_spawn_chunk_radius() -> i64 {
+    GameRuleRegistry::default().spawn_chunk_radius
 }
-fn default_spawn_patrols() -> bool {
-    GameRuleRegistry::default().spawn_patrols
-}
-fn default_spawn_phantoms() -> bool {
-    GameRuleRegistry::default().spawn_phantoms
-}
-fn default_spawn_wandering_traders() -> bool {
-    GameRuleRegistry::default().spawn_wandering_traders
-}
-fn default_spawn_wardens() -> bool {
-    GameRuleRegistry::default().spawn_wardens
-}
-fn default_spawner_blocks_work() -> bool {
-    GameRuleRegistry::default().spawner_blocks_work
+fn default_spawn_radius() -> i64 {
+    GameRuleRegistry::default().spawn_radius
 }
 fn default_spectators_generate_chunks() -> bool {
     GameRuleRegistry::default().spectators_generate_chunks
-}
-fn default_spread_vines() -> bool {
-    GameRuleRegistry::default().spread_vines
-}
-fn default_tnt_explodes() -> bool {
-    GameRuleRegistry::default().tnt_explodes
 }
 fn default_tnt_explosion_drop_decay() -> bool {
     GameRuleRegistry::default().tnt_explosion_drop_decay

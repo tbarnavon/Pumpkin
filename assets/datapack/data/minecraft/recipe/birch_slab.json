@@ -3,7 +3,9 @@
   "category": "building",
   "group": "wooden_slab",
   "key": {
-    "#": "minecraft:birch_planks"
+    "#": {
+      "item": "minecraft:birch_planks"
+    }
   },
   "pattern": [
     "###"

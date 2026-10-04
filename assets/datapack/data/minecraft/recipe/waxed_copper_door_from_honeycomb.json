@@ -1,12 +1,17 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "redstone",
+  "category": "building",
   "group": "waxed_copper_door",
   "ingredients": [
-    "minecraft:copper_door",
-    "minecraft:honeycomb"
+    {
+      "item": "minecraft:copper_door"
+    },
+    {
+      "item": "minecraft:honeycomb"
+    }
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:waxed_copper_door"
   }
 }

@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:crossbow"
+        "recipe": "minecraft:crossbow"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

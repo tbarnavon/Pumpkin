@@ -3,7 +3,9 @@
   "category": "building",
   "group": "bark",
   "key": {
-    "#": "minecraft:spruce_log"
+    "#": {
+      "item": "minecraft:spruce_log"
+    }
   },
   "pattern": [
     "##",

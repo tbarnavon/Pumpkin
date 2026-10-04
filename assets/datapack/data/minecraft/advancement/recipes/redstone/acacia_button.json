@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:acacia_button"
+        "recipe": "minecraft:acacia_button"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

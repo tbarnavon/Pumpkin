@@ -6,8 +6,8 @@
         "damage": {
           "type": {
             "direct_entity": {
-              "minecraft:entity_type": "minecraft:player",
-              "minecraft:equipment": {
+              "type": "minecraft:player",
+              "equipment": {
                 "mainhand": {
                   "items": "minecraft:mace"
                 }
@@ -16,7 +16,7 @@
             "tags": [
               {
                 "expected": true,
-                "id": "#minecraft:mace_smash"
+                "id": "minecraft:is_player_attack"
               }
             ]
           },
@@ -34,6 +34,7 @@
     },
     "frame": "challenge",
     "icon": {
+      "count": 1,
       "id": "minecraft:mace"
     },
     "title": {

@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "S": "minecraft:diorite"
+    "S": {
+      "item": "minecraft:diorite"
+    }
   },
   "pattern": [
     "SS",

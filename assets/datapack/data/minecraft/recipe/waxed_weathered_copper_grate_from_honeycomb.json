@@ -3,10 +3,15 @@
   "category": "building",
   "group": "waxed_weathered_copper_grate",
   "ingredients": [
-    "minecraft:weathered_copper_grate",
-    "minecraft:honeycomb"
+    {
+      "item": "minecraft:weathered_copper_grate"
+    },
+    {
+      "item": "minecraft:honeycomb"
+    }
   ],
   "result": {
+    "count": 1,
     "id": "minecraft:waxed_weathered_copper_grate"
   }
 }

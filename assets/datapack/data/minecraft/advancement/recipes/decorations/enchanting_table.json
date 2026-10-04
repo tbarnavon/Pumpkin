@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:enchanting_table"
+        "recipe": "minecraft:enchanting_table"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

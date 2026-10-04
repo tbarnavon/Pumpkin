@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:white_dye"
+        "recipe": "minecraft:white_dye"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

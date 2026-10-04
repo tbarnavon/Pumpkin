@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:snow_block"
+        "recipe": "minecraft:snow_block"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -3,8 +3,12 @@
   "category": "building",
   "key": {
     "#": [
-      "minecraft:red_sandstone",
-      "minecraft:chiseled_red_sandstone"
+      {
+        "item": "minecraft:red_sandstone"
+      },
+      {
+        "item": "minecraft:chiseled_red_sandstone"
+      }
     ]
   },
   "pattern": [

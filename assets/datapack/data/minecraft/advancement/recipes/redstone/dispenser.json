@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:dispenser"
+        "recipe": "minecraft:dispenser"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

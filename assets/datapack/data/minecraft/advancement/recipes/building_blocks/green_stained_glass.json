@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:green_stained_glass"
+        "recipe": "minecraft:green_stained_glass"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

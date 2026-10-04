@@ -6,11 +6,12 @@
   },
   "display": {
     "announce_to_chat": false,
-    "background": "minecraft:gui/advancements/backgrounds/husbandry",
+    "background": "minecraft:textures/gui/advancements/backgrounds/husbandry.png",
     "description": {
       "translate": "advancements.husbandry.root.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:hay_block"
     },
     "show_toast": false,

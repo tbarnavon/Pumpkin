@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:candle"
+        "recipe": "minecraft:candle"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

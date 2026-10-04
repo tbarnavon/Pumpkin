@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:prismarine_bricks"
+        "recipe": "minecraft:prismarine_bricks"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

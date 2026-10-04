@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:magenta_stained_glass"
+        "recipe": "minecraft:magenta_stained_glass"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

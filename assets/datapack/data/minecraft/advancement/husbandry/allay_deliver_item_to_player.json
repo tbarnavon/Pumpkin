@@ -3,13 +3,15 @@
   "criteria": {
     "allay_deliver_item_to_player": {
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:entity_type": "minecraft:allay"
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:allay"
+            }
           }
-        }
+        ]
       },
       "trigger": "minecraft:thrown_item_picked_up_by_player"
     }
@@ -20,6 +22,7 @@
     },
     "hidden": true,
     "icon": {
+      "count": 1,
       "id": "minecraft:cookie"
     },
     "title": {

@@ -2,15 +2,17 @@
   "type": "minecraft:equipment",
   "pools": [
     {
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:loot_table",
           "value": "minecraft:equipment/trial_chamber"
         }
       ],
-      "rolls": 1
+      "rolls": 1.0
     },
     {
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
@@ -19,22 +21,28 @@
         },
         {
           "type": "minecraft:item",
-          "modifier": {
-            "type": "minecraft:set_enchantments",
-            "enchantments": {
-              "minecraft:sharpness": 1
+          "functions": [
+            {
+              "add": false,
+              "enchantments": {
+                "minecraft:sharpness": 1.0
+              },
+              "function": "minecraft:set_enchantments"
             }
-          },
+          ],
           "name": "minecraft:iron_sword"
         },
         {
           "type": "minecraft:item",
-          "modifier": {
-            "type": "minecraft:set_enchantments",
-            "enchantments": {
-              "minecraft:knockback": 1
+          "functions": [
+            {
+              "add": false,
+              "enchantments": {
+                "minecraft:knockback": 1.0
+              },
+              "function": "minecraft:set_enchantments"
             }
-          },
+          ],
           "name": "minecraft:iron_sword"
         },
         {
@@ -42,7 +50,7 @@
           "name": "minecraft:diamond_sword"
         }
       ],
-      "rolls": 1
+      "rolls": 1.0
     }
   ],
   "random_sequence": "minecraft:equipment/trial_chamber_melee"

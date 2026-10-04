@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:deepslate_brick_slab"
+        "recipe": "minecraft:deepslate_brick_slab"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

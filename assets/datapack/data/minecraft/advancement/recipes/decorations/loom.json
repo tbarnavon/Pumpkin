@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:loom"
+        "recipe": "minecraft:loom"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

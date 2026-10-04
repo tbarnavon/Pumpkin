@@ -3,7 +3,9 @@
   "category": "blocks",
   "cookingtime": 200,
   "experience": 0.1,
-  "ingredient": "minecraft:cyan_terracotta",
+  "ingredient": {
+    "item": "minecraft:cyan_terracotta"
+  },
   "result": {
     "id": "minecraft:cyan_glazed_terracotta"
   }

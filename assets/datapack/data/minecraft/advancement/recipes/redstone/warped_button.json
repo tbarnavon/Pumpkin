@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:warped_button"
+        "recipe": "minecraft:warped_button"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

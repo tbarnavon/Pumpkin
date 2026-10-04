@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:copper_ingot"
+        "recipe": "minecraft:copper_ingot"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

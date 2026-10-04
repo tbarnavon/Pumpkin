@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:shears"
+        "recipe": "minecraft:shears"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

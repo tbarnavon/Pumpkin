@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:rabbit_stew_from_brown_mushroom"
+        "recipe": "minecraft:rabbit_stew_from_brown_mushroom"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

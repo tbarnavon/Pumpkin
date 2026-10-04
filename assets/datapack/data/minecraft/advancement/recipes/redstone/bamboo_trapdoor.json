@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "minecraft:bamboo_trapdoor"
+        "recipe": "minecraft:bamboo_trapdoor"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

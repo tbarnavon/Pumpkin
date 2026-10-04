@@ -3,7 +3,9 @@
   "category": "building",
   "group": "planks",
   "ingredients": [
-    "#minecraft:cherry_logs"
+    {
+      "tag": "minecraft:cherry_logs"
+    }
   ],
   "result": {
     "count": 4,

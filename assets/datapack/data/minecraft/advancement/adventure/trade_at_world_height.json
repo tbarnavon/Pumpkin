@@ -3,19 +3,21 @@
   "criteria": {
     "trade_at_world_height": {
       "conditions": {
-        "player": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:location": {
-              "position": {
-                "y": {
-                  "min": 319.0
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "position": {
+                  "y": {
+                    "min": 319.0
+                  }
                 }
               }
             }
           }
-        }
+        ]
       },
       "trigger": "minecraft:villager_trade"
     }
@@ -25,6 +27,7 @@
       "translate": "advancements.adventure.trade_at_world_height.description"
     },
     "icon": {
+      "count": 1,
       "id": "minecraft:emerald"
     },
     "title": {

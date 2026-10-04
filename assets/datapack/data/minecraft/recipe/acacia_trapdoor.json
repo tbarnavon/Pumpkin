@@ -3,7 +3,9 @@
   "category": "redstone",
   "group": "wooden_trapdoor",
   "key": {
-    "#": "minecraft:acacia_planks"
+    "#": {
+      "item": "minecraft:acacia_planks"
+    }
   },
   "pattern": [
     "###",
