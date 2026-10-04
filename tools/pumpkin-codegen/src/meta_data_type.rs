@@ -55,9 +55,9 @@ pub fn build() -> TokenStream {
         pub const QUATERNION_F: MetaDataType = Self::QUATERNION;
         pub const ROTATION: MetaDataType = Self::ROTATIONS;
         pub const PARTICLE_LIST: MetaDataType = Self::PARTICLES;
-        pub const COPPER_GOLEM_STATE: MetaDataType = Self::WEATHERING_COPPER_STATE;
-        pub const PROFILE: MetaDataType = Self::RESOLVABLE_PROFILE;
-        pub const ARM: MetaDataType = Self::HUMANOID_ARM;
+        // 1.21.1 names the NBT type `compound_tag`; it has no copper golem state, resolvable
+        // profile or humanoid arm types yet.
+        pub const NBT_COMPOUND: MetaDataType = Self::COMPOUND_TAG;
     };
 
     quote! {

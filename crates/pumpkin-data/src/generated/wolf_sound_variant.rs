@@ -71,51 +71,51 @@ impl WolfSoundVariant {
         match self {
             Self::Angry => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 } else {
-                    crate::sound::Sound::EntityWolfAngryAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 }
             }
             Self::Big => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 } else {
-                    crate::sound::Sound::EntityWolfBigAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 }
             }
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 } else {
                     crate::sound::Sound::EntityWolfAmbient
                 }
             }
             Self::Cute => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 } else {
-                    crate::sound::Sound::EntityWolfCuteAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 }
             }
             Self::Grumpy => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 } else {
-                    crate::sound::Sound::EntityWolfGrumpyAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 }
             }
             Self::Puglin => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 } else {
-                    crate::sound::Sound::EntityWolfPuglinAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 }
             }
             Self::Sad => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 } else {
-                    crate::sound::Sound::EntityWolfSadAmbient
+                    crate::sound::Sound::EntityWolfAmbient
                 }
             }
         }
@@ -125,51 +125,51 @@ impl WolfSoundVariant {
         match self {
             Self::Angry => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfDeath
+                    crate::sound::Sound::EntityWolfDeath
                 } else {
-                    crate::sound::Sound::EntityWolfAngryDeath
+                    crate::sound::Sound::EntityWolfDeath
                 }
             }
             Self::Big => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfDeath
+                    crate::sound::Sound::EntityWolfDeath
                 } else {
-                    crate::sound::Sound::EntityWolfBigDeath
+                    crate::sound::Sound::EntityWolfDeath
                 }
             }
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfDeath
+                    crate::sound::Sound::EntityWolfDeath
                 } else {
                     crate::sound::Sound::EntityWolfDeath
                 }
             }
             Self::Cute => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfDeath
+                    crate::sound::Sound::EntityWolfDeath
                 } else {
-                    crate::sound::Sound::EntityWolfCuteDeath
+                    crate::sound::Sound::EntityWolfDeath
                 }
             }
             Self::Grumpy => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfDeath
+                    crate::sound::Sound::EntityWolfDeath
                 } else {
-                    crate::sound::Sound::EntityWolfGrumpyDeath
+                    crate::sound::Sound::EntityWolfDeath
                 }
             }
             Self::Puglin => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfDeath
+                    crate::sound::Sound::EntityWolfDeath
                 } else {
-                    crate::sound::Sound::EntityWolfPuglinDeath
+                    crate::sound::Sound::EntityWolfDeath
                 }
             }
             Self::Sad => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfDeath
+                    crate::sound::Sound::EntityWolfDeath
                 } else {
-                    crate::sound::Sound::EntityWolfSadDeath
+                    crate::sound::Sound::EntityWolfDeath
                 }
             }
         }
@@ -179,51 +179,51 @@ impl WolfSoundVariant {
         match self {
             Self::Angry => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfHurt
+                    crate::sound::Sound::EntityWolfHurt
                 } else {
-                    crate::sound::Sound::EntityWolfAngryHurt
+                    crate::sound::Sound::EntityWolfHurt
                 }
             }
             Self::Big => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfHurt
+                    crate::sound::Sound::EntityWolfHurt
                 } else {
-                    crate::sound::Sound::EntityWolfBigHurt
+                    crate::sound::Sound::EntityWolfHurt
                 }
             }
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfHurt
+                    crate::sound::Sound::EntityWolfHurt
                 } else {
                     crate::sound::Sound::EntityWolfHurt
                 }
             }
             Self::Cute => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfHurt
+                    crate::sound::Sound::EntityWolfHurt
                 } else {
-                    crate::sound::Sound::EntityWolfCuteHurt
+                    crate::sound::Sound::EntityWolfHurt
                 }
             }
             Self::Grumpy => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfHurt
+                    crate::sound::Sound::EntityWolfHurt
                 } else {
-                    crate::sound::Sound::EntityWolfGrumpyHurt
+                    crate::sound::Sound::EntityWolfHurt
                 }
             }
             Self::Puglin => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfHurt
+                    crate::sound::Sound::EntityWolfHurt
                 } else {
-                    crate::sound::Sound::EntityWolfPuglinHurt
+                    crate::sound::Sound::EntityWolfHurt
                 }
             }
             Self::Sad => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfHurt
+                    crate::sound::Sound::EntityWolfHurt
                 } else {
-                    crate::sound::Sound::EntityWolfSadHurt
+                    crate::sound::Sound::EntityWolfHurt
                 }
             }
         }
@@ -233,49 +233,49 @@ impl WolfSoundVariant {
         match self {
             Self::Angry => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfStep
+                    crate::sound::Sound::EntityWolfStep
                 } else {
                     crate::sound::Sound::EntityWolfStep
                 }
             }
             Self::Big => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfStep
+                    crate::sound::Sound::EntityWolfStep
                 } else {
                     crate::sound::Sound::EntityWolfStep
                 }
             }
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfStep
+                    crate::sound::Sound::EntityWolfStep
                 } else {
                     crate::sound::Sound::EntityWolfStep
                 }
             }
             Self::Cute => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfStep
+                    crate::sound::Sound::EntityWolfStep
                 } else {
                     crate::sound::Sound::EntityWolfStep
                 }
             }
             Self::Grumpy => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfStep
+                    crate::sound::Sound::EntityWolfStep
                 } else {
                     crate::sound::Sound::EntityWolfStep
                 }
             }
             Self::Puglin => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfStep
+                    crate::sound::Sound::EntityWolfStep
                 } else {
                     crate::sound::Sound::EntityWolfStep
                 }
             }
             Self::Sad => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfStep
+                    crate::sound::Sound::EntityWolfStep
                 } else {
                     crate::sound::Sound::EntityWolfStep
                 }
@@ -287,51 +287,51 @@ impl WolfSoundVariant {
         match self {
             Self::Angry => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 } else {
-                    crate::sound::Sound::EntityWolfAngryGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 }
             }
             Self::Big => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 } else {
-                    crate::sound::Sound::EntityWolfBigGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 }
             }
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 } else {
                     crate::sound::Sound::EntityWolfGrowl
                 }
             }
             Self::Cute => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 } else {
-                    crate::sound::Sound::EntityWolfCuteGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 }
             }
             Self::Grumpy => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 } else {
-                    crate::sound::Sound::EntityWolfGrumpyGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 }
             }
             Self::Puglin => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 } else {
-                    crate::sound::Sound::EntityWolfPuglinGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 }
             }
             Self::Sad => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 } else {
-                    crate::sound::Sound::EntityWolfSadGrowl
+                    crate::sound::Sound::EntityWolfGrowl
                 }
             }
         }
@@ -341,51 +341,51 @@ impl WolfSoundVariant {
         match self {
             Self::Angry => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfPant
+                    crate::sound::Sound::EntityWolfPant
                 } else {
-                    crate::sound::Sound::EntityWolfAngryPant
+                    crate::sound::Sound::EntityWolfPant
                 }
             }
             Self::Big => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfPant
+                    crate::sound::Sound::EntityWolfPant
                 } else {
-                    crate::sound::Sound::EntityWolfBigPant
+                    crate::sound::Sound::EntityWolfPant
                 }
             }
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfPant
+                    crate::sound::Sound::EntityWolfPant
                 } else {
                     crate::sound::Sound::EntityWolfPant
                 }
             }
             Self::Cute => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfPant
+                    crate::sound::Sound::EntityWolfPant
                 } else {
-                    crate::sound::Sound::EntityWolfCutePant
+                    crate::sound::Sound::EntityWolfPant
                 }
             }
             Self::Grumpy => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfPant
+                    crate::sound::Sound::EntityWolfPant
                 } else {
-                    crate::sound::Sound::EntityWolfGrumpyPant
+                    crate::sound::Sound::EntityWolfPant
                 }
             }
             Self::Puglin => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfPant
+                    crate::sound::Sound::EntityWolfPant
                 } else {
-                    crate::sound::Sound::EntityWolfPuglinPant
+                    crate::sound::Sound::EntityWolfPant
                 }
             }
             Self::Sad => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfPant
+                    crate::sound::Sound::EntityWolfPant
                 } else {
-                    crate::sound::Sound::EntityWolfSadPant
+                    crate::sound::Sound::EntityWolfPant
                 }
             }
         }
@@ -395,51 +395,51 @@ impl WolfSoundVariant {
         match self {
             Self::Angry => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfWhine
+                    crate::sound::Sound::EntityWolfWhine
                 } else {
-                    crate::sound::Sound::EntityWolfAngryWhine
+                    crate::sound::Sound::EntityWolfWhine
                 }
             }
             Self::Big => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfWhine
+                    crate::sound::Sound::EntityWolfWhine
                 } else {
-                    crate::sound::Sound::EntityWolfBigWhine
+                    crate::sound::Sound::EntityWolfWhine
                 }
             }
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfWhine
+                    crate::sound::Sound::EntityWolfWhine
                 } else {
                     crate::sound::Sound::EntityWolfWhine
                 }
             }
             Self::Cute => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfWhine
+                    crate::sound::Sound::EntityWolfWhine
                 } else {
-                    crate::sound::Sound::EntityWolfCuteWhine
+                    crate::sound::Sound::EntityWolfWhine
                 }
             }
             Self::Grumpy => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfWhine
+                    crate::sound::Sound::EntityWolfWhine
                 } else {
-                    crate::sound::Sound::EntityWolfGrumpyWhine
+                    crate::sound::Sound::EntityWolfWhine
                 }
             }
             Self::Puglin => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfWhine
+                    crate::sound::Sound::EntityWolfWhine
                 } else {
-                    crate::sound::Sound::EntityWolfPuglinWhine
+                    crate::sound::Sound::EntityWolfWhine
                 }
             }
             Self::Sad => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyWolfWhine
+                    crate::sound::Sound::EntityWolfWhine
                 } else {
-                    crate::sound::Sound::EntityWolfSadWhine
+                    crate::sound::Sound::EntityWolfWhine
                 }
             }
         }

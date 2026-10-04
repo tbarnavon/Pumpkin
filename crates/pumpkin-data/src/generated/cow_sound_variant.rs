@@ -50,9 +50,9 @@ impl CowSoundVariant {
             }
             Self::Moody => {
                 if is_baby {
-                    crate::sound::Sound::EntityCowMoodyAmbient
+                    crate::sound::Sound::EntityCowAmbient
                 } else {
-                    crate::sound::Sound::EntityCowMoodyAmbient
+                    crate::sound::Sound::EntityCowAmbient
                 }
             }
         }
@@ -69,9 +69,9 @@ impl CowSoundVariant {
             }
             Self::Moody => {
                 if is_baby {
-                    crate::sound::Sound::EntityCowMoodyDeath
+                    crate::sound::Sound::EntityCowDeath
                 } else {
-                    crate::sound::Sound::EntityCowMoodyDeath
+                    crate::sound::Sound::EntityCowDeath
                 }
             }
         }
@@ -88,9 +88,9 @@ impl CowSoundVariant {
             }
             Self::Moody => {
                 if is_baby {
-                    crate::sound::Sound::EntityCowMoodyHurt
+                    crate::sound::Sound::EntityCowHurt
                 } else {
-                    crate::sound::Sound::EntityCowMoodyHurt
+                    crate::sound::Sound::EntityCowHurt
                 }
             }
         }
@@ -107,9 +107,9 @@ impl CowSoundVariant {
             }
             Self::Moody => {
                 if is_baby {
-                    crate::sound::Sound::EntityCowMoodyStep
+                    crate::sound::Sound::EntityCowStep
                 } else {
-                    crate::sound::Sound::EntityCowMoodyStep
+                    crate::sound::Sound::EntityCowStep
                 }
             }
         }

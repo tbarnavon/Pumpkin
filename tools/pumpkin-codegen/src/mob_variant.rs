@@ -7,8 +7,54 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 use serde::Deserialize;
 
+/// The sounds 1.21.1 has (`sounds.json`).
+fn known_sounds() -> &'static std::collections::HashSet<String> {
+    static SOUNDS: std::sync::OnceLock<std::collections::HashSet<String>> =
+        std::sync::OnceLock::new();
+    SOUNDS.get_or_init(|| {
+        serde_json::from_str::<Vec<String>>(
+            &fs::read_to_string("../../assets/sounds.json").expect("Missing sounds.json"),
+        )
+        .expect("Failed to parse sounds.json")
+        .into_iter()
+        .collect()
+    })
+}
+
+/// A mob variant's sound as 1.21.1 has it. 1.21.1 mobs have one set of sounds: the variant and
+/// baby sounds of later versions (`entity.wolf_big.ambient`, `entity.baby_cat.eat`) resolve to
+/// the mob's own (`entity.wolf.ambient`, `entity.cat.eat`).
+fn resolve_sound(sound: &str) -> String {
+    let known = known_sounds();
+    if known.contains(sound) {
+        return sound.to_string();
+    }
+    let mut parts = sound.splitn(3, '.');
+    let (Some(category), Some(mob), Some(event)) = (parts.next(), parts.next(), parts.next())
+    else {
+        panic!("No 1.21.1 sound for {sound}");
+    };
+    let mut mob = mob.strip_prefix("baby_").unwrap_or(mob).to_string();
+    loop {
+        let candidate = format!("{category}.{mob}.{event}");
+        if known.contains(&candidate) {
+            return candidate;
+        }
+        match mob.rfind('_') {
+            Some(i) => mob.truncate(i),
+            // An event the mob doesn't have in 1.21.1 (a pig eating): the generic sound.
+            None => {
+                let generic = format!("{category}.generic.{event}");
+                assert!(known.contains(&generic), "No 1.21.1 sound for {sound}");
+                return generic;
+            }
+        }
+    }
+}
+
 fn sound_ident_from_str(s: &str) -> proc_macro2::Ident {
     let bare = s.strip_prefix("minecraft:").unwrap_or(s);
+    let bare = resolve_sound(bare);
     let pascal = bare.replace('.', "_").to_pascal_case();
     format_ident!("{pascal}")
 }
@@ -126,32 +172,13 @@ fn build_entity_variant(
         all_variants.push(quote! { Self::#variant_ident });
     }
 
-    let biome_selection_fn = if is_farm_animal {
+    // 1.21.1 has no farm animal or zombie nautilus variants: every mob is the default one.
+    let biome_selection_fn = if is_farm_animal || is_nautilus {
         quote! {
-            #[doc = "Selects the appropriate variant based on the biome name, using vanilla farm animal biome tags."]
+            #[doc = "The variant for a biome: always the default one, as 1.21.1 has no variants."]
             #[must_use]
-            pub fn select_for_biome(biome_name: &str) -> Self {
-                let bare = biome_name.strip_prefix("minecraft:").unwrap_or(biome_name);
-                if crate::tag::WorldgenBiome::MINECRAFT_SPAWNS_COLD_VARIANT_FARM_ANIMALS.0.contains(&bare) {
-                    Self::Cold
-                } else if crate::tag::WorldgenBiome::MINECRAFT_SPAWNS_WARM_VARIANT_FARM_ANIMALS.0.contains(&bare) {
-                    Self::Warm
-                } else {
-                    Self::Temperate
-                }
-            }
-        }
-    } else if is_nautilus {
-        quote! {
-            #[doc = "Selects the appropriate variant based on the biome name, using vanilla zombie nautilus biome tags."]
-            #[must_use]
-            pub fn select_for_biome(biome_name: &str) -> Self {
-                let bare = biome_name.strip_prefix("minecraft:").unwrap_or(biome_name);
-                if crate::tag::WorldgenBiome::MINECRAFT_SPAWNS_CORAL_VARIANT_ZOMBIE_NAUTILUS.0.contains(&bare) {
-                    Self::Warm
-                } else {
-                    Self::Temperate
-                }
+            pub const fn select_for_biome(_biome_name: &str) -> Self {
+                Self::Temperate
             }
         }
     } else {

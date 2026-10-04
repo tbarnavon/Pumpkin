@@ -43,16 +43,16 @@ impl ChickenSoundVariant {
         match self {
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyChickenAmbient
+                    crate::sound::Sound::EntityChickenAmbient
                 } else {
                     crate::sound::Sound::EntityChickenAmbient
                 }
             }
             Self::Picky => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyChickenAmbient
+                    crate::sound::Sound::EntityChickenAmbient
                 } else {
-                    crate::sound::Sound::EntityChickenPickyAmbient
+                    crate::sound::Sound::EntityChickenAmbient
                 }
             }
         }
@@ -62,16 +62,16 @@ impl ChickenSoundVariant {
         match self {
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyChickenDeath
+                    crate::sound::Sound::EntityChickenDeath
                 } else {
                     crate::sound::Sound::EntityChickenDeath
                 }
             }
             Self::Picky => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyChickenDeath
+                    crate::sound::Sound::EntityChickenDeath
                 } else {
-                    crate::sound::Sound::EntityChickenPickyDeath
+                    crate::sound::Sound::EntityChickenDeath
                 }
             }
         }
@@ -81,16 +81,16 @@ impl ChickenSoundVariant {
         match self {
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyChickenHurt
+                    crate::sound::Sound::EntityChickenHurt
                 } else {
                     crate::sound::Sound::EntityChickenHurt
                 }
             }
             Self::Picky => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyChickenHurt
+                    crate::sound::Sound::EntityChickenHurt
                 } else {
-                    crate::sound::Sound::EntityChickenPickyHurt
+                    crate::sound::Sound::EntityChickenHurt
                 }
             }
         }
@@ -100,14 +100,14 @@ impl ChickenSoundVariant {
         match self {
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyChickenStep
+                    crate::sound::Sound::EntityChickenStep
                 } else {
                     crate::sound::Sound::EntityChickenStep
                 }
             }
             Self::Picky => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyChickenStep
+                    crate::sound::Sound::EntityChickenStep
                 } else {
                     crate::sound::Sound::EntityChickenStep
                 }

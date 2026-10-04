@@ -47,23 +47,23 @@ impl PigSoundVariant {
         match self {
             Self::Big => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigAmbient
+                    crate::sound::Sound::EntityPigAmbient
                 } else {
-                    crate::sound::Sound::EntityPigBigAmbient
+                    crate::sound::Sound::EntityPigAmbient
                 }
             }
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigAmbient
+                    crate::sound::Sound::EntityPigAmbient
                 } else {
                     crate::sound::Sound::EntityPigAmbient
                 }
             }
             Self::Mini => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigAmbient
+                    crate::sound::Sound::EntityPigAmbient
                 } else {
-                    crate::sound::Sound::EntityPigMiniAmbient
+                    crate::sound::Sound::EntityPigAmbient
                 }
             }
         }
@@ -73,23 +73,23 @@ impl PigSoundVariant {
         match self {
             Self::Big => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigDeath
+                    crate::sound::Sound::EntityPigDeath
                 } else {
-                    crate::sound::Sound::EntityPigBigDeath
+                    crate::sound::Sound::EntityPigDeath
                 }
             }
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigDeath
+                    crate::sound::Sound::EntityPigDeath
                 } else {
                     crate::sound::Sound::EntityPigDeath
                 }
             }
             Self::Mini => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigDeath
+                    crate::sound::Sound::EntityPigDeath
                 } else {
-                    crate::sound::Sound::EntityPigMiniDeath
+                    crate::sound::Sound::EntityPigDeath
                 }
             }
         }
@@ -99,23 +99,23 @@ impl PigSoundVariant {
         match self {
             Self::Big => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigHurt
+                    crate::sound::Sound::EntityPigHurt
                 } else {
-                    crate::sound::Sound::EntityPigBigHurt
+                    crate::sound::Sound::EntityPigHurt
                 }
             }
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigHurt
+                    crate::sound::Sound::EntityPigHurt
                 } else {
                     crate::sound::Sound::EntityPigHurt
                 }
             }
             Self::Mini => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigHurt
+                    crate::sound::Sound::EntityPigHurt
                 } else {
-                    crate::sound::Sound::EntityPigMiniHurt
+                    crate::sound::Sound::EntityPigHurt
                 }
             }
         }
@@ -125,21 +125,21 @@ impl PigSoundVariant {
         match self {
             Self::Big => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigStep
+                    crate::sound::Sound::EntityPigStep
                 } else {
                     crate::sound::Sound::EntityPigStep
                 }
             }
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigStep
+                    crate::sound::Sound::EntityPigStep
                 } else {
                     crate::sound::Sound::EntityPigStep
                 }
             }
             Self::Mini => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigStep
+                    crate::sound::Sound::EntityPigStep
                 } else {
                     crate::sound::Sound::EntityPigStep
                 }
@@ -151,23 +151,23 @@ impl PigSoundVariant {
         match self {
             Self::Big => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigEat
+                    crate::sound::Sound::EntityGenericEat
                 } else {
-                    crate::sound::Sound::EntityPigBigEat
+                    crate::sound::Sound::EntityGenericEat
                 }
             }
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigEat
+                    crate::sound::Sound::EntityGenericEat
                 } else {
-                    crate::sound::Sound::EntityPigEat
+                    crate::sound::Sound::EntityGenericEat
                 }
             }
             Self::Mini => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyPigEat
+                    crate::sound::Sound::EntityGenericEat
                 } else {
-                    crate::sound::Sound::EntityPigMiniEat
+                    crate::sound::Sound::EntityGenericEat
                 }
             }
         }

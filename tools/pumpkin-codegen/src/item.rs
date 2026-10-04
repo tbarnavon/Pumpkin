@@ -707,7 +707,7 @@ impl ToTokens for ItemComponents {
                         format_ident!("{}", s.strip_prefix("minecraft:").unwrap().to_pascal_case());
                     quote! { IdOr::Id(Sound::#variant_name) }
                 })
-                .unwrap_or(quote! { IdOr::Id(Sound::ItemShearsSnip) });
+                .unwrap_or(quote! { IdOr::Id(Sound::EntitySheepShear) });
 
             tokens.extend(quote! { (Equippable, &EquippableImpl {
                 slot: #slot,

@@ -616,7 +616,8 @@ impl EquippableImpl {
         let equip_on_interact = compound.get_bool("equip_on_interact").unwrap_or(false);
         let can_be_sheared = compound.get_bool("can_be_sheared").unwrap_or(false);
         let equip_sound = get_idor(compound, "equip_sound", Sound::ItemArmorEquipGeneric);
-        let shearing_sound = get_idor(compound, "shearing_sound_sound", Sound::ItemShearsSnip);
+        // 1.21.1 has no `item.shears.snip` (nor equipment shearing); the sheep shearing sound.
+        let shearing_sound = get_idor(compound, "shearing_sound_sound", Sound::EntitySheepShear);
         let allowed_entities = if let Some(nbt) = compound.get("allowed_entities") {
             IDSet::<EntityType>::read(nbt)
         } else {

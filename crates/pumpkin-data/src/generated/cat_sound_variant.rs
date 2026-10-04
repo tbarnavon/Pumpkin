@@ -43,16 +43,16 @@ impl CatSoundVariant {
         match self {
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatAmbient
+                    crate::sound::Sound::EntityCatAmbient
                 } else {
                     crate::sound::Sound::EntityCatAmbient
                 }
             }
             Self::Royal => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatAmbient
+                    crate::sound::Sound::EntityCatAmbient
                 } else {
-                    crate::sound::Sound::EntityCatRoyalAmbient
+                    crate::sound::Sound::EntityCatAmbient
                 }
             }
         }
@@ -62,16 +62,16 @@ impl CatSoundVariant {
         match self {
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatDeath
+                    crate::sound::Sound::EntityCatDeath
                 } else {
                     crate::sound::Sound::EntityCatDeath
                 }
             }
             Self::Royal => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatDeath
+                    crate::sound::Sound::EntityCatDeath
                 } else {
-                    crate::sound::Sound::EntityCatRoyalDeath
+                    crate::sound::Sound::EntityCatDeath
                 }
             }
         }
@@ -81,16 +81,16 @@ impl CatSoundVariant {
         match self {
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatHurt
+                    crate::sound::Sound::EntityCatHurt
                 } else {
                     crate::sound::Sound::EntityCatHurt
                 }
             }
             Self::Royal => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatHurt
+                    crate::sound::Sound::EntityCatHurt
                 } else {
-                    crate::sound::Sound::EntityCatRoyalHurt
+                    crate::sound::Sound::EntityCatHurt
                 }
             }
         }
@@ -100,16 +100,16 @@ impl CatSoundVariant {
         match self {
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatEat
+                    crate::sound::Sound::EntityCatEat
                 } else {
                     crate::sound::Sound::EntityCatEat
                 }
             }
             Self::Royal => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatEat
+                    crate::sound::Sound::EntityCatEat
                 } else {
-                    crate::sound::Sound::EntityCatRoyalEat
+                    crate::sound::Sound::EntityCatEat
                 }
             }
         }
@@ -119,16 +119,16 @@ impl CatSoundVariant {
         match self {
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatHiss
+                    crate::sound::Sound::EntityCatHiss
                 } else {
                     crate::sound::Sound::EntityCatHiss
                 }
             }
             Self::Royal => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatHiss
+                    crate::sound::Sound::EntityCatHiss
                 } else {
-                    crate::sound::Sound::EntityCatRoyalHiss
+                    crate::sound::Sound::EntityCatHiss
                 }
             }
         }
@@ -138,16 +138,16 @@ impl CatSoundVariant {
         match self {
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatPurr
+                    crate::sound::Sound::EntityCatPurr
                 } else {
                     crate::sound::Sound::EntityCatPurr
                 }
             }
             Self::Royal => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatPurr
+                    crate::sound::Sound::EntityCatPurr
                 } else {
-                    crate::sound::Sound::EntityCatRoyalPurr
+                    crate::sound::Sound::EntityCatPurr
                 }
             }
         }
@@ -157,16 +157,16 @@ impl CatSoundVariant {
         match self {
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatPurreow
+                    crate::sound::Sound::EntityCatPurreow
                 } else {
                     crate::sound::Sound::EntityCatPurreow
                 }
             }
             Self::Royal => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatPurreow
+                    crate::sound::Sound::EntityCatPurreow
                 } else {
-                    crate::sound::Sound::EntityCatRoyalPurreow
+                    crate::sound::Sound::EntityCatPurreow
                 }
             }
         }
@@ -176,16 +176,16 @@ impl CatSoundVariant {
         match self {
             Self::Classic => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatBegForFood
+                    crate::sound::Sound::EntityCatBegForFood
                 } else {
                     crate::sound::Sound::EntityCatBegForFood
                 }
             }
             Self::Royal => {
                 if is_baby {
-                    crate::sound::Sound::EntityBabyCatBegForFood
+                    crate::sound::Sound::EntityCatBegForFood
                 } else {
-                    crate::sound::Sound::EntityCatRoyalBegForFood
+                    crate::sound::Sound::EntityCatBegForFood
                 }
             }
         }
@@ -194,7 +194,7 @@ impl CatSoundVariant {
     pub const fn stray_ambient_sound(&self) -> crate::sound::Sound {
         match self {
             Self::Classic => crate::sound::Sound::EntityCatStrayAmbient,
-            Self::Royal => crate::sound::Sound::EntityCatRoyalStrayAmbient,
+            Self::Royal => crate::sound::Sound::EntityCatStrayAmbient,
         }
     }
     #[must_use]

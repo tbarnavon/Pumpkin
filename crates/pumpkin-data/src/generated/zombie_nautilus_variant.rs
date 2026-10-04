@@ -63,17 +63,9 @@ impl ZombieNautilusVariant {
     pub const fn all() -> &'static [Self] {
         Self::ALL
     }
-    #[doc = "Selects the appropriate variant based on the biome name, using vanilla zombie nautilus biome tags."]
+    #[doc = "The variant for a biome: always the default one, as 1.21.1 has no variants."]
     #[must_use]
-    pub fn select_for_biome(biome_name: &str) -> Self {
-        let bare = biome_name.strip_prefix("minecraft:").unwrap_or(biome_name);
-        if crate::tag::WorldgenBiome::MINECRAFT_SPAWNS_CORAL_VARIANT_ZOMBIE_NAUTILUS
-            .0
-            .contains(&bare)
-        {
-            Self::Warm
-        } else {
-            Self::Temperate
-        }
+    pub const fn select_for_biome(_biome_name: &str) -> Self {
+        Self::Temperate
     }
 }
