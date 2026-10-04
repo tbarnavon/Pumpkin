@@ -924,8 +924,9 @@ impl EntityBase for ArrowEntity {
                     damage as f32,
                     DamageType::ARROW,
                     Some(hit_pos),
+                    // `DamageSources.arrow(arrow, owner)`: the arrow is the direct entity.
+                    Some(entity),
                     owner_entity.as_deref(),
-                    None,
                 );
 
                 if let Some(living) = target.get_living_entity() {

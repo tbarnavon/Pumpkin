@@ -3284,8 +3284,9 @@ impl LivingEntity {
         world.broadcast_damage_event(
             &self.entity,
             i32::from(damage_type.id),
+            // `DamageSource.getEntity` (the shooter), then `getDirectEntity` (the arrow).
+            cause.or(source).map(|e| e.get_entity().entity_id),
             source.map(|e| e.get_entity().entity_id),
-            cause.map(|e| e.get_entity().entity_id),
             position,
         );
 
