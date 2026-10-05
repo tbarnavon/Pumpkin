@@ -140,6 +140,9 @@ impl Mob for StriderEntity {
 
     fn set_saddled(&self, saddled: bool) {
         self.saddled.store(saddled, Ordering::Relaxed);
+        // 1.21.1 shows the saddle through entity data, not an equipment slot.
+        self.get_entity()
+            .set_synced_data(pumpkin_data::tracked_data::strider::DATA_SADDLE_ID, saddled);
     }
 
     fn mob_tick(&self, _caller: &dyn EntityBase) {

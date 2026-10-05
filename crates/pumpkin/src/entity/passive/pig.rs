@@ -210,6 +210,9 @@ impl Mob for PigEntity {
 
     fn set_saddled(&self, saddled: bool) {
         self.saddled.store(saddled, Ordering::Relaxed);
+        // 1.21.1 shows the saddle through entity data, not an equipment slot.
+        self.get_entity()
+            .set_synced_data(pumpkin_data::tracked_data::pig::DATA_SADDLE_ID, saddled);
     }
 
     fn mob_interact(&self, player: &Arc<Player>, item_stack: &mut ItemStack) -> bool {
