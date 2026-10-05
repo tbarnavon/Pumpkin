@@ -55,7 +55,7 @@ fn fill_blocks(
     source: &CommandSource,
     from: BlockPos,
     to: BlockPos,
-    target_block: &'static Block,
+    target: &crate::command::argument_types::block::BlockStateInput,
     mode: FillMode,
     filter: Option<&BlockPredicate>,
     _strict: bool,
@@ -85,7 +85,7 @@ fn fill_blocks(
         ));
     }
 
-    let target_state_id = target_block.default_state.id;
+    let target_state_id = target.state;
     let mut changed_positions = Vec::new();
 
     let min_chunk_x = min_x >> 4;
@@ -225,6 +225,11 @@ fn fill_blocks(
 
     world.queue_block_updates(&changed_positions);
     world.flush_block_updates();
+    if let Some(nbt) = &target.nbt {
+        for (pos, _) in &changed_positions {
+            super::setblock::load_block_entity_nbt(&world, pos, nbt);
+        }
+    }
 
     source.send_feedback(
         TextComponent::translate_cross(
@@ -248,7 +253,7 @@ impl CommandExecutor for FillExecutor {
     fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
         let from = BlockPosArgumentType::get_loaded_block_pos(context, "from")?;
         let to = BlockPosArgumentType::get_loaded_block_pos(context, "to")?;
-        let block = BlockArgumentType::get(context, "block")?;
+        let block = BlockArgumentType::get_state(context, "block")?;
 
         let filter = if matches!(self.filter_mode, FilterMode::WithFilter) {
             Some(BlockPredicateArgumentType::get(context, "filter")?)
@@ -260,7 +265,7 @@ impl CommandExecutor for FillExecutor {
             &context.source,
             from,
             to,
-            block,
+            &block,
             self.mode,
             filter.as_ref(),
             self.strict,

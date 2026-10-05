@@ -37,10 +37,31 @@ enum Mode {
 
 struct SetBlockExecutor(Mode);
 
+/// `BlockInput.place` with a tag: the block entity now at `pos` loads `nbt` over its own data.
+pub(super) fn load_block_entity_nbt(
+    world: &crate::world::World,
+    pos: &pumpkin_util::math::position::BlockPos,
+    nbt: &pumpkin_nbt::compound::NbtCompound,
+) {
+    let Some(existing) = world.get_block_entity(pos) else {
+        return;
+    };
+    let mut data = pumpkin_nbt::compound::NbtCompound::new();
+    existing.write_nbt(&mut data);
+    data.merge(nbt);
+    data.put_string("id", existing.resource_location().to_string());
+    data.put_int("x", pos.0.x);
+    data.put_int("y", pos.0.y);
+    data.put_int("z", pos.0.z);
+    if let Some(block_entity) = crate::block::entities::block_entity_from_nbt(&data) {
+        world.add_block_entity(block_entity);
+    }
+}
+
 impl CommandExecutor for SetBlockExecutor {
     fn execute(&self, context: &CommandContext) -> CommandExecutorResult {
-        let block = BlockArgumentType::get(context, "block")?;
-        let block_state_id = block.default_state.id;
+        let input = BlockArgumentType::get_state(context, "block")?;
+        let block_state_id = input.state;
         let mode = self.0;
         let world = context.source.world();
         let pos = BlockPosArgumentType::get_loaded_block_pos(context, "pos")?;
@@ -93,6 +114,9 @@ impl CommandExecutor for SetBlockExecutor {
         };
 
         if success {
+            if let Some(nbt) = &input.nbt {
+                load_block_entity_nbt(world, &pos, nbt);
+            }
             world.flush_block_updates();
             context.source.send_feedback(
                 TextComponent::translate_cross(
