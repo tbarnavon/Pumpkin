@@ -200,6 +200,16 @@ send upstream (`ROADMAP.md`, item 12); once merged there, drop them here.
 - `eae26f083` adventure mode ignored `can_break` and `can_place_on`: any block broke, none placed
   (`pumpkin/src/entity/player/adventure.rs` new, `pumpkin/src/net/java/play/{player_action,use_item_on}.rs`,
   `pumpkin/src/block/registry.rs`)
+- `dbc56b4ed` completing a villager trade deadlocked the server: the trade callback
+  locked the merchant screen handler it ran under (`pumpkin/src/entity/passive/villager/mod.rs`)
+- `22f9cb735` a right click interacted twice (`interact_at` and `interact`), so
+  players mounted twice and items were used twice (`pumpkin/src/net/java/play/interact.rs`,
+  `pumpkin/src/entity/mod.rs`)
+- `ef539eaf1` releasing shift was handled as pressing it
+  (`pumpkin/src/net/java/play/player_command.rs`)
+- `b2a0f0534` decorated pots lost their sherds (`pot_decorations` kept no data)
+  (`pumpkin-data/src/data_component_impl/basic.rs`, `pumpkin/src/block/entities/decorated_pot.rs`,
+  `pumpkin-protocol/src/codec/data_component.rs`, `tools/pumpkin-codegen/src/item.rs`)
 
 ## 11. Docs
 
