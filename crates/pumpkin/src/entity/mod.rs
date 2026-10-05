@@ -3447,6 +3447,17 @@ impl Entity {
     }
 
     pub fn add_passenger(&self, vehicle: Arc<dyn EntityBase>, passenger: Arc<dyn EntityBase>) {
+        // Vanilla `Entity.startRiding`: riding the vehicle one already rides does nothing.
+        let passenger_id = passenger.get_entity().entity_id;
+        if self
+            .passengers
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .iter()
+            .any(|p| p.get_entity().entity_id == passenger_id)
+        {
+            return;
+        }
         let mut mount_event =
             crate::plugin::api::events::entity::entity_mount::EntityMountEvent::new(
                 passenger.get_entity().entity_id,
