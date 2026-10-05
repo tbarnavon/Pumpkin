@@ -2808,6 +2808,87 @@ impl LivingEntity {
         if !equipment.child_tags.is_empty() {
             nbt.put("equipment", NbtTag::Compound(equipment));
         }
+        self.write_legacy_equipment(nbt);
+    }
+
+    /// 1.21.1's `Mob` equipment lists: `ArmorItems` (feet to head), `HandItems` (main hand,
+    /// off hand) with empty compounds for empty slots, and `body_armor_item`.
+    fn write_legacy_equipment(&self, nbt: &mut NbtCompound) {
+        let guard = self
+            .entity_equipment
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let list = |slots: &[EquipmentSlot]| {
+            slots
+                .iter()
+                .map(|slot| {
+                    let mut item = NbtCompound::new();
+                    let stack = guard.get(slot);
+                    if !stack.is_empty() {
+                        stack.write_item_stack(&mut item);
+                    }
+                    NbtTag::Compound(item)
+                })
+                .collect::<Vec<_>>()
+        };
+        nbt.put_list(
+            "ArmorItems",
+            list(&[
+                EquipmentSlot::FEET,
+                EquipmentSlot::LEGS,
+                EquipmentSlot::CHEST,
+                EquipmentSlot::HEAD,
+            ]),
+        );
+        nbt.put_list(
+            "HandItems",
+            list(&[EquipmentSlot::MAIN_HAND, EquipmentSlot::OFF_HAND]),
+        );
+        let body = guard.get(&EquipmentSlot::BODY);
+        if !body.is_empty() {
+            let mut item = NbtCompound::new();
+            body.write_item_stack(&mut item);
+            nbt.put_compound("body_armor_item", item);
+        }
+    }
+
+    /// Reads 1.21.1's equipment lists, for entities saved without the `equipment` compound.
+    fn read_legacy_equipment(&self, nbt: &NbtCompound) {
+        let mut guard = self
+            .entity_equipment
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let lists: [(&str, &[EquipmentSlot]); 2] = [
+            (
+                "ArmorItems",
+                &[
+                    EquipmentSlot::FEET,
+                    EquipmentSlot::LEGS,
+                    EquipmentSlot::CHEST,
+                    EquipmentSlot::HEAD,
+                ],
+            ),
+            (
+                "HandItems",
+                &[EquipmentSlot::MAIN_HAND, EquipmentSlot::OFF_HAND],
+            ),
+        ];
+        for (key, slots) in lists {
+            let Some(items) = nbt.get_list(key) else {
+                continue;
+            };
+            for (slot, tag) in slots.iter().zip(items) {
+                if let Some(stack) = tag.extract_compound().and_then(ItemStack::read_item_stack) {
+                    guard.put(slot, stack);
+                }
+            }
+        }
+        if let Some(stack) = nbt
+            .get_compound("body_armor_item")
+            .and_then(ItemStack::read_item_stack)
+        {
+            guard.put(&EquipmentSlot::BODY, stack);
+        }
     }
 
     pub fn read_living_nbt_non_mut(&self, nbt: &NbtCompound) {
@@ -2819,6 +2900,9 @@ impl LivingEntity {
                 .unwrap_or_else(|| self.get_max_health()),
         );
 
+        if nbt.get_compound("equipment").is_none() {
+            self.read_legacy_equipment(nbt);
+        }
         if let Some(equipment) = nbt.get_compound("equipment") {
             let mut guard = self
                 .entity_equipment

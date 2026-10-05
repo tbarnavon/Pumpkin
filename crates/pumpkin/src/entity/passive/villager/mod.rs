@@ -1942,7 +1942,7 @@ impl Mob for VillagerEntity {
                 item_stack.write_item_stack(&mut sell);
                 recipe.put_compound("sell", sell);
 
-                if let Some(cost_b) = &offer.cost_b {
+                if let Some(cost_b) = offer.cost_b.as_ref().filter(|cost_b| !cost_b.0.is_empty()) {
                     let mut buy_b = NbtCompound::new();
                     let item_stack: &ItemStack = cost_b.0.as_ref();
                     item_stack.write_item_stack(&mut buy_b);
@@ -1970,7 +1970,8 @@ impl Mob for VillagerEntity {
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         if !inventory.is_empty() {
             let mut inventory_list = Vec::new();
-            for item in inventory.iter() {
+            // `SimpleContainer.createTag` keeps only the non-empty stacks.
+            for item in inventory.iter().filter(|item| !item.is_empty()) {
                 let mut item_compound = NbtCompound::new();
                 item.write_item_stack(&mut item_compound);
                 inventory_list.push(NbtTag::Compound(item_compound));
