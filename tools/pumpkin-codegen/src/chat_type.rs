@@ -19,7 +19,7 @@ struct ChatFormatJson {
 }
 
 pub fn build() -> TokenStream {
-    let dir = Path::new("../../assets/datapack/data/minecraft/chat_type");
+    let dir = &crate::datapack::mc("chat_type");
 
     let mut chat_types: BTreeMap<String, ChatTypeJson> = BTreeMap::new();
 

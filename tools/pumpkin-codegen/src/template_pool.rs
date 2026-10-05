@@ -139,7 +139,7 @@ fn element_to_tokens(element: &RawPoolElement) -> TokenStream {
 }
 
 pub fn build() -> TokenStream {
-    let pool_dir = Path::new("../../assets/datapack/data/minecraft/worldgen/template_pool");
+    let pool_dir = &crate::datapack::mc("worldgen/template_pool");
     let mut pools: BTreeMap<String, RawTemplatePool> = BTreeMap::new();
 
     fn visit_dir(dir: &Path, base: &Path, pools: &mut BTreeMap<String, RawTemplatePool>) {

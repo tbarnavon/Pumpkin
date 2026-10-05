@@ -16815,7 +16815,7 @@ pub mod WorldgenWorldPreset {
             "single_biome_surface",
             "debug_all_block_states",
         ],
-        &[5u16, 2u16, 4u16, 0u16, 6u16, 1u16],
+        &[4u16, 2u16, 3u16, 0u16, 5u16, 1u16],
         "minecraft:extended",
     );
     pub const MINECRAFT_NORMAL: Tag = (
@@ -16826,7 +16826,7 @@ pub mod WorldgenWorldPreset {
             "amplified",
             "single_biome_surface",
         ],
-        &[5u16, 2u16, 4u16, 0u16, 6u16],
+        &[4u16, 2u16, 3u16, 0u16, 5u16],
         "minecraft:normal",
     );
 }

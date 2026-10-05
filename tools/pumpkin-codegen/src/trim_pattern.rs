@@ -21,7 +21,7 @@ struct TrimDescriptionJson {
 }
 
 pub fn build() -> TokenStream {
-    let dir = Path::new("../../assets/datapack/data/minecraft/trim_pattern");
+    let dir = &crate::datapack::mc("trim_pattern");
 
     let mut patterns: BTreeMap<String, TrimPatternJson> = BTreeMap::new();
 

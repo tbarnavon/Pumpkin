@@ -3081,10 +3081,8 @@ fn load_vanilla_noise_router(
 }
 
 fn load_vanilla_noise_routers() -> NoiseRouterReprs {
-    let base_ns_dir =
-        std::path::Path::new("../../assets/datapack/data/minecraft/worldgen/noise_settings");
-    let base_df_dir =
-        std::path::Path::new("../../assets/datapack/data/minecraft/worldgen/density_function");
+    let base_ns_dir = &crate::datapack::mc("worldgen/noise_settings");
+    let base_df_dir = &crate::datapack::mc("worldgen/density_function");
 
     let overworld = load_vanilla_noise_router(base_ns_dir, base_df_dir, "overworld");
     let overworld_large_biomes =

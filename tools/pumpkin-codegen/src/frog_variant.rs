@@ -13,7 +13,7 @@ struct FrogVariantJson {
 }
 
 pub fn build() -> TokenStream {
-    let dir = Path::new("../../assets/datapack/data/minecraft/frog_variant");
+    let dir = &crate::datapack::mc("frog_variant");
 
     let mut variants: BTreeMap<String, FrogVariantJson> = BTreeMap::new();
 

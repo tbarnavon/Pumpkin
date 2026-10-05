@@ -540,15 +540,12 @@ pub fn resolve_rule(
 
 /// Reads material_rule files and resolves conditions from material_condition folder.
 pub fn build() -> TokenStream {
-    let rule_dir =
-        std::path::Path::new("../../assets/datapack/data/minecraft/worldgen/material_rule");
-    let cond_dir =
-        std::path::Path::new("../../assets/datapack/data/minecraft/worldgen/material_condition");
+    let rule_dir = &crate::datapack::mc("worldgen/material_rule");
+    let cond_dir = &crate::datapack::mc("worldgen/material_condition");
 
     // 1.21.1 keeps each dimension's surface rule inline in its noise settings (`surface_rule`);
     // there are no named rule files, and the bedrock floor and roof are part of these rules.
-    let settings_dir =
-        std::path::Path::new("../../assets/datapack/data/minecraft/worldgen/noise_settings");
+    let settings_dir = &crate::datapack::mc("worldgen/noise_settings");
     let top_level_rules = [
         ("OVERWORLD", "overworld"),
         ("END", "end"),

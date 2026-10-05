@@ -15,7 +15,7 @@ struct CatVariantJson {
 }
 
 pub fn build() -> TokenStream {
-    let dir = Path::new("../../assets/datapack/data/minecraft/cat_variant");
+    let dir = &crate::datapack::mc("cat_variant");
 
     let mut variants: BTreeMap<String, CatVariantJson> = BTreeMap::new();
 

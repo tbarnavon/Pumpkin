@@ -496,7 +496,7 @@ fn processor_to_tokens(proc: &RawProcessor) -> TokenStream {
 pub fn build() -> TokenStream {
     println!("cargo:rerun-if-changed=../../assets/datapack/data/minecraft/worldgen/processor_list");
 
-    let dir = Path::new("../../assets/datapack/data/minecraft/worldgen/processor_list");
+    let dir = &crate::datapack::mc("worldgen/processor_list");
     let mut files: Vec<_> = fs::read_dir(dir)
         .expect("Failed to read processor_list directory")
         .filter_map(Result::ok)

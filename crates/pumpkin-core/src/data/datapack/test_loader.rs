@@ -247,19 +247,16 @@ mod tests {
     }
 
     #[test]
-    fn loads_embedded_test_instances_including_always_pass() {
+    fn loads_embedded_test_instances() {
+        // Vanilla 1.21.1 ships no test instances as data; the embedded ones are Pumpkin's own.
         let mut registry = TestInstanceRegistry::new();
         let count = load_embedded_test_instances(&mut registry);
         assert!(count > 0);
 
-        let always_pass = registry
-            .get("minecraft:always_pass")
-            .expect("minecraft:always_pass should be successfully parsed and registered");
-        assert_eq!(always_pass.instance_type, TestType::Function);
-        assert_eq!(
-            always_pass.function.as_deref(),
-            Some("minecraft:always_pass")
+        assert!(
+            registry.contains_key("pumpkin:creeper_should_run_from_cat"),
+            "pumpkin:creeper_should_run_from_cat should be successfully parsed and registered"
         );
-        assert_eq!(always_pass.structure, "minecraft:empty");
+        assert!(!registry.contains_key("minecraft:always_pass"));
     }
 }

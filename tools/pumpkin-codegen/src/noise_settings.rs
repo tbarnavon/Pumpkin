@@ -246,8 +246,7 @@ impl ToTokens for NoiseSettingsStruct {
 
 /// Reads noise_settings files from datapack and generates NoiseSettings constants.
 pub fn build() -> TokenStream {
-    let noise_settings_dir =
-        std::path::Path::new("../../assets/datapack/data/minecraft/worldgen/noise_settings");
+    let noise_settings_dir = &crate::datapack::mc("worldgen/noise_settings");
 
     let mut json: BTreeMap<String, NoiseSettingsStruct> = BTreeMap::new();
     let mut entries: Vec<_> = fs::read_dir(noise_settings_dir)

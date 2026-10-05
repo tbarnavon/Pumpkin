@@ -848,8 +848,8 @@ fn collect_advancements(
 /// calculates positions using the Reingold-Tilford algorithm, and generates
 /// the final Rust source code.
 pub(crate) fn build() -> TokenStream {
-    let base_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../assets/datapack/data/minecraft/advancement");
+    let base_path =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(crate::datapack::mc("advancement"));
     let mut advancements: BTreeMap<String, AdvancementStruct> = BTreeMap::new();
     collect_advancements(&base_path, &base_path, &mut advancements);
 

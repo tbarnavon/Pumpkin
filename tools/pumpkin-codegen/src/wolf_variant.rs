@@ -41,7 +41,7 @@ impl From<WolfVariantJson1_21_1> for WolfVariantJson {
 }
 
 pub fn build() -> TokenStream {
-    let dir = Path::new("../../assets/datapack/data/minecraft/wolf_variant");
+    let dir = &crate::datapack::mc("wolf_variant");
 
     let mut variants: BTreeMap<String, WolfVariantJson> = BTreeMap::new();
 

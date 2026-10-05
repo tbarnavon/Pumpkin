@@ -244,6 +244,11 @@ fn load_datapack_tags(
     }
 
     walk_data_dir(data_dir, &mut raw_categories);
+    // Tags of the registries the branch keeps in `assets/codegen_extra` (see `datapack`).
+    walk_data_dir(
+        std::path::Path::new(crate::datapack::EXTRA_DATA),
+        &mut raw_categories,
+    );
 
     // Later versions' tags the game code checks; a vanilla tag of the same name wins.
     let mut internal_raw = BTreeMap::new();
@@ -447,7 +452,7 @@ pub(crate) fn build() -> TokenStream {
             let mut tag_map_entries = Vec::new();
 
             if !datapack_id_maps.contains_key(&key) {
-                let dir = std::path::Path::new("../../assets/datapack/data/minecraft").join(&key);
+                let dir = &crate::datapack::mc(&key);
                 if dir.is_dir() {
                     datapack_id_maps.insert(key.clone(), load_datapack_registry_ids(&dir));
                 }

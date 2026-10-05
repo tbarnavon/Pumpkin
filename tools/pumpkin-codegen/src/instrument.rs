@@ -21,7 +21,7 @@ struct DescriptionJson {
 }
 
 pub fn build() -> TokenStream {
-    let dir = Path::new("../../assets/datapack/data/minecraft/instrument");
+    let dir = &crate::datapack::mc("instrument");
 
     let mut instruments: BTreeMap<String, InstrumentJson> = BTreeMap::new();
 

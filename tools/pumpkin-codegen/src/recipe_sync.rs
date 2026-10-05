@@ -6,7 +6,7 @@ use serde_json::Value;
 
 /// Generates every recipe in the form `update_recipes` sends it to pre-1.21.2 clients.
 pub fn build() -> TokenStream {
-    let dir = std::path::Path::new("../../assets/datapack/data/minecraft/recipe");
+    let dir = &crate::datapack::mc("recipe");
     let mut paths: Vec<_> = fs::read_dir(dir)
         .expect("Missing recipe directory")
         .map(|entry| entry.unwrap().path())

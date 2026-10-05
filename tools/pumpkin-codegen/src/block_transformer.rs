@@ -235,7 +235,7 @@ pub fn build() -> TokenStream {
             .expect("Failed to parse blocks.json");
     let valid_blocks: HashSet<String> = blocks_file.into_keys().collect();
 
-    let dir = Path::new("../../assets/datapack/data/minecraft/block_transformer");
+    let dir = &crate::datapack::mc("block_transformer");
     let mut files: Vec<(String, Vec<TransformerEntryJson>)> = Vec::new();
 
     if dir.is_dir() {

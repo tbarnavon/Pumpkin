@@ -31,12 +31,10 @@ pub(crate) fn build() -> TokenStream {
     ];
 
     let process_version = |ver_folder: &str| -> TokenStream {
-        let base_path = std::path::Path::new("../../assets/datapack/data/minecraft");
-
         let mut data: IndexMap<String, IndexMap<String, Value>> = IndexMap::new();
 
         for &reg_name in SYNCED_REGISTRIES {
-            let reg_dir = base_path.join(reg_name);
+            let reg_dir = &crate::datapack::mc(reg_name);
             if !reg_dir.is_dir() {
                 continue;
             }

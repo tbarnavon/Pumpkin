@@ -13,7 +13,7 @@ struct DecoratedPotPatternJson {
 }
 
 pub fn build() -> TokenStream {
-    let dir = Path::new("../../assets/datapack/data/minecraft/decorated_pot_pattern");
+    let dir = &crate::datapack::mc("decorated_pot_pattern");
 
     let mut patterns: BTreeMap<String, DecoratedPotPatternJson> = BTreeMap::new();
 

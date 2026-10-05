@@ -36,8 +36,8 @@ struct ProviderEntry {
 }
 
 pub fn build() -> TokenStream {
-    let provider_dir = Path::new("../../assets/datapack/data/minecraft/enchantment_provider");
-    let tags_dir = Path::new("../../assets/datapack/data/minecraft/tags/enchantment");
+    let provider_dir = &crate::datapack::mc("enchantment_provider");
+    let tags_dir = &crate::datapack::mc("tags/enchantment");
 
     let mut raw_files: BTreeMap<String, (String, String, String)> = BTreeMap::new();
     if provider_dir.is_dir() {
@@ -48,8 +48,7 @@ pub fn build() -> TokenStream {
 
     for (qualified, (bare, const_name, rel_path)) in raw_files {
         // Read and parse JSON
-        let full_path = Path::new("../../assets/datapack/data/minecraft/enchantment_provider")
-            .join(format!("{bare}.json"));
+        let full_path = &crate::datapack::mc("enchantment_provider").join(format!("{bare}.json"));
         let content = fs::read_to_string(&full_path).unwrap_or_else(|e| {
             panic!(
                 "failed to read enchantment provider file {}: {}",

@@ -419,8 +419,7 @@ struct KeyframeJson {
 }
 
 pub fn build() -> TokenStream {
-    let timeline_path =
-        std::path::Path::new("../../assets/datapack/data/minecraft/timeline/day.json");
+    let timeline_path = &crate::datapack::mc("timeline/day.json");
     let (
         period_ticks,
         sky_light_level_keyframes,
@@ -501,7 +500,7 @@ pub fn build() -> TokenStream {
         )
     };
 
-    let moon_path = std::path::Path::new("../../assets/datapack/data/minecraft/timeline/moon.json");
+    let moon_path = &crate::datapack::mc("timeline/moon.json");
     let (moon_period_ticks, surface_slime_spawn_chance_keyframes, moon_phase_keyframes) =
         if let Ok(content) = std::fs::read_to_string(moon_path) {
             if let Ok(timeline) = serde_json::from_str::<TimelineJson>(&content) {
@@ -537,8 +536,7 @@ pub fn build() -> TokenStream {
             (192000, Vec::new(), Vec::new())
         };
 
-    let early_game_path =
-        std::path::Path::new("../../assets/datapack/data/minecraft/timeline/early_game.json");
+    let early_game_path = &crate::datapack::mc("timeline/early_game.json");
     let can_pillager_patrol_spawn_keyframes =
         if let Ok(content) = std::fs::read_to_string(early_game_path) {
             if let Ok(timeline) = serde_json::from_str::<TimelineJson>(&content) {
@@ -561,9 +559,7 @@ pub fn build() -> TokenStream {
             Vec::new()
         };
 
-    let villager_schedule_path = std::path::Path::new(
-        "../../assets/datapack/data/minecraft/timeline/villager_schedule.json",
-    );
+    let villager_schedule_path = &crate::datapack::mc("timeline/villager_schedule.json");
     let (schedule_period_ticks, villager_activity_keyframes, baby_villager_activity_keyframes) =
         if let Ok(content) = std::fs::read_to_string(villager_schedule_path) {
             if let Ok(timeline) = serde_json::from_str::<TimelineJson>(&content) {

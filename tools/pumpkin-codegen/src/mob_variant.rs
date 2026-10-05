@@ -94,7 +94,7 @@ fn build_entity_variant(
     is_farm_animal: bool,
     is_nautilus: bool,
 ) -> TokenStream {
-    let dir = Path::new("../../assets/datapack/data/minecraft").join(dir_name);
+    let dir = &crate::datapack::mc(dir_name);
     let mut variants: BTreeMap<String, EntityVariantJson> = BTreeMap::new();
 
     let mut entries = fs::read_dir(&dir)
@@ -359,7 +359,7 @@ impl SoundVariantJson {
 }
 
 fn load_sound_variants(dir_name: &str) -> BTreeMap<String, SoundVariantJson> {
-    let dir = Path::new("../../assets/datapack/data/minecraft").join(dir_name);
+    let dir = &crate::datapack::mc(dir_name);
     let mut variants: BTreeMap<String, SoundVariantJson> = BTreeMap::new();
 
     let mut entries = fs::read_dir(&dir)

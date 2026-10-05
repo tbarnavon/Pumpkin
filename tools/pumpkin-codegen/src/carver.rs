@@ -54,8 +54,7 @@ fn normalize_carver(data: &Value) -> Value {
 }
 
 pub fn build() -> TokenStream {
-    let dir =
-        std::path::Path::new("../../assets/datapack/data/minecraft/worldgen/configured_carver");
+    let dir = &crate::datapack::mc("worldgen/configured_carver");
     let mut carvers: BTreeMap<String, Value> = BTreeMap::new();
     let mut entries: Vec<_> = fs::read_dir(dir)
         .expect("Missing worldgen/configured_carver directory")

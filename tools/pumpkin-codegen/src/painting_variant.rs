@@ -27,9 +27,8 @@ struct TagJson {
 }
 
 pub fn build() -> TokenStream {
-    let dir = Path::new("../../assets/datapack/data/minecraft/painting_variant");
-    let tag_file =
-        Path::new("../../assets/datapack/data/minecraft/tags/painting_variant/placeable.json");
+    let dir = &crate::datapack::mc("painting_variant");
+    let tag_file = &crate::datapack::mc("tags/painting_variant/placeable.json");
 
     let placeable_set: Vec<String> = if tag_file.exists() {
         let content = fs::read_to_string(tag_file).expect("read placeable.json");

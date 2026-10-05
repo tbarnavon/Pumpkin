@@ -14,7 +14,7 @@ struct BannerPatternJson {
 }
 
 pub fn build() -> TokenStream {
-    let dir = Path::new("../../assets/datapack/data/minecraft/banner_pattern");
+    let dir = &crate::datapack::mc("banner_pattern");
 
     let mut patterns: BTreeMap<String, BannerPatternJson> = BTreeMap::new();
 

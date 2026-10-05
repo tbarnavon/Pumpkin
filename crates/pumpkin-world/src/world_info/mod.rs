@@ -250,9 +250,6 @@ impl WorldPreset {
     );
     pub const FLAT_RAW: &'static str =
         include_str!("../../../../assets/datapack/data/minecraft/worldgen/world_preset/flat.json");
-    pub const FLAT_ALL_DIMENSIONS_RAW: &'static str = include_str!(
-        "../../../../assets/datapack/data/minecraft/worldgen/world_preset/flat_all_dimensions.json"
-    );
     pub const SINGLE_BIOME_SURFACE_RAW: &'static str = include_str!(
         "../../../../assets/datapack/data/minecraft/worldgen/world_preset/single_biome_surface.json"
     );
@@ -268,7 +265,6 @@ impl WorldPreset {
             "amplified" => Self::AMPLIFIED_RAW,
             "large_biomes" => Self::LARGE_BIOMES_RAW,
             "flat" => Self::FLAT_RAW,
-            "flat_all_dimensions" => Self::FLAT_ALL_DIMENSIONS_RAW,
             "single_biome_surface" => Self::SINGLE_BIOME_SURFACE_RAW,
             "debug_all_block_states" => Self::DEBUG_ALL_BLOCK_STATES_RAW,
             _ => return None,
@@ -615,7 +611,6 @@ mod tests {
             "amplified",
             "large_biomes",
             "flat",
-            "flat_all_dimensions",
             "single_biome_surface",
             "debug_all_block_states",
         ];

@@ -8,8 +8,9 @@ use quote::quote;
 const DEFAULT_NAMESPACE: &str = "minecraft";
 
 pub fn build() -> TokenStream {
-    let int_dir = Path::new("../../assets/datapack/data/minecraft/context_int_provider");
-    let float_dir = Path::new("../../assets/datapack/data/minecraft/context_float_provider");
+    let int_dir = Path::new("../../assets/context_providers/data/minecraft/context_int_provider");
+    let float_dir =
+        Path::new("../../assets/context_providers/data/minecraft/context_float_provider");
 
     let mut int_providers: BTreeMap<String, (String, String)> = BTreeMap::new();
     let mut float_providers: BTreeMap<String, (String, String)> = BTreeMap::new();

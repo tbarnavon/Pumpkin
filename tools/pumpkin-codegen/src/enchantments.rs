@@ -1010,7 +1010,7 @@ fn parse_optional_value_effect(val: Option<&serde_json::Value>) -> TokenStream {
 /// Generates the `TokenStream` for the `Enchantment` struct, `AttributeModifierSlot` enum,
 /// data-driven effect types, and `from_name`/`from_id` lookup methods.
 pub fn build() -> TokenStream {
-    let dir = std::path::Path::new("../../assets/datapack/data/minecraft/enchantment");
+    let dir = &crate::datapack::mc("enchantment");
     let mut enchantments: BTreeMap<String, Enchantment> = BTreeMap::new();
     let mut entries: Vec<_> = fs::read_dir(dir)
         .expect("Missing enchantment directory")

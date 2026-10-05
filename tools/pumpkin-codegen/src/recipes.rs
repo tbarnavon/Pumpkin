@@ -110,7 +110,7 @@ pub struct SmithingTrimRecipeStruct {
 fn trim_pattern_for_template(template: &str) -> Option<String> {
     static PATTERNS: std::sync::OnceLock<Vec<(String, String)>> = std::sync::OnceLock::new();
     let patterns = PATTERNS.get_or_init(|| {
-        let dir = std::path::Path::new("../../assets/datapack/data/minecraft/trim_pattern");
+        let dir = &crate::datapack::mc("trim_pattern");
         let mut patterns = Vec::new();
         for entry in fs::read_dir(dir)
             .expect("Missing trim_pattern directory")
@@ -616,7 +616,7 @@ impl ToTokens for RecipeCategoryTypes {
 
 /// Reads recipe JSON files from the 26.2 datapack and emits the complete recipe constants and helpers `TokenStream`.
 pub fn build() -> TokenStream {
-    let dir = std::path::Path::new("../../assets/datapack/data/minecraft/recipe");
+    let dir = &crate::datapack::mc("recipe");
     let mut recipes_assets: BTreeMap<String, RecipeTypes> = BTreeMap::new();
     let mut entries: Vec<_> = fs::read_dir(dir)
         .expect("Missing recipe directory")

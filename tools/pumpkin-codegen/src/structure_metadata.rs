@@ -239,7 +239,7 @@ fn joint_to_tokens(joint: &str) -> TokenStream {
 pub fn build() -> TokenStream {
     println!("cargo:rerun-if-changed=../../assets/datapack/data/minecraft/structure");
 
-    let root_dir = Path::new("../../assets/datapack/data/minecraft/structure");
+    let root_dir = &crate::datapack::mc("structure");
     let mut files = Vec::new();
     collect_nbt_files(root_dir, "", &mut files);
 
