@@ -243,7 +243,7 @@ Real-client tests to run:
 
 ## Phase 4: host APIs for the rest of Storage Drawers (2026-09-30)
 
-Host (branch `modded`), each listed in `HOOKS.md`:
+Host (branch `latest`), each listed in `HOOKS.md`:
 - `modded.register-component-stream-codec`: a plugin describes a modded component's
   `networkSynchronized` stream codec once (composite, primitives, item stacks, lists, optionals);
   the item stack serializer writes and reads the mod's bytes with it. Tested in

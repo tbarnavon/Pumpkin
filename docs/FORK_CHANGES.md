@@ -1,6 +1,6 @@
 # Fork changes
 
-What branch `modded` changes on top of upstream Pumpkin, by area: the commits, the files, and
+What branch `latest` changes on top of upstream Pumpkin, by area: the commits, the files, and
 why each change exists. The upstream sync (`ROADMAP.md`, item 11) reads this file to sort each
 upstream merge into "drop ours", "adapt ours" or "unrelated".
 
@@ -8,7 +8,7 @@ upstream merge into "drop ours", "adapt ours" or "unrelated".
 - **Last sync:** merge base `4426d1113` (2026-09-28).
 - **Fork commits since then:** 99 (2026-10-03, this file's commit included).
 
-When you commit to `modded`, add the commit to its area here (or add an area). Hooks and host
+When you commit to `latest`, add the commit to its area here (or add an area). Hooks and host
 functions also get a row in `HOOKS.md`. Paths below drop the `crates/` prefix; `WH` is
 `pumpkin/src/plugin/loader/wasm/wasm_host/wit/v0_1`.
 
