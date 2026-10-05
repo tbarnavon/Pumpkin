@@ -464,6 +464,16 @@ pub struct PotionContentsImpl {
 }
 impl PotionContentsImpl {
     pub fn read_data(tag: &NbtTag) -> Option<Self> {
+        // The short form is just the potion's id.
+        if let Some(name) = tag.extract_string() {
+            let name = name.strip_prefix("minecraft:").unwrap_or(name);
+            return Some(Self {
+                potion_id: crate::potion::Potion::from_name(name).map(|p| i32::from(p.id)),
+                custom_color: None,
+                custom_effects: Vec::new(),
+                custom_name: None,
+            });
+        }
         let compound = tag.extract_compound()?;
         let potion_id = if let Some(id) = compound.get_int("potion") {
             Some(id)
@@ -517,8 +527,13 @@ impl PotionContentsImpl {
 impl DataComponentImpl for PotionContentsImpl {
     fn write_data(&self) -> NbtTag {
         let mut compound = NbtCompound::new();
-        if let Some(potion_id) = self.potion_id {
-            compound.put_int("potion", potion_id);
+        // `PotionContents.CODEC` names the potion by id.
+        if let Some(potion) = self
+            .potion_id
+            .and_then(|id| u8::try_from(id).ok())
+            .and_then(crate::potion::Potion::from_id)
+        {
+            compound.put_string("potion", format!("minecraft:{}", potion.name));
         }
         if let Some(color) = self.custom_color {
             compound.put_int("custom_color", color);

@@ -283,7 +283,10 @@ pub struct DyedColorImpl {
 }
 impl DyedColorImpl {
     pub fn read_data(data: &NbtTag) -> Option<Self> {
-        data.extract_int().map(|rgb| Self { rgb })
+        // 1.21.1 writes `{rgb, show_in_tooltip}`; the int alone is the short form.
+        data.extract_int()
+            .or_else(|| data.extract_compound()?.get_int("rgb"))
+            .map(|rgb| Self { rgb })
     }
 }
 impl DataComponentImpl for DyedColorImpl {

@@ -109,14 +109,12 @@ pub struct CustomNameImpl {
 }
 impl CustomNameImpl {
     pub fn read_data(data: &NbtTag) -> Option<Self> {
-        data.extract_string().map(|name| Self {
-            name: TextComponent::text(name.to_string()),
-        })
+        super::text_from_disk(data).map(|name| Self { name })
     }
 }
 impl DataComponentImpl for CustomNameImpl {
     fn write_data(&self) -> NbtTag {
-        NbtTag::String(self.name.clone().get_text().into())
+        super::text_to_disk(&self.name)
     }
     fn get_hash(&self) -> i32 {
         get_str_hash(self.name.clone().get_text().as_str()) as i32
@@ -130,8 +128,17 @@ pub struct ItemNameImpl {
 }
 impl ItemNameImpl {
     pub fn read_data(data: &NbtTag) -> Option<Self> {
+        // A JSON string in 1.21.1, an NBT component later; the name is the translation key.
         let name = match data {
-            NbtTag::String(name) => name.to_string(),
+            NbtTag::String(name) => match serde_json::from_str::<serde_json::Value>(name) {
+                Ok(serde_json::Value::Object(json)) => json
+                    .get("translate")
+                    .or_else(|| json.get("text"))
+                    .and_then(serde_json::Value::as_str)?
+                    .to_owned(),
+                Ok(serde_json::Value::String(text)) => text,
+                _ => name.to_string(),
+            },
             NbtTag::Compound(component) => component
                 .get_string("translate")
                 .or_else(|| component.get_string("text"))?
@@ -145,9 +152,12 @@ impl ItemNameImpl {
 }
 impl DataComponentImpl for ItemNameImpl {
     fn write_data(&self) -> NbtTag {
-        let mut component = NbtCompound::new();
-        component.put_string("translate", self.name.to_string());
-        NbtTag::Compound(component)
+        // A translatable component as 1.21.1's JSON string.
+        NbtTag::String(
+            serde_json::json!({ "translate": self.name })
+                .to_string()
+                .into(),
+        )
     }
     fn get_hash(&self) -> i32 {
         get_str_hash(&self.name) as i32
@@ -187,22 +197,13 @@ impl LoreImpl {
         };
 
         Some(Self {
-            lines: lines
-                .iter()
-                .filter_map(NbtTag::extract_string)
-                .map(|line| TextComponent::text(line.to_owned()))
-                .collect(),
+            lines: lines.iter().filter_map(super::text_from_disk).collect(),
         })
     }
 }
 impl DataComponentImpl for LoreImpl {
     fn write_data(&self) -> NbtTag {
-        NbtTag::List(
-            self.lines
-                .iter()
-                .map(|line| NbtTag::String(line.clone().get_text().into_boxed_str()))
-                .collect(),
-        )
+        NbtTag::List(self.lines.iter().map(super::text_to_disk).collect())
     }
     default_impl!(Lore);
 }
@@ -290,6 +291,15 @@ pub struct CustomModelDataImpl {
 }
 impl CustomModelDataImpl {
     pub fn read_data(data: &NbtTag) -> Option<Self> {
+        // 1.21.1 stores a single int.
+        if let Some(value) = data.extract_int() {
+            return Some(Self {
+                floats: vec![value as f32],
+                flags: Vec::new(),
+                strings: Vec::new(),
+                colors: Vec::new(),
+            });
+        }
         let compound = data.extract_compound()?;
         let floats = compound
             .get_list("floats")
@@ -325,27 +335,8 @@ impl CustomModelDataImpl {
 }
 impl DataComponentImpl for CustomModelDataImpl {
     fn write_data(&self) -> NbtTag {
-        let mut compound = NbtCompound::new();
-        compound.put_list(
-            "floats",
-            self.floats.iter().map(|f| NbtTag::Float(*f)).collect(),
-        );
-        compound.put_list(
-            "flags",
-            self.flags.iter().map(|b| NbtTag::Byte(*b as i8)).collect(),
-        );
-        compound.put_list(
-            "strings",
-            self.strings
-                .iter()
-                .map(|s| NbtTag::String(s.clone().into()))
-                .collect(),
-        );
-        compound.put_list(
-            "colors",
-            self.colors.iter().map(|c| NbtTag::Int(*c)).collect(),
-        );
-        NbtTag::Compound(compound)
+        // 1.21.1's `CustomModelData` is one int.
+        NbtTag::Int(self.floats.first().map_or(0, |value| *value as i32))
     }
     default_impl!(CustomModelData);
 }

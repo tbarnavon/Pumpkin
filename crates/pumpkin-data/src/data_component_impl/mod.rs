@@ -518,6 +518,30 @@ pub enum IdOr<T> {
     Value(T),
 }
 
+/// Item text as 1.21.1 stores it: a JSON string (`ComponentSerialization.FLAT_CODEC`).
+#[must_use]
+pub fn text_to_disk(text: &pumpkin_util::text::TextComponent) -> NbtTag {
+    NbtTag::String(
+        text.to_json_for_version(&crate::packet::CURRENT_MC_VERSION)
+            .into_boxed_str(),
+    )
+}
+
+/// Reads item text: a JSON string, or later versions' NBT component. A string that isn't
+/// JSON is taken as plain text.
+#[must_use]
+pub fn text_from_disk(tag: &NbtTag) -> Option<pumpkin_util::text::TextComponent> {
+    use pumpkin_util::text::TextComponent;
+    match tag {
+        NbtTag::String(value) => Some(
+            serde_json::from_str::<TextComponent>(value)
+                .unwrap_or_else(|_| TextComponent::text(value.to_string())),
+        ),
+        NbtTag::Compound(_) | NbtTag::List(_) => Some(TextComponent::from_nbt(tag)),
+        _ => None,
+    }
+}
+
 pub mod basic;
 pub mod block_entity;
 pub mod book;
@@ -831,12 +855,13 @@ mod tests {
 
     #[test]
     fn custom_model_data_round_trip() {
+        // 1.21.1 keeps one int.
         assert_round_trip(
             CustomModelDataImpl {
-                floats: vec![1.5, -2.0],
-                flags: vec![true, false, true],
-                strings: vec!["a".to_string(), "b".to_string()],
-                colors: vec![0xFF0000, 0x00FF00],
+                floats: vec![7.0],
+                flags: Vec::new(),
+                strings: Vec::new(),
+                colors: Vec::new(),
             },
             CustomModelDataImpl::read_data,
         );

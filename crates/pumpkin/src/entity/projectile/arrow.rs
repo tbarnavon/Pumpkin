@@ -1154,7 +1154,10 @@ mod tests {
         ArrowEntity::write_item_stack_nbt(&payload, &mut nbt);
         let restored = ArrowEntity::read_item_stack_nbt(&nbt).expect("arrow payload should decode");
 
-        assert!(restored.are_equal(&payload));
+        // Components 1.21.1 doesn't know (the duration scale) aren't saved.
+        let mut expected = payload.clone();
+        expected.patch.retain(|(id, _)| id.is_networked());
+        assert!(restored.are_equal(&expected));
         assert_eq!(restored.item_count, 1);
     }
 

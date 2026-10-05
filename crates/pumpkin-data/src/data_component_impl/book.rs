@@ -9,28 +9,35 @@ use pumpkin_util::text::TextComponent;
 /// `{raw: {text: "A Partner", color: "red"}}`.
 fn read_component(tag: &NbtTag) -> Option<TextComponent> {
     match tag {
-        NbtTag::String(value) => Some(TextComponent::text(value.to_string())),
-        NbtTag::Compound(compound) => {
-            let component = compound.get("raw").unwrap_or(tag);
-            Some(TextComponent::from_nbt(component))
+        NbtTag::Compound(compound) if compound.get("raw").is_some() => {
+            compound.get("raw").and_then(super::text_from_disk)
         }
-        _ => None,
+        _ => super::text_from_disk(tag),
     }
 }
 
 /// Reads a filterable text whose content is a plain string, like writable book
 /// pages and written book titles in vanilla.
 fn read_text(tag: &NbtTag) -> Option<String> {
-    read_component(tag).map(TextComponent::get_text)
+    match tag {
+        NbtTag::String(value) => Some(value.to_string()),
+        NbtTag::Compound(compound) => match compound.get("raw") {
+            Some(NbtTag::String(value)) => Some(value.to_string()),
+            _ => read_component(tag).map(TextComponent::get_text),
+        },
+        _ => None,
+    }
 }
 
+/// 1.21.1's `Filterable<String>`: the plain string.
 fn text_tag(value: &str) -> NbtTag {
-    text_component_tag(&TextComponent::text(value.to_string()))
+    NbtTag::String(value.into())
 }
 
+/// 1.21.1's `Filterable<Component>` of a book page: `{raw: <JSON string>}`.
 fn text_component_tag(component: &TextComponent) -> NbtTag {
     let mut compound = NbtCompound::new();
-    compound.put("raw", NbtTag::Compound(component.0.to_nbt_compound()));
+    compound.put("raw", super::text_to_disk(component));
     NbtTag::Compound(compound)
 }
 
@@ -214,9 +221,10 @@ mod tests {
             NbtTag::Compound(c) => c,
             _ => panic!("expected a compound"),
         };
+        // 1.21.1: the title is a plain string, pages are `{raw: <JSON>}`.
         assert!(matches!(
             written_compound.get("title"),
-            Some(NbtTag::Compound(_))
+            Some(NbtTag::String(_))
         ));
         let read_back = WrittenBookContentImpl::read_data(&tag).unwrap();
         assert_eq!(read_back, content);
