@@ -1,4 +1,5 @@
 pub mod advancement;
+pub mod adventure;
 pub mod statistics;
 
 use core::f32;
