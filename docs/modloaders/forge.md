@@ -12,6 +12,12 @@ Unlike NeoForge, the modern Forge handshake runs in the **configuration** phase 
 channel, `forge:handshake` (a `SimpleChannel`: a VarInt discriminator, then the message), not in
 login queries. The login channel `forge:login` only carries `LoginWrapper` from the client.
 
+
+## On 1.21.1
+
+Not supported on this branch: MinecraftForge is out of scope for 1.21.1, where NeoForge is the
+Forge-family loader. The crate still builds; its handshake is for 26.3.
+
 ## Handshake
 
 1. **Detection:** the client appends `\0FORGE` (optionally followed by a network version, `0`

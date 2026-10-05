@@ -11,6 +11,16 @@ registries mods add to, the `c:` tasks and NeoForge's own synced config. Tested 
 plain NeoForge 26.3.0.46-beta client (FML 12.0.8) joins and plays. The rest is the work list
 for the NeoForge adapter (`../ROADMAP.md`, item 7).
 
+
+## On 1.21.1
+
+This branch serves NeoForge 21.1.x clients. Compared with the 26.3 classes cited below, NeoForge
+21.1 sends the same bytes for everything Pumpkin implements: the query and `neoforge:network`
+negotiation, the frozen registry sync (`RegistrySnapshot` is the same map of raw ids to names
+and aliases), `neoforge:config_file` (21.1 syncs its `neoforge-server.toml`) and
+`neoforge:advanced_open_screen`. The configuration tasks are the same
+(`ConfigurationInitialization`).
+
 ## Handshake (configuration phase)
 
 From the `ServerConfigurationPacketListenerImpl` patch and `NetworkRegistry`:

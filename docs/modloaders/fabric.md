@@ -14,6 +14,23 @@ stays on the server or reaches the client through vanilla packets the fork alrea
 Fabric's support today is the minimum Storage Drawers 26.3.0.1 needs, tested with a real
 client (`STATUS.md`).
 
+
+## On 1.21.1
+
+This branch serves Fabric API 0.116.17+1.21.1 clients. The tables below describe 26.3; the
+handshake (`minecraft:register`, ping, `c:version`, `c:register`) is the same on 1.21.1, but
+these pieces differ:
+
+| Piece | 1.21.1 | Source (1.21.1) |
+|:--|:--|:--|
+| Registry sync | `fabric:registry/sync/direct`: the same body without the attributes byte, cut into payloads of at most 1 MiB and ended by an empty one | `DirectRegistryPacketHandler` |
+| Synced registries | Every `SYNCED` registry a mod adds to; Storage Drawers adds `recipe_serializer`, which is synced too. Data component ids count only 1.21.1's 57 vanilla components | `RegistrySyncManager.createAndPopulateRegistryMap` |
+| Optional registries | No flag on the wire | `DirectRegistryPacketHandler` |
+| Extended menus | `fabric-screen-handler-api-v1:open_screen`, same layout | `impl/screenhandler/Networking` |
+
+Fabric's own payload is its buffer's whole backing array, padded with zeros; Pumpkin sends the
+exact bytes, which the client reads the same way.
+
 ## fabric-networking-api-v1
 
 The base every other module builds on. Source: `impl/networking/*`, `mixin/networking/*`.

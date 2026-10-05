@@ -94,13 +94,20 @@ to 3955 load; 3955 is written).
   over.
 - **Advancements** are saved as `{criteria: {name: date}, done}` with a `DataVersion`.
 
+## Mod loaders
+
+Fabric (Fabric API 0.116.17+1.21.1) and NeoForge (21.1.x) clients are served; MinecraftForge is
+not supported on 1.21.1. What differs from 26.3 is listed in each loader's file under
+`modloaders/`. Mod dumps come from the Extractor's mod dump on a Fabric 1.21.1 server; the
+Storage Drawers 1.21.1-13.11.4 dump is the test fixture, and its Fabric registry sync carries the
+same bytes as Fabric's own server.
+
 ## Tests
 
 - **Worldgen fixtures:** the noise, surface and biome fixtures in `assets/tests/` are dumped from
   1.21.1's own generator by the Extractor, and the tests allow no mismatch.
 - **Expected values:** tests that pinned 26.x ids now pin 1.21.1's.
-- **Skipped:** the three Storage Drawers fixture tests are skipped; they need a 1.21.1 dump of
-  the mod.
+- **Skipped:** the modded recipe book test: 1.21.1 has no `recipe_book_add` (see Known gaps).
 
 ## Known gaps
 
@@ -108,6 +115,8 @@ to 3955 load; 3955 is written).
   through the saddle equipment slot of later versions, which isn't sent. Saddled animals look
   unsaddled.
 - **Unsent components:** see Protocol.
+- **Modded recipes:** `update_recipes` lists only vanilla recipes, so a modded client's recipe
+  book doesn't show mod recipes.
 - **Content:** content added after 1.21.1 is removed (copper golem, creaking, happy ghast,
   nautilus, cushions, shelves, spears, ...). Where a mechanic differs, the code follows 1.21.1:
   - boats are one entity with a wood type;
