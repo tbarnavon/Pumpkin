@@ -1,6 +1,6 @@
 # Hooks and APIs added by the fork
 
-Every hook, event and host function the `modded` branch adds to the plugin API (WIT in
+Every hook, event and host function the `latest` branch adds to the plugin API (WIT in
 `crates/pumpkin-plugin-wit/v0.1`), with the Java it stands for and the commit that added it.
 Upstream Pumpkin's own API is not listed.
 

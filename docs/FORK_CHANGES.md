@@ -1,6 +1,6 @@
 # Fork changes
 
-What branch `modded` changes on top of upstream Pumpkin, by area: the commits, the files, and
+What branch `latest` changes on top of upstream Pumpkin, by area: the commits, the files, and
 why each change exists. The upstream sync (`ROADMAP.md`, item 11) reads this file to sort each
 upstream merge into "drop ours", "adapt ours" or "unrelated".
 
@@ -8,7 +8,7 @@ upstream merge into "drop ours", "adapt ours" or "unrelated".
 - **Last sync:** merge base `4426d1113` (2026-09-28).
 - **Fork commits since then:** 99 (2026-10-03, this file's commit included).
 
-When you commit to `modded`, add the commit to its area here (or add an area). Hooks and host
+When you commit to `latest`, add the commit to its area here (or add an area). Hooks and host
 functions also get a row in `HOOKS.md`. Paths below drop the `crates/` prefix; `WH` is
 `pumpkin/src/plugin/loader/wasm/wasm_host/wit/v0_1`.
 
@@ -192,6 +192,14 @@ send upstream (`ROADMAP.md`, item 12); once merged there, drop them here.
   client couldn't read them (`pumpkin-protocol/src/java/client/config/config_disconnect.rs`)
 - `523f5c9a6` arrows passed their shooter as the direct entity, and the damage event packet sent
   cause and direct entity swapped (`pumpkin/src/entity/{projectile/arrow,living}.rs`)
+- `1d3b8e6dc` `setblock` and `fill` read only a block id, not `[properties]{nbt}`
+  (`pumpkin-command/src/argument_types/{block,block_predicate}.rs`,
+  `pumpkin/src/command/commands/{setblock,fill}.rs`)
+- `96e8e067c` new worlds kept the placeholder spawn height, so the console and other spawn users
+  sat at Y 200 (`pumpkin/src/server/mod.rs`)
+- `eae26f083` adventure mode ignored `can_break` and `can_place_on`: any block broke, none placed
+  (`pumpkin/src/entity/player/adventure.rs` new, `pumpkin/src/net/java/play/{player_action,use_item_on}.rs`,
+  `pumpkin/src/block/registry.rs`)
 
 ## 11. Docs
 
