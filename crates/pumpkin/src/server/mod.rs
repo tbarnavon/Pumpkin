@@ -749,7 +749,12 @@ impl Server {
 
         info!("Starting worlds");
         for world in self.worlds.load().iter() {
-            world.shutdown().await;
+            // On a worker thread: `main`'s stack (1 MiB on Windows) overflows when saving has to
+            // load an entity chunk.
+            let world = world.clone();
+            if let Err(err) = tokio::spawn(async move { world.shutdown().await }).await {
+                error!("Failed to save a world: {err}");
+            }
         }
         let level_data = self.level_info.load();
         // then lets save the world info
