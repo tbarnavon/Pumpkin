@@ -78,6 +78,22 @@ gradients, and the legacy random for nether-style settings. Eroded badlands pill
 the surface rules after they are placed. Chunk generation is about 20 to 30% slower than with f32
 (noise stage in a release bench: 149 ms to 195 ms).
 
+## World files
+
+Worlds open in vanilla 1.21.1, and vanilla 1.21.1 worlds open in Pumpkin (data versions 3953
+to 3955 load; 3955 is written).
+- **Layout:** the overworld in the world folder, the nether in `DIM-1`, the end in `DIM1`, saved
+  data in `data/`, players in `playerdata/`, `advancements/` and `stats/`.
+- **level.dat** holds what 1.21.1 reads there: `WorldGenSettings`, `GameRules` (string values),
+  `DayTime` and `DragonFight`. Pumpkin's own data files are still written next to it.
+- **Items** use 1.21.1's component forms: one-int custom model data, the potion id string, JSON
+  text for names, lore and book pages, a plain book title. Components 1.21.1 lacks aren't saved.
+- **Mobs** also save the `ArmorItems`, `HandItems` and `body_armor_item` lists, and load them
+  when the later `equipment` compound is absent.
+- **Offline players** get vanilla's UUID (`OfflinePlayer:<name>`, MD5), so their files carry
+  over.
+- **Advancements** are saved as `{criteria: {name: date}, done}` with a `DataVersion`.
+
 ## Tests
 
 - **Worldgen fixtures:** the noise, surface and biome fixtures in `assets/tests/` are dumped from
@@ -88,8 +104,6 @@ the surface rules after they are placed. Chunk generation is about 20 to 30% slo
 
 ## Known gaps
 
-- **World files:** worlds are written with 26.x's data version and Pumpkin's chunk format, so a
-  vanilla 1.21.1 server can't open them, and Pumpkin doesn't load vanilla 1.21.1 worlds.
 - **Saddles:** pigs, striders and horses show a saddle through entity data in 1.21.1, not
   through the saddle equipment slot of later versions, which isn't sent. Saddled animals look
   unsaddled.
