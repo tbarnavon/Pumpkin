@@ -124,6 +124,20 @@ pub fn serialize_java_packet(
             crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
             Some(buf.into())
         }
+        ClientboundPacket::CAddExperienceOrb(data) => {
+            let p = pumpkin_protocol::java::client::play::CAddExperienceOrb {
+                entity_id: VarInt(data.entity_id),
+                position: pumpkin_util::math::vector3::Vector3::new(
+                    data.position.0 as _,
+                    data.position.1 as _,
+                    data.position.2 as _,
+                ),
+                value: data.value.try_into().unwrap(),
+            };
+            let mut buf = Vec::new();
+            crate::net::java::JavaClient::write_packet_for_version(&p, version, &mut buf).ok()?;
+            Some(buf.into())
+        }
         ClientboundPacket::CSetBlockDestroyStage(data) => {
             let p = pumpkin_protocol::java::client::play::CSetBlockDestroyStage {
                 entity_id: VarInt(data.entity_id),
@@ -1250,6 +1264,13 @@ pub fn deserialize_java_serverbound_packet(
                 include_data: p.include_data.try_into().unwrap(),
             }))
         }
+        id if id == pumpkin_protocol::java::server::play::SPickItem::to_id(version) => {
+            use pumpkin_protocol::ServerPacket;
+            let p = <pumpkin_protocol::java::server::play::SPickItem as pumpkin_protocol::ServerPacket>::read(&mut payload, &version).ok()?;
+            Some(ServerboundPacket::SPickItem(crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::java_packets::SPickItem {
+                slot: p.slot.0.try_into().unwrap(),
+            }))
+        }
         id if id == pumpkin_protocol::java::server::play::SPlayPingRequest::to_id(version) => {
             use pumpkin_protocol::ServerPacket;
             let p = <pumpkin_protocol::java::server::play::SPlayPingRequest as pumpkin_protocol::ServerPacket>::read(&mut payload, &version).ok()?;
@@ -1606,6 +1627,16 @@ impl ToWitClientboundJava for pumpkin_protocol::java::client::play::CActionBar<'
     fn to_wit(&self) -> ClientboundPacket {
         ClientboundPacket::CActionBar(crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::java_packets::CActionBar {
                 action_bar: serde_json::to_string(&self.action_bar).unwrap_or_default(),
+        })
+    }
+}
+
+impl ToWitClientboundJava for pumpkin_protocol::java::client::play::CAddExperienceOrb {
+    fn to_wit(&self) -> ClientboundPacket {
+        ClientboundPacket::CAddExperienceOrb(crate::plugin::loader::wasm::wasm_host::wit::v0_1::pumpkin::plugin::java_packets::CAddExperienceOrb {
+                entity_id: self.entity_id.0.try_into().unwrap(),
+                position: (self.position.x as _, self.position.y as _, self.position.z as _),
+                value: self.value.try_into().unwrap(),
         })
     }
 }
@@ -2429,6 +2460,9 @@ pub fn clientbound_java_any_to_wit(any: &dyn Any) -> Option<ClientboundPacket> {
         return Some(p.to_wit());
     }
     if let Some(p) = any.downcast_ref::<pumpkin_protocol::java::client::play::CActionBar>() {
+        return Some(p.to_wit());
+    }
+    if let Some(p) = any.downcast_ref::<pumpkin_protocol::java::client::play::CAddExperienceOrb>() {
         return Some(p.to_wit());
     }
     if let Some(p) =

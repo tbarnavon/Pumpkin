@@ -241,6 +241,9 @@ interface java-packets {
     id: s32,
     include-data: bool,
   }
+  record s-pick-item {
+    slot: s32,
+  }
   record s-play-ping-request {
     payload: s64,
   }
@@ -582,6 +585,11 @@ interface java-packets {
   }
   record c-action-bar {
     action-bar: string,
+  }
+  record c-add-experience-orb {
+    entity-id: s32,
+    position: tuple<f64, f64, f64>,
+    value: s32,
   }
   record c-add-resource-pack {
     uuid: uuid,
@@ -1653,6 +1661,7 @@ interface java-packets {
     s-paddle-boat(s-paddle-boat),
     s-pick-item-from-block(s-pick-item-from-block),
     s-pick-item-from-entity(s-pick-item-from-entity),
+    s-pick-item(s-pick-item),
     s-play-ping-request(s-play-ping-request),
     s-place-recipe(s-place-recipe),
     s-player-abilities(s-player-abilities),
@@ -1718,6 +1727,7 @@ interface java-packets {
     login-c-set-compression(login-c-set-compression),
     c-acknowledge-block-change(c-acknowledge-block-change),
     c-action-bar(c-action-bar),
+    c-add-experience-orb(c-add-experience-orb),
     c-add-resource-pack(c-add-resource-pack),
     c-award-stats(c-award-stats),
     c-set-block-destroy-stage(c-set-block-destroy-stage),
