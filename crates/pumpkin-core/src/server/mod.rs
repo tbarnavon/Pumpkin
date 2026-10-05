@@ -148,6 +148,7 @@ pub struct Server {
     pub scheduled_functions: Arc<crate::server::scheduler::ScheduledFunctionQueue>,
     tasks: TaskTracker,
     pub runtime: tokio::runtime::Handle,
+    pub management_hub: Arc<crate::net::management::hub::ManagementHub>,
 
     // world stuff which maybe should be put into a struct
     pub level_info: Arc<ArcSwap<LevelData>>,
@@ -269,6 +270,15 @@ impl Server {
                 .collect::<Vec<_>>()
         );
 
+        let management_settings = Arc::new(crate::net::management::hub::ManagementSettings::new(
+            &basic_config,
+            &advanced_config,
+            &advanced_config.networking.management,
+        ));
+        let management_hub = Arc::new(crate::net::management::hub::ManagementHub::new(
+            management_settings,
+        ));
+
         let server = Self {
             basic_config,
             advanced_config,
@@ -314,6 +324,7 @@ impl Server {
             mojang_public_keys: ArcSwap::from_pointee(Vec::new()),
             world_info_writer: Arc::new(AnvilLevelInfo),
             level_info,
+            management_hub,
         };
         let server = Arc::new(server);
 
@@ -579,6 +590,8 @@ impl Server {
     }
 
     pub async fn save_all(&self) -> Result<(), String> {
+        self.management_hub.broadcast_server_saving();
+
         if let Err(err) = self.save_world_info() {
             error!("Failed to save world info: {err}");
             return Err(format!("Failed to save world info: {err}"));
@@ -601,6 +614,8 @@ impl Server {
         for world in self.worlds.load().iter() {
             world.save().await;
         }
+
+        self.management_hub.broadcast_server_saved();
 
         Ok(())
     }
@@ -716,6 +731,12 @@ impl Server {
                         }
                     }
 
+                    let player_dto = crate::net::management::dto::PlayerDto::new(
+                        Some(player.gameprofile.id),
+                        Some(player.gameprofile.name.clone()),
+                    );
+                    self.management_hub.broadcast_player_joined(&player_dto);
+
                     (player, world)
                 })
             }
@@ -728,6 +749,12 @@ impl Server {
     }
 
     pub fn remove_player(&self, player: &Player) {
+        let player_dto = crate::net::management::dto::PlayerDto::new(
+            Some(player.gameprofile.id),
+            Some(player.gameprofile.name.clone()),
+        );
+        self.management_hub.broadcast_player_left(&player_dto);
+
         player.increment_stat(
             pumpkin_data::statistic::StatisticCategory::Custom,
             pumpkin_data::statistic::CustomStatistic::LeaveGame as i32,
@@ -741,6 +768,8 @@ impl Server {
     }
 
     pub async fn shutdown(&self) {
+        self.management_hub.broadcast_server_stopping();
+
         self.tasks.close();
         debug!("Awaiting tasks for server");
         self.tasks.wait().await;
@@ -1295,13 +1324,6 @@ impl Server {
             .tick_times_nanos
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
-    }
-
-    pub async fn execute_remote_command(self: &Arc<Self>, command: String) {
-        let mut remote_event = crate::plugin::api::events::server::remote_server_command::RemoteServerCommandEvent::new(
-            command,
-        );
-        self.plugin_manager.fire(self, &mut remote_event).await;
     }
 
     pub async fn register_service(self: &Arc<Self>, service_name: String) {
