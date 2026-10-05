@@ -797,6 +797,8 @@ impl BlockRegistry {
             && let Some(block_entity) = world.get_block_entity(&final_block_pos)
         {
             block_entity.apply_item_components(&player.inventory().get_stack_in_hand(hand));
+            // Clients got the block entity before its components: send it again.
+            world.update_block_entity(&block_entity);
         }
 
         self.player_placed(
