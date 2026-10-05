@@ -1002,14 +1002,17 @@ impl ProtoChunk {
                 else {
                     panic!("surface biome neighborhood must cover fuzzy biome lookup");
                 };
-                // The pillar is filled with the default block above the surface, and vanilla keeps
-                // scanning from the pre-pillar height, so the pillar itself is never run through
-                // the material rules and stays stone instead of being banded like the terrain.
-                if this_biome == Biome::ERODED_BADLANDS {
+                // The pillar is filled with the default block above the surface. 1.21.1 reads the
+                // height again afterwards (`SurfaceSystem.buildSurface`), so the material rules
+                // band the pillar like the terrain.
+                let top_block = if this_biome == Biome::ERODED_BADLANDS {
                     terrain_cache
                         .terrain_builder
                         .place_badlands_pillar(self, x, z, top_block);
-                }
+                    self.top_block_height_exclusive(local_x, local_z)
+                } else {
+                    top_block
+                };
 
                 context.init_horizontal(x, z);
 
