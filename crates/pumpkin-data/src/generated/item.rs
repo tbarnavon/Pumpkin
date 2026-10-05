@@ -32585,7 +32585,12 @@ impl Item {
                     enchantment: Cow::Borrowed(&[]),
                 },
             ),
-            (Instrument, &InstrumentImpl),
+            (
+                Instrument,
+                &InstrumentImpl {
+                    instrument: InstrumentValue::Named(Cow::Borrowed("minecraft:ponder_goat_horn")),
+                },
+            ),
             (
                 ItemModel,
                 &ItemModelImpl {

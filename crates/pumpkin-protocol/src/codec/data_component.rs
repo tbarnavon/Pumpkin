@@ -2418,14 +2418,29 @@ impl DataComponentCodec<Self> for BlockEntityDataImpl {
     }
 }
 
+/// `InstrumentComponent.STREAM_CODEC`: `Instrument.STREAM_CODEC`, a holder of the synced
+/// instrument registry (id plus one). Inline instruments aren't supported.
 impl DataComponentCodec<Self> for InstrumentImpl {
     fn serialize(&self, seq: &mut impl NetworkWriteExt) -> Result<(), WritingError> {
-        seq.write_var_int(&VarInt(0))
+        let instrument = self
+            .name()
+            .and_then(pumpkin_data::instrument::Instrument::from_name)
+            .ok_or_else(|| WritingError::Message("Inline instruments aren't supported".into()))?;
+        seq.write_var_int(&VarInt(instrument.id() as i32 + 1))
     }
 
     fn deserialize(seq: &mut impl NetworkReadExt) -> Result<Self, ReadingError> {
-        let _ = seq.get_var_int()?;
-        Ok(Self)
+        let id = seq.get_var_int()?.0;
+        let instrument = usize::try_from(id - 1)
+            .ok()
+            .and_then(|id| pumpkin_data::instrument::Instrument::all().get(id))
+            .ok_or_else(|| ReadingError::Message(format!("Unsupported instrument {id}")))?;
+        Ok(Self {
+            instrument: InstrumentValue::Named(Cow::Owned(format!(
+                "minecraft:{}",
+                instrument.to_name()
+            ))),
+        })
     }
 }
 

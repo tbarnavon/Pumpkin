@@ -922,6 +922,12 @@ mod tests {
             },
             PotDecorationsImpl::read_data,
         );
+        assert_round_trip(
+            InstrumentImpl {
+                instrument: InstrumentValue::Named(Cow::Borrowed("minecraft:sing_goat_horn")),
+            },
+            InstrumentImpl::read_data,
+        );
     }
 
     #[test]

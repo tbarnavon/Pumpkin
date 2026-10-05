@@ -444,14 +444,44 @@ impl DataComponentImpl for BaseColorImpl {
     default_impl!(BaseColor);
 }
 
-#[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct InstrumentImpl;
+/// A goat horn's instrument (`InstrumentComponent`): a registry name, or an inline instrument.
+#[derive(Clone, Debug, PartialEq)]
+pub enum InstrumentValue {
+    Named(Cow<'static, str>),
+    Inline(NbtCompound),
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct InstrumentImpl {
+    pub instrument: InstrumentValue,
+}
 impl InstrumentImpl {
-    pub const fn read_data(_data: &NbtTag) -> Option<Self> {
-        Some(Self)
+    #[must_use]
+    pub fn read_data(data: &NbtTag) -> Option<Self> {
+        let instrument = match data {
+            NbtTag::String(name) => InstrumentValue::Named(Cow::Owned(name.to_string())),
+            NbtTag::Compound(inline) => InstrumentValue::Inline(inline.clone()),
+            _ => return None,
+        };
+        Some(Self { instrument })
+    }
+
+    /// The registry name, when the instrument isn't inline.
+    #[must_use]
+    pub fn name(&self) -> Option<&str> {
+        match &self.instrument {
+            InstrumentValue::Named(name) => Some(name),
+            InstrumentValue::Inline(_) => None,
+        }
     }
 }
 impl DataComponentImpl for InstrumentImpl {
+    fn write_data(&self) -> NbtTag {
+        match &self.instrument {
+            InstrumentValue::Named(name) => NbtTag::String(name.to_string().into()),
+            InstrumentValue::Inline(inline) => NbtTag::Compound(inline.clone()),
+        }
+    }
     default_impl!(Instrument);
 }
 

@@ -913,8 +913,12 @@ impl ToTokens for ItemComponents {
         if self.glider.is_some() {
             tokens.extend(quote! { (Glider, &GliderImpl), });
         }
-        if self.instrument.is_some() {
-            tokens.extend(quote! { (Instrument, &InstrumentImpl), });
+        if let Some(instrument) = self.instrument.as_ref().and_then(serde_json::Value::as_str) {
+            tokens.extend(quote! {
+                (Instrument, &InstrumentImpl {
+                    instrument: InstrumentValue::Named(Cow::Borrowed(#instrument)),
+                }),
+            });
         }
         if let Some(model) = &self.item_model {
             let model_lit = LitStr::new(model, Span::call_site());
