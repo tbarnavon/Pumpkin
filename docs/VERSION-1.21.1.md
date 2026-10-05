@@ -69,20 +69,25 @@ codec. Components 1.21.1 doesn't know are never sent. Components the server can'
 **Particles** sent without options (commands, plugins) get default options in 1.21.1's
 layouts, since the client can't decode an option particle without them.
 
+## Worldgen
+
+Density functions, Perlin noise and the aquifer run in f64, as in 1.21.1; splines stay f32 and
+the end islands function stays float, as vanilla does. Climate values are cast to float before
+quantizing. Surface rules use 1.21.1's positional randoms: big-endian MD5 seeds for vertical
+gradients, and the legacy random for nether-style settings. Eroded badlands pillars are banded by
+the surface rules after they are placed. Chunk generation is about 20 to 30% slower than with f32
+(noise stage in a release bench: 149 ms to 195 ms).
+
 ## Tests
 
-- **Worldgen fixtures:** the fixtures in `assets/tests/` are translated from 26.x's ids to
-  1.21.1's, by block name and state index and by biome name. End, nether and overworld terrain are
-  the same in both versions, so the fixtures stay valid.
+- **Worldgen fixtures:** the noise, surface and biome fixtures in `assets/tests/` are dumped from
+  1.21.1's own generator by the Extractor, and the tests allow no mismatch.
 - **Expected values:** tests that pinned 26.x ids now pin 1.21.1's.
 - **Skipped:** the three Storage Drawers fixture tests are skipped; they need a 1.21.1 dump of
   the mod.
 
 ## Known gaps
 
-- **Density precision:** Pumpkin's density functions run in f32 (as in 26.x); 1.21.1 runs them in
-  f64. Quantized climate values can be one off (under 1% of samples), so rare border blocks and
-  biomes can differ from vanilla 1.21.1.
 - **World files:** worlds are written with 26.x's data version and Pumpkin's chunk format, so a
   vanilla 1.21.1 server can't open them, and Pumpkin doesn't load vanilla 1.21.1 worlds.
 - **Saddles:** pigs, striders and horses show a saddle through entity data in 1.21.1, not
