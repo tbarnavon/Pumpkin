@@ -33,6 +33,7 @@ use pumpkin_protocol::java::client::login::CEncryptionRequest;
 use pumpkin_protocol::java::client::play::{CChangeDifficulty, CTabList};
 use pumpkin_protocol::{ClientPacket, java::client::config::CPluginMessage};
 use pumpkin_util::Difficulty;
+use pumpkin_util::math::vector2::Vector2;
 use pumpkin_util::text::TextComponent;
 use pumpkin_world::world_info::anvil::{
     AnvilLevelInfo, LEVEL_DAT_BACKUP_FILE_NAME, LEVEL_DAT_FILE_NAME,
@@ -177,6 +178,7 @@ impl Server {
 
         let block_registry = super::block::registry::default_registry();
 
+        let mut new_world = false;
         let level_info = match AnvilLevelInfo.read_world_info(&world_path) {
             Ok(level_info) => {
                 let dat_path = world_path.join(LEVEL_DAT_FILE_NAME);
@@ -201,6 +203,7 @@ impl Server {
                 let default_data =
                     LevelData::from_world_generator(basic_config.seed, &overworld_gen);
                 AnvilLevelInfo.write_world_info(&default_data, &world_path)?;
+                new_world = true;
                 default_data
             }
             Err(
@@ -423,6 +426,10 @@ impl Server {
         server.worlds.store(Arc::new(worlds_vec));
 
         info!("All worlds loaded successfully.");
+
+        if new_world {
+            server.place_initial_spawn().await;
+        }
 
         let enabled_packs = server.level_info.load().data_packs.enabled.clone();
         server
@@ -862,6 +869,30 @@ impl Server {
     /// # Note
     ///
     /// This function does not handle the actual mob spawn options update, which is a TODO item for future implementation.
+    /// Vanilla `MinecraftServer.setInitialSpawn`: a new world's spawn goes on the surface, so
+    /// what uses it (the console's position, respawns, `/spawnpoint`) is not up in the air.
+    async fn place_initial_spawn(&self) {
+        let world = self.get_world_from_dimension(&Dimension::OVERWORLD);
+        let info = self.level_info.load_full();
+        let chunk_pos = Vector2::new(info.spawn_x >> 4, info.spawn_z >> 4);
+        let fetched = tokio::time::timeout(
+            Duration::from_secs(60),
+            world.level.get_or_fetch_chunk(chunk_pos, |_| ()),
+        )
+        .await;
+        if fetched.is_err() {
+            warn!("Timed out generating the spawn chunk; the spawn height stays unset");
+            return;
+        }
+        let top = world.get_top_block(Vector2::new(info.spawn_x, info.spawn_z));
+        if top <= world.dimension.min_y {
+            return;
+        }
+        let mut new_info = (*info).clone();
+        new_info.spawn_y = top + 1;
+        self.level_info.store(Arc::new(new_info));
+    }
+
     pub fn set_difficulty(&self, difficulty: Difficulty, force_update: bool) {
         let current_info = self.level_info.load();
         if current_info.difficulty_locked && !force_update {
