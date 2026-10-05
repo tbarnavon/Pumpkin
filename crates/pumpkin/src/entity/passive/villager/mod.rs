@@ -893,6 +893,7 @@ impl VillagerEntity {
         }
     }
 
+    /// Sends the offers again after a trade (`MerchantMenu`'s `ClientboundMerchantOffersPacket`).
     fn resend_offers_to_player(&self, player: &Arc<Player>) {
         let trading_player = *self
             .trading_player
@@ -914,30 +915,9 @@ impl VillagerEntity {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
 
-        let ok = {
-            let screen = player
-                .current_screen_handler
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .clone();
-            let mut screen = screen
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner);
-            if screen.sync_id() != sync_id {
-                false
-            } else if let Some(handler) =
-                screen.as_any_mut().downcast_mut::<MerchantScreenHandler>()
-            {
-                handler.offers.clone_from(&offers);
-                handler.update_result_slot();
-                true
-            } else {
-                false
-            }
-        };
-        if !ok {
-            return;
-        }
+        // Runs from the merchant screen handler's trade callback, which holds that handler's
+        // lock and has already counted the use and updated its result slot: only the client
+        // needs the new offers.
         self.send_trade_offers(player, sync_id, &offers, villager_data);
     }
 
