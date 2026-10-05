@@ -38,7 +38,7 @@ pub const CHUNK_COUNT: usize = REGION_SIZE * REGION_SIZE;
 const SECTOR_BYTES: usize = 4096;
 
 // 26.2
-pub const WORLD_DATA_VERSION: i32 = 4903;
+pub const WORLD_DATA_VERSION: i32 = 3955; // 1.21.1
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]

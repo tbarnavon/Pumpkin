@@ -114,10 +114,11 @@ impl Default for WanderingTraderData {
 
 #[must_use]
 pub fn minecraft_data_dir(level_folder: &Path) -> PathBuf {
-    level_folder.join("data").join("minecraft")
+    // 1.21.1 keeps saved data directly in data/.
+    level_folder.join("data")
 }
 
-/// Ensures the `<world>/data/minecraft/` directory exists.
+/// Ensures the `<world>/data/` directory exists.
 pub fn ensure_minecraft_data_dir(level_folder: &Path) -> Result<PathBuf, WorldInfoError> {
     let dir = minecraft_data_dir(level_folder);
     fs::create_dir_all(&dir)?;
@@ -263,67 +264,7 @@ fn read_world_gen_settings_file(path: &Path) -> Option<WorldGenSettings> {
                     warn!("{} has no seed", path.display());
                     return None;
                 };
-                let seed = c.get_long("seed")?;
-                let mut dimensions = std::collections::HashMap::new();
-                if let Some(dims_comp) = c.get_compound("dimensions") {
-                    for (dim_name, dim_tag) in &dims_comp.child_tags {
-                        if let NbtTag::Compound(dim_c) = dim_tag {
-                            let dim_type = dim_c.get_string("type").unwrap_or(dim_name).to_string();
-                            if let Some(gen_c) = dim_c.get_compound("generator") {
-                                let generator_type = gen_c
-                                    .get_string("type")
-                                    .unwrap_or("minecraft:noise")
-                                    .to_string();
-                                let settings = gen_c
-                                    .get_string("settings")
-                                    .map(|s| {
-                                        crate::world_info::GeneratorSettings::Reference(
-                                            s.to_string(),
-                                        )
-                                    })
-                                    .or_else(|| {
-                                        gen_c.get_compound("settings").map(|settings_c| {
-                                            let json_val = nbt_tag_to_json(&NbtTag::Compound(
-                                                settings_c.clone(),
-                                            ));
-                                            crate::world_info::GeneratorSettings::Compound(json_val)
-                                        })
-                                    });
-                                let biome_source = gen_c.get_compound("biome_source").map(|bs_c| {
-                                    let biome_type = bs_c
-                                        .get_string("type")
-                                        .unwrap_or("minecraft:multi_noise")
-                                        .to_string();
-                                    if let Some(preset) = bs_c.get_string("preset") {
-                                        crate::world_info::BiomeSource::WithPreset {
-                                            preset: preset.to_string(),
-                                            biome_type,
-                                        }
-                                    } else if let Some(biome) = bs_c.get_string("biome") {
-                                        crate::world_info::BiomeSource::Fixed {
-                                            biome: biome.to_string(),
-                                            biome_type,
-                                        }
-                                    } else {
-                                        crate::world_info::BiomeSource::Simple { biome_type }
-                                    }
-                                });
-                                dimensions.insert(
-                                    dim_name.to_string(),
-                                    crate::world_info::Dimension {
-                                        generator: crate::world_info::Generator {
-                                            settings,
-                                            biome_source,
-                                            generator_type,
-                                        },
-                                        dimension_type: dim_type,
-                                    },
-                                );
-                            }
-                        }
-                    }
-                }
-                Some(WorldGenSettings { seed, dimensions })
+                world_gen_settings_from_nbt(c)
             }
             Err(e) => {
                 warn!("Failed to deserialize {}: {e}", path.display());
@@ -335,6 +276,68 @@ fn read_world_gen_settings_file(path: &Path) -> Option<WorldGenSettings> {
             None
         }
     }
+}
+
+/// Reads world generation settings: a seed and the dimensions, as in vanilla's
+/// `WorldGenSettings` (level.dat before 26.x, `world_gen_settings.dat` after).
+#[must_use]
+pub fn world_gen_settings_from_nbt(c: &NbtCompound) -> Option<WorldGenSettings> {
+    let seed = c.get_long("seed")?;
+    let mut dimensions = std::collections::HashMap::new();
+    if let Some(dims_comp) = c.get_compound("dimensions") {
+        for (dim_name, dim_tag) in &dims_comp.child_tags {
+            if let NbtTag::Compound(dim_c) = dim_tag {
+                let dim_type = dim_c.get_string("type").unwrap_or(dim_name).to_string();
+                if let Some(gen_c) = dim_c.get_compound("generator") {
+                    let generator_type = gen_c
+                        .get_string("type")
+                        .unwrap_or("minecraft:noise")
+                        .to_string();
+                    let settings = gen_c
+                        .get_string("settings")
+                        .map(|s| crate::world_info::GeneratorSettings::Reference(s.to_string()))
+                        .or_else(|| {
+                            gen_c.get_compound("settings").map(|settings_c| {
+                                let json_val =
+                                    nbt_tag_to_json(&NbtTag::Compound(settings_c.clone()));
+                                crate::world_info::GeneratorSettings::Compound(json_val)
+                            })
+                        });
+                    let biome_source = gen_c.get_compound("biome_source").map(|bs_c| {
+                        let biome_type = bs_c
+                            .get_string("type")
+                            .unwrap_or("minecraft:multi_noise")
+                            .to_string();
+                        if let Some(preset) = bs_c.get_string("preset") {
+                            crate::world_info::BiomeSource::WithPreset {
+                                preset: preset.to_string(),
+                                biome_type,
+                            }
+                        } else if let Some(biome) = bs_c.get_string("biome") {
+                            crate::world_info::BiomeSource::Fixed {
+                                biome: biome.to_string(),
+                                biome_type,
+                            }
+                        } else {
+                            crate::world_info::BiomeSource::Simple { biome_type }
+                        }
+                    });
+                    dimensions.insert(
+                        dim_name.to_string(),
+                        crate::world_info::Dimension {
+                            generator: crate::world_info::Generator {
+                                settings,
+                                biome_source,
+                                generator_type,
+                            },
+                            dimension_type: dim_type,
+                        },
+                    );
+                }
+            }
+        }
+    }
+    Some(WorldGenSettings { seed, dimensions })
 }
 
 fn world_gen_settings_payload(mut compound: &NbtCompound) -> Option<&NbtCompound> {
@@ -349,17 +352,13 @@ fn world_gen_settings_payload(mut compound: &NbtCompound) -> Option<&NbtCompound
     }
 }
 
-pub fn write_world_gen_settings(
-    level_folder: &Path,
-    settings: &WorldGenSettings,
-    data_version: i32,
-) -> Result<(), WorldInfoError> {
-    let dir = ensure_minecraft_data_dir(level_folder)?;
-    let path = dir.join("world_gen_settings.dat");
-    let file = File::create(&path)?;
+/// Writes world generation settings in vanilla's `WorldGenSettings` form.
+#[must_use]
+pub fn world_gen_settings_to_nbt(settings: &WorldGenSettings) -> NbtCompound {
     let mut inner = NbtCompound::new();
-    inner.put_int("DataVersion", data_version);
     inner.put_long("seed", settings.seed);
+    // 1.21.1 names it `generate_features`, later versions `generate_structures`.
+    inner.put_bool("generate_features", true);
     inner.put_bool("generate_structures", true);
     inner.put_bool("bonus_chest", false);
 
@@ -401,11 +400,59 @@ pub fn write_world_gen_settings(
         dims_comp.put_compound(dim_name, dim_comp);
     }
     inner.put_compound("dimensions", dims_comp);
+    inner
+}
+
+pub fn write_world_gen_settings(
+    level_folder: &Path,
+    settings: &WorldGenSettings,
+    data_version: i32,
+) -> Result<(), WorldInfoError> {
+    let dir = ensure_minecraft_data_dir(level_folder)?;
+    let path = dir.join("world_gen_settings.dat");
+    let file = File::create(&path)?;
+    let mut inner = world_gen_settings_to_nbt(settings);
+    inner.put_int("DataVersion", data_version);
 
     let mut root = NbtCompound::new();
     root.put_compound("data", inner);
     pumpkin_nbt::nbt_compress::write_gzip_compound_tag(root, BufWriter::new(file))
         .map_err(|e| WorldInfoError::SerializationError(e.to_string()))
+}
+
+/// The game rules as 1.21.1's level.dat keeps them (`GameRules`): each value as a string
+/// under the rule's name.
+#[must_use]
+pub fn game_rules_to_level_nbt(rules: &GameRuleRegistry) -> NbtCompound {
+    let mut compound = NbtCompound::new();
+    if let Ok(serde_json::Value::Object(map)) = serde_json::to_value(rules) {
+        for (name, value) in map {
+            if let serde_json::Value::String(value) = value {
+                compound.put_string(&name, value);
+            }
+        }
+    }
+    compound
+}
+
+/// Reads the game rules from 1.21.1's level.dat `GameRules`; missing rules keep their default.
+#[must_use]
+pub fn game_rules_from_level_nbt(compound: &NbtCompound) -> GameRuleRegistry {
+    let map = compound
+        .child_tags
+        .iter()
+        .filter_map(|(name, tag)| match tag {
+            NbtTag::String(value) => Some((
+                name.to_string(),
+                serde_json::Value::String(value.to_string()),
+            )),
+            _ => None,
+        })
+        .collect::<serde_json::Map<_, _>>();
+    serde_json::from_value(serde_json::Value::Object(map)).unwrap_or_else(|e| {
+        warn!("Failed to read the level.dat game rules: {e}");
+        GameRuleRegistry::default()
+    })
 }
 
 #[must_use]

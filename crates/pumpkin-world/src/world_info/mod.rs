@@ -12,8 +12,8 @@ pub mod anvil;
 pub mod data_files;
 
 // Constraint: disk biome palette serialization changed in 1.21.5
-pub const MINIMUM_SUPPORTED_WORLD_DATA_VERSION: i32 = 4435; // 1.21.9
-pub const MAXIMUM_SUPPORTED_WORLD_DATA_VERSION: i32 = 4903; // 26.2
+pub const MINIMUM_SUPPORTED_WORLD_DATA_VERSION: i32 = 3953; // 1.21
+pub const MAXIMUM_SUPPORTED_WORLD_DATA_VERSION: i32 = 3955; // 1.21.1
 
 pub const MINIMUM_SUPPORTED_LEVEL_VERSION: i32 = 19132; // 1.21.9
 pub const MAXIMUM_SUPPORTED_LEVEL_VERSION: i32 = 19133; // 1.21.9
@@ -80,21 +80,21 @@ pub struct LevelData {
 
     // These are NOT serialized to level.dat, but are still deserialized from it if present.
     // They are loaded and saved by AnvilLevelInfo via the data_files module.
-    /// Game rules – persisted to `data/minecraft/game_rules.dat`.
+    /// Game rules – persisted to `data/game_rules.dat`.
     #[serde(skip_serializing, default)]
     pub game_rules: GameRuleRegistry,
 
-    /// World generation settings – persisted to `data/minecraft/world_gen_settings.dat`.
+    /// World generation settings – persisted to `data/world_gen_settings.dat`.
     #[serde(skip_serializing, default)]
     pub world_gen_settings: WorldGenSettings,
 
     /// In-game time of day (overworld dimension clock).
-    /// Persisted to `data/minecraft/world_clocks.dat`.
+    /// Persisted to `data/world_clocks.dat`.
     #[serde(skip_serializing, default)]
     pub day_time: i64,
 
     /// Remaining ticks of forced-clear weather.
-    /// Persisted to `data/minecraft/weather.dat`.
+    /// Persisted to `data/weather.dat`.
     #[serde(rename = "clearWeatherTime", skip_serializing, default)]
     pub clear_weather_time: i32,
 }
@@ -551,7 +551,7 @@ impl LevelData {
             world_version: WorldVersion::default(),
             level_version: MAXIMUM_SUPPORTED_LEVEL_VERSION,
             map_id: 0,
-            // fields now in data/minecraft/*.dat
+            // fields also kept in data/*.dat
             game_rules: GameRuleRegistry::default(),
             world_gen_settings: WorldGenSettings::new(seed),
             day_time: 0,
@@ -594,9 +594,7 @@ pub enum WorldInfoError {
     InfoNotFound,
     #[error("Deserialization error: {0}")]
     DeserializationError(String),
-    #[error(
-        "No world seed found: neither level.dat nor data/minecraft/world_gen_settings.dat contains one"
-    )]
+    #[error("No world seed found: neither level.dat nor data/world_gen_settings.dat contains one")]
     MissingWorldSeed,
     #[error("Serialization error: {0}")]
     SerializationError(String),

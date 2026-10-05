@@ -234,9 +234,10 @@ impl Server {
         let defaultgamemode = std::sync::Mutex::new(DefaultGamemode {
             gamemode: basic_config.default_gamemode,
         });
-        let players_dir = world_path.join("players");
+        // 1.21.1 keeps player files in playerdata/, advancements/ and stats/ of the world.
+        let players_dir = world_path.clone();
         let player_data_storage = ServerPlayerData::new(
-            players_dir.join("data"),
+            players_dir.join("playerdata"),
             Duration::from_secs(advanced_config.player_data.save_player_cron_interval),
             advanced_config.player_data.save_player_data,
         );

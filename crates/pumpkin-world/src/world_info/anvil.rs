@@ -18,8 +18,9 @@ use crate::world_info::{
     DataPacks, MAXIMUM_SUPPORTED_LEVEL_VERSION, MAXIMUM_SUPPORTED_WORLD_DATA_VERSION,
     MINIMUM_SUPPORTED_LEVEL_VERSION, MINIMUM_SUPPORTED_WORLD_DATA_VERSION, WorldVersion,
     data_files::{
-        minecraft_data_dir, read_game_rules, read_wandering_trader, read_weather,
-        read_world_clocks, read_world_gen_settings, write_custom_boss_events_stub,
+        game_rules_from_level_nbt, game_rules_to_level_nbt, minecraft_data_dir, read_game_rules,
+        read_wandering_trader, read_weather, read_world_clocks, read_world_gen_settings,
+        world_gen_settings_from_nbt, world_gen_settings_to_nbt, write_custom_boss_events_stub,
         write_game_rules, write_random_sequences_stub, write_scheduled_events_stub,
         write_scoreboard_stub, write_stopwatches_stub, write_wandering_trader, write_weather,
         write_world_clocks, write_world_gen_settings,
@@ -148,15 +149,6 @@ fn stored_world_seed(level_folder: &Path, data: &NbtCompound) -> Option<i64> {
             data.get_compound(WORLD_GEN_SETTINGS_TAG)
                 .and_then(|settings| settings.get_long("seed"))
         })
-}
-
-fn put_world_gen_settings_seed(data: &mut NbtCompound, seed: i64) {
-    let mut world_gen_settings = data
-        .get_compound(WORLD_GEN_SETTINGS_TAG)
-        .cloned()
-        .unwrap_or_default();
-    world_gen_settings.put_long("seed", seed);
-    data.put_compound(WORLD_GEN_SETTINGS_TAG, world_gen_settings);
 }
 
 fn update_world_border_from_nbt(level_data: &mut LevelData, data: &NbtCompound) {
@@ -340,7 +332,23 @@ fn level_data_to_nbt(info: &LevelData, data: &mut NbtCompound) {
     data.put_compound("Version", world_version_to_nbt(&info.world_version));
     data.put_int("version", info.level_version);
     data.put_int("map_id", info.map_id);
-    put_world_gen_settings_seed(data, info.world_gen_settings.seed);
+
+    // What 1.21.1 keeps in level.dat rather than in data files.
+    data.put_compound(
+        WORLD_GEN_SETTINGS_TAG,
+        world_gen_settings_to_nbt(&info.world_gen_settings),
+    );
+    data.put_compound("GameRules", game_rules_to_level_nbt(&info.game_rules));
+    data.put_long("DayTime", info.day_time);
+    data.put_int("clearWeatherTime", info.clear_weather_time);
+    // 1.21.1 reads the end's dragon fight from level.dat; its fields have defaults.
+    if data.get_compound("DragonFight").is_none() {
+        data.put_compound("DragonFight", NbtCompound::new());
+    }
+    if data.get_bool("hardcore").is_none() {
+        data.put_bool("hardcore", false);
+    }
+    data.put_bool("initialized", true);
 }
 
 fn stamp_current_version(level_data: &mut LevelData) {
@@ -385,8 +393,16 @@ impl WorldInfoReader for AnvilLevelInfo {
 
         let mut level_data = level_data_from_nbt(data, seed);
 
-        if let Some(wgs) = read_world_gen_settings(level_folder) {
+        if let Some(wgs) = read_world_gen_settings(level_folder).or_else(|| {
+            data.get_compound(WORLD_GEN_SETTINGS_TAG)
+                .and_then(world_gen_settings_from_nbt)
+        }) {
             level_data.world_gen_settings = wgs;
+        }
+
+        // 1.21.1 keeps the game rules in level.dat.
+        if let Some(game_rules) = data.get_compound("GameRules") {
+            level_data.game_rules = game_rules_from_level_nbt(game_rules);
         }
 
         // game_rules.dat – prefer the new file; fall back to level.dat values
@@ -457,7 +473,7 @@ impl WorldInfoWriter for AnvilLevelInfo {
 
         let data_version = level_data.data_version;
 
-        // ── Write data/minecraft/*.dat files ─────────────────────────────────
+        // ── Write data/*.dat files ─────────────────────────────────
 
         // game_rules.dat
         if let Err(e) = write_game_rules(level_folder, &info.game_rules, data_version) {
@@ -984,11 +1000,12 @@ mod test {
     }
 
     #[test]
-    fn spawn_and_difficulty_format_26_2() {
+    fn spawn_and_difficulty_compounds() {
         let temp_dir = TempDir::new().unwrap();
 
+        // Later versions' `difficulty_settings` and `spawn` compounds are read too.
         let mut data_comp = NbtCompound::new();
-        data_comp.put_int("DataVersion", 4903);
+        data_comp.put_int("DataVersion", MAXIMUM_SUPPORTED_WORLD_DATA_VERSION);
         data_comp.put_int("version", 19133);
         data_comp.put_string("LevelName", "26.2 Test".to_string());
         data_comp.put_long("LastPlayed", 123456789);
@@ -1033,7 +1050,8 @@ mod test {
                 dimension_type: "minecraft:overworld".to_string(),
             },
         );
-        write_world_gen_settings(temp_dir.path(), &wgs, 4903).unwrap();
+        write_world_gen_settings(temp_dir.path(), &wgs, MAXIMUM_SUPPORTED_WORLD_DATA_VERSION)
+            .unwrap();
 
         let loaded = AnvilLevelInfo.read_world_info(temp_dir.path()).unwrap();
         assert_eq!(loaded.spawn_x, 42);
@@ -1058,7 +1076,7 @@ mod test {
     }
 
     #[test]
-    fn all_26_2_minecraft_data_files_written_and_read() {
+    fn data_files_written_and_read() {
         let temp_dir = TempDir::new().unwrap();
         let mut level_data = LEVEL_DAT.data.clone();
         level_data.data_version = 4903;
@@ -1070,7 +1088,7 @@ mod test {
             .write_world_info(&level_data, temp_dir.path())
             .unwrap();
 
-        let data_dir = temp_dir.path().join("data").join("minecraft");
+        let data_dir = temp_dir.path().join("data");
         let expected_files = [
             "game_rules.dat",
             "random_sequences.dat",
@@ -1088,7 +1106,7 @@ mod test {
             let file_path = data_dir.join(file_name);
             assert!(
                 file_path.exists(),
-                "Expected file {file_name} to exist in data/minecraft/"
+                "Expected file {file_name} to exist in data/"
             );
         }
 
@@ -1116,5 +1134,42 @@ mod test {
         let loaded_wt = crate::world_info::data_files::read_wandering_trader(temp_dir.path());
         assert_eq!(loaded_wt.spawn_delay, 24000);
         assert_eq!(loaded_wt.spawn_chance, 25);
+    }
+
+    #[test]
+    fn level_dat_has_what_1_21_1_reads() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut level_data = LevelData::default(Seed(99));
+        level_data.game_rules.keep_inventory = true;
+        level_data.day_time = 1234;
+        AnvilLevelInfo
+            .write_world_info(&level_data, temp_dir.path())
+            .unwrap();
+
+        let root = read_level_dat(temp_dir.path());
+        let data = root.get_compound("Data").unwrap();
+        assert_eq!(data.get_int("DataVersion"), Some(3955));
+        assert_eq!(data.get_long("DayTime"), Some(1234));
+        assert_eq!(data.get_bool("initialized"), Some(true));
+        let settings = data.get_compound("WorldGenSettings").unwrap();
+        assert_eq!(settings.get_long("seed"), Some(99));
+        assert_eq!(settings.get_bool("generate_features"), Some(true));
+        let dimensions = settings.get_compound("dimensions").unwrap();
+        for dimension in [
+            "minecraft:overworld",
+            "minecraft:the_nether",
+            "minecraft:the_end",
+        ] {
+            assert!(dimensions.get_compound(dimension).is_some(), "{dimension}");
+        }
+        let game_rules = data.get_compound("GameRules").unwrap();
+        assert_eq!(game_rules.get_string("keepInventory"), Some("true"));
+        assert_eq!(game_rules.get_string("randomTickSpeed"), Some("3"));
+
+        // Without the data files, as in a vanilla 1.21.1 world.
+        fs::remove_dir_all(minecraft_data_dir(temp_dir.path())).unwrap();
+        let loaded = AnvilLevelInfo.read_world_info(temp_dir.path()).unwrap();
+        assert!(loaded.game_rules.keep_inventory);
+        assert_eq!(loaded.world_gen_settings, level_data.world_gen_settings);
     }
 }
