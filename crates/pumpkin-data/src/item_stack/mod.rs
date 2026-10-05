@@ -822,9 +822,8 @@ impl ItemStack {
         let mut tag = NbtCompound::new();
 
         for (id, data) in &self.patch {
-            // 1.21.1 drops an item whose components include one it doesn't know, and its lock
-            // is a string rather than an item predicate.
-            if !id.is_networked() || *id == DataComponent::Lock {
+            // 1.21.1 drops an item whose components include one it doesn't know.
+            if !id.is_networked() {
                 continue;
             }
             if let Some(data) = data {

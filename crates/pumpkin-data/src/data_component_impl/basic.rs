@@ -435,14 +435,29 @@ impl DataComponentImpl for BaseColorImpl {
     default_impl!(BaseColor);
 }
 
-#[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct InstrumentImpl;
+/// A goat horn's instrument, as saved: a registry name, or an inline instrument compound.
+#[derive(Clone, Debug, PartialEq)]
+pub struct InstrumentImpl {
+    pub instrument: NbtTag,
+}
 impl InstrumentImpl {
-    pub const fn read_data(_data: &NbtTag) -> Option<Self> {
-        Some(Self)
+    #[must_use]
+    pub fn read_data(data: &NbtTag) -> Option<Self> {
+        Some(Self {
+            instrument: data.clone(),
+        })
+    }
+
+    /// The registry name, when the instrument isn't inline.
+    #[must_use]
+    pub fn name(&self) -> Option<&str> {
+        self.instrument.extract_string()
     }
 }
 impl DataComponentImpl for InstrumentImpl {
+    fn write_data(&self) -> NbtTag {
+        self.instrument.clone()
+    }
     default_impl!(Instrument);
 }
 
@@ -514,34 +529,72 @@ impl DataComponentImpl for BannerPatternsImpl {
     default_impl!(BannerPatterns);
 }
 
+/// A decorated pot's sherds: back, left, right, front (`PotDecorations.ordered`), bricks where
+/// a side has none.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct PotDecorationsImpl;
+pub struct PotDecorationsImpl {
+    pub sherds: [Cow<'static, str>; 4],
+}
 impl PotDecorationsImpl {
-    pub const fn read_data(_data: &NbtTag) -> Option<Self> {
-        Some(Self)
+    const BRICK: Cow<'static, str> = Cow::Borrowed("minecraft:brick");
+
+    #[must_use]
+    pub fn read_data(data: &NbtTag) -> Option<Self> {
+        let NbtTag::List(list) = data else {
+            return None;
+        };
+        let mut sherds = [Self::BRICK, Self::BRICK, Self::BRICK, Self::BRICK];
+        for (sherd, tag) in sherds.iter_mut().zip(list) {
+            *sherd = Cow::Owned(tag.extract_string()?.to_string());
+        }
+        Some(Self { sherds })
     }
 }
 impl DataComponentImpl for PotDecorationsImpl {
+    fn write_data(&self) -> NbtTag {
+        NbtTag::List(
+            self.sherds
+                .iter()
+                .map(|sherd| NbtTag::String(sherd.to_string().into()))
+                .collect(),
+        )
+    }
     default_impl!(PotDecorations);
 }
 
-/// The lock's item predicate, kept as its raw NBT compound since Pumpkin does
-/// not yet model item predicates.
-// TODO: replace `predicate` with a typed item predicate once item predicates are modelled.
-#[derive(Clone, Debug, PartialEq)]
+/// 1.21.1's `LockCode`: the name an item must have to open the container.
+#[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub struct LockImpl {
-    pub predicate: NbtCompound,
+    pub key: String,
 }
 impl LockImpl {
+    /// Reads 1.21.1's string, or a later version's item predicate when it only checks the
+    /// custom name (the form later versions convert old locks to).
+    #[must_use]
     pub fn read_data(data: &NbtTag) -> Option<Self> {
-        data.extract_compound().map(|predicate| Self {
-            predicate: predicate.clone(),
-        })
+        if let Some(key) = data.extract_string() {
+            return Some(Self {
+                key: key.to_string(),
+            });
+        }
+        let name = data
+            .extract_compound()?
+            .get_compound("components")?
+            .get("minecraft:custom_name")?;
+        let key = match name {
+            NbtTag::String(text) => serde_json::from_str::<serde_json::Value>(text)
+                .ok()
+                .and_then(|json| json.as_str().map(str::to_string))
+                .unwrap_or_else(|| text.to_string()),
+            NbtTag::Compound(text) => text.get_string("text")?.to_string(),
+            _ => return None,
+        };
+        Some(Self { key })
     }
 }
 impl DataComponentImpl for LockImpl {
     fn write_data(&self) -> NbtTag {
-        NbtTag::Compound(self.predicate.clone())
+        NbtTag::String(self.key.clone().into())
     }
     default_impl!(Lock);
 }

@@ -10,6 +10,7 @@ use pumpkin_data::data_component_impl::*;
 
 use pumpkin_data::effect::StatusEffect;
 use pumpkin_data::entity::EntityType;
+use pumpkin_data::item::Item;
 use pumpkin_data::sound::Sound;
 use pumpkin_nbt::{serializer::NbtWriteHelperJava, tag::NbtTag};
 use pumpkin_util::version::JavaMinecraftVersion;
@@ -2420,12 +2421,22 @@ impl DataComponentCodec<Self> for BlockEntityDataImpl {
 
 impl DataComponentCodec<Self> for InstrumentImpl {
     fn serialize(&self, seq: &mut impl NetworkWriteExt) -> Result<(), WritingError> {
-        seq.write_var_int(&VarInt(0))
+        let instrument = self
+            .name()
+            .and_then(pumpkin_data::instrument::Instrument::from_name)
+            .ok_or_else(|| WritingError::Message("Inline instruments aren't supported".into()))?;
+        seq.write_var_int(&VarInt(instrument.id() as i32 + 1))
     }
 
     fn deserialize(seq: &mut impl NetworkReadExt) -> Result<Self, ReadingError> {
-        let _ = seq.get_var_int()?;
-        Ok(Self)
+        let id = seq.get_var_int()?.0;
+        let instrument = usize::try_from(id - 1)
+            .ok()
+            .and_then(|id| pumpkin_data::instrument::Instrument::all().get(id))
+            .ok_or_else(|| ReadingError::Message(format!("Unsupported instrument {id}")))?;
+        Ok(Self {
+            instrument: NbtTag::String(format!("minecraft:{}", instrument.to_name()).into()),
+        })
     }
 }
 
@@ -2487,7 +2498,9 @@ impl DataComponentCodec<Self> for RecipesImpl {
     }
 
     fn deserialize(_seq: &mut impl NetworkReadExt) -> Result<Self, ReadingError> {
-        Ok(Self)
+        Ok(Self {
+            recipes: Vec::new(),
+        })
     }
 }
 
@@ -2714,15 +2727,28 @@ impl DataComponentCodec<Self> for BaseColorImpl {
 
 impl DataComponentCodec<Self> for PotDecorationsImpl {
     fn serialize(&self, seq: &mut impl NetworkWriteExt) -> Result<(), WritingError> {
-        seq.write_var_int(&VarInt(0))
+        seq.write_var_int(&VarInt(self.sherds.len() as i32))?;
+        for sherd in &self.sherds {
+            let item = Item::from_registry_key(sherd.strip_prefix("minecraft:").unwrap_or(sherd))
+                .ok_or_else(|| WritingError::Message(format!("Unknown sherd {sherd}")))?;
+            seq.write_var_int(&VarInt(i32::from(item.id)))?;
+        }
+        Ok(())
     }
 
     fn deserialize(seq: &mut impl NetworkReadExt) -> Result<Self, ReadingError> {
         let len = seq.get_var_int()?.0 as usize;
+        let mut sherds = Vec::new();
         for _ in 0..len {
-            let _ = seq.get_var_int()?;
+            let id = seq.get_var_int()?.0;
+            let item = u16::try_from(id)
+                .ok()
+                .and_then(Item::from_id)
+                .ok_or_else(|| ReadingError::Message(format!("Unknown item id {id}")))?;
+            sherds.push(NbtTag::String(item.namespaced_name().into_owned().into()));
         }
-        Ok(Self)
+        Self::read_data(&NbtTag::List(sherds))
+            .ok_or_else(|| ReadingError::Message("Bad pot decorations".into()))
     }
 }
 
@@ -2810,9 +2836,7 @@ impl DataComponentCodec<Self> for LockImpl {
     }
 
     fn deserialize(_seq: &mut impl NetworkReadExt) -> Result<Self, ReadingError> {
-        Ok(Self {
-            predicate: pumpkin_nbt::compound::NbtCompound::new(),
-        })
+        Ok(Self { key: String::new() })
     }
 }
 

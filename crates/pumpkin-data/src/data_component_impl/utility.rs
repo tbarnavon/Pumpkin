@@ -877,13 +877,32 @@ impl DataComponentImpl for JukeboxPlayableImpl {
     default_impl!(JukeboxPlayable);
 }
 
+/// The recipes a knowledge book unlocks.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct RecipesImpl;
+pub struct RecipesImpl {
+    pub recipes: Vec<Cow<'static, str>>,
+}
 impl RecipesImpl {
-    pub const fn read_data(_data: &NbtTag) -> Option<Self> {
-        Some(Self)
+    #[must_use]
+    pub fn read_data(data: &NbtTag) -> Option<Self> {
+        let NbtTag::List(list) = data else {
+            return None;
+        };
+        let recipes = list
+            .iter()
+            .map(|tag| tag.extract_string().map(|id| Cow::Owned(id.to_string())))
+            .collect::<Option<_>>()?;
+        Some(Self { recipes })
     }
 }
 impl DataComponentImpl for RecipesImpl {
+    fn write_data(&self) -> NbtTag {
+        NbtTag::List(
+            self.recipes
+                .iter()
+                .map(|id| NbtTag::String(id.to_string().into()))
+                .collect(),
+        )
+    }
     default_impl!(Recipes);
 }

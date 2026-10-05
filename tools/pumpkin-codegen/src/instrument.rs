@@ -55,7 +55,28 @@ pub fn build() -> TokenStream {
     let mut translation_key_arms = Vec::new();
     let mut all_variants = Vec::new();
 
-    for (name, json) in &instruments {
+    // Numbered in the version's registry order (1.21.1's instrument registry is built in, not
+    // alphabetical like a datapack registry).
+    let order: Vec<String> =
+        serde_json::from_str(&fs::read_to_string("../../assets/instruments.json").unwrap())
+            .expect("Failed to parse instruments.json");
+    let ordered: Vec<(String, &InstrumentJson)> = order
+        .iter()
+        .map(|id| {
+            let name = id.strip_prefix("minecraft:").unwrap_or(id).to_string();
+            let json = instruments
+                .get(&name)
+                .unwrap_or_else(|| panic!("No instrument data for {id}"));
+            (name, json)
+        })
+        .collect();
+    assert_eq!(
+        ordered.len(),
+        instruments.len(),
+        "instruments.json lists every instrument"
+    );
+
+    for (name, json) in &ordered {
         let variant_ident = format_ident!("{}", name.to_pascal_case());
         let namespaced = format!("minecraft:{name}");
         let description_key = json

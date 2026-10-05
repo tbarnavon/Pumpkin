@@ -13,18 +13,22 @@ use pumpkin_data::banner_pattern::BannerPattern;
 use pumpkin_data::data_component::DataComponent;
 use pumpkin_data::data_component_impl::{
     AttributeModifiersImpl, BannerPatternLayer, BannerPatternsImpl, BeesImpl, BlockEntityDataImpl,
-    BundleContentsImpl, ChargedProjectilesImpl, ContainerImpl, CustomModelDataImpl,
-    DataComponentImpl, DyedColorImpl, EnchantmentsImpl, EntityDataImpl, FoodImpl, InstrumentImpl,
-    ItemNameImpl, JukeboxPlayableImpl, LoreImpl, PotDecorationsImpl, PotionContentsImpl,
-    ProfileImpl, ProfileProperty, StoredEnchantmentsImpl, ToolImpl, ToolRule, TrimImpl,
-    UnbreakableImpl, WritableBookContentImpl, WrittenBookContentImpl, get, read_data,
+    BundleContentsImpl, CanBreakImpl, CanPlaceOnImpl, ChargedProjectilesImpl, ContainerImpl,
+    CustomModelDataImpl, DataComponentImpl, DyedColorImpl, EnchantmentsImpl, EntityDataImpl,
+    FoodImpl, InstrumentImpl, ItemNameImpl, JukeboxPlayableImpl, LoreImpl, PotDecorationsImpl,
+    PotionContentsImpl, ProfileImpl, ProfileProperty, StoredEnchantmentsImpl, ToolImpl, ToolRule,
+    TrimImpl, UnbreakableImpl, WritableBookContentImpl, WrittenBookContentImpl, get, read_data,
 };
 use pumpkin_data::dye_color::DyeColor;
 use pumpkin_data::enchantment::AttributeModifierSlot;
+use pumpkin_data::instrument::Instrument;
 use pumpkin_data::item::Item;
 use pumpkin_data::item_stack::ItemStack;
+use pumpkin_data::sound::Sound;
+use pumpkin_data::tag::{RegistryKey, get_tag_ids};
 use pumpkin_data::trim_material::TrimMaterial;
 use pumpkin_data::trim_pattern::TrimPattern;
+use pumpkin_data::{Block, BlockId};
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_nbt::tag::NbtTag;
 use pumpkin_util::text::TextComponent;
@@ -223,15 +227,27 @@ fn write_component(
             get::<StoredEnchantmentsImpl>(value).serialize(w)?;
             w.write_bool(true)?;
         }
-        // Pumpkin doesn't keep these in a sendable form: the block predicates of
-        // `AdventureModePredicate`, which instrument, the recipes, the lock (a string in 1.21.1)
-        // and the sherds.
-        DataComponent::CanPlaceOn
-        | DataComponent::CanBreak
-        | DataComponent::Instrument
-        | DataComponent::Recipes
-        | DataComponent::Lock
-        | DataComponent::PotDecorations => return Ok(false),
+        DataComponent::CanPlaceOn => {
+            return write_adventure_predicate(&get::<CanPlaceOnImpl>(value).predicate, w);
+        }
+        DataComponent::CanBreak => {
+            return write_adventure_predicate(&get::<CanBreakImpl>(value).predicate, w);
+        }
+        DataComponent::Instrument => {
+            return write_instrument(&get::<InstrumentImpl>(value).instrument, w);
+        }
+        // `PotDecorations`: the item of each side, back, left, right, front
+        DataComponent::PotDecorations => {
+            let Some(ids) = get::<PotDecorationsImpl>(value)
+                .sherds
+                .iter()
+                .map(|sherd| Item::from_registry_key(strip_namespace(sherd)).map(|item| item.id))
+                .collect::<Option<Vec<_>>>()
+            else {
+                return Ok(false);
+            };
+            write_list(w, &ids, |b, id| b.write_var_int(&VarInt(i32::from(*id))))?;
+        }
         // `ItemAttributeModifiers`: entries without a display, then show in tooltip
         DataComponent::AttributeModifiers => {
             let modifiers: Vec<_> = get::<AttributeModifiersImpl>(value)
@@ -260,7 +276,10 @@ fn write_component(
         | DataComponent::DebugStickState
         | DataComponent::MapDecorations
         | DataComponent::BucketEntityData => w.write_nbt(NbtTag::Compound(NbtCompound::new()))?,
-        DataComponent::ContainerLoot => w.write_nbt(value.write_data())?,
+        // No network codec in 1.21.1: network NBT of their saved form.
+        DataComponent::ContainerLoot | DataComponent::Recipes | DataComponent::Lock => {
+            w.write_nbt(value.write_data())?;
+        }
         // `FoodProperties.DIRECT_STREAM_CODEC`
         DataComponent::Food => {
             let food = get::<FoodImpl>(value);
@@ -463,29 +482,284 @@ fn skip_sound_holder(read: &mut impl NetworkReadExt) -> Result<(), ReadingError>
     Ok(())
 }
 
-/// `BlockPredicate.STREAM_CODEC`, read and dropped.
-fn skip_block_predicate(read: &mut impl NetworkReadExt) -> Result<(), ReadingError> {
-    if read.get_bool()? {
-        deserialize_idset::<pumpkin_data::Block>(read)?;
+/// `AdventureModePredicate.STREAM_CODEC`: the block predicates, then show in tooltip. Reads the
+/// saved forms: 1.21.1's `{predicates, show_in_tooltip}` or one predicate, or a later version's
+/// list. Returns false, leaving the component out, when a predicate names a block or tag the
+/// client doesn't have (it can't decode those) or keeps its NBT as an unparsed string.
+fn write_adventure_predicate(predicate: &NbtTag, w: &mut Vec<u8>) -> Result<bool, WritingError> {
+    let (predicates, show_in_tooltip) = match predicate {
+        NbtTag::Compound(full) if full.get("predicates").is_some() => (
+            full.get_list("predicates").unwrap_or_default(),
+            full.get_bool("show_in_tooltip").unwrap_or(true),
+        ),
+        NbtTag::Compound(_) => (std::slice::from_ref(predicate), true),
+        NbtTag::List(list) => (list.as_slice(), true),
+        _ => return Ok(false),
+    };
+    let mut bytes = Vec::new();
+    for predicate in predicates {
+        let Some(predicate) = predicate.extract_compound() else {
+            return Ok(false);
+        };
+        if !write_block_predicate(predicate, &mut bytes)? {
+            return Ok(false);
+        }
     }
-    if read.get_bool()? {
-        for _ in 0..read_count(read)? {
-            read.get_str()?;
-            if read.get_bool()? {
-                read.get_str()?;
-            } else {
-                for _ in 0..2 {
-                    if read.get_bool()? {
-                        read.get_str()?;
+    w.write_var_int(&VarInt(predicates.len() as i32))?;
+    w.write_slice(&bytes)?;
+    w.write_bool(show_in_tooltip)?;
+    Ok(true)
+}
+
+/// `BlockPredicate.STREAM_CODEC` from a saved predicate: optional blocks (a holder set),
+/// optional state properties, optional NBT.
+fn write_block_predicate(predicate: &NbtCompound, w: &mut Vec<u8>) -> Result<bool, WritingError> {
+    match predicate.get("blocks") {
+        None => w.write_bool(false)?,
+        Some(NbtTag::String(name)) if name.starts_with('#') => {
+            let tag = namespaced(&name[1..]);
+            if get_tag_ids(RegistryKey::Block, &tag).is_none() {
+                return Ok(false);
+            }
+            w.write_bool(true)?;
+            w.write_var_int(&VarInt(0))?;
+            w.write_string(&tag)?;
+        }
+        Some(blocks) => {
+            let names: Vec<&str> = match blocks {
+                NbtTag::String(name) => vec![name],
+                NbtTag::List(list) => {
+                    let Some(names) = list.iter().map(NbtTag::extract_string).collect() else {
+                        return Ok(false);
+                    };
+                    names
+                }
+                _ => return Ok(false),
+            };
+            let Some(ids) = names
+                .iter()
+                .map(|name| Block::from_name(name).map(|block| block.id.as_u16()))
+                .collect::<Option<Vec<_>>>()
+            else {
+                return Ok(false);
+            };
+            w.write_bool(true)?;
+            w.write_var_int(&VarInt(ids.len() as i32 + 1))?;
+            for id in ids {
+                w.write_var_int(&VarInt(i32::from(id)))?;
+            }
+        }
+    }
+    match predicate.get_compound("state") {
+        None => w.write_bool(false)?,
+        Some(state) => {
+            w.write_bool(true)?;
+            w.write_var_int(&VarInt(state.child_tags.len() as i32))?;
+            for (name, matcher) in &state.child_tags {
+                w.write_string(name)?;
+                // `ValueMatcher`: true then an `ExactMatcher`, or false then a `RangedMatcher`
+                match matcher {
+                    NbtTag::Compound(range) => {
+                        w.write_bool(false)?;
+                        for bound in ["min", "max"] {
+                            match range.get(bound).and_then(property_value) {
+                                Some(value) => {
+                                    w.write_bool(true)?;
+                                    w.write_string(&value)?;
+                                }
+                                None => w.write_bool(false)?,
+                            }
+                        }
+                    }
+                    exact => {
+                        let Some(value) = property_value(exact) else {
+                            return Ok(false);
+                        };
+                        w.write_bool(true)?;
+                        w.write_string(&value)?;
                     }
                 }
             }
         }
     }
-    if read.get_bool()? {
-        read_nbt(read)?;
+    match predicate.get("nbt") {
+        None => w.write_bool(false)?,
+        Some(NbtTag::Compound(nbt)) => {
+            w.write_bool(true)?;
+            w.write_nbt(NbtTag::Compound(nbt.clone()))?;
+        }
+        Some(_) => return Ok(false),
     }
-    Ok(())
+    Ok(true)
+}
+
+/// A state property value as `StatePropertiesPredicate` matches it: its string form.
+fn property_value(value: &NbtTag) -> Option<String> {
+    Some(match value {
+        NbtTag::String(value) => value.to_string(),
+        NbtTag::Byte(value) => value.to_string(),
+        NbtTag::Short(value) => value.to_string(),
+        NbtTag::Int(value) => value.to_string(),
+        NbtTag::Long(value) => value.to_string(),
+        _ => return None,
+    })
+}
+
+fn namespaced(name: &str) -> String {
+    if name.contains(':') {
+        name.to_string()
+    } else {
+        format!("minecraft:{name}")
+    }
+}
+
+/// Reads `AdventureModePredicate.STREAM_CODEC` into 1.21.1's saved form.
+fn read_adventure_predicate(read: &mut impl NetworkReadExt) -> Result<NbtTag, ReadingError> {
+    let mut predicates = Vec::new();
+    for _ in 0..read_count(read)? {
+        predicates.push(NbtTag::Compound(read_block_predicate(read)?));
+    }
+    let mut full = NbtCompound::new();
+    full.put_list("predicates", predicates);
+    full.put_bool("show_in_tooltip", read.get_bool()?);
+    Ok(NbtTag::Compound(full))
+}
+
+/// Reads `BlockPredicate.STREAM_CODEC` into its saved form.
+fn read_block_predicate(read: &mut impl NetworkReadExt) -> Result<NbtCompound, ReadingError> {
+    let mut predicate = NbtCompound::new();
+    if read.get_bool()? {
+        let size = read.get_var_int()?.0;
+        if size == 0 {
+            let tag = read_resource_location(read)?;
+            predicate.put_string("blocks", format!("#{tag}"));
+        } else {
+            if !(1..=MAX_LIST + 1).contains(&size) {
+                return Err(ReadingError::Message(format!("Bad holder set size {size}")));
+            }
+            let mut blocks = Vec::new();
+            for _ in 1..size {
+                let id = read.get_var_int()?.0;
+                let block = u16::try_from(id)
+                    .ok()
+                    .and_then(BlockId::new)
+                    .map(Block::from_id)
+                    .ok_or_else(|| ReadingError::Message(format!("Unknown block id {id}")))?;
+                blocks.push(NbtTag::String(block.namespaced_name().into_owned().into()));
+            }
+            predicate.put_list("blocks", blocks);
+        }
+    }
+    if read.get_bool()? {
+        let mut state = NbtCompound::new();
+        for _ in 0..read_count(read)? {
+            let name = read.get_str()?.to_string();
+            if read.get_bool()? {
+                state.put_string(&name, read.get_str()?.to_string());
+            } else {
+                let mut range = NbtCompound::new();
+                for bound in ["min", "max"] {
+                    if read.get_bool()? {
+                        range.put_string(bound, read.get_str()?.to_string());
+                    }
+                }
+                state.put_compound(&name, range);
+            }
+        }
+        predicate.put_compound("state", state);
+    }
+    if read.get_bool()? {
+        predicate.put("nbt", read_nbt(read)?);
+    }
+    Ok(predicate)
+}
+
+/// `Instrument.STREAM_CODEC`: the registry id plus one, or 0 then `Instrument.DIRECT_STREAM_CODEC`
+/// (sound event, use duration in ticks, range). Returns false for a saved instrument it can't
+/// express.
+fn write_instrument(instrument: &NbtTag, w: &mut Vec<u8>) -> Result<bool, WritingError> {
+    if let Some(name) = instrument.extract_string() {
+        let Some(instrument) = Instrument::from_name(name) else {
+            return Ok(false);
+        };
+        w.write_var_int(&VarInt(instrument.id() as i32 + 1))?;
+        return Ok(true);
+    }
+    let Some(inline) = instrument.extract_compound() else {
+        return Ok(false);
+    };
+    // Saved in ticks by 1.21.1, in seconds by later versions.
+    let use_duration = match inline.get("use_duration") {
+        Some(NbtTag::Float(seconds)) => (seconds * 20.0).round() as i32,
+        Some(NbtTag::Double(seconds)) => (seconds * 20.0).round() as i32,
+        Some(NbtTag::Int(ticks)) => *ticks,
+        _ => return Ok(false),
+    };
+    let Some(range) = inline.get_float("range") else {
+        return Ok(false);
+    };
+    w.write_var_int(&VarInt(0))?;
+    match inline.get("sound_event") {
+        Some(NbtTag::String(name)) => write_sound_holder(name, None, w)?,
+        Some(NbtTag::Compound(sound)) => {
+            let Some(name) = sound.get_string("sound_id") else {
+                return Ok(false);
+            };
+            write_sound_holder(name, sound.get_float("range"), w)?;
+        }
+        _ => return Ok(false),
+    }
+    w.write_var_int(&VarInt(use_duration))?;
+    w.write_f32_be(range)?;
+    Ok(true)
+}
+
+/// `SoundEvent.STREAM_CODEC`: a registered sound's id plus one, or 0 then its location and
+/// optional fixed range.
+fn write_sound_holder(name: &str, range: Option<f32>, w: &mut Vec<u8>) -> Result<(), WritingError> {
+    if range.is_none()
+        && let Some(sound) = Sound::from_name(strip_namespace(name))
+    {
+        return w.write_var_int(&VarInt(sound as i32 + 1));
+    }
+    w.write_var_int(&VarInt(0))?;
+    w.write_string(&namespaced(name))?;
+    match range {
+        Some(range) => {
+            w.write_bool(true)?;
+            w.write_f32_be(range)
+        }
+        None => w.write_bool(false),
+    }
+}
+
+/// Reads `Instrument.STREAM_CODEC` into its saved form.
+fn read_instrument(read: &mut impl NetworkReadExt) -> Result<NbtTag, ReadingError> {
+    if let Some(id) = read_holder(read)? {
+        let instrument = Instrument::all()
+            .get(id as usize)
+            .ok_or_else(|| ReadingError::Message(format!("Unknown instrument id {id}")))?;
+        return Ok(NbtTag::String(
+            format!("minecraft:{}", instrument.to_name()).into(),
+        ));
+    }
+    let mut inline = NbtCompound::new();
+    if let Some(id) = read_holder(read)? {
+        let name = Sound::NAMES
+            .get(id as usize)
+            .ok_or_else(|| ReadingError::Message(format!("Unknown sound id {id}")))?;
+        inline.put_string("sound_event", format!("minecraft:{name}"));
+    } else {
+        let mut sound = NbtCompound::new();
+        sound.put_string("sound_id", read_resource_location(read)?);
+        if read.get_bool()? {
+            sound.put_float("range", read.get_f32()?);
+        }
+        inline.put_compound("sound_event", sound);
+    }
+    inline.put_int("use_duration", read.get_var_int()?.0);
+    inline.put_float("range", read.get_f32()?);
+    Ok(NbtTag::Compound(inline))
 }
 
 /// `MobEffectInstance.STREAM_CODEC`, read and dropped.
@@ -532,13 +806,14 @@ fn read_component(
             read.get_bool()?;
             enchantments.to_dyn()
         }
-        DataComponent::CanPlaceOn | DataComponent::CanBreak => {
-            for _ in 0..read_count(read)? {
-                skip_block_predicate(read)?;
-            }
-            read.get_bool()?;
-            return Ok(None);
+        DataComponent::CanPlaceOn => CanPlaceOnImpl {
+            predicate: read_adventure_predicate(read)?,
         }
+        .to_dyn(),
+        DataComponent::CanBreak => CanBreakImpl {
+            predicate: read_adventure_predicate(read)?,
+        }
+        .to_dyn(),
         DataComponent::AttributeModifiers => {
             for _ in 0..read_count(read)? {
                 read.get_var_int()?;
@@ -703,15 +978,10 @@ fn read_component(
             }
             .to_dyn()
         }
-        DataComponent::Instrument => {
-            if read_holder(read)?.is_none() {
-                // `Instrument.DIRECT_STREAM_CODEC`
-                skip_sound_holder(read)?;
-                read.get_var_int()?;
-                read.get_f32()?;
-            }
-            InstrumentImpl.to_dyn()
+        DataComponent::Instrument => InstrumentImpl {
+            instrument: read_instrument(read)?,
         }
+        .to_dyn(),
         DataComponent::JukeboxPlayable => {
             if read.get_bool()? {
                 if read_holder(read)?.is_none() {
@@ -791,10 +1061,16 @@ fn read_component(
             BeesImpl.to_dyn()
         }
         DataComponent::PotDecorations => {
+            let mut sherds = Vec::new();
             for _ in 0..read_count(read)? {
-                read.get_var_int()?;
+                let id = read.get_var_int()?.0;
+                let item = u16::try_from(id)
+                    .ok()
+                    .and_then(Item::from_id)
+                    .ok_or_else(|| ReadingError::Message(format!("Unknown item id {id}")))?;
+                sherds.push(NbtTag::String(item.namespaced_name().into_owned().into()));
             }
-            PotDecorationsImpl.to_dyn()
+            return Ok(read_data(id, &NbtTag::List(sherds)));
         }
         DataComponent::ItemName => {
             let name = match read_nbt(read)? {
@@ -865,6 +1141,152 @@ mod tests {
     use super::{read_stack, write_stack};
     use crate::VarInt;
     use crate::ser::NetworkWriteExt;
+
+    /// Writes a stack with one component and reads it back.
+    fn round_trip(
+        item: &'static Item,
+        id: DataComponent,
+        value: Box<dyn DataComponentImpl>,
+    ) -> (Vec<u8>, ItemStack) {
+        let stack = ItemStack::new_with_component(1, item, vec![(id, Some(value))]);
+        let mut bytes = Vec::new();
+        write_stack(&stack, stack.item.id, &mut bytes).unwrap();
+        let read = read_stack(&mut bytes.as_slice()).unwrap();
+        (bytes, read)
+    }
+
+    #[test]
+    fn adventure_predicates_are_sent() {
+        use pumpkin_data::data_component_impl::CanBreakImpl;
+        use pumpkin_nbt::compound::NbtCompound;
+        use pumpkin_nbt::tag::NbtTag;
+
+        let mut state = NbtCompound::new();
+        state.put_string("axis", "y".to_string());
+        let mut predicate = NbtCompound::new();
+        predicate.put_string("blocks", "minecraft:oak_log".to_string());
+        predicate.put_compound("state", state);
+        let (bytes, read) = round_trip(
+            &Item::DIAMOND_PICKAXE,
+            DataComponent::CanBreak,
+            CanBreakImpl {
+                predicate: NbtTag::Compound(predicate),
+            }
+            .to_dyn(),
+        );
+        let mut expected = var_ints(&[
+            1,
+            i32::from(Item::DIAMOND_PICKAXE.id),
+            1,
+            0,
+            i32::from(DataComponent::CanBreak.to_id()),
+            1,
+        ]);
+        // blocks: a list of one, then the oak log's id
+        expected.push(1);
+        expected.extend(var_ints(&[
+            2,
+            i32::from(pumpkin_data::Block::OAK_LOG.id.as_u16()),
+        ]));
+        // properties: axis = exact "y"
+        expected.extend([1, 1, 4]);
+        expected.extend(b"axis");
+        expected.extend([1, 1]);
+        expected.extend(b"y");
+        // no NBT, then show in tooltip
+        expected.extend([0, 1]);
+        assert_eq!(bytes, expected);
+
+        let predicate = &get::<CanBreakImpl>(read.patch[0].1.as_deref().unwrap()).predicate;
+        let first = predicate
+            .extract_compound()
+            .unwrap()
+            .get_list("predicates")
+            .unwrap()[0]
+            .extract_compound()
+            .unwrap();
+        assert_eq!(
+            first.get_list("blocks").unwrap()[0].extract_string(),
+            Some("minecraft:oak_log")
+        );
+        assert_eq!(
+            first.get_compound("state").unwrap().get_string("axis"),
+            Some("y")
+        );
+
+        // A tag the client lacks would fail its decoding: the component is left out.
+        let mut unknown = NbtCompound::new();
+        unknown.put_string("blocks", "#minecraft:no_such_tag".to_string());
+        let (_, read) = round_trip(
+            &Item::DIAMOND_PICKAXE,
+            DataComponent::CanBreak,
+            CanBreakImpl {
+                predicate: NbtTag::Compound(unknown),
+            }
+            .to_dyn(),
+        );
+        assert!(read.patch.is_empty());
+    }
+
+    #[test]
+    fn instrument_pot_decorations_recipes_and_lock_are_sent() {
+        use pumpkin_data::data_component_impl::{
+            InstrumentImpl, LockImpl, PotDecorationsImpl, RecipesImpl,
+        };
+        use pumpkin_nbt::tag::NbtTag;
+
+        let (bytes, read) = round_trip(
+            &Item::GOAT_HORN,
+            DataComponent::Instrument,
+            InstrumentImpl {
+                instrument: NbtTag::String("minecraft:sing_goat_horn".into()),
+            }
+            .to_dyn(),
+        );
+        // 1.21.1's registry order: ponder, then sing (id 1, holder 2)
+        assert_eq!(bytes.last(), Some(&2));
+        assert_eq!(
+            get::<InstrumentImpl>(read.patch[0].1.as_deref().unwrap()).name(),
+            Some("minecraft:sing_goat_horn")
+        );
+
+        let sherds = PotDecorationsImpl {
+            sherds: [
+                Cow::Borrowed("minecraft:brick"),
+                Cow::Borrowed("minecraft:angler_pottery_sherd"),
+                Cow::Borrowed("minecraft:brick"),
+                Cow::Borrowed("minecraft:brick"),
+            ],
+        };
+        let (_, read) = round_trip(
+            &Item::DECORATED_POT,
+            DataComponent::PotDecorations,
+            sherds.clone().to_dyn(),
+        );
+        assert_eq!(
+            get::<PotDecorationsImpl>(read.patch[0].1.as_deref().unwrap()),
+            &sherds
+        );
+
+        let recipes = RecipesImpl {
+            recipes: vec![Cow::Borrowed("minecraft:stick")],
+        };
+        let (_, read) = round_trip(
+            &Item::KNOWLEDGE_BOOK,
+            DataComponent::Recipes,
+            recipes.clone().to_dyn(),
+        );
+        assert_eq!(
+            get::<RecipesImpl>(read.patch[0].1.as_deref().unwrap()),
+            &recipes
+        );
+
+        let lock = LockImpl {
+            key: "Key".to_string(),
+        };
+        let (_, read) = round_trip(&Item::CHEST, DataComponent::Lock, lock.clone().to_dyn());
+        assert_eq!(get::<LockImpl>(read.patch[0].1.as_deref().unwrap()), &lock);
+    }
 
     fn var_ints(values: &[i32]) -> Vec<u8> {
         let mut out = Vec::new();

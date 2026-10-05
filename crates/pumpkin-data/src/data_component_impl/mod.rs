@@ -931,11 +931,53 @@ mod tests {
         predicate.put_string("blocks", "minecraft:stone".to_string());
         assert_round_trip(
             CanPlaceOnImpl {
-                predicate: NbtTag::Compound(predicate.clone()),
+                predicate: NbtTag::Compound(predicate),
             },
             CanPlaceOnImpl::read_data,
         );
-        assert_round_trip(LockImpl { predicate }, LockImpl::read_data);
+        assert_round_trip(
+            LockImpl {
+                key: "Key".to_string(),
+            },
+            LockImpl::read_data,
+        );
+        assert_round_trip(
+            PotDecorationsImpl {
+                sherds: [
+                    Cow::Borrowed("minecraft:angler_pottery_sherd"),
+                    Cow::Borrowed("minecraft:brick"),
+                    Cow::Borrowed("minecraft:brick"),
+                    Cow::Borrowed("minecraft:heart_pottery_sherd"),
+                ],
+            },
+            PotDecorationsImpl::read_data,
+        );
+        assert_round_trip(
+            RecipesImpl {
+                recipes: vec![Cow::Borrowed("minecraft:stick")],
+            },
+            RecipesImpl::read_data,
+        );
+        assert_round_trip(
+            InstrumentImpl {
+                instrument: NbtTag::String("minecraft:ponder_goat_horn".into()),
+            },
+            InstrumentImpl::read_data,
+        );
+    }
+
+    #[test]
+    fn lock_reads_a_later_custom_name_predicate() {
+        let mut components = NbtCompound::new();
+        components.put_string("minecraft:custom_name", "\"Key\"".to_string());
+        let mut predicate = NbtCompound::new();
+        predicate.put_compound("components", components);
+        assert_eq!(
+            LockImpl::read_data(&NbtTag::Compound(predicate)),
+            Some(LockImpl {
+                key: "Key".to_string()
+            })
+        );
     }
 
     #[test]
