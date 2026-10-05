@@ -329,7 +329,7 @@ mod test {
 
         let mismatches = count_dump_mismatches(&chunk, expected_data, test_name);
         assert_air_above_dumped_window(&chunk, expected_data, test_name);
-        let allowed_mismatches = 6000;
+        let allowed_mismatches = 0;
         assert!(
             mismatches <= allowed_mismatches,
             "[{test_name}] Chunk noise generation mismatches vanilla! (got {mismatches} mismatches, allowed {allowed_mismatches})"
@@ -417,7 +417,7 @@ mod test {
 
         let mismatches = count_dump_mismatches(&chunk, expected_data, test_name);
         assert_air_above_dumped_window(&chunk, expected_data, test_name);
-        let allowed_mismatches = 6000;
+        let allowed_mismatches = 0;
         assert!(
             mismatches <= allowed_mismatches,
             "[{test_name}] Chunk surface generation mismatches vanilla! (got {mismatches} mismatches, allowed {allowed_mismatches})"
@@ -601,6 +601,66 @@ mod test {
             4,
             &expected,
             "end_noise_no_blend_no_beard_7_4",
+        );
+    }
+
+    #[test]
+    fn no_blend_no_beard_surface_7_4() {
+        let expected: Vec<u16> = pumpkin_util::read_data_from_file!(
+            "../../../../assets/tests/no_blend_no_beard_surface_7_4.chunk"
+        );
+        verify_chunk_surface(
+            0,
+            Dimension::OVERWORLD,
+            7,
+            4,
+            &expected,
+            "no_blend_no_beard_surface_7_4",
+        );
+    }
+
+    #[test]
+    fn no_blend_no_beard_surface_13579_minus6_11() {
+        let expected: Vec<u16> = pumpkin_util::read_data_from_file!(
+            "../../../../assets/tests/no_blend_no_beard_surface_13579_-6_11.chunk"
+        );
+        verify_chunk_surface(
+            13579,
+            Dimension::OVERWORLD,
+            -6,
+            11,
+            &expected,
+            "no_blend_no_beard_surface_13579_minus6_11",
+        );
+    }
+
+    #[test]
+    fn no_blend_no_beard_surface_13579_minus2_15() {
+        let expected: Vec<u16> = pumpkin_util::read_data_from_file!(
+            "../../../../assets/tests/no_blend_no_beard_surface_13579_-2_15.chunk"
+        );
+        verify_chunk_surface(
+            13579,
+            Dimension::OVERWORLD,
+            -2,
+            15,
+            &expected,
+            "no_blend_no_beard_surface_13579_minus2_15",
+        );
+    }
+
+    #[test]
+    fn no_blend_no_beard_surface_13579_minus7_9() {
+        let expected: Vec<u16> = pumpkin_util::read_data_from_file!(
+            "../../../../assets/tests/no_blend_no_beard_surface_13579_-7_9.chunk"
+        );
+        verify_chunk_surface(
+            13579,
+            Dimension::OVERWORLD,
+            -7,
+            9,
+            &expected,
+            "no_blend_no_beard_surface_13579_minus7_9",
         );
     }
 
