@@ -596,3 +596,32 @@ fn shuffle_and_split_items(
         result.swap(i, j);
     }
 }
+
+#[cfg(test)]
+mod block_loot_tests {
+    use super::{LootContextParameters, generate_loot_with_context};
+
+    fn drops(key: &str) -> Vec<&'static str> {
+        let table = pumpkin_data::loot_table::get_loot_table(key).expect("table");
+        (0..500)
+            .flat_map(|seed| {
+                generate_loot_with_context(table, seed, &LootContextParameters::default())
+            })
+            .map(|stack| stack.item.registry_key)
+            .collect()
+    }
+
+    /// The loot conditions of 1.21.1's tables (`conditions`, `condition` keys) must be read:
+    /// without a tool, grass blocks drop dirt and short grass only sometimes drops seeds.
+    #[test]
+    fn grass_drops_follow_their_conditions() {
+        assert!(
+            drops("minecraft:blocks/grass_block")
+                .iter()
+                .all(|item| *item == "dirt")
+        );
+        let grass = drops("minecraft:blocks/short_grass");
+        assert!(grass.iter().all(|item| *item == "wheat_seeds"));
+        assert!((20..110).contains(&grass.len()), "{} seeds", grass.len());
+    }
+}

@@ -701,7 +701,7 @@ static BLOCKS_ACACIA_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_BUTTON: LootTable = LootTable {
     pools: BLOCKS_ACACIA_BUTTON_POOLS,
@@ -719,7 +719,7 @@ static BLOCKS_ACACIA_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_DOOR: LootTable = LootTable {
     pools: BLOCKS_ACACIA_DOOR_POOLS,
@@ -737,7 +737,7 @@ static BLOCKS_ACACIA_FENCE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_FENCE: LootTable = LootTable {
     pools: BLOCKS_ACACIA_FENCE_POOLS,
@@ -755,7 +755,7 @@ static BLOCKS_ACACIA_FENCE_GATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_FENCE_GATE: LootTable = LootTable {
     pools: BLOCKS_ACACIA_FENCE_GATE_POOLS,
@@ -773,7 +773,7 @@ static BLOCKS_ACACIA_HANGING_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_HANGING_SIGN: LootTable = LootTable {
     pools: BLOCKS_ACACIA_HANGING_SIGN_POOLS,
@@ -784,7 +784,7 @@ static BLOCKS_ACACIA_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -792,7 +792,15 @@ static BLOCKS_ACACIA_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::TableBonus {
+                    chances: &[0.05f32, 0.0625f32, 0.083333336f32, 0.1f32],
+                },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -800,8 +808,10 @@ static BLOCKS_ACACIA_LEAVES_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:stick",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
-    condition: LootCondition::None,
+    max_count: 2i32,
+    condition: LootCondition::TableBonus {
+        chances: &[0.02f32, 0.022222223f32, 0.025f32, 0.033333335f32, 0.1f32],
+    },
     bonus_formula: None,
 }];
 static BLOCKS_ACACIA_LEAVES_POOLS: &[LootPool] = &[
@@ -817,7 +827,7 @@ static BLOCKS_ACACIA_LEAVES_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouchOrShears,
     },
 ];
 pub static BLOCKS_ACACIA_LEAVES: LootTable = LootTable {
@@ -836,7 +846,7 @@ static BLOCKS_ACACIA_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_LOG: LootTable = LootTable {
     pools: BLOCKS_ACACIA_LOG_POOLS,
@@ -854,7 +864,7 @@ static BLOCKS_ACACIA_PLANKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_PLANKS: LootTable = LootTable {
     pools: BLOCKS_ACACIA_PLANKS_POOLS,
@@ -872,7 +882,7 @@ static BLOCKS_ACACIA_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_ACACIA_PRESSURE_PLATE_POOLS,
@@ -890,7 +900,7 @@ static BLOCKS_ACACIA_SAPLING_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_SAPLING: LootTable = LootTable {
     pools: BLOCKS_ACACIA_SAPLING_POOLS,
@@ -908,7 +918,7 @@ static BLOCKS_ACACIA_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_SIGN: LootTable = LootTable {
     pools: BLOCKS_ACACIA_SIGN_POOLS,
@@ -916,8 +926,8 @@ pub static BLOCKS_ACACIA_SIGN: LootTable = LootTable {
 static BLOCKS_ACACIA_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:acacia_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -944,7 +954,7 @@ static BLOCKS_ACACIA_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_STAIRS: LootTable = LootTable {
     pools: BLOCKS_ACACIA_STAIRS_POOLS,
@@ -962,7 +972,7 @@ static BLOCKS_ACACIA_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_ACACIA_TRAPDOOR_POOLS,
@@ -980,7 +990,7 @@ static BLOCKS_ACACIA_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACACIA_WOOD: LootTable = LootTable {
     pools: BLOCKS_ACACIA_WOOD_POOLS,
@@ -998,7 +1008,7 @@ static BLOCKS_ACTIVATOR_RAIL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ACTIVATOR_RAIL: LootTable = LootTable {
     pools: BLOCKS_ACTIVATOR_RAIL_POOLS,
@@ -1016,7 +1026,7 @@ static BLOCKS_ALLIUM_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ALLIUM: LootTable = LootTable {
     pools: BLOCKS_ALLIUM_POOLS,
@@ -1034,7 +1044,7 @@ static BLOCKS_AMETHYST_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_AMETHYST_BLOCK: LootTable = LootTable {
     pools: BLOCKS_AMETHYST_BLOCK_POOLS,
@@ -1045,23 +1055,23 @@ static BLOCKS_AMETHYST_CLUSTER_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:amethyst_shard",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        min_count: 4i32,
+        max_count: 4i32,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
     LootEntry {
         item: "minecraft:amethyst_shard",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 2i32,
+        max_count: 2i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
 ];
@@ -1088,7 +1098,7 @@ static BLOCKS_ANCIENT_DEBRIS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ANCIENT_DEBRIS: LootTable = LootTable {
     pools: BLOCKS_ANCIENT_DEBRIS_POOLS,
@@ -1106,7 +1116,7 @@ static BLOCKS_ANDESITE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ANDESITE: LootTable = LootTable {
     pools: BLOCKS_ANDESITE_POOLS,
@@ -1114,8 +1124,8 @@ pub static BLOCKS_ANDESITE: LootTable = LootTable {
 static BLOCKS_ANDESITE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:andesite_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -1142,7 +1152,7 @@ static BLOCKS_ANDESITE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ANDESITE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_ANDESITE_STAIRS_POOLS,
@@ -1160,7 +1170,7 @@ static BLOCKS_ANDESITE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ANDESITE_WALL: LootTable = LootTable {
     pools: BLOCKS_ANDESITE_WALL_POOLS,
@@ -1178,7 +1188,7 @@ static BLOCKS_ANVIL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ANVIL: LootTable = LootTable {
     pools: BLOCKS_ANVIL_POOLS,
@@ -1186,8 +1196,8 @@ pub static BLOCKS_ANVIL: LootTable = LootTable {
 static BLOCKS_ATTACHED_MELON_STEM_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:melon_seeds",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 0i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -1204,8 +1214,8 @@ pub static BLOCKS_ATTACHED_MELON_STEM: LootTable = LootTable {
 static BLOCKS_ATTACHED_PUMPKIN_STEM_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:pumpkin_seeds",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 0i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -1232,7 +1242,7 @@ static BLOCKS_AZALEA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_AZALEA: LootTable = LootTable {
     pools: BLOCKS_AZALEA_POOLS,
@@ -1243,7 +1253,7 @@ static BLOCKS_AZALEA_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -1251,7 +1261,15 @@ static BLOCKS_AZALEA_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::TableBonus {
+                    chances: &[0.05f32, 0.0625f32, 0.083333336f32, 0.1f32],
+                },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -1259,8 +1277,10 @@ static BLOCKS_AZALEA_LEAVES_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:stick",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
-    condition: LootCondition::None,
+    max_count: 2i32,
+    condition: LootCondition::TableBonus {
+        chances: &[0.02f32, 0.022222223f32, 0.025f32, 0.033333335f32, 0.1f32],
+    },
     bonus_formula: None,
 }];
 static BLOCKS_AZALEA_LEAVES_POOLS: &[LootPool] = &[
@@ -1276,7 +1296,7 @@ static BLOCKS_AZALEA_LEAVES_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouchOrShears,
     },
 ];
 pub static BLOCKS_AZALEA_LEAVES: LootTable = LootTable {
@@ -1295,7 +1315,7 @@ static BLOCKS_AZURE_BLUET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_AZURE_BLUET: LootTable = LootTable {
     pools: BLOCKS_AZURE_BLUET_POOLS,
@@ -1313,7 +1333,7 @@ static BLOCKS_BAMBOO_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_POOLS,
@@ -1331,7 +1351,7 @@ static BLOCKS_BAMBOO_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_BLOCK: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_BLOCK_POOLS,
@@ -1349,7 +1369,7 @@ static BLOCKS_BAMBOO_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_BUTTON: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_BUTTON_POOLS,
@@ -1367,7 +1387,7 @@ static BLOCKS_BAMBOO_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_DOOR: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_DOOR_POOLS,
@@ -1385,7 +1405,7 @@ static BLOCKS_BAMBOO_FENCE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_FENCE: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_FENCE_POOLS,
@@ -1403,7 +1423,7 @@ static BLOCKS_BAMBOO_FENCE_GATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_FENCE_GATE: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_FENCE_GATE_POOLS,
@@ -1421,7 +1441,7 @@ static BLOCKS_BAMBOO_HANGING_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_HANGING_SIGN: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_HANGING_SIGN_POOLS,
@@ -1439,7 +1459,7 @@ static BLOCKS_BAMBOO_MOSAIC_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_MOSAIC: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_MOSAIC_POOLS,
@@ -1447,8 +1467,8 @@ pub static BLOCKS_BAMBOO_MOSAIC: LootTable = LootTable {
 static BLOCKS_BAMBOO_MOSAIC_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:bamboo_mosaic_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -1475,7 +1495,7 @@ static BLOCKS_BAMBOO_MOSAIC_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_MOSAIC_STAIRS: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_MOSAIC_STAIRS_POOLS,
@@ -1493,7 +1513,7 @@ static BLOCKS_BAMBOO_PLANKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_PLANKS: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_PLANKS_POOLS,
@@ -1511,7 +1531,7 @@ static BLOCKS_BAMBOO_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_PRESSURE_PLATE_POOLS,
@@ -1529,7 +1549,7 @@ static BLOCKS_BAMBOO_SAPLING_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_SAPLING: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_SAPLING_POOLS,
@@ -1547,7 +1567,7 @@ static BLOCKS_BAMBOO_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_SIGN: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_SIGN_POOLS,
@@ -1555,8 +1575,8 @@ pub static BLOCKS_BAMBOO_SIGN: LootTable = LootTable {
 static BLOCKS_BAMBOO_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:bamboo_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -1583,7 +1603,7 @@ static BLOCKS_BAMBOO_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_STAIRS: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_STAIRS_POOLS,
@@ -1601,7 +1621,7 @@ static BLOCKS_BAMBOO_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BAMBOO_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_BAMBOO_TRAPDOOR_POOLS,
@@ -1619,7 +1639,7 @@ static BLOCKS_BARREL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BARREL: LootTable = LootTable {
     pools: BLOCKS_BARREL_POOLS,
@@ -1637,7 +1657,7 @@ static BLOCKS_BASALT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BASALT: LootTable = LootTable {
     pools: BLOCKS_BASALT_POOLS,
@@ -1673,7 +1693,7 @@ static BLOCKS_BEE_NEST_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_BEE_NEST: LootTable = LootTable {
     pools: BLOCKS_BEE_NEST_POOLS,
@@ -1684,7 +1704,7 @@ static BLOCKS_BEEHIVE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -1692,7 +1712,7 @@ static BLOCKS_BEEHIVE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
 ];
@@ -1730,7 +1750,10 @@ static BLOCKS_BEETROOTS_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     min_count: 1i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::BinomialWithBonusCount {
+        extra: 3i32,
+        probability: 0.5714286f32,
+    }),
 }];
 static BLOCKS_BEETROOTS_POOLS: &[LootPool] = &[
     LootPool {
@@ -1764,7 +1787,7 @@ static BLOCKS_BELL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BELL: LootTable = LootTable {
     pools: BLOCKS_BELL_POOLS,
@@ -1782,7 +1805,7 @@ static BLOCKS_BIG_DRIPLEAF_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIG_DRIPLEAF: LootTable = LootTable {
     pools: BLOCKS_BIG_DRIPLEAF_POOLS,
@@ -1800,7 +1823,7 @@ static BLOCKS_BIG_DRIPLEAF_STEM_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIG_DRIPLEAF_STEM: LootTable = LootTable {
     pools: BLOCKS_BIG_DRIPLEAF_STEM_POOLS,
@@ -1818,7 +1841,7 @@ static BLOCKS_BIRCH_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_BUTTON: LootTable = LootTable {
     pools: BLOCKS_BIRCH_BUTTON_POOLS,
@@ -1836,7 +1859,7 @@ static BLOCKS_BIRCH_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_DOOR: LootTable = LootTable {
     pools: BLOCKS_BIRCH_DOOR_POOLS,
@@ -1854,7 +1877,7 @@ static BLOCKS_BIRCH_FENCE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_FENCE: LootTable = LootTable {
     pools: BLOCKS_BIRCH_FENCE_POOLS,
@@ -1872,7 +1895,7 @@ static BLOCKS_BIRCH_FENCE_GATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_FENCE_GATE: LootTable = LootTable {
     pools: BLOCKS_BIRCH_FENCE_GATE_POOLS,
@@ -1890,7 +1913,7 @@ static BLOCKS_BIRCH_HANGING_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_HANGING_SIGN: LootTable = LootTable {
     pools: BLOCKS_BIRCH_HANGING_SIGN_POOLS,
@@ -1901,7 +1924,7 @@ static BLOCKS_BIRCH_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -1909,7 +1932,15 @@ static BLOCKS_BIRCH_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::TableBonus {
+                    chances: &[0.05f32, 0.0625f32, 0.083333336f32, 0.1f32],
+                },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -1917,8 +1948,10 @@ static BLOCKS_BIRCH_LEAVES_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:stick",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
-    condition: LootCondition::None,
+    max_count: 2i32,
+    condition: LootCondition::TableBonus {
+        chances: &[0.02f32, 0.022222223f32, 0.025f32, 0.033333335f32, 0.1f32],
+    },
     bonus_formula: None,
 }];
 static BLOCKS_BIRCH_LEAVES_POOLS: &[LootPool] = &[
@@ -1934,7 +1967,7 @@ static BLOCKS_BIRCH_LEAVES_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouchOrShears,
     },
 ];
 pub static BLOCKS_BIRCH_LEAVES: LootTable = LootTable {
@@ -1953,7 +1986,7 @@ static BLOCKS_BIRCH_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_LOG: LootTable = LootTable {
     pools: BLOCKS_BIRCH_LOG_POOLS,
@@ -1971,7 +2004,7 @@ static BLOCKS_BIRCH_PLANKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_PLANKS: LootTable = LootTable {
     pools: BLOCKS_BIRCH_PLANKS_POOLS,
@@ -1989,7 +2022,7 @@ static BLOCKS_BIRCH_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_BIRCH_PRESSURE_PLATE_POOLS,
@@ -2007,7 +2040,7 @@ static BLOCKS_BIRCH_SAPLING_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_SAPLING: LootTable = LootTable {
     pools: BLOCKS_BIRCH_SAPLING_POOLS,
@@ -2025,7 +2058,7 @@ static BLOCKS_BIRCH_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_SIGN: LootTable = LootTable {
     pools: BLOCKS_BIRCH_SIGN_POOLS,
@@ -2033,8 +2066,8 @@ pub static BLOCKS_BIRCH_SIGN: LootTable = LootTable {
 static BLOCKS_BIRCH_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:birch_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -2061,7 +2094,7 @@ static BLOCKS_BIRCH_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_STAIRS: LootTable = LootTable {
     pools: BLOCKS_BIRCH_STAIRS_POOLS,
@@ -2079,7 +2112,7 @@ static BLOCKS_BIRCH_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_BIRCH_TRAPDOOR_POOLS,
@@ -2097,7 +2130,7 @@ static BLOCKS_BIRCH_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BIRCH_WOOD: LootTable = LootTable {
     pools: BLOCKS_BIRCH_WOOD_POOLS,
@@ -2115,7 +2148,7 @@ static BLOCKS_BLACK_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLACK_BANNER: LootTable = LootTable {
     pools: BLOCKS_BLACK_BANNER_POOLS,
@@ -2133,7 +2166,7 @@ static BLOCKS_BLACK_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLACK_BED: LootTable = LootTable {
     pools: BLOCKS_BLACK_BED_POOLS,
@@ -2141,8 +2174,8 @@ pub static BLOCKS_BLACK_BED: LootTable = LootTable {
 static BLOCKS_BLACK_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:black_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -2187,7 +2220,7 @@ static BLOCKS_BLACK_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLACK_CARPET: LootTable = LootTable {
     pools: BLOCKS_BLACK_CARPET_POOLS,
@@ -2205,7 +2238,7 @@ static BLOCKS_BLACK_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLACK_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_BLACK_CONCRETE_POOLS,
@@ -2223,7 +2256,7 @@ static BLOCKS_BLACK_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLACK_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_BLACK_CONCRETE_POWDER_POOLS,
@@ -2241,7 +2274,7 @@ static BLOCKS_BLACK_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLACK_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_BLACK_GLAZED_TERRACOTTA_POOLS,
@@ -2277,7 +2310,7 @@ static BLOCKS_BLACK_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_BLACK_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_BLACK_STAINED_GLASS_POOLS,
@@ -2295,7 +2328,7 @@ static BLOCKS_BLACK_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_BLACK_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_BLACK_STAINED_GLASS_PANE_POOLS,
@@ -2313,7 +2346,7 @@ static BLOCKS_BLACK_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLACK_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_BLACK_TERRACOTTA_POOLS,
@@ -2331,7 +2364,7 @@ static BLOCKS_BLACK_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLACK_WOOL: LootTable = LootTable {
     pools: BLOCKS_BLACK_WOOL_POOLS,
@@ -2349,7 +2382,7 @@ static BLOCKS_BLACKSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLACKSTONE: LootTable = LootTable {
     pools: BLOCKS_BLACKSTONE_POOLS,
@@ -2357,8 +2390,8 @@ pub static BLOCKS_BLACKSTONE: LootTable = LootTable {
 static BLOCKS_BLACKSTONE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:blackstone_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -2385,7 +2418,7 @@ static BLOCKS_BLACKSTONE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLACKSTONE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_BLACKSTONE_STAIRS_POOLS,
@@ -2403,7 +2436,7 @@ static BLOCKS_BLACKSTONE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLACKSTONE_WALL: LootTable = LootTable {
     pools: BLOCKS_BLACKSTONE_WALL_POOLS,
@@ -2421,7 +2454,7 @@ static BLOCKS_BLAST_FURNACE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLAST_FURNACE: LootTable = LootTable {
     pools: BLOCKS_BLAST_FURNACE_POOLS,
@@ -2439,7 +2472,7 @@ static BLOCKS_BLUE_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLUE_BANNER: LootTable = LootTable {
     pools: BLOCKS_BLUE_BANNER_POOLS,
@@ -2457,7 +2490,7 @@ static BLOCKS_BLUE_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLUE_BED: LootTable = LootTable {
     pools: BLOCKS_BLUE_BED_POOLS,
@@ -2465,8 +2498,8 @@ pub static BLOCKS_BLUE_BED: LootTable = LootTable {
 static BLOCKS_BLUE_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:blue_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -2511,7 +2544,7 @@ static BLOCKS_BLUE_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLUE_CARPET: LootTable = LootTable {
     pools: BLOCKS_BLUE_CARPET_POOLS,
@@ -2529,7 +2562,7 @@ static BLOCKS_BLUE_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLUE_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_BLUE_CONCRETE_POOLS,
@@ -2547,7 +2580,7 @@ static BLOCKS_BLUE_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLUE_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_BLUE_CONCRETE_POWDER_POOLS,
@@ -2565,7 +2598,7 @@ static BLOCKS_BLUE_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLUE_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_BLUE_GLAZED_TERRACOTTA_POOLS,
@@ -2583,7 +2616,7 @@ static BLOCKS_BLUE_ICE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_BLUE_ICE: LootTable = LootTable {
     pools: BLOCKS_BLUE_ICE_POOLS,
@@ -2601,7 +2634,7 @@ static BLOCKS_BLUE_ORCHID_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLUE_ORCHID: LootTable = LootTable {
     pools: BLOCKS_BLUE_ORCHID_POOLS,
@@ -2637,7 +2670,7 @@ static BLOCKS_BLUE_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_BLUE_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_BLUE_STAINED_GLASS_POOLS,
@@ -2655,7 +2688,7 @@ static BLOCKS_BLUE_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_BLUE_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_BLUE_STAINED_GLASS_PANE_POOLS,
@@ -2673,7 +2706,7 @@ static BLOCKS_BLUE_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLUE_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_BLUE_TERRACOTTA_POOLS,
@@ -2691,7 +2724,7 @@ static BLOCKS_BLUE_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BLUE_WOOL: LootTable = LootTable {
     pools: BLOCKS_BLUE_WOOL_POOLS,
@@ -2709,7 +2742,7 @@ static BLOCKS_BONE_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BONE_BLOCK: LootTable = LootTable {
     pools: BLOCKS_BONE_BLOCK_POOLS,
@@ -2720,15 +2753,15 @@ static BLOCKS_BOOKSHELF_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:book",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 3i32,
+        max_count: 3i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
 ];
@@ -2755,7 +2788,7 @@ static BLOCKS_BRAIN_CORAL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_BRAIN_CORAL: LootTable = LootTable {
     pools: BLOCKS_BRAIN_CORAL_POOLS,
@@ -2766,7 +2799,7 @@ static BLOCKS_BRAIN_CORAL_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -2774,7 +2807,10 @@ static BLOCKS_BRAIN_CORAL_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -2801,7 +2837,7 @@ static BLOCKS_BRAIN_CORAL_FAN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_BRAIN_CORAL_FAN: LootTable = LootTable {
     pools: BLOCKS_BRAIN_CORAL_FAN_POOLS,
@@ -2819,7 +2855,7 @@ static BLOCKS_BREWING_STAND_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BREWING_STAND: LootTable = LootTable {
     pools: BLOCKS_BREWING_STAND_POOLS,
@@ -2827,8 +2863,8 @@ pub static BLOCKS_BREWING_STAND: LootTable = LootTable {
 static BLOCKS_BRICK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:brick_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -2855,7 +2891,7 @@ static BLOCKS_BRICK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BRICK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_BRICK_STAIRS_POOLS,
@@ -2873,7 +2909,7 @@ static BLOCKS_BRICK_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BRICK_WALL: LootTable = LootTable {
     pools: BLOCKS_BRICK_WALL_POOLS,
@@ -2891,7 +2927,7 @@ static BLOCKS_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BRICKS: LootTable = LootTable {
     pools: BLOCKS_BRICKS_POOLS,
@@ -2909,7 +2945,7 @@ static BLOCKS_BROWN_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BROWN_BANNER: LootTable = LootTable {
     pools: BLOCKS_BROWN_BANNER_POOLS,
@@ -2927,7 +2963,7 @@ static BLOCKS_BROWN_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BROWN_BED: LootTable = LootTable {
     pools: BLOCKS_BROWN_BED_POOLS,
@@ -2935,8 +2971,8 @@ pub static BLOCKS_BROWN_BED: LootTable = LootTable {
 static BLOCKS_BROWN_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:brown_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -2981,7 +3017,7 @@ static BLOCKS_BROWN_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BROWN_CARPET: LootTable = LootTable {
     pools: BLOCKS_BROWN_CARPET_POOLS,
@@ -2999,7 +3035,7 @@ static BLOCKS_BROWN_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BROWN_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_BROWN_CONCRETE_POOLS,
@@ -3017,7 +3053,7 @@ static BLOCKS_BROWN_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BROWN_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_BROWN_CONCRETE_POWDER_POOLS,
@@ -3035,7 +3071,7 @@ static BLOCKS_BROWN_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BROWN_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_BROWN_GLAZED_TERRACOTTA_POOLS,
@@ -3053,7 +3089,7 @@ static BLOCKS_BROWN_MUSHROOM_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BROWN_MUSHROOM: LootTable = LootTable {
     pools: BLOCKS_BROWN_MUSHROOM_POOLS,
@@ -3064,15 +3100,15 @@ static BLOCKS_BROWN_MUSHROOM_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:brown_mushroom",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: -6i32,
+        max_count: 2i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
 ];
@@ -3117,7 +3153,7 @@ static BLOCKS_BROWN_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_BROWN_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_BROWN_STAINED_GLASS_POOLS,
@@ -3135,7 +3171,7 @@ static BLOCKS_BROWN_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_BROWN_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_BROWN_STAINED_GLASS_PANE_POOLS,
@@ -3153,7 +3189,7 @@ static BLOCKS_BROWN_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BROWN_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_BROWN_TERRACOTTA_POOLS,
@@ -3171,7 +3207,7 @@ static BLOCKS_BROWN_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_BROWN_WOOL: LootTable = LootTable {
     pools: BLOCKS_BROWN_WOOL_POOLS,
@@ -3189,7 +3225,7 @@ static BLOCKS_BUBBLE_CORAL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_BUBBLE_CORAL: LootTable = LootTable {
     pools: BLOCKS_BUBBLE_CORAL_POOLS,
@@ -3200,7 +3236,7 @@ static BLOCKS_BUBBLE_CORAL_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -3208,7 +3244,10 @@ static BLOCKS_BUBBLE_CORAL_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -3235,7 +3274,7 @@ static BLOCKS_BUBBLE_CORAL_FAN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_BUBBLE_CORAL_FAN: LootTable = LootTable {
     pools: BLOCKS_BUBBLE_CORAL_FAN_POOLS,
@@ -3257,7 +3296,7 @@ static BLOCKS_CACTUS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CACTUS: LootTable = LootTable {
     pools: BLOCKS_CACTUS_POOLS,
@@ -3279,7 +3318,7 @@ static BLOCKS_CALCITE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CALCITE: LootTable = LootTable {
     pools: BLOCKS_CALCITE_POOLS,
@@ -3297,7 +3336,7 @@ static BLOCKS_CALIBRATED_SCULK_SENSOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_CALIBRATED_SCULK_SENSOR: LootTable = LootTable {
     pools: BLOCKS_CALIBRATED_SCULK_SENSOR_POOLS,
@@ -3308,15 +3347,18 @@ static BLOCKS_CAMPFIRE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:charcoal",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 2i32,
+        max_count: 2i32,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -3333,8 +3375,8 @@ pub static BLOCKS_CAMPFIRE: LootTable = LootTable {
 static BLOCKS_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -3380,7 +3422,10 @@ static BLOCKS_CARROTS_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     min_count: 1i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::BinomialWithBonusCount {
+        extra: 3i32,
+        probability: 0.5714286f32,
+    }),
 }];
 static BLOCKS_CARROTS_POOLS: &[LootPool] = &[
     LootPool {
@@ -3414,7 +3459,7 @@ static BLOCKS_CARTOGRAPHY_TABLE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CARTOGRAPHY_TABLE: LootTable = LootTable {
     pools: BLOCKS_CARTOGRAPHY_TABLE_POOLS,
@@ -3432,7 +3477,7 @@ static BLOCKS_CARVED_PUMPKIN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CARVED_PUMPKIN: LootTable = LootTable {
     pools: BLOCKS_CARVED_PUMPKIN_POOLS,
@@ -3450,7 +3495,7 @@ static BLOCKS_CAULDRON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CAULDRON: LootTable = LootTable {
     pools: BLOCKS_CAULDRON_POOLS,
@@ -3504,7 +3549,7 @@ static BLOCKS_CHAIN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHAIN: LootTable = LootTable {
     pools: BLOCKS_CHAIN_POOLS,
@@ -3522,7 +3567,7 @@ static BLOCKS_CHERRY_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_BUTTON: LootTable = LootTable {
     pools: BLOCKS_CHERRY_BUTTON_POOLS,
@@ -3540,7 +3585,7 @@ static BLOCKS_CHERRY_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_DOOR: LootTable = LootTable {
     pools: BLOCKS_CHERRY_DOOR_POOLS,
@@ -3558,7 +3603,7 @@ static BLOCKS_CHERRY_FENCE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_FENCE: LootTable = LootTable {
     pools: BLOCKS_CHERRY_FENCE_POOLS,
@@ -3576,7 +3621,7 @@ static BLOCKS_CHERRY_FENCE_GATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_FENCE_GATE: LootTable = LootTable {
     pools: BLOCKS_CHERRY_FENCE_GATE_POOLS,
@@ -3594,7 +3639,7 @@ static BLOCKS_CHERRY_HANGING_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_HANGING_SIGN: LootTable = LootTable {
     pools: BLOCKS_CHERRY_HANGING_SIGN_POOLS,
@@ -3605,7 +3650,7 @@ static BLOCKS_CHERRY_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -3613,7 +3658,15 @@ static BLOCKS_CHERRY_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::TableBonus {
+                    chances: &[0.05f32, 0.0625f32, 0.083333336f32, 0.1f32],
+                },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -3621,8 +3674,10 @@ static BLOCKS_CHERRY_LEAVES_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:stick",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
-    condition: LootCondition::None,
+    max_count: 2i32,
+    condition: LootCondition::TableBonus {
+        chances: &[0.02f32, 0.022222223f32, 0.025f32, 0.033333335f32, 0.1f32],
+    },
     bonus_formula: None,
 }];
 static BLOCKS_CHERRY_LEAVES_POOLS: &[LootPool] = &[
@@ -3638,7 +3693,7 @@ static BLOCKS_CHERRY_LEAVES_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouchOrShears,
     },
 ];
 pub static BLOCKS_CHERRY_LEAVES: LootTable = LootTable {
@@ -3657,7 +3712,7 @@ static BLOCKS_CHERRY_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_LOG: LootTable = LootTable {
     pools: BLOCKS_CHERRY_LOG_POOLS,
@@ -3675,7 +3730,7 @@ static BLOCKS_CHERRY_PLANKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_PLANKS: LootTable = LootTable {
     pools: BLOCKS_CHERRY_PLANKS_POOLS,
@@ -3693,7 +3748,7 @@ static BLOCKS_CHERRY_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_CHERRY_PRESSURE_PLATE_POOLS,
@@ -3711,7 +3766,7 @@ static BLOCKS_CHERRY_SAPLING_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_SAPLING: LootTable = LootTable {
     pools: BLOCKS_CHERRY_SAPLING_POOLS,
@@ -3729,7 +3784,7 @@ static BLOCKS_CHERRY_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_SIGN: LootTable = LootTable {
     pools: BLOCKS_CHERRY_SIGN_POOLS,
@@ -3737,8 +3792,8 @@ pub static BLOCKS_CHERRY_SIGN: LootTable = LootTable {
 static BLOCKS_CHERRY_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:cherry_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -3765,7 +3820,7 @@ static BLOCKS_CHERRY_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_STAIRS: LootTable = LootTable {
     pools: BLOCKS_CHERRY_STAIRS_POOLS,
@@ -3783,7 +3838,7 @@ static BLOCKS_CHERRY_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_CHERRY_TRAPDOOR_POOLS,
@@ -3801,7 +3856,7 @@ static BLOCKS_CHERRY_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHERRY_WOOD: LootTable = LootTable {
     pools: BLOCKS_CHERRY_WOOD_POOLS,
@@ -3819,7 +3874,7 @@ static BLOCKS_CHEST_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHEST: LootTable = LootTable {
     pools: BLOCKS_CHEST_POOLS,
@@ -3837,7 +3892,7 @@ static BLOCKS_CHIPPED_ANVIL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHIPPED_ANVIL: LootTable = LootTable {
     pools: BLOCKS_CHIPPED_ANVIL_POOLS,
@@ -3855,7 +3910,7 @@ static BLOCKS_CHISELED_BOOKSHELF_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_CHISELED_BOOKSHELF: LootTable = LootTable {
     pools: BLOCKS_CHISELED_BOOKSHELF_POOLS,
@@ -3873,7 +3928,7 @@ static BLOCKS_CHISELED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHISELED_COPPER: LootTable = LootTable {
     pools: BLOCKS_CHISELED_COPPER_POOLS,
@@ -3891,7 +3946,7 @@ static BLOCKS_CHISELED_DEEPSLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHISELED_DEEPSLATE: LootTable = LootTable {
     pools: BLOCKS_CHISELED_DEEPSLATE_POOLS,
@@ -3909,7 +3964,7 @@ static BLOCKS_CHISELED_NETHER_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHISELED_NETHER_BRICKS: LootTable = LootTable {
     pools: BLOCKS_CHISELED_NETHER_BRICKS_POOLS,
@@ -3927,7 +3982,7 @@ static BLOCKS_CHISELED_POLISHED_BLACKSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHISELED_POLISHED_BLACKSTONE: LootTable = LootTable {
     pools: BLOCKS_CHISELED_POLISHED_BLACKSTONE_POOLS,
@@ -3945,7 +4000,7 @@ static BLOCKS_CHISELED_QUARTZ_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHISELED_QUARTZ_BLOCK: LootTable = LootTable {
     pools: BLOCKS_CHISELED_QUARTZ_BLOCK_POOLS,
@@ -3963,7 +4018,7 @@ static BLOCKS_CHISELED_RED_SANDSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHISELED_RED_SANDSTONE: LootTable = LootTable {
     pools: BLOCKS_CHISELED_RED_SANDSTONE_POOLS,
@@ -3981,7 +4036,7 @@ static BLOCKS_CHISELED_SANDSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHISELED_SANDSTONE: LootTable = LootTable {
     pools: BLOCKS_CHISELED_SANDSTONE_POOLS,
@@ -3999,7 +4054,7 @@ static BLOCKS_CHISELED_STONE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHISELED_STONE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_CHISELED_STONE_BRICKS_POOLS,
@@ -4017,7 +4072,7 @@ static BLOCKS_CHISELED_TUFF_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHISELED_TUFF: LootTable = LootTable {
     pools: BLOCKS_CHISELED_TUFF_POOLS,
@@ -4035,7 +4090,7 @@ static BLOCKS_CHISELED_TUFF_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CHISELED_TUFF_BRICKS: LootTable = LootTable {
     pools: BLOCKS_CHISELED_TUFF_BRICKS_POOLS,
@@ -4045,7 +4100,7 @@ static BLOCKS_CHORUS_FLOWER_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     weight: 1i32,
     min_count: 1i32,
     max_count: 1i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
     bonus_formula: None,
 }];
 static BLOCKS_CHORUS_FLOWER_POOLS: &[LootPool] = &[LootPool {
@@ -4061,7 +4116,7 @@ pub static BLOCKS_CHORUS_FLOWER: LootTable = LootTable {
 static BLOCKS_CHORUS_PLANT_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:chorus_fruit",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
     bonus_formula: None,
@@ -4082,15 +4137,15 @@ static BLOCKS_CLAY_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:clay_ball",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 4i32,
+        max_count: 4i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
 ];
@@ -4117,7 +4172,7 @@ static BLOCKS_COAL_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COAL_BLOCK: LootTable = LootTable {
     pools: BLOCKS_COAL_BLOCK_POOLS,
@@ -4128,7 +4183,7 @@ static BLOCKS_COAL_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -4136,8 +4191,8 @@ static BLOCKS_COAL_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_COAL_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -4163,7 +4218,7 @@ static BLOCKS_COARSE_DIRT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COARSE_DIRT: LootTable = LootTable {
     pools: BLOCKS_COARSE_DIRT_POOLS,
@@ -4181,7 +4236,7 @@ static BLOCKS_COBBLED_DEEPSLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COBBLED_DEEPSLATE: LootTable = LootTable {
     pools: BLOCKS_COBBLED_DEEPSLATE_POOLS,
@@ -4189,8 +4244,8 @@ pub static BLOCKS_COBBLED_DEEPSLATE: LootTable = LootTable {
 static BLOCKS_COBBLED_DEEPSLATE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:cobbled_deepslate_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -4217,7 +4272,7 @@ static BLOCKS_COBBLED_DEEPSLATE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COBBLED_DEEPSLATE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_COBBLED_DEEPSLATE_STAIRS_POOLS,
@@ -4235,7 +4290,7 @@ static BLOCKS_COBBLED_DEEPSLATE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COBBLED_DEEPSLATE_WALL: LootTable = LootTable {
     pools: BLOCKS_COBBLED_DEEPSLATE_WALL_POOLS,
@@ -4253,7 +4308,7 @@ static BLOCKS_COBBLESTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COBBLESTONE: LootTable = LootTable {
     pools: BLOCKS_COBBLESTONE_POOLS,
@@ -4261,8 +4316,8 @@ pub static BLOCKS_COBBLESTONE: LootTable = LootTable {
 static BLOCKS_COBBLESTONE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:cobblestone_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -4289,7 +4344,7 @@ static BLOCKS_COBBLESTONE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COBBLESTONE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_COBBLESTONE_STAIRS_POOLS,
@@ -4307,7 +4362,7 @@ static BLOCKS_COBBLESTONE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COBBLESTONE_WALL: LootTable = LootTable {
     pools: BLOCKS_COBBLESTONE_WALL_POOLS,
@@ -4318,7 +4373,7 @@ static BLOCKS_COBWEB_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -4326,7 +4381,10 @@ static BLOCKS_COBWEB_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -4343,8 +4401,8 @@ pub static BLOCKS_COBWEB: LootTable = LootTable {
 static BLOCKS_COCOA_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:cocoa_beans",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 3i32,
+    max_count: 3i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -4371,7 +4429,7 @@ static BLOCKS_COMPARATOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COMPARATOR: LootTable = LootTable {
     pools: BLOCKS_COMPARATOR_POOLS,
@@ -4442,7 +4500,7 @@ static BLOCKS_COPPER_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COPPER_BLOCK: LootTable = LootTable {
     pools: BLOCKS_COPPER_BLOCK_POOLS,
@@ -4460,7 +4518,7 @@ static BLOCKS_COPPER_BULB_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COPPER_BULB: LootTable = LootTable {
     pools: BLOCKS_COPPER_BULB_POOLS,
@@ -4478,7 +4536,7 @@ static BLOCKS_COPPER_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COPPER_DOOR: LootTable = LootTable {
     pools: BLOCKS_COPPER_DOOR_POOLS,
@@ -4496,7 +4554,7 @@ static BLOCKS_COPPER_GRATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COPPER_GRATE: LootTable = LootTable {
     pools: BLOCKS_COPPER_GRATE_POOLS,
@@ -4507,16 +4565,16 @@ static BLOCKS_COPPER_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:raw_copper",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        min_count: 2i32,
+        max_count: 5i32,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_COPPER_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -4542,7 +4600,7 @@ static BLOCKS_COPPER_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_COPPER_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_COPPER_TRAPDOOR_POOLS,
@@ -4560,7 +4618,7 @@ static BLOCKS_CORNFLOWER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CORNFLOWER: LootTable = LootTable {
     pools: BLOCKS_CORNFLOWER_POOLS,
@@ -4578,7 +4636,7 @@ static BLOCKS_CRACKED_DEEPSLATE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRACKED_DEEPSLATE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_CRACKED_DEEPSLATE_BRICKS_POOLS,
@@ -4596,7 +4654,7 @@ static BLOCKS_CRACKED_DEEPSLATE_TILES_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRACKED_DEEPSLATE_TILES: LootTable = LootTable {
     pools: BLOCKS_CRACKED_DEEPSLATE_TILES_POOLS,
@@ -4614,7 +4672,7 @@ static BLOCKS_CRACKED_NETHER_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRACKED_NETHER_BRICKS: LootTable = LootTable {
     pools: BLOCKS_CRACKED_NETHER_BRICKS_POOLS,
@@ -4632,7 +4690,7 @@ static BLOCKS_CRACKED_POLISHED_BLACKSTONE_BRICKS_POOLS: &[LootPool] = &[LootPool
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRACKED_POLISHED_BLACKSTONE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_CRACKED_POLISHED_BLACKSTONE_BRICKS_POOLS,
@@ -4650,7 +4708,7 @@ static BLOCKS_CRACKED_STONE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRACKED_STONE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_CRACKED_STONE_BRICKS_POOLS,
@@ -4668,7 +4726,7 @@ static BLOCKS_CRAFTER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRAFTER: LootTable = LootTable {
     pools: BLOCKS_CRAFTER_POOLS,
@@ -4686,7 +4744,7 @@ static BLOCKS_CRAFTING_TABLE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRAFTING_TABLE: LootTable = LootTable {
     pools: BLOCKS_CRAFTING_TABLE_POOLS,
@@ -4722,7 +4780,7 @@ static BLOCKS_CRIMSON_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_BUTTON: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_BUTTON_POOLS,
@@ -4740,7 +4798,7 @@ static BLOCKS_CRIMSON_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_DOOR: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_DOOR_POOLS,
@@ -4758,7 +4816,7 @@ static BLOCKS_CRIMSON_FENCE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_FENCE: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_FENCE_POOLS,
@@ -4776,7 +4834,7 @@ static BLOCKS_CRIMSON_FENCE_GATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_FENCE_GATE: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_FENCE_GATE_POOLS,
@@ -4794,7 +4852,7 @@ static BLOCKS_CRIMSON_FUNGUS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_FUNGUS: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_FUNGUS_POOLS,
@@ -4812,7 +4870,7 @@ static BLOCKS_CRIMSON_HANGING_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_HANGING_SIGN: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_HANGING_SIGN_POOLS,
@@ -4830,7 +4888,7 @@ static BLOCKS_CRIMSON_HYPHAE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_HYPHAE: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_HYPHAE_POOLS,
@@ -4841,7 +4899,7 @@ static BLOCKS_CRIMSON_NYLIUM_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -4849,7 +4907,10 @@ static BLOCKS_CRIMSON_NYLIUM_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -4876,7 +4937,7 @@ static BLOCKS_CRIMSON_PLANKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_PLANKS: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_PLANKS_POOLS,
@@ -4894,7 +4955,7 @@ static BLOCKS_CRIMSON_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_PRESSURE_PLATE_POOLS,
@@ -4912,7 +4973,7 @@ static BLOCKS_CRIMSON_ROOTS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_ROOTS: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_ROOTS_POOLS,
@@ -4930,7 +4991,7 @@ static BLOCKS_CRIMSON_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_SIGN: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_SIGN_POOLS,
@@ -4938,8 +4999,8 @@ pub static BLOCKS_CRIMSON_SIGN: LootTable = LootTable {
 static BLOCKS_CRIMSON_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:crimson_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -4966,7 +5027,7 @@ static BLOCKS_CRIMSON_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_STAIRS: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_STAIRS_POOLS,
@@ -4984,7 +5045,7 @@ static BLOCKS_CRIMSON_STEM_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_STEM: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_STEM_POOLS,
@@ -5002,7 +5063,7 @@ static BLOCKS_CRIMSON_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRIMSON_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_CRIMSON_TRAPDOOR_POOLS,
@@ -5020,7 +5081,7 @@ static BLOCKS_CRYING_OBSIDIAN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CRYING_OBSIDIAN: LootTable = LootTable {
     pools: BLOCKS_CRYING_OBSIDIAN_POOLS,
@@ -5038,7 +5099,7 @@ static BLOCKS_CUT_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CUT_COPPER: LootTable = LootTable {
     pools: BLOCKS_CUT_COPPER_POOLS,
@@ -5046,8 +5107,8 @@ pub static BLOCKS_CUT_COPPER: LootTable = LootTable {
 static BLOCKS_CUT_COPPER_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:cut_copper_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -5074,7 +5135,7 @@ static BLOCKS_CUT_COPPER_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CUT_COPPER_STAIRS: LootTable = LootTable {
     pools: BLOCKS_CUT_COPPER_STAIRS_POOLS,
@@ -5092,7 +5153,7 @@ static BLOCKS_CUT_RED_SANDSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CUT_RED_SANDSTONE: LootTable = LootTable {
     pools: BLOCKS_CUT_RED_SANDSTONE_POOLS,
@@ -5100,8 +5161,8 @@ pub static BLOCKS_CUT_RED_SANDSTONE: LootTable = LootTable {
 static BLOCKS_CUT_RED_SANDSTONE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:cut_red_sandstone_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -5128,7 +5189,7 @@ static BLOCKS_CUT_SANDSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CUT_SANDSTONE: LootTable = LootTable {
     pools: BLOCKS_CUT_SANDSTONE_POOLS,
@@ -5136,8 +5197,8 @@ pub static BLOCKS_CUT_SANDSTONE: LootTable = LootTable {
 static BLOCKS_CUT_SANDSTONE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:cut_sandstone_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -5164,7 +5225,7 @@ static BLOCKS_CYAN_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CYAN_BANNER: LootTable = LootTable {
     pools: BLOCKS_CYAN_BANNER_POOLS,
@@ -5182,7 +5243,7 @@ static BLOCKS_CYAN_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CYAN_BED: LootTable = LootTable {
     pools: BLOCKS_CYAN_BED_POOLS,
@@ -5190,8 +5251,8 @@ pub static BLOCKS_CYAN_BED: LootTable = LootTable {
 static BLOCKS_CYAN_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:cyan_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -5236,7 +5297,7 @@ static BLOCKS_CYAN_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CYAN_CARPET: LootTable = LootTable {
     pools: BLOCKS_CYAN_CARPET_POOLS,
@@ -5254,7 +5315,7 @@ static BLOCKS_CYAN_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CYAN_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_CYAN_CONCRETE_POOLS,
@@ -5272,7 +5333,7 @@ static BLOCKS_CYAN_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CYAN_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_CYAN_CONCRETE_POWDER_POOLS,
@@ -5290,7 +5351,7 @@ static BLOCKS_CYAN_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CYAN_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_CYAN_GLAZED_TERRACOTTA_POOLS,
@@ -5326,7 +5387,7 @@ static BLOCKS_CYAN_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_CYAN_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_CYAN_STAINED_GLASS_POOLS,
@@ -5344,7 +5405,7 @@ static BLOCKS_CYAN_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_CYAN_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_CYAN_STAINED_GLASS_PANE_POOLS,
@@ -5362,7 +5423,7 @@ static BLOCKS_CYAN_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CYAN_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_CYAN_TERRACOTTA_POOLS,
@@ -5380,7 +5441,7 @@ static BLOCKS_CYAN_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_CYAN_WOOL: LootTable = LootTable {
     pools: BLOCKS_CYAN_WOOL_POOLS,
@@ -5398,7 +5459,7 @@ static BLOCKS_DAMAGED_ANVIL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DAMAGED_ANVIL: LootTable = LootTable {
     pools: BLOCKS_DAMAGED_ANVIL_POOLS,
@@ -5416,7 +5477,7 @@ static BLOCKS_DANDELION_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DANDELION: LootTable = LootTable {
     pools: BLOCKS_DANDELION_POOLS,
@@ -5434,7 +5495,7 @@ static BLOCKS_DARK_OAK_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_BUTTON: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_BUTTON_POOLS,
@@ -5452,7 +5513,7 @@ static BLOCKS_DARK_OAK_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_DOOR: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_DOOR_POOLS,
@@ -5470,7 +5531,7 @@ static BLOCKS_DARK_OAK_FENCE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_FENCE: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_FENCE_POOLS,
@@ -5488,7 +5549,7 @@ static BLOCKS_DARK_OAK_FENCE_GATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_FENCE_GATE: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_FENCE_GATE_POOLS,
@@ -5506,7 +5567,7 @@ static BLOCKS_DARK_OAK_HANGING_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_HANGING_SIGN: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_HANGING_SIGN_POOLS,
@@ -5517,7 +5578,7 @@ static BLOCKS_DARK_OAK_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -5525,7 +5586,15 @@ static BLOCKS_DARK_OAK_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::TableBonus {
+                    chances: &[0.05f32, 0.0625f32, 0.083333336f32, 0.1f32],
+                },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -5533,8 +5602,10 @@ static BLOCKS_DARK_OAK_LEAVES_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:stick",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
-    condition: LootCondition::None,
+    max_count: 2i32,
+    condition: LootCondition::TableBonus {
+        chances: &[0.02f32, 0.022222223f32, 0.025f32, 0.033333335f32, 0.1f32],
+    },
     bonus_formula: None,
 }];
 static BLOCKS_DARK_OAK_LEAVES_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
@@ -5542,7 +5613,18 @@ static BLOCKS_DARK_OAK_LEAVES_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
     weight: 1i32,
     min_count: 1i32,
     max_count: 1i32,
-    condition: LootCondition::None,
+    condition: LootCondition::AllOf(&[
+        LootCondition::SurvivesExplosion,
+        LootCondition::TableBonus {
+            chances: &[
+                0.005f32,
+                0.0055555557f32,
+                0.00625f32,
+                0.008333334f32,
+                0.025f32,
+            ],
+        },
+    ]),
     bonus_formula: None,
 }];
 static BLOCKS_DARK_OAK_LEAVES_POOLS: &[LootPool] = &[
@@ -5558,14 +5640,14 @@ static BLOCKS_DARK_OAK_LEAVES_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouchOrShears,
     },
     LootPool {
         entries: BLOCKS_DARK_OAK_LEAVES_POOL2_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouchOrShears,
     },
 ];
 pub static BLOCKS_DARK_OAK_LEAVES: LootTable = LootTable {
@@ -5584,7 +5666,7 @@ static BLOCKS_DARK_OAK_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_LOG: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_LOG_POOLS,
@@ -5602,7 +5684,7 @@ static BLOCKS_DARK_OAK_PLANKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_PLANKS: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_PLANKS_POOLS,
@@ -5620,7 +5702,7 @@ static BLOCKS_DARK_OAK_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_PRESSURE_PLATE_POOLS,
@@ -5638,7 +5720,7 @@ static BLOCKS_DARK_OAK_SAPLING_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_SAPLING: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_SAPLING_POOLS,
@@ -5656,7 +5738,7 @@ static BLOCKS_DARK_OAK_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_SIGN: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_SIGN_POOLS,
@@ -5664,8 +5746,8 @@ pub static BLOCKS_DARK_OAK_SIGN: LootTable = LootTable {
 static BLOCKS_DARK_OAK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:dark_oak_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -5692,7 +5774,7 @@ static BLOCKS_DARK_OAK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_STAIRS_POOLS,
@@ -5710,7 +5792,7 @@ static BLOCKS_DARK_OAK_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_TRAPDOOR_POOLS,
@@ -5728,7 +5810,7 @@ static BLOCKS_DARK_OAK_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_OAK_WOOD: LootTable = LootTable {
     pools: BLOCKS_DARK_OAK_WOOD_POOLS,
@@ -5746,7 +5828,7 @@ static BLOCKS_DARK_PRISMARINE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_PRISMARINE: LootTable = LootTable {
     pools: BLOCKS_DARK_PRISMARINE_POOLS,
@@ -5754,8 +5836,8 @@ pub static BLOCKS_DARK_PRISMARINE: LootTable = LootTable {
 static BLOCKS_DARK_PRISMARINE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:dark_prismarine_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -5782,7 +5864,7 @@ static BLOCKS_DARK_PRISMARINE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DARK_PRISMARINE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_DARK_PRISMARINE_STAIRS_POOLS,
@@ -5800,7 +5882,7 @@ static BLOCKS_DAYLIGHT_DETECTOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DAYLIGHT_DETECTOR: LootTable = LootTable {
     pools: BLOCKS_DAYLIGHT_DETECTOR_POOLS,
@@ -5818,7 +5900,7 @@ static BLOCKS_DEAD_BRAIN_CORAL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_DEAD_BRAIN_CORAL: LootTable = LootTable {
     pools: BLOCKS_DEAD_BRAIN_CORAL_POOLS,
@@ -5836,7 +5918,7 @@ static BLOCKS_DEAD_BRAIN_CORAL_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DEAD_BRAIN_CORAL_BLOCK: LootTable = LootTable {
     pools: BLOCKS_DEAD_BRAIN_CORAL_BLOCK_POOLS,
@@ -5854,7 +5936,7 @@ static BLOCKS_DEAD_BRAIN_CORAL_FAN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_DEAD_BRAIN_CORAL_FAN: LootTable = LootTable {
     pools: BLOCKS_DEAD_BRAIN_CORAL_FAN_POOLS,
@@ -5872,7 +5954,7 @@ static BLOCKS_DEAD_BUBBLE_CORAL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_DEAD_BUBBLE_CORAL: LootTable = LootTable {
     pools: BLOCKS_DEAD_BUBBLE_CORAL_POOLS,
@@ -5890,7 +5972,7 @@ static BLOCKS_DEAD_BUBBLE_CORAL_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DEAD_BUBBLE_CORAL_BLOCK: LootTable = LootTable {
     pools: BLOCKS_DEAD_BUBBLE_CORAL_BLOCK_POOLS,
@@ -5908,7 +5990,7 @@ static BLOCKS_DEAD_BUBBLE_CORAL_FAN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_DEAD_BUBBLE_CORAL_FAN: LootTable = LootTable {
     pools: BLOCKS_DEAD_BUBBLE_CORAL_FAN_POOLS,
@@ -5919,15 +6001,15 @@ static BLOCKS_DEAD_BUSH_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::Shears,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:stick",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 0i32,
+        max_count: 2i32,
+        condition: LootCondition::NoSilkTouchOrShears,
         bonus_formula: None,
     },
 ];
@@ -5954,7 +6036,7 @@ static BLOCKS_DEAD_FIRE_CORAL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_DEAD_FIRE_CORAL: LootTable = LootTable {
     pools: BLOCKS_DEAD_FIRE_CORAL_POOLS,
@@ -5972,7 +6054,7 @@ static BLOCKS_DEAD_FIRE_CORAL_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DEAD_FIRE_CORAL_BLOCK: LootTable = LootTable {
     pools: BLOCKS_DEAD_FIRE_CORAL_BLOCK_POOLS,
@@ -5990,7 +6072,7 @@ static BLOCKS_DEAD_FIRE_CORAL_FAN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_DEAD_FIRE_CORAL_FAN: LootTable = LootTable {
     pools: BLOCKS_DEAD_FIRE_CORAL_FAN_POOLS,
@@ -6008,7 +6090,7 @@ static BLOCKS_DEAD_HORN_CORAL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_DEAD_HORN_CORAL: LootTable = LootTable {
     pools: BLOCKS_DEAD_HORN_CORAL_POOLS,
@@ -6026,7 +6108,7 @@ static BLOCKS_DEAD_HORN_CORAL_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DEAD_HORN_CORAL_BLOCK: LootTable = LootTable {
     pools: BLOCKS_DEAD_HORN_CORAL_BLOCK_POOLS,
@@ -6044,7 +6126,7 @@ static BLOCKS_DEAD_HORN_CORAL_FAN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_DEAD_HORN_CORAL_FAN: LootTable = LootTable {
     pools: BLOCKS_DEAD_HORN_CORAL_FAN_POOLS,
@@ -6062,7 +6144,7 @@ static BLOCKS_DEAD_TUBE_CORAL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_DEAD_TUBE_CORAL: LootTable = LootTable {
     pools: BLOCKS_DEAD_TUBE_CORAL_POOLS,
@@ -6080,7 +6162,7 @@ static BLOCKS_DEAD_TUBE_CORAL_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DEAD_TUBE_CORAL_BLOCK: LootTable = LootTable {
     pools: BLOCKS_DEAD_TUBE_CORAL_BLOCK_POOLS,
@@ -6098,7 +6180,7 @@ static BLOCKS_DEAD_TUBE_CORAL_FAN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_DEAD_TUBE_CORAL_FAN: LootTable = LootTable {
     pools: BLOCKS_DEAD_TUBE_CORAL_FAN_POOLS,
@@ -6127,7 +6209,7 @@ static BLOCKS_DEEPSLATE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -6135,7 +6217,10 @@ static BLOCKS_DEEPSLATE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -6152,8 +6237,8 @@ pub static BLOCKS_DEEPSLATE: LootTable = LootTable {
 static BLOCKS_DEEPSLATE_BRICK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:deepslate_brick_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -6180,7 +6265,7 @@ static BLOCKS_DEEPSLATE_BRICK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DEEPSLATE_BRICK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_DEEPSLATE_BRICK_STAIRS_POOLS,
@@ -6198,7 +6283,7 @@ static BLOCKS_DEEPSLATE_BRICK_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DEEPSLATE_BRICK_WALL: LootTable = LootTable {
     pools: BLOCKS_DEEPSLATE_BRICK_WALL_POOLS,
@@ -6216,7 +6301,7 @@ static BLOCKS_DEEPSLATE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DEEPSLATE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_DEEPSLATE_BRICKS_POOLS,
@@ -6227,7 +6312,7 @@ static BLOCKS_DEEPSLATE_COAL_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -6235,8 +6320,8 @@ static BLOCKS_DEEPSLATE_COAL_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_DEEPSLATE_COAL_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -6255,16 +6340,16 @@ static BLOCKS_DEEPSLATE_COPPER_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:raw_copper",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        min_count: 2i32,
+        max_count: 5i32,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_DEEPSLATE_COPPER_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -6283,7 +6368,7 @@ static BLOCKS_DEEPSLATE_DIAMOND_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -6291,8 +6376,8 @@ static BLOCKS_DEEPSLATE_DIAMOND_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_DEEPSLATE_DIAMOND_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -6311,7 +6396,7 @@ static BLOCKS_DEEPSLATE_EMERALD_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -6319,8 +6404,8 @@ static BLOCKS_DEEPSLATE_EMERALD_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_DEEPSLATE_EMERALD_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -6339,7 +6424,7 @@ static BLOCKS_DEEPSLATE_GOLD_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -6347,8 +6432,8 @@ static BLOCKS_DEEPSLATE_GOLD_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_DEEPSLATE_GOLD_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -6367,7 +6452,7 @@ static BLOCKS_DEEPSLATE_IRON_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -6375,8 +6460,8 @@ static BLOCKS_DEEPSLATE_IRON_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_DEEPSLATE_IRON_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -6395,16 +6480,16 @@ static BLOCKS_DEEPSLATE_LAPIS_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:lapis_lazuli",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        min_count: 4i32,
+        max_count: 9i32,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_DEEPSLATE_LAPIS_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -6423,16 +6508,16 @@ static BLOCKS_DEEPSLATE_REDSTONE_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:redstone",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        min_count: 4i32,
+        max_count: 5i32,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
 ];
 static BLOCKS_DEEPSLATE_REDSTONE_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -6448,8 +6533,8 @@ pub static BLOCKS_DEEPSLATE_REDSTONE_ORE: LootTable = LootTable {
 static BLOCKS_DEEPSLATE_TILE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:deepslate_tile_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -6476,7 +6561,7 @@ static BLOCKS_DEEPSLATE_TILE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DEEPSLATE_TILE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_DEEPSLATE_TILE_STAIRS_POOLS,
@@ -6494,7 +6579,7 @@ static BLOCKS_DEEPSLATE_TILE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DEEPSLATE_TILE_WALL: LootTable = LootTable {
     pools: BLOCKS_DEEPSLATE_TILE_WALL_POOLS,
@@ -6512,7 +6597,7 @@ static BLOCKS_DEEPSLATE_TILES_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DEEPSLATE_TILES: LootTable = LootTable {
     pools: BLOCKS_DEEPSLATE_TILES_POOLS,
@@ -6530,7 +6615,7 @@ static BLOCKS_DETECTOR_RAIL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DETECTOR_RAIL: LootTable = LootTable {
     pools: BLOCKS_DETECTOR_RAIL_POOLS,
@@ -6548,7 +6633,7 @@ static BLOCKS_DIAMOND_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DIAMOND_BLOCK: LootTable = LootTable {
     pools: BLOCKS_DIAMOND_BLOCK_POOLS,
@@ -6559,7 +6644,7 @@ static BLOCKS_DIAMOND_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -6567,8 +6652,8 @@ static BLOCKS_DIAMOND_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_DIAMOND_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -6594,7 +6679,7 @@ static BLOCKS_DIORITE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DIORITE: LootTable = LootTable {
     pools: BLOCKS_DIORITE_POOLS,
@@ -6602,8 +6687,8 @@ pub static BLOCKS_DIORITE: LootTable = LootTable {
 static BLOCKS_DIORITE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:diorite_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -6630,7 +6715,7 @@ static BLOCKS_DIORITE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DIORITE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_DIORITE_STAIRS_POOLS,
@@ -6648,7 +6733,7 @@ static BLOCKS_DIORITE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DIORITE_WALL: LootTable = LootTable {
     pools: BLOCKS_DIORITE_WALL_POOLS,
@@ -6666,7 +6751,7 @@ static BLOCKS_DIRT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DIRT: LootTable = LootTable {
     pools: BLOCKS_DIRT_POOLS,
@@ -6684,7 +6769,7 @@ static BLOCKS_DIRT_PATH_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DIRT_PATH: LootTable = LootTable {
     pools: BLOCKS_DIRT_PATH_POOLS,
@@ -6702,7 +6787,7 @@ static BLOCKS_DISPENSER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DISPENSER: LootTable = LootTable {
     pools: BLOCKS_DISPENSER_POOLS,
@@ -6756,7 +6841,7 @@ static BLOCKS_DRIED_KELP_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DRIED_KELP_BLOCK: LootTable = LootTable {
     pools: BLOCKS_DRIED_KELP_BLOCK_POOLS,
@@ -6774,7 +6859,7 @@ static BLOCKS_DRIPSTONE_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DRIPSTONE_BLOCK: LootTable = LootTable {
     pools: BLOCKS_DRIPSTONE_BLOCK_POOLS,
@@ -6792,7 +6877,7 @@ static BLOCKS_DROPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_DROPPER: LootTable = LootTable {
     pools: BLOCKS_DROPPER_POOLS,
@@ -6810,7 +6895,7 @@ static BLOCKS_EMERALD_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_EMERALD_BLOCK: LootTable = LootTable {
     pools: BLOCKS_EMERALD_BLOCK_POOLS,
@@ -6821,7 +6906,7 @@ static BLOCKS_EMERALD_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -6829,8 +6914,8 @@ static BLOCKS_EMERALD_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_EMERALD_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -6856,7 +6941,7 @@ static BLOCKS_ENCHANTING_TABLE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ENCHANTING_TABLE: LootTable = LootTable {
     pools: BLOCKS_ENCHANTING_TABLE_POOLS,
@@ -6874,7 +6959,7 @@ static BLOCKS_END_ROD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_END_ROD: LootTable = LootTable {
     pools: BLOCKS_END_ROD_POOLS,
@@ -6892,7 +6977,7 @@ static BLOCKS_END_STONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_END_STONE: LootTable = LootTable {
     pools: BLOCKS_END_STONE_POOLS,
@@ -6900,8 +6985,8 @@ pub static BLOCKS_END_STONE: LootTable = LootTable {
 static BLOCKS_END_STONE_BRICK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:end_stone_brick_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -6928,7 +7013,7 @@ static BLOCKS_END_STONE_BRICK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_END_STONE_BRICK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_END_STONE_BRICK_STAIRS_POOLS,
@@ -6946,7 +7031,7 @@ static BLOCKS_END_STONE_BRICK_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_END_STONE_BRICK_WALL: LootTable = LootTable {
     pools: BLOCKS_END_STONE_BRICK_WALL_POOLS,
@@ -6964,7 +7049,7 @@ static BLOCKS_END_STONE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_END_STONE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_END_STONE_BRICKS_POOLS,
@@ -6975,15 +7060,15 @@ static BLOCKS_ENDER_CHEST_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:obsidian",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 8i32,
+        max_count: 8i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
 ];
@@ -7010,7 +7095,7 @@ static BLOCKS_EXPOSED_CHISELED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_EXPOSED_CHISELED_COPPER: LootTable = LootTable {
     pools: BLOCKS_EXPOSED_CHISELED_COPPER_POOLS,
@@ -7028,7 +7113,7 @@ static BLOCKS_EXPOSED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_EXPOSED_COPPER: LootTable = LootTable {
     pools: BLOCKS_EXPOSED_COPPER_POOLS,
@@ -7046,7 +7131,7 @@ static BLOCKS_EXPOSED_COPPER_BULB_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_EXPOSED_COPPER_BULB: LootTable = LootTable {
     pools: BLOCKS_EXPOSED_COPPER_BULB_POOLS,
@@ -7064,7 +7149,7 @@ static BLOCKS_EXPOSED_COPPER_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_EXPOSED_COPPER_DOOR: LootTable = LootTable {
     pools: BLOCKS_EXPOSED_COPPER_DOOR_POOLS,
@@ -7082,7 +7167,7 @@ static BLOCKS_EXPOSED_COPPER_GRATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_EXPOSED_COPPER_GRATE: LootTable = LootTable {
     pools: BLOCKS_EXPOSED_COPPER_GRATE_POOLS,
@@ -7100,7 +7185,7 @@ static BLOCKS_EXPOSED_COPPER_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_EXPOSED_COPPER_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_EXPOSED_COPPER_TRAPDOOR_POOLS,
@@ -7118,7 +7203,7 @@ static BLOCKS_EXPOSED_CUT_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_EXPOSED_CUT_COPPER: LootTable = LootTable {
     pools: BLOCKS_EXPOSED_CUT_COPPER_POOLS,
@@ -7126,8 +7211,8 @@ pub static BLOCKS_EXPOSED_CUT_COPPER: LootTable = LootTable {
 static BLOCKS_EXPOSED_CUT_COPPER_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:exposed_cut_copper_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -7154,7 +7239,7 @@ static BLOCKS_EXPOSED_CUT_COPPER_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_EXPOSED_CUT_COPPER_STAIRS: LootTable = LootTable {
     pools: BLOCKS_EXPOSED_CUT_COPPER_STAIRS_POOLS,
@@ -7172,7 +7257,7 @@ static BLOCKS_FARMLAND_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_FARMLAND: LootTable = LootTable {
     pools: BLOCKS_FARMLAND_POOLS,
@@ -7183,7 +7268,7 @@ static BLOCKS_FERN_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::Shears,
         bonus_formula: None,
     },
     LootEntry {
@@ -7191,8 +7276,11 @@ static BLOCKS_FERN_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::RandomChance { chance: 0.125f32 },
+        ]),
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(2i32)),
     },
 ];
 static BLOCKS_FERN_POOLS: &[LootPool] = &[LootPool {
@@ -7222,7 +7310,7 @@ static BLOCKS_FIRE_CORAL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_FIRE_CORAL: LootTable = LootTable {
     pools: BLOCKS_FIRE_CORAL_POOLS,
@@ -7233,7 +7321,7 @@ static BLOCKS_FIRE_CORAL_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -7241,7 +7329,10 @@ static BLOCKS_FIRE_CORAL_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -7268,7 +7359,7 @@ static BLOCKS_FIRE_CORAL_FAN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_FIRE_CORAL_FAN: LootTable = LootTable {
     pools: BLOCKS_FIRE_CORAL_FAN_POOLS,
@@ -7286,7 +7377,7 @@ static BLOCKS_FLETCHING_TABLE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_FLETCHING_TABLE: LootTable = LootTable {
     pools: BLOCKS_FLETCHING_TABLE_POOLS,
@@ -7304,7 +7395,7 @@ static BLOCKS_FLOWER_POT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_FLOWER_POT: LootTable = LootTable {
     pools: BLOCKS_FLOWER_POT_POOLS,
@@ -7322,7 +7413,7 @@ static BLOCKS_FLOWERING_AZALEA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_FLOWERING_AZALEA: LootTable = LootTable {
     pools: BLOCKS_FLOWERING_AZALEA_POOLS,
@@ -7333,7 +7424,7 @@ static BLOCKS_FLOWERING_AZALEA_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -7341,7 +7432,15 @@ static BLOCKS_FLOWERING_AZALEA_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::TableBonus {
+                    chances: &[0.05f32, 0.0625f32, 0.083333336f32, 0.1f32],
+                },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -7349,8 +7448,10 @@ static BLOCKS_FLOWERING_AZALEA_LEAVES_POOL1_ENTRIES: &[LootEntry] = &[LootEntry 
     item: "minecraft:stick",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
-    condition: LootCondition::None,
+    max_count: 2i32,
+    condition: LootCondition::TableBonus {
+        chances: &[0.02f32, 0.022222223f32, 0.025f32, 0.033333335f32, 0.1f32],
+    },
     bonus_formula: None,
 }];
 static BLOCKS_FLOWERING_AZALEA_LEAVES_POOLS: &[LootPool] = &[
@@ -7366,7 +7467,7 @@ static BLOCKS_FLOWERING_AZALEA_LEAVES_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouchOrShears,
     },
 ];
 pub static BLOCKS_FLOWERING_AZALEA_LEAVES: LootTable = LootTable {
@@ -7393,7 +7494,7 @@ static BLOCKS_FURNACE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_FURNACE: LootTable = LootTable {
     pools: BLOCKS_FURNACE_POOLS,
@@ -7404,15 +7505,20 @@ static BLOCKS_GILDED_BLACKSTONE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gold_nugget",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 2i32,
+        max_count: 5i32,
+        condition: LootCondition::AllOf(&[
+            LootCondition::AllOf(&[LootCondition::NoSilkTouch, LootCondition::SurvivesExplosion]),
+            LootCondition::TableBonus {
+                chances: &[0.1f32, 0.14285715f32, 0.25f32, 1f32],
+            },
+        ]),
         bonus_formula: None,
     },
     LootEntry {
@@ -7420,7 +7526,10 @@ static BLOCKS_GILDED_BLACKSTONE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -7447,7 +7556,7 @@ static BLOCKS_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_GLASS: LootTable = LootTable {
     pools: BLOCKS_GLASS_POOLS,
@@ -7465,7 +7574,7 @@ static BLOCKS_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_GLASS_PANE_POOLS,
@@ -7475,7 +7584,7 @@ static BLOCKS_GLOW_LICHEN_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     weight: 1i32,
     min_count: 1i32,
     max_count: 1i32,
-    condition: LootCondition::None,
+    condition: LootCondition::Shears,
     bonus_formula: None,
 }];
 static BLOCKS_GLOW_LICHEN_POOLS: &[LootPool] = &[LootPool {
@@ -7494,16 +7603,16 @@ static BLOCKS_GLOWSTONE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:glowstone_dust",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        min_count: 2i32,
+        max_count: 4i32,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
 ];
 static BLOCKS_GLOWSTONE_POOLS: &[LootPool] = &[LootPool {
@@ -7529,7 +7638,7 @@ static BLOCKS_GOLD_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GOLD_BLOCK: LootTable = LootTable {
     pools: BLOCKS_GOLD_BLOCK_POOLS,
@@ -7540,7 +7649,7 @@ static BLOCKS_GOLD_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -7548,8 +7657,8 @@ static BLOCKS_GOLD_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_GOLD_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -7575,7 +7684,7 @@ static BLOCKS_GRANITE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GRANITE: LootTable = LootTable {
     pools: BLOCKS_GRANITE_POOLS,
@@ -7583,8 +7692,8 @@ pub static BLOCKS_GRANITE: LootTable = LootTable {
 static BLOCKS_GRANITE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:granite_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -7611,7 +7720,7 @@ static BLOCKS_GRANITE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GRANITE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_GRANITE_STAIRS_POOLS,
@@ -7629,7 +7738,7 @@ static BLOCKS_GRANITE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GRANITE_WALL: LootTable = LootTable {
     pools: BLOCKS_GRANITE_WALL_POOLS,
@@ -7640,7 +7749,7 @@ static BLOCKS_GRASS_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -7648,7 +7757,10 @@ static BLOCKS_GRASS_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -7668,7 +7780,7 @@ static BLOCKS_GRAVEL_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -7676,7 +7788,12 @@ static BLOCKS_GRAVEL_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::AllOf(&[LootCondition::NoSilkTouch, LootCondition::SurvivesExplosion]),
+            LootCondition::TableBonus {
+                chances: &[0.1f32, 0.14285715f32, 0.25f32, 1f32],
+            },
+        ]),
         bonus_formula: None,
     },
     LootEntry {
@@ -7684,7 +7801,10 @@ static BLOCKS_GRAVEL_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -7711,7 +7831,7 @@ static BLOCKS_GRAY_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GRAY_BANNER: LootTable = LootTable {
     pools: BLOCKS_GRAY_BANNER_POOLS,
@@ -7729,7 +7849,7 @@ static BLOCKS_GRAY_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GRAY_BED: LootTable = LootTable {
     pools: BLOCKS_GRAY_BED_POOLS,
@@ -7737,8 +7857,8 @@ pub static BLOCKS_GRAY_BED: LootTable = LootTable {
 static BLOCKS_GRAY_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:gray_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -7783,7 +7903,7 @@ static BLOCKS_GRAY_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GRAY_CARPET: LootTable = LootTable {
     pools: BLOCKS_GRAY_CARPET_POOLS,
@@ -7801,7 +7921,7 @@ static BLOCKS_GRAY_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GRAY_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_GRAY_CONCRETE_POOLS,
@@ -7819,7 +7939,7 @@ static BLOCKS_GRAY_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GRAY_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_GRAY_CONCRETE_POWDER_POOLS,
@@ -7837,7 +7957,7 @@ static BLOCKS_GRAY_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GRAY_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_GRAY_GLAZED_TERRACOTTA_POOLS,
@@ -7873,7 +7993,7 @@ static BLOCKS_GRAY_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_GRAY_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_GRAY_STAINED_GLASS_POOLS,
@@ -7891,7 +8011,7 @@ static BLOCKS_GRAY_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_GRAY_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_GRAY_STAINED_GLASS_PANE_POOLS,
@@ -7909,7 +8029,7 @@ static BLOCKS_GRAY_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GRAY_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_GRAY_TERRACOTTA_POOLS,
@@ -7927,7 +8047,7 @@ static BLOCKS_GRAY_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GRAY_WOOL: LootTable = LootTable {
     pools: BLOCKS_GRAY_WOOL_POOLS,
@@ -7945,7 +8065,7 @@ static BLOCKS_GREEN_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GREEN_BANNER: LootTable = LootTable {
     pools: BLOCKS_GREEN_BANNER_POOLS,
@@ -7963,7 +8083,7 @@ static BLOCKS_GREEN_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GREEN_BED: LootTable = LootTable {
     pools: BLOCKS_GREEN_BED_POOLS,
@@ -7971,8 +8091,8 @@ pub static BLOCKS_GREEN_BED: LootTable = LootTable {
 static BLOCKS_GREEN_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:green_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -8017,7 +8137,7 @@ static BLOCKS_GREEN_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GREEN_CARPET: LootTable = LootTable {
     pools: BLOCKS_GREEN_CARPET_POOLS,
@@ -8035,7 +8155,7 @@ static BLOCKS_GREEN_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GREEN_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_GREEN_CONCRETE_POOLS,
@@ -8053,7 +8173,7 @@ static BLOCKS_GREEN_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GREEN_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_GREEN_CONCRETE_POWDER_POOLS,
@@ -8071,7 +8191,7 @@ static BLOCKS_GREEN_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GREEN_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_GREEN_GLAZED_TERRACOTTA_POOLS,
@@ -8107,7 +8227,7 @@ static BLOCKS_GREEN_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_GREEN_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_GREEN_STAINED_GLASS_POOLS,
@@ -8125,7 +8245,7 @@ static BLOCKS_GREEN_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_GREEN_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_GREEN_STAINED_GLASS_PANE_POOLS,
@@ -8143,7 +8263,7 @@ static BLOCKS_GREEN_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GREEN_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_GREEN_TERRACOTTA_POOLS,
@@ -8161,7 +8281,7 @@ static BLOCKS_GREEN_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GREEN_WOOL: LootTable = LootTable {
     pools: BLOCKS_GREEN_WOOL_POOLS,
@@ -8179,7 +8299,7 @@ static BLOCKS_GRINDSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_GRINDSTONE: LootTable = LootTable {
     pools: BLOCKS_GRINDSTONE_POOLS,
@@ -8197,7 +8317,7 @@ static BLOCKS_HANGING_ROOTS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::Shears,
 }];
 pub static BLOCKS_HANGING_ROOTS: LootTable = LootTable {
     pools: BLOCKS_HANGING_ROOTS_POOLS,
@@ -8215,7 +8335,7 @@ static BLOCKS_HAY_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_HAY_BLOCK: LootTable = LootTable {
     pools: BLOCKS_HAY_BLOCK_POOLS,
@@ -8233,7 +8353,7 @@ static BLOCKS_HEAVY_CORE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_HEAVY_CORE: LootTable = LootTable {
     pools: BLOCKS_HEAVY_CORE_POOLS,
@@ -8251,7 +8371,7 @@ static BLOCKS_HEAVY_WEIGHTED_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_HEAVY_WEIGHTED_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_HEAVY_WEIGHTED_PRESSURE_PLATE_POOLS,
@@ -8269,7 +8389,7 @@ static BLOCKS_HONEY_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_HONEY_BLOCK: LootTable = LootTable {
     pools: BLOCKS_HONEY_BLOCK_POOLS,
@@ -8287,7 +8407,7 @@ static BLOCKS_HONEYCOMB_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_HONEYCOMB_BLOCK: LootTable = LootTable {
     pools: BLOCKS_HONEYCOMB_BLOCK_POOLS,
@@ -8305,7 +8425,7 @@ static BLOCKS_HOPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_HOPPER: LootTable = LootTable {
     pools: BLOCKS_HOPPER_POOLS,
@@ -8323,7 +8443,7 @@ static BLOCKS_HORN_CORAL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_HORN_CORAL: LootTable = LootTable {
     pools: BLOCKS_HORN_CORAL_POOLS,
@@ -8334,7 +8454,7 @@ static BLOCKS_HORN_CORAL_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -8342,7 +8462,10 @@ static BLOCKS_HORN_CORAL_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -8369,7 +8492,7 @@ static BLOCKS_HORN_CORAL_FAN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_HORN_CORAL_FAN: LootTable = LootTable {
     pools: BLOCKS_HORN_CORAL_FAN_POOLS,
@@ -8387,7 +8510,7 @@ static BLOCKS_ICE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_ICE: LootTable = LootTable {
     pools: BLOCKS_ICE_POOLS,
@@ -8405,7 +8528,7 @@ static BLOCKS_INFESTED_CHISELED_STONE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_INFESTED_CHISELED_STONE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_INFESTED_CHISELED_STONE_BRICKS_POOLS,
@@ -8423,7 +8546,7 @@ static BLOCKS_INFESTED_COBBLESTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_INFESTED_COBBLESTONE: LootTable = LootTable {
     pools: BLOCKS_INFESTED_COBBLESTONE_POOLS,
@@ -8441,7 +8564,7 @@ static BLOCKS_INFESTED_CRACKED_STONE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_INFESTED_CRACKED_STONE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_INFESTED_CRACKED_STONE_BRICKS_POOLS,
@@ -8459,7 +8582,7 @@ static BLOCKS_INFESTED_DEEPSLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_INFESTED_DEEPSLATE: LootTable = LootTable {
     pools: BLOCKS_INFESTED_DEEPSLATE_POOLS,
@@ -8477,7 +8600,7 @@ static BLOCKS_INFESTED_MOSSY_STONE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_INFESTED_MOSSY_STONE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_INFESTED_MOSSY_STONE_BRICKS_POOLS,
@@ -8495,7 +8618,7 @@ static BLOCKS_INFESTED_STONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_INFESTED_STONE: LootTable = LootTable {
     pools: BLOCKS_INFESTED_STONE_POOLS,
@@ -8513,7 +8636,7 @@ static BLOCKS_INFESTED_STONE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_INFESTED_STONE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_INFESTED_STONE_BRICKS_POOLS,
@@ -8531,7 +8654,7 @@ static BLOCKS_IRON_BARS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_IRON_BARS: LootTable = LootTable {
     pools: BLOCKS_IRON_BARS_POOLS,
@@ -8549,7 +8672,7 @@ static BLOCKS_IRON_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_IRON_BLOCK: LootTable = LootTable {
     pools: BLOCKS_IRON_BLOCK_POOLS,
@@ -8567,7 +8690,7 @@ static BLOCKS_IRON_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_IRON_DOOR: LootTable = LootTable {
     pools: BLOCKS_IRON_DOOR_POOLS,
@@ -8578,7 +8701,7 @@ static BLOCKS_IRON_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -8586,8 +8709,8 @@ static BLOCKS_IRON_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_IRON_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -8613,7 +8736,7 @@ static BLOCKS_IRON_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_IRON_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_IRON_TRAPDOOR_POOLS,
@@ -8631,7 +8754,7 @@ static BLOCKS_JACK_O_LANTERN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JACK_O_LANTERN: LootTable = LootTable {
     pools: BLOCKS_JACK_O_LANTERN_POOLS,
@@ -8649,7 +8772,7 @@ static BLOCKS_JUKEBOX_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUKEBOX: LootTable = LootTable {
     pools: BLOCKS_JUKEBOX_POOLS,
@@ -8667,7 +8790,7 @@ static BLOCKS_JUNGLE_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_BUTTON: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_BUTTON_POOLS,
@@ -8685,7 +8808,7 @@ static BLOCKS_JUNGLE_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_DOOR: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_DOOR_POOLS,
@@ -8703,7 +8826,7 @@ static BLOCKS_JUNGLE_FENCE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_FENCE: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_FENCE_POOLS,
@@ -8721,7 +8844,7 @@ static BLOCKS_JUNGLE_FENCE_GATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_FENCE_GATE: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_FENCE_GATE_POOLS,
@@ -8739,7 +8862,7 @@ static BLOCKS_JUNGLE_HANGING_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_HANGING_SIGN: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_HANGING_SIGN_POOLS,
@@ -8750,7 +8873,7 @@ static BLOCKS_JUNGLE_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -8758,7 +8881,15 @@ static BLOCKS_JUNGLE_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::TableBonus {
+                    chances: &[0.025f32, 0.027777778f32, 0.03125f32, 0.041666668f32, 0.1f32],
+                },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -8766,8 +8897,10 @@ static BLOCKS_JUNGLE_LEAVES_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:stick",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
-    condition: LootCondition::None,
+    max_count: 2i32,
+    condition: LootCondition::TableBonus {
+        chances: &[0.02f32, 0.022222223f32, 0.025f32, 0.033333335f32, 0.1f32],
+    },
     bonus_formula: None,
 }];
 static BLOCKS_JUNGLE_LEAVES_POOLS: &[LootPool] = &[
@@ -8783,7 +8916,7 @@ static BLOCKS_JUNGLE_LEAVES_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouchOrShears,
     },
 ];
 pub static BLOCKS_JUNGLE_LEAVES: LootTable = LootTable {
@@ -8802,7 +8935,7 @@ static BLOCKS_JUNGLE_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_LOG: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_LOG_POOLS,
@@ -8820,7 +8953,7 @@ static BLOCKS_JUNGLE_PLANKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_PLANKS: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_PLANKS_POOLS,
@@ -8838,7 +8971,7 @@ static BLOCKS_JUNGLE_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_PRESSURE_PLATE_POOLS,
@@ -8856,7 +8989,7 @@ static BLOCKS_JUNGLE_SAPLING_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_SAPLING: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_SAPLING_POOLS,
@@ -8874,7 +9007,7 @@ static BLOCKS_JUNGLE_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_SIGN: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_SIGN_POOLS,
@@ -8882,8 +9015,8 @@ pub static BLOCKS_JUNGLE_SIGN: LootTable = LootTable {
 static BLOCKS_JUNGLE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:jungle_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -8910,7 +9043,7 @@ static BLOCKS_JUNGLE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_STAIRS_POOLS,
@@ -8928,7 +9061,7 @@ static BLOCKS_JUNGLE_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_TRAPDOOR_POOLS,
@@ -8946,7 +9079,7 @@ static BLOCKS_JUNGLE_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_JUNGLE_WOOD: LootTable = LootTable {
     pools: BLOCKS_JUNGLE_WOOD_POOLS,
@@ -8964,7 +9097,7 @@ static BLOCKS_KELP_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_KELP: LootTable = LootTable {
     pools: BLOCKS_KELP_POOLS,
@@ -8982,7 +9115,7 @@ static BLOCKS_KELP_PLANT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_KELP_PLANT: LootTable = LootTable {
     pools: BLOCKS_KELP_PLANT_POOLS,
@@ -9000,7 +9133,7 @@ static BLOCKS_LADDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LADDER: LootTable = LootTable {
     pools: BLOCKS_LADDER_POOLS,
@@ -9018,7 +9151,7 @@ static BLOCKS_LANTERN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LANTERN: LootTable = LootTable {
     pools: BLOCKS_LANTERN_POOLS,
@@ -9036,7 +9169,7 @@ static BLOCKS_LAPIS_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LAPIS_BLOCK: LootTable = LootTable {
     pools: BLOCKS_LAPIS_BLOCK_POOLS,
@@ -9047,16 +9180,16 @@ static BLOCKS_LAPIS_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:lapis_lazuli",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        min_count: 4i32,
+        max_count: 9i32,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_LAPIS_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -9082,7 +9215,7 @@ static BLOCKS_LARGE_AMETHYST_BUD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_LARGE_AMETHYST_BUD: LootTable = LootTable {
     pools: BLOCKS_LARGE_AMETHYST_BUD_POOLS,
@@ -9091,9 +9224,9 @@ static BLOCKS_LARGE_FERN_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:fern",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 2i32,
+        max_count: 2i32,
+        condition: LootCondition::Shears,
         bonus_formula: None,
     },
     LootEntry {
@@ -9101,7 +9234,13 @@ static BLOCKS_LARGE_FERN_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::RandomChance { chance: 0.125f32 },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -9109,9 +9248,9 @@ static BLOCKS_LARGE_FERN_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:fern",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 2i32,
+        max_count: 2i32,
+        condition: LootCondition::Shears,
         bonus_formula: None,
     },
     LootEntry {
@@ -9119,7 +9258,13 @@ static BLOCKS_LARGE_FERN_POOL1_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::RandomChance { chance: 0.125f32 },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -9155,7 +9300,7 @@ static BLOCKS_LAVA_CAULDRON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LAVA_CAULDRON: LootTable = LootTable {
     pools: BLOCKS_LAVA_CAULDRON_POOLS,
@@ -9173,7 +9318,7 @@ static BLOCKS_LECTERN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LECTERN: LootTable = LootTable {
     pools: BLOCKS_LECTERN_POOLS,
@@ -9191,7 +9336,7 @@ static BLOCKS_LEVER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LEVER: LootTable = LootTable {
     pools: BLOCKS_LEVER_POOLS,
@@ -9209,7 +9354,7 @@ static BLOCKS_LIGHT_BLUE_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_BLUE_BANNER: LootTable = LootTable {
     pools: BLOCKS_LIGHT_BLUE_BANNER_POOLS,
@@ -9227,7 +9372,7 @@ static BLOCKS_LIGHT_BLUE_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_BLUE_BED: LootTable = LootTable {
     pools: BLOCKS_LIGHT_BLUE_BED_POOLS,
@@ -9235,8 +9380,8 @@ pub static BLOCKS_LIGHT_BLUE_BED: LootTable = LootTable {
 static BLOCKS_LIGHT_BLUE_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:light_blue_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -9281,7 +9426,7 @@ static BLOCKS_LIGHT_BLUE_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_BLUE_CARPET: LootTable = LootTable {
     pools: BLOCKS_LIGHT_BLUE_CARPET_POOLS,
@@ -9299,7 +9444,7 @@ static BLOCKS_LIGHT_BLUE_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_BLUE_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_LIGHT_BLUE_CONCRETE_POOLS,
@@ -9317,7 +9462,7 @@ static BLOCKS_LIGHT_BLUE_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_BLUE_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_LIGHT_BLUE_CONCRETE_POWDER_POOLS,
@@ -9335,7 +9480,7 @@ static BLOCKS_LIGHT_BLUE_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_BLUE_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_LIGHT_BLUE_GLAZED_TERRACOTTA_POOLS,
@@ -9371,7 +9516,7 @@ static BLOCKS_LIGHT_BLUE_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_LIGHT_BLUE_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_LIGHT_BLUE_STAINED_GLASS_POOLS,
@@ -9389,7 +9534,7 @@ static BLOCKS_LIGHT_BLUE_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_LIGHT_BLUE_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_LIGHT_BLUE_STAINED_GLASS_PANE_POOLS,
@@ -9407,7 +9552,7 @@ static BLOCKS_LIGHT_BLUE_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_BLUE_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_LIGHT_BLUE_TERRACOTTA_POOLS,
@@ -9425,7 +9570,7 @@ static BLOCKS_LIGHT_BLUE_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_BLUE_WOOL: LootTable = LootTable {
     pools: BLOCKS_LIGHT_BLUE_WOOL_POOLS,
@@ -9443,7 +9588,7 @@ static BLOCKS_LIGHT_GRAY_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_GRAY_BANNER: LootTable = LootTable {
     pools: BLOCKS_LIGHT_GRAY_BANNER_POOLS,
@@ -9461,7 +9606,7 @@ static BLOCKS_LIGHT_GRAY_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_GRAY_BED: LootTable = LootTable {
     pools: BLOCKS_LIGHT_GRAY_BED_POOLS,
@@ -9469,8 +9614,8 @@ pub static BLOCKS_LIGHT_GRAY_BED: LootTable = LootTable {
 static BLOCKS_LIGHT_GRAY_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:light_gray_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -9515,7 +9660,7 @@ static BLOCKS_LIGHT_GRAY_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_GRAY_CARPET: LootTable = LootTable {
     pools: BLOCKS_LIGHT_GRAY_CARPET_POOLS,
@@ -9533,7 +9678,7 @@ static BLOCKS_LIGHT_GRAY_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_GRAY_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_LIGHT_GRAY_CONCRETE_POOLS,
@@ -9551,7 +9696,7 @@ static BLOCKS_LIGHT_GRAY_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_GRAY_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_LIGHT_GRAY_CONCRETE_POWDER_POOLS,
@@ -9569,7 +9714,7 @@ static BLOCKS_LIGHT_GRAY_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_GRAY_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_LIGHT_GRAY_GLAZED_TERRACOTTA_POOLS,
@@ -9605,7 +9750,7 @@ static BLOCKS_LIGHT_GRAY_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_LIGHT_GRAY_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_LIGHT_GRAY_STAINED_GLASS_POOLS,
@@ -9623,7 +9768,7 @@ static BLOCKS_LIGHT_GRAY_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_LIGHT_GRAY_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_LIGHT_GRAY_STAINED_GLASS_PANE_POOLS,
@@ -9641,7 +9786,7 @@ static BLOCKS_LIGHT_GRAY_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_GRAY_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_LIGHT_GRAY_TERRACOTTA_POOLS,
@@ -9659,7 +9804,7 @@ static BLOCKS_LIGHT_GRAY_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_GRAY_WOOL: LootTable = LootTable {
     pools: BLOCKS_LIGHT_GRAY_WOOL_POOLS,
@@ -9677,7 +9822,7 @@ static BLOCKS_LIGHT_WEIGHTED_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHT_WEIGHTED_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_LIGHT_WEIGHTED_PRESSURE_PLATE_POOLS,
@@ -9695,7 +9840,7 @@ static BLOCKS_LIGHTNING_ROD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIGHTNING_ROD: LootTable = LootTable {
     pools: BLOCKS_LIGHTNING_ROD_POOLS,
@@ -9713,7 +9858,7 @@ static BLOCKS_LILAC_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LILAC: LootTable = LootTable {
     pools: BLOCKS_LILAC_POOLS,
@@ -9731,7 +9876,7 @@ static BLOCKS_LILY_OF_THE_VALLEY_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LILY_OF_THE_VALLEY: LootTable = LootTable {
     pools: BLOCKS_LILY_OF_THE_VALLEY_POOLS,
@@ -9749,7 +9894,7 @@ static BLOCKS_LILY_PAD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LILY_PAD: LootTable = LootTable {
     pools: BLOCKS_LILY_PAD_POOLS,
@@ -9767,7 +9912,7 @@ static BLOCKS_LIME_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIME_BANNER: LootTable = LootTable {
     pools: BLOCKS_LIME_BANNER_POOLS,
@@ -9785,7 +9930,7 @@ static BLOCKS_LIME_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIME_BED: LootTable = LootTable {
     pools: BLOCKS_LIME_BED_POOLS,
@@ -9793,8 +9938,8 @@ pub static BLOCKS_LIME_BED: LootTable = LootTable {
 static BLOCKS_LIME_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:lime_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -9839,7 +9984,7 @@ static BLOCKS_LIME_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIME_CARPET: LootTable = LootTable {
     pools: BLOCKS_LIME_CARPET_POOLS,
@@ -9857,7 +10002,7 @@ static BLOCKS_LIME_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIME_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_LIME_CONCRETE_POOLS,
@@ -9875,7 +10020,7 @@ static BLOCKS_LIME_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIME_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_LIME_CONCRETE_POWDER_POOLS,
@@ -9893,7 +10038,7 @@ static BLOCKS_LIME_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIME_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_LIME_GLAZED_TERRACOTTA_POOLS,
@@ -9929,7 +10074,7 @@ static BLOCKS_LIME_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_LIME_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_LIME_STAINED_GLASS_POOLS,
@@ -9947,7 +10092,7 @@ static BLOCKS_LIME_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_LIME_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_LIME_STAINED_GLASS_PANE_POOLS,
@@ -9965,7 +10110,7 @@ static BLOCKS_LIME_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIME_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_LIME_TERRACOTTA_POOLS,
@@ -9983,7 +10128,7 @@ static BLOCKS_LIME_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LIME_WOOL: LootTable = LootTable {
     pools: BLOCKS_LIME_WOOL_POOLS,
@@ -10001,7 +10146,7 @@ static BLOCKS_LODESTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LODESTONE: LootTable = LootTable {
     pools: BLOCKS_LODESTONE_POOLS,
@@ -10019,7 +10164,7 @@ static BLOCKS_LOOM_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_LOOM: LootTable = LootTable {
     pools: BLOCKS_LOOM_POOLS,
@@ -10037,7 +10182,7 @@ static BLOCKS_MAGENTA_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MAGENTA_BANNER: LootTable = LootTable {
     pools: BLOCKS_MAGENTA_BANNER_POOLS,
@@ -10055,7 +10200,7 @@ static BLOCKS_MAGENTA_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MAGENTA_BED: LootTable = LootTable {
     pools: BLOCKS_MAGENTA_BED_POOLS,
@@ -10063,8 +10208,8 @@ pub static BLOCKS_MAGENTA_BED: LootTable = LootTable {
 static BLOCKS_MAGENTA_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:magenta_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -10109,7 +10254,7 @@ static BLOCKS_MAGENTA_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MAGENTA_CARPET: LootTable = LootTable {
     pools: BLOCKS_MAGENTA_CARPET_POOLS,
@@ -10127,7 +10272,7 @@ static BLOCKS_MAGENTA_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MAGENTA_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_MAGENTA_CONCRETE_POOLS,
@@ -10145,7 +10290,7 @@ static BLOCKS_MAGENTA_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MAGENTA_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_MAGENTA_CONCRETE_POWDER_POOLS,
@@ -10163,7 +10308,7 @@ static BLOCKS_MAGENTA_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MAGENTA_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_MAGENTA_GLAZED_TERRACOTTA_POOLS,
@@ -10199,7 +10344,7 @@ static BLOCKS_MAGENTA_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_MAGENTA_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_MAGENTA_STAINED_GLASS_POOLS,
@@ -10217,7 +10362,7 @@ static BLOCKS_MAGENTA_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_MAGENTA_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_MAGENTA_STAINED_GLASS_PANE_POOLS,
@@ -10235,7 +10380,7 @@ static BLOCKS_MAGENTA_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MAGENTA_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_MAGENTA_TERRACOTTA_POOLS,
@@ -10253,7 +10398,7 @@ static BLOCKS_MAGENTA_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MAGENTA_WOOL: LootTable = LootTable {
     pools: BLOCKS_MAGENTA_WOOL_POOLS,
@@ -10271,7 +10416,7 @@ static BLOCKS_MAGMA_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MAGMA_BLOCK: LootTable = LootTable {
     pools: BLOCKS_MAGMA_BLOCK_POOLS,
@@ -10289,7 +10434,7 @@ static BLOCKS_MANGROVE_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_BUTTON: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_BUTTON_POOLS,
@@ -10307,7 +10452,7 @@ static BLOCKS_MANGROVE_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_DOOR: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_DOOR_POOLS,
@@ -10325,7 +10470,7 @@ static BLOCKS_MANGROVE_FENCE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_FENCE: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_FENCE_POOLS,
@@ -10343,7 +10488,7 @@ static BLOCKS_MANGROVE_FENCE_GATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_FENCE_GATE: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_FENCE_GATE_POOLS,
@@ -10361,7 +10506,7 @@ static BLOCKS_MANGROVE_HANGING_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_HANGING_SIGN: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_HANGING_SIGN_POOLS,
@@ -10372,15 +10517,20 @@ static BLOCKS_MANGROVE_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:stick",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        max_count: 2i32,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::TableBonus {
+                chances: &[0.02f32, 0.022222223f32, 0.025f32, 0.033333335f32, 0.1f32],
+            },
+        ]),
         bonus_formula: None,
     },
 ];
@@ -10407,7 +10557,7 @@ static BLOCKS_MANGROVE_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_LOG: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_LOG_POOLS,
@@ -10425,7 +10575,7 @@ static BLOCKS_MANGROVE_PLANKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_PLANKS: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_PLANKS_POOLS,
@@ -10443,7 +10593,7 @@ static BLOCKS_MANGROVE_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_PRESSURE_PLATE_POOLS,
@@ -10479,7 +10629,7 @@ static BLOCKS_MANGROVE_ROOTS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_ROOTS: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_ROOTS_POOLS,
@@ -10497,7 +10647,7 @@ static BLOCKS_MANGROVE_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_SIGN: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_SIGN_POOLS,
@@ -10505,8 +10655,8 @@ pub static BLOCKS_MANGROVE_SIGN: LootTable = LootTable {
 static BLOCKS_MANGROVE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mangrove_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -10533,7 +10683,7 @@ static BLOCKS_MANGROVE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_STAIRS_POOLS,
@@ -10551,7 +10701,7 @@ static BLOCKS_MANGROVE_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_TRAPDOOR_POOLS,
@@ -10569,7 +10719,7 @@ static BLOCKS_MANGROVE_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MANGROVE_WOOD: LootTable = LootTable {
     pools: BLOCKS_MANGROVE_WOOD_POOLS,
@@ -10587,7 +10737,7 @@ static BLOCKS_MEDIUM_AMETHYST_BUD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_MEDIUM_AMETHYST_BUD: LootTable = LootTable {
     pools: BLOCKS_MEDIUM_AMETHYST_BUD_POOLS,
@@ -10598,16 +10748,16 @@ static BLOCKS_MELON_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:melon_slice",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        min_count: 3i32,
+        max_count: 7i32,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
 ];
 static BLOCKS_MELON_POOLS: &[LootPool] = &[LootPool {
@@ -10623,8 +10773,8 @@ pub static BLOCKS_MELON: LootTable = LootTable {
 static BLOCKS_MELON_STEM_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:melon_seeds",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 0i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -10651,7 +10801,7 @@ static BLOCKS_MOSS_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MOSS_BLOCK: LootTable = LootTable {
     pools: BLOCKS_MOSS_BLOCK_POOLS,
@@ -10669,7 +10819,7 @@ static BLOCKS_MOSS_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MOSS_CARPET: LootTable = LootTable {
     pools: BLOCKS_MOSS_CARPET_POOLS,
@@ -10687,7 +10837,7 @@ static BLOCKS_MOSSY_COBBLESTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MOSSY_COBBLESTONE: LootTable = LootTable {
     pools: BLOCKS_MOSSY_COBBLESTONE_POOLS,
@@ -10695,8 +10845,8 @@ pub static BLOCKS_MOSSY_COBBLESTONE: LootTable = LootTable {
 static BLOCKS_MOSSY_COBBLESTONE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mossy_cobblestone_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -10723,7 +10873,7 @@ static BLOCKS_MOSSY_COBBLESTONE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MOSSY_COBBLESTONE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_MOSSY_COBBLESTONE_STAIRS_POOLS,
@@ -10741,7 +10891,7 @@ static BLOCKS_MOSSY_COBBLESTONE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MOSSY_COBBLESTONE_WALL: LootTable = LootTable {
     pools: BLOCKS_MOSSY_COBBLESTONE_WALL_POOLS,
@@ -10749,8 +10899,8 @@ pub static BLOCKS_MOSSY_COBBLESTONE_WALL: LootTable = LootTable {
 static BLOCKS_MOSSY_STONE_BRICK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mossy_stone_brick_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -10777,7 +10927,7 @@ static BLOCKS_MOSSY_STONE_BRICK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MOSSY_STONE_BRICK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_MOSSY_STONE_BRICK_STAIRS_POOLS,
@@ -10795,7 +10945,7 @@ static BLOCKS_MOSSY_STONE_BRICK_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MOSSY_STONE_BRICK_WALL: LootTable = LootTable {
     pools: BLOCKS_MOSSY_STONE_BRICK_WALL_POOLS,
@@ -10813,7 +10963,7 @@ static BLOCKS_MOSSY_STONE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MOSSY_STONE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_MOSSY_STONE_BRICKS_POOLS,
@@ -10831,7 +10981,7 @@ static BLOCKS_MUD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MUD: LootTable = LootTable {
     pools: BLOCKS_MUD_POOLS,
@@ -10839,8 +10989,8 @@ pub static BLOCKS_MUD: LootTable = LootTable {
 static BLOCKS_MUD_BRICK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mud_brick_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -10867,7 +11017,7 @@ static BLOCKS_MUD_BRICK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MUD_BRICK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_MUD_BRICK_STAIRS_POOLS,
@@ -10885,7 +11035,7 @@ static BLOCKS_MUD_BRICK_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MUD_BRICK_WALL: LootTable = LootTable {
     pools: BLOCKS_MUD_BRICK_WALL_POOLS,
@@ -10903,7 +11053,7 @@ static BLOCKS_MUD_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MUD_BRICKS: LootTable = LootTable {
     pools: BLOCKS_MUD_BRICKS_POOLS,
@@ -10921,7 +11071,7 @@ static BLOCKS_MUDDY_MANGROVE_ROOTS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_MUDDY_MANGROVE_ROOTS: LootTable = LootTable {
     pools: BLOCKS_MUDDY_MANGROVE_ROOTS_POOLS,
@@ -10939,7 +11089,7 @@ static BLOCKS_MUSHROOM_STEM_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_MUSHROOM_STEM: LootTable = LootTable {
     pools: BLOCKS_MUSHROOM_STEM_POOLS,
@@ -10950,7 +11100,7 @@ static BLOCKS_MYCELIUM_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -10958,7 +11108,10 @@ static BLOCKS_MYCELIUM_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -10985,7 +11138,7 @@ static BLOCKS_NETHER_BRICK_FENCE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_NETHER_BRICK_FENCE: LootTable = LootTable {
     pools: BLOCKS_NETHER_BRICK_FENCE_POOLS,
@@ -10993,8 +11146,8 @@ pub static BLOCKS_NETHER_BRICK_FENCE: LootTable = LootTable {
 static BLOCKS_NETHER_BRICK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:nether_brick_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -11021,7 +11174,7 @@ static BLOCKS_NETHER_BRICK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_NETHER_BRICK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_NETHER_BRICK_STAIRS_POOLS,
@@ -11039,7 +11192,7 @@ static BLOCKS_NETHER_BRICK_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_NETHER_BRICK_WALL: LootTable = LootTable {
     pools: BLOCKS_NETHER_BRICK_WALL_POOLS,
@@ -11057,7 +11210,7 @@ static BLOCKS_NETHER_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_NETHER_BRICKS: LootTable = LootTable {
     pools: BLOCKS_NETHER_BRICKS_POOLS,
@@ -11068,16 +11221,16 @@ static BLOCKS_NETHER_GOLD_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gold_nugget",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        min_count: 2i32,
+        max_count: 6i32,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_NETHER_GOLD_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -11100,7 +11253,7 @@ static BLOCKS_NETHER_QUARTZ_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -11108,8 +11261,8 @@ static BLOCKS_NETHER_QUARTZ_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::OreDrops),
     },
 ];
 static BLOCKS_NETHER_QUARTZ_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -11135,7 +11288,7 @@ static BLOCKS_NETHER_SPROUTS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::Shears,
 }];
 pub static BLOCKS_NETHER_SPROUTS: LootTable = LootTable {
     pools: BLOCKS_NETHER_SPROUTS_POOLS,
@@ -11143,10 +11296,10 @@ pub static BLOCKS_NETHER_SPROUTS: LootTable = LootTable {
 static BLOCKS_NETHER_WART_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:nether_wart",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 4i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static BLOCKS_NETHER_WART_POOLS: &[LootPool] = &[LootPool {
     entries: BLOCKS_NETHER_WART_POOL0_ENTRIES,
@@ -11171,7 +11324,7 @@ static BLOCKS_NETHER_WART_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_NETHER_WART_BLOCK: LootTable = LootTable {
     pools: BLOCKS_NETHER_WART_BLOCK_POOLS,
@@ -11189,7 +11342,7 @@ static BLOCKS_NETHERITE_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_NETHERITE_BLOCK: LootTable = LootTable {
     pools: BLOCKS_NETHERITE_BLOCK_POOLS,
@@ -11207,7 +11360,7 @@ static BLOCKS_NETHERRACK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_NETHERRACK: LootTable = LootTable {
     pools: BLOCKS_NETHERRACK_POOLS,
@@ -11225,7 +11378,7 @@ static BLOCKS_NOTE_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_NOTE_BLOCK: LootTable = LootTable {
     pools: BLOCKS_NOTE_BLOCK_POOLS,
@@ -11243,7 +11396,7 @@ static BLOCKS_OAK_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_BUTTON: LootTable = LootTable {
     pools: BLOCKS_OAK_BUTTON_POOLS,
@@ -11261,7 +11414,7 @@ static BLOCKS_OAK_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_DOOR: LootTable = LootTable {
     pools: BLOCKS_OAK_DOOR_POOLS,
@@ -11279,7 +11432,7 @@ static BLOCKS_OAK_FENCE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_FENCE: LootTable = LootTable {
     pools: BLOCKS_OAK_FENCE_POOLS,
@@ -11297,7 +11450,7 @@ static BLOCKS_OAK_FENCE_GATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_FENCE_GATE: LootTable = LootTable {
     pools: BLOCKS_OAK_FENCE_GATE_POOLS,
@@ -11315,7 +11468,7 @@ static BLOCKS_OAK_HANGING_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_HANGING_SIGN: LootTable = LootTable {
     pools: BLOCKS_OAK_HANGING_SIGN_POOLS,
@@ -11326,7 +11479,7 @@ static BLOCKS_OAK_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -11334,7 +11487,15 @@ static BLOCKS_OAK_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::TableBonus {
+                    chances: &[0.05f32, 0.0625f32, 0.083333336f32, 0.1f32],
+                },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -11342,8 +11503,10 @@ static BLOCKS_OAK_LEAVES_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:stick",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
-    condition: LootCondition::None,
+    max_count: 2i32,
+    condition: LootCondition::TableBonus {
+        chances: &[0.02f32, 0.022222223f32, 0.025f32, 0.033333335f32, 0.1f32],
+    },
     bonus_formula: None,
 }];
 static BLOCKS_OAK_LEAVES_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
@@ -11351,7 +11514,18 @@ static BLOCKS_OAK_LEAVES_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
     weight: 1i32,
     min_count: 1i32,
     max_count: 1i32,
-    condition: LootCondition::None,
+    condition: LootCondition::AllOf(&[
+        LootCondition::SurvivesExplosion,
+        LootCondition::TableBonus {
+            chances: &[
+                0.005f32,
+                0.0055555557f32,
+                0.00625f32,
+                0.008333334f32,
+                0.025f32,
+            ],
+        },
+    ]),
     bonus_formula: None,
 }];
 static BLOCKS_OAK_LEAVES_POOLS: &[LootPool] = &[
@@ -11367,14 +11541,14 @@ static BLOCKS_OAK_LEAVES_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouchOrShears,
     },
     LootPool {
         entries: BLOCKS_OAK_LEAVES_POOL2_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouchOrShears,
     },
 ];
 pub static BLOCKS_OAK_LEAVES: LootTable = LootTable {
@@ -11393,7 +11567,7 @@ static BLOCKS_OAK_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_LOG: LootTable = LootTable {
     pools: BLOCKS_OAK_LOG_POOLS,
@@ -11411,7 +11585,7 @@ static BLOCKS_OAK_PLANKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_PLANKS: LootTable = LootTable {
     pools: BLOCKS_OAK_PLANKS_POOLS,
@@ -11429,7 +11603,7 @@ static BLOCKS_OAK_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_OAK_PRESSURE_PLATE_POOLS,
@@ -11447,7 +11621,7 @@ static BLOCKS_OAK_SAPLING_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_SAPLING: LootTable = LootTable {
     pools: BLOCKS_OAK_SAPLING_POOLS,
@@ -11465,7 +11639,7 @@ static BLOCKS_OAK_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_SIGN: LootTable = LootTable {
     pools: BLOCKS_OAK_SIGN_POOLS,
@@ -11473,8 +11647,8 @@ pub static BLOCKS_OAK_SIGN: LootTable = LootTable {
 static BLOCKS_OAK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:oak_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -11501,7 +11675,7 @@ static BLOCKS_OAK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_OAK_STAIRS_POOLS,
@@ -11519,7 +11693,7 @@ static BLOCKS_OAK_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_OAK_TRAPDOOR_POOLS,
@@ -11537,7 +11711,7 @@ static BLOCKS_OAK_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OAK_WOOD: LootTable = LootTable {
     pools: BLOCKS_OAK_WOOD_POOLS,
@@ -11555,7 +11729,7 @@ static BLOCKS_OBSERVER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OBSERVER: LootTable = LootTable {
     pools: BLOCKS_OBSERVER_POOLS,
@@ -11573,7 +11747,7 @@ static BLOCKS_OBSIDIAN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OBSIDIAN: LootTable = LootTable {
     pools: BLOCKS_OBSIDIAN_POOLS,
@@ -11591,7 +11765,7 @@ static BLOCKS_OCHRE_FROGLIGHT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OCHRE_FROGLIGHT: LootTable = LootTable {
     pools: BLOCKS_OCHRE_FROGLIGHT_POOLS,
@@ -11609,7 +11783,7 @@ static BLOCKS_ORANGE_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ORANGE_BANNER: LootTable = LootTable {
     pools: BLOCKS_ORANGE_BANNER_POOLS,
@@ -11627,7 +11801,7 @@ static BLOCKS_ORANGE_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ORANGE_BED: LootTable = LootTable {
     pools: BLOCKS_ORANGE_BED_POOLS,
@@ -11635,8 +11809,8 @@ pub static BLOCKS_ORANGE_BED: LootTable = LootTable {
 static BLOCKS_ORANGE_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:orange_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -11681,7 +11855,7 @@ static BLOCKS_ORANGE_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ORANGE_CARPET: LootTable = LootTable {
     pools: BLOCKS_ORANGE_CARPET_POOLS,
@@ -11699,7 +11873,7 @@ static BLOCKS_ORANGE_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ORANGE_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_ORANGE_CONCRETE_POOLS,
@@ -11717,7 +11891,7 @@ static BLOCKS_ORANGE_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ORANGE_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_ORANGE_CONCRETE_POWDER_POOLS,
@@ -11735,7 +11909,7 @@ static BLOCKS_ORANGE_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ORANGE_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_ORANGE_GLAZED_TERRACOTTA_POOLS,
@@ -11771,7 +11945,7 @@ static BLOCKS_ORANGE_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_ORANGE_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_ORANGE_STAINED_GLASS_POOLS,
@@ -11789,7 +11963,7 @@ static BLOCKS_ORANGE_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_ORANGE_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_ORANGE_STAINED_GLASS_PANE_POOLS,
@@ -11807,7 +11981,7 @@ static BLOCKS_ORANGE_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ORANGE_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_ORANGE_TERRACOTTA_POOLS,
@@ -11825,7 +11999,7 @@ static BLOCKS_ORANGE_TULIP_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ORANGE_TULIP: LootTable = LootTable {
     pools: BLOCKS_ORANGE_TULIP_POOLS,
@@ -11843,7 +12017,7 @@ static BLOCKS_ORANGE_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ORANGE_WOOL: LootTable = LootTable {
     pools: BLOCKS_ORANGE_WOOL_POOLS,
@@ -11861,7 +12035,7 @@ static BLOCKS_OXEYE_DAISY_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OXEYE_DAISY: LootTable = LootTable {
     pools: BLOCKS_OXEYE_DAISY_POOLS,
@@ -11879,7 +12053,7 @@ static BLOCKS_OXIDIZED_CHISELED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OXIDIZED_CHISELED_COPPER: LootTable = LootTable {
     pools: BLOCKS_OXIDIZED_CHISELED_COPPER_POOLS,
@@ -11897,7 +12071,7 @@ static BLOCKS_OXIDIZED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OXIDIZED_COPPER: LootTable = LootTable {
     pools: BLOCKS_OXIDIZED_COPPER_POOLS,
@@ -11915,7 +12089,7 @@ static BLOCKS_OXIDIZED_COPPER_BULB_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OXIDIZED_COPPER_BULB: LootTable = LootTable {
     pools: BLOCKS_OXIDIZED_COPPER_BULB_POOLS,
@@ -11933,7 +12107,7 @@ static BLOCKS_OXIDIZED_COPPER_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OXIDIZED_COPPER_DOOR: LootTable = LootTable {
     pools: BLOCKS_OXIDIZED_COPPER_DOOR_POOLS,
@@ -11951,7 +12125,7 @@ static BLOCKS_OXIDIZED_COPPER_GRATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OXIDIZED_COPPER_GRATE: LootTable = LootTable {
     pools: BLOCKS_OXIDIZED_COPPER_GRATE_POOLS,
@@ -11969,7 +12143,7 @@ static BLOCKS_OXIDIZED_COPPER_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OXIDIZED_COPPER_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_OXIDIZED_COPPER_TRAPDOOR_POOLS,
@@ -11987,7 +12161,7 @@ static BLOCKS_OXIDIZED_CUT_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OXIDIZED_CUT_COPPER: LootTable = LootTable {
     pools: BLOCKS_OXIDIZED_CUT_COPPER_POOLS,
@@ -11995,8 +12169,8 @@ pub static BLOCKS_OXIDIZED_CUT_COPPER: LootTable = LootTable {
 static BLOCKS_OXIDIZED_CUT_COPPER_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:oxidized_cut_copper_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -12023,7 +12197,7 @@ static BLOCKS_OXIDIZED_CUT_COPPER_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_OXIDIZED_CUT_COPPER_STAIRS: LootTable = LootTable {
     pools: BLOCKS_OXIDIZED_CUT_COPPER_STAIRS_POOLS,
@@ -12041,7 +12215,7 @@ static BLOCKS_PACKED_ICE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_PACKED_ICE: LootTable = LootTable {
     pools: BLOCKS_PACKED_ICE_POOLS,
@@ -12059,7 +12233,7 @@ static BLOCKS_PACKED_MUD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PACKED_MUD: LootTable = LootTable {
     pools: BLOCKS_PACKED_MUD_POOLS,
@@ -12077,7 +12251,7 @@ static BLOCKS_PEARLESCENT_FROGLIGHT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PEARLESCENT_FROGLIGHT: LootTable = LootTable {
     pools: BLOCKS_PEARLESCENT_FROGLIGHT_POOLS,
@@ -12095,7 +12269,7 @@ static BLOCKS_PEONY_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PEONY: LootTable = LootTable {
     pools: BLOCKS_PEONY_POOLS,
@@ -12103,8 +12277,8 @@ pub static BLOCKS_PEONY: LootTable = LootTable {
 static BLOCKS_PETRIFIED_OAK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:petrified_oak_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -12149,7 +12323,7 @@ static BLOCKS_PINK_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PINK_BANNER: LootTable = LootTable {
     pools: BLOCKS_PINK_BANNER_POOLS,
@@ -12167,7 +12341,7 @@ static BLOCKS_PINK_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PINK_BED: LootTable = LootTable {
     pools: BLOCKS_PINK_BED_POOLS,
@@ -12175,8 +12349,8 @@ pub static BLOCKS_PINK_BED: LootTable = LootTable {
 static BLOCKS_PINK_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:pink_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -12221,7 +12395,7 @@ static BLOCKS_PINK_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PINK_CARPET: LootTable = LootTable {
     pools: BLOCKS_PINK_CARPET_POOLS,
@@ -12239,7 +12413,7 @@ static BLOCKS_PINK_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PINK_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_PINK_CONCRETE_POOLS,
@@ -12257,7 +12431,7 @@ static BLOCKS_PINK_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PINK_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_PINK_CONCRETE_POWDER_POOLS,
@@ -12275,7 +12449,7 @@ static BLOCKS_PINK_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PINK_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_PINK_GLAZED_TERRACOTTA_POOLS,
@@ -12329,7 +12503,7 @@ static BLOCKS_PINK_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_PINK_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_PINK_STAINED_GLASS_POOLS,
@@ -12347,7 +12521,7 @@ static BLOCKS_PINK_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_PINK_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_PINK_STAINED_GLASS_PANE_POOLS,
@@ -12365,7 +12539,7 @@ static BLOCKS_PINK_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PINK_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_PINK_TERRACOTTA_POOLS,
@@ -12383,7 +12557,7 @@ static BLOCKS_PINK_TULIP_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PINK_TULIP: LootTable = LootTable {
     pools: BLOCKS_PINK_TULIP_POOLS,
@@ -12401,7 +12575,7 @@ static BLOCKS_PINK_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PINK_WOOL: LootTable = LootTable {
     pools: BLOCKS_PINK_WOOL_POOLS,
@@ -12419,7 +12593,7 @@ static BLOCKS_PISTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PISTON: LootTable = LootTable {
     pools: BLOCKS_PISTON_POOLS,
@@ -12518,7 +12692,7 @@ static BLOCKS_PODZOL_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -12526,7 +12700,10 @@ static BLOCKS_PODZOL_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -12553,7 +12730,7 @@ static BLOCKS_POINTED_DRIPSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POINTED_DRIPSTONE: LootTable = LootTable {
     pools: BLOCKS_POINTED_DRIPSTONE_POOLS,
@@ -12571,7 +12748,7 @@ static BLOCKS_POLISHED_ANDESITE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_ANDESITE: LootTable = LootTable {
     pools: BLOCKS_POLISHED_ANDESITE_POOLS,
@@ -12579,8 +12756,8 @@ pub static BLOCKS_POLISHED_ANDESITE: LootTable = LootTable {
 static BLOCKS_POLISHED_ANDESITE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:polished_andesite_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -12607,7 +12784,7 @@ static BLOCKS_POLISHED_ANDESITE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_ANDESITE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_POLISHED_ANDESITE_STAIRS_POOLS,
@@ -12625,7 +12802,7 @@ static BLOCKS_POLISHED_BASALT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_BASALT: LootTable = LootTable {
     pools: BLOCKS_POLISHED_BASALT_POOLS,
@@ -12643,7 +12820,7 @@ static BLOCKS_POLISHED_BLACKSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_BLACKSTONE: LootTable = LootTable {
     pools: BLOCKS_POLISHED_BLACKSTONE_POOLS,
@@ -12651,8 +12828,8 @@ pub static BLOCKS_POLISHED_BLACKSTONE: LootTable = LootTable {
 static BLOCKS_POLISHED_BLACKSTONE_BRICK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:polished_blackstone_brick_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -12679,7 +12856,7 @@ static BLOCKS_POLISHED_BLACKSTONE_BRICK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_BLACKSTONE_BRICK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_POLISHED_BLACKSTONE_BRICK_STAIRS_POOLS,
@@ -12697,7 +12874,7 @@ static BLOCKS_POLISHED_BLACKSTONE_BRICK_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_BLACKSTONE_BRICK_WALL: LootTable = LootTable {
     pools: BLOCKS_POLISHED_BLACKSTONE_BRICK_WALL_POOLS,
@@ -12715,7 +12892,7 @@ static BLOCKS_POLISHED_BLACKSTONE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_BLACKSTONE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_POLISHED_BLACKSTONE_BRICKS_POOLS,
@@ -12733,7 +12910,7 @@ static BLOCKS_POLISHED_BLACKSTONE_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_BLACKSTONE_BUTTON: LootTable = LootTable {
     pools: BLOCKS_POLISHED_BLACKSTONE_BUTTON_POOLS,
@@ -12751,7 +12928,7 @@ static BLOCKS_POLISHED_BLACKSTONE_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_BLACKSTONE_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_POLISHED_BLACKSTONE_PRESSURE_PLATE_POOLS,
@@ -12759,8 +12936,8 @@ pub static BLOCKS_POLISHED_BLACKSTONE_PRESSURE_PLATE: LootTable = LootTable {
 static BLOCKS_POLISHED_BLACKSTONE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:polished_blackstone_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -12787,7 +12964,7 @@ static BLOCKS_POLISHED_BLACKSTONE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_BLACKSTONE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_POLISHED_BLACKSTONE_STAIRS_POOLS,
@@ -12805,7 +12982,7 @@ static BLOCKS_POLISHED_BLACKSTONE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_BLACKSTONE_WALL: LootTable = LootTable {
     pools: BLOCKS_POLISHED_BLACKSTONE_WALL_POOLS,
@@ -12823,7 +13000,7 @@ static BLOCKS_POLISHED_DEEPSLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_DEEPSLATE: LootTable = LootTable {
     pools: BLOCKS_POLISHED_DEEPSLATE_POOLS,
@@ -12831,8 +13008,8 @@ pub static BLOCKS_POLISHED_DEEPSLATE: LootTable = LootTable {
 static BLOCKS_POLISHED_DEEPSLATE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:polished_deepslate_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -12859,7 +13036,7 @@ static BLOCKS_POLISHED_DEEPSLATE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_DEEPSLATE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_POLISHED_DEEPSLATE_STAIRS_POOLS,
@@ -12877,7 +13054,7 @@ static BLOCKS_POLISHED_DEEPSLATE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_DEEPSLATE_WALL: LootTable = LootTable {
     pools: BLOCKS_POLISHED_DEEPSLATE_WALL_POOLS,
@@ -12895,7 +13072,7 @@ static BLOCKS_POLISHED_DIORITE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_DIORITE: LootTable = LootTable {
     pools: BLOCKS_POLISHED_DIORITE_POOLS,
@@ -12903,8 +13080,8 @@ pub static BLOCKS_POLISHED_DIORITE: LootTable = LootTable {
 static BLOCKS_POLISHED_DIORITE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:polished_diorite_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -12931,7 +13108,7 @@ static BLOCKS_POLISHED_DIORITE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_DIORITE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_POLISHED_DIORITE_STAIRS_POOLS,
@@ -12949,7 +13126,7 @@ static BLOCKS_POLISHED_GRANITE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_GRANITE: LootTable = LootTable {
     pools: BLOCKS_POLISHED_GRANITE_POOLS,
@@ -12957,8 +13134,8 @@ pub static BLOCKS_POLISHED_GRANITE: LootTable = LootTable {
 static BLOCKS_POLISHED_GRANITE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:polished_granite_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -12985,7 +13162,7 @@ static BLOCKS_POLISHED_GRANITE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_GRANITE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_POLISHED_GRANITE_STAIRS_POOLS,
@@ -13003,7 +13180,7 @@ static BLOCKS_POLISHED_TUFF_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_TUFF: LootTable = LootTable {
     pools: BLOCKS_POLISHED_TUFF_POOLS,
@@ -13011,8 +13188,8 @@ pub static BLOCKS_POLISHED_TUFF: LootTable = LootTable {
 static BLOCKS_POLISHED_TUFF_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:polished_tuff_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -13039,7 +13216,7 @@ static BLOCKS_POLISHED_TUFF_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_TUFF_STAIRS: LootTable = LootTable {
     pools: BLOCKS_POLISHED_TUFF_STAIRS_POOLS,
@@ -13057,7 +13234,7 @@ static BLOCKS_POLISHED_TUFF_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POLISHED_TUFF_WALL: LootTable = LootTable {
     pools: BLOCKS_POLISHED_TUFF_WALL_POOLS,
@@ -13075,7 +13252,7 @@ static BLOCKS_POPPY_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POPPY: LootTable = LootTable {
     pools: BLOCKS_POPPY_POOLS,
@@ -13094,14 +13271,17 @@ static BLOCKS_POTATOES_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     min_count: 1i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::BinomialWithBonusCount {
+        extra: 3i32,
+        probability: 0.5714286f32,
+    }),
 }];
 static BLOCKS_POTATOES_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:poisonous_potato",
     weight: 1i32,
     min_count: 1i32,
     max_count: 1i32,
-    condition: LootCondition::None,
+    condition: LootCondition::RandomChance { chance: 0.02f32 },
     bonus_formula: None,
 }];
 static BLOCKS_POTATOES_POOLS: &[LootPool] = &[
@@ -13152,14 +13332,14 @@ static BLOCKS_POTTED_ACACIA_SAPLING_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_ACACIA_SAPLING_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_ACACIA_SAPLING: LootTable = LootTable {
@@ -13187,14 +13367,14 @@ static BLOCKS_POTTED_ALLIUM_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_ALLIUM_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_ALLIUM: LootTable = LootTable {
@@ -13222,14 +13402,14 @@ static BLOCKS_POTTED_AZALEA_BUSH_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_AZALEA_BUSH_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_AZALEA_BUSH: LootTable = LootTable {
@@ -13257,14 +13437,14 @@ static BLOCKS_POTTED_AZURE_BLUET_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_AZURE_BLUET_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_AZURE_BLUET: LootTable = LootTable {
@@ -13292,14 +13472,14 @@ static BLOCKS_POTTED_BAMBOO_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_BAMBOO_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_BAMBOO: LootTable = LootTable {
@@ -13327,14 +13507,14 @@ static BLOCKS_POTTED_BIRCH_SAPLING_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_BIRCH_SAPLING_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_BIRCH_SAPLING: LootTable = LootTable {
@@ -13362,14 +13542,14 @@ static BLOCKS_POTTED_BLUE_ORCHID_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_BLUE_ORCHID_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_BLUE_ORCHID: LootTable = LootTable {
@@ -13397,14 +13577,14 @@ static BLOCKS_POTTED_BROWN_MUSHROOM_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_BROWN_MUSHROOM_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_BROWN_MUSHROOM: LootTable = LootTable {
@@ -13432,14 +13612,14 @@ static BLOCKS_POTTED_CACTUS_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_CACTUS_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_CACTUS: LootTable = LootTable {
@@ -13467,14 +13647,14 @@ static BLOCKS_POTTED_CHERRY_SAPLING_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_CHERRY_SAPLING_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_CHERRY_SAPLING: LootTable = LootTable {
@@ -13502,14 +13682,14 @@ static BLOCKS_POTTED_CORNFLOWER_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_CORNFLOWER_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_CORNFLOWER: LootTable = LootTable {
@@ -13537,14 +13717,14 @@ static BLOCKS_POTTED_CRIMSON_FUNGUS_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_CRIMSON_FUNGUS_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_CRIMSON_FUNGUS: LootTable = LootTable {
@@ -13572,14 +13752,14 @@ static BLOCKS_POTTED_CRIMSON_ROOTS_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_CRIMSON_ROOTS_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_CRIMSON_ROOTS: LootTable = LootTable {
@@ -13607,14 +13787,14 @@ static BLOCKS_POTTED_DANDELION_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_DANDELION_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_DANDELION: LootTable = LootTable {
@@ -13642,14 +13822,14 @@ static BLOCKS_POTTED_DARK_OAK_SAPLING_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_DARK_OAK_SAPLING_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_DARK_OAK_SAPLING: LootTable = LootTable {
@@ -13677,14 +13857,14 @@ static BLOCKS_POTTED_DEAD_BUSH_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_DEAD_BUSH_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_DEAD_BUSH: LootTable = LootTable {
@@ -13712,14 +13892,14 @@ static BLOCKS_POTTED_FERN_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_FERN_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_FERN: LootTable = LootTable {
@@ -13747,14 +13927,14 @@ static BLOCKS_POTTED_FLOWERING_AZALEA_BUSH_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_FLOWERING_AZALEA_BUSH_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_FLOWERING_AZALEA_BUSH: LootTable = LootTable {
@@ -13782,14 +13962,14 @@ static BLOCKS_POTTED_JUNGLE_SAPLING_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_JUNGLE_SAPLING_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_JUNGLE_SAPLING: LootTable = LootTable {
@@ -13817,14 +13997,14 @@ static BLOCKS_POTTED_LILY_OF_THE_VALLEY_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_LILY_OF_THE_VALLEY_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_LILY_OF_THE_VALLEY: LootTable = LootTable {
@@ -13852,14 +14032,14 @@ static BLOCKS_POTTED_MANGROVE_PROPAGULE_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_MANGROVE_PROPAGULE_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_MANGROVE_PROPAGULE: LootTable = LootTable {
@@ -13887,14 +14067,14 @@ static BLOCKS_POTTED_OAK_SAPLING_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_OAK_SAPLING_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_OAK_SAPLING: LootTable = LootTable {
@@ -13922,14 +14102,14 @@ static BLOCKS_POTTED_ORANGE_TULIP_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_ORANGE_TULIP_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_ORANGE_TULIP: LootTable = LootTable {
@@ -13957,14 +14137,14 @@ static BLOCKS_POTTED_OXEYE_DAISY_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_OXEYE_DAISY_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_OXEYE_DAISY: LootTable = LootTable {
@@ -13992,14 +14172,14 @@ static BLOCKS_POTTED_PINK_TULIP_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_PINK_TULIP_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_PINK_TULIP: LootTable = LootTable {
@@ -14027,14 +14207,14 @@ static BLOCKS_POTTED_POPPY_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_POPPY_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_POPPY: LootTable = LootTable {
@@ -14062,14 +14242,14 @@ static BLOCKS_POTTED_RED_MUSHROOM_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_RED_MUSHROOM_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_RED_MUSHROOM: LootTable = LootTable {
@@ -14097,14 +14277,14 @@ static BLOCKS_POTTED_RED_TULIP_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_RED_TULIP_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_RED_TULIP: LootTable = LootTable {
@@ -14132,14 +14312,14 @@ static BLOCKS_POTTED_SPRUCE_SAPLING_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_SPRUCE_SAPLING_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_SPRUCE_SAPLING: LootTable = LootTable {
@@ -14167,14 +14347,14 @@ static BLOCKS_POTTED_TORCHFLOWER_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_TORCHFLOWER_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_TORCHFLOWER: LootTable = LootTable {
@@ -14202,14 +14382,14 @@ static BLOCKS_POTTED_WARPED_FUNGUS_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_WARPED_FUNGUS_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_WARPED_FUNGUS: LootTable = LootTable {
@@ -14237,14 +14417,14 @@ static BLOCKS_POTTED_WARPED_ROOTS_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_WARPED_ROOTS_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_WARPED_ROOTS: LootTable = LootTable {
@@ -14272,14 +14452,14 @@ static BLOCKS_POTTED_WHITE_TULIP_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_WHITE_TULIP_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_WHITE_TULIP: LootTable = LootTable {
@@ -14307,14 +14487,14 @@ static BLOCKS_POTTED_WITHER_ROSE_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
     LootPool {
         entries: BLOCKS_POTTED_WITHER_ROSE_POOL1_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SurvivesExplosion,
     },
 ];
 pub static BLOCKS_POTTED_WITHER_ROSE: LootTable = LootTable {
@@ -14337,7 +14517,7 @@ static BLOCKS_POWDER_SNOW_CAULDRON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POWDER_SNOW_CAULDRON: LootTable = LootTable {
     pools: BLOCKS_POWDER_SNOW_CAULDRON_POOLS,
@@ -14355,7 +14535,7 @@ static BLOCKS_POWERED_RAIL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_POWERED_RAIL: LootTable = LootTable {
     pools: BLOCKS_POWERED_RAIL_POOLS,
@@ -14373,7 +14553,7 @@ static BLOCKS_PRISMARINE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PRISMARINE: LootTable = LootTable {
     pools: BLOCKS_PRISMARINE_POOLS,
@@ -14381,8 +14561,8 @@ pub static BLOCKS_PRISMARINE: LootTable = LootTable {
 static BLOCKS_PRISMARINE_BRICK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:prismarine_brick_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -14409,7 +14589,7 @@ static BLOCKS_PRISMARINE_BRICK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PRISMARINE_BRICK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_PRISMARINE_BRICK_STAIRS_POOLS,
@@ -14427,7 +14607,7 @@ static BLOCKS_PRISMARINE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PRISMARINE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_PRISMARINE_BRICKS_POOLS,
@@ -14435,8 +14615,8 @@ pub static BLOCKS_PRISMARINE_BRICKS: LootTable = LootTable {
 static BLOCKS_PRISMARINE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:prismarine_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -14463,7 +14643,7 @@ static BLOCKS_PRISMARINE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PRISMARINE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_PRISMARINE_STAIRS_POOLS,
@@ -14481,7 +14661,7 @@ static BLOCKS_PRISMARINE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PRISMARINE_WALL: LootTable = LootTable {
     pools: BLOCKS_PRISMARINE_WALL_POOLS,
@@ -14499,7 +14679,7 @@ static BLOCKS_PUMPKIN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PUMPKIN: LootTable = LootTable {
     pools: BLOCKS_PUMPKIN_POOLS,
@@ -14507,8 +14687,8 @@ pub static BLOCKS_PUMPKIN: LootTable = LootTable {
 static BLOCKS_PUMPKIN_STEM_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:pumpkin_seeds",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 0i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -14535,7 +14715,7 @@ static BLOCKS_PURPLE_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PURPLE_BANNER: LootTable = LootTable {
     pools: BLOCKS_PURPLE_BANNER_POOLS,
@@ -14553,7 +14733,7 @@ static BLOCKS_PURPLE_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PURPLE_BED: LootTable = LootTable {
     pools: BLOCKS_PURPLE_BED_POOLS,
@@ -14561,8 +14741,8 @@ pub static BLOCKS_PURPLE_BED: LootTable = LootTable {
 static BLOCKS_PURPLE_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:purple_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -14607,7 +14787,7 @@ static BLOCKS_PURPLE_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PURPLE_CARPET: LootTable = LootTable {
     pools: BLOCKS_PURPLE_CARPET_POOLS,
@@ -14625,7 +14805,7 @@ static BLOCKS_PURPLE_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PURPLE_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_PURPLE_CONCRETE_POOLS,
@@ -14643,7 +14823,7 @@ static BLOCKS_PURPLE_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PURPLE_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_PURPLE_CONCRETE_POWDER_POOLS,
@@ -14661,7 +14841,7 @@ static BLOCKS_PURPLE_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PURPLE_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_PURPLE_GLAZED_TERRACOTTA_POOLS,
@@ -14697,7 +14877,7 @@ static BLOCKS_PURPLE_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_PURPLE_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_PURPLE_STAINED_GLASS_POOLS,
@@ -14715,7 +14895,7 @@ static BLOCKS_PURPLE_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_PURPLE_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_PURPLE_STAINED_GLASS_PANE_POOLS,
@@ -14733,7 +14913,7 @@ static BLOCKS_PURPLE_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PURPLE_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_PURPLE_TERRACOTTA_POOLS,
@@ -14751,7 +14931,7 @@ static BLOCKS_PURPLE_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PURPLE_WOOL: LootTable = LootTable {
     pools: BLOCKS_PURPLE_WOOL_POOLS,
@@ -14769,7 +14949,7 @@ static BLOCKS_PURPUR_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PURPUR_BLOCK: LootTable = LootTable {
     pools: BLOCKS_PURPUR_BLOCK_POOLS,
@@ -14787,7 +14967,7 @@ static BLOCKS_PURPUR_PILLAR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PURPUR_PILLAR: LootTable = LootTable {
     pools: BLOCKS_PURPUR_PILLAR_POOLS,
@@ -14795,8 +14975,8 @@ pub static BLOCKS_PURPUR_PILLAR: LootTable = LootTable {
 static BLOCKS_PURPUR_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:purpur_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -14823,7 +15003,7 @@ static BLOCKS_PURPUR_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_PURPUR_STAIRS: LootTable = LootTable {
     pools: BLOCKS_PURPUR_STAIRS_POOLS,
@@ -14841,7 +15021,7 @@ static BLOCKS_QUARTZ_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_QUARTZ_BLOCK: LootTable = LootTable {
     pools: BLOCKS_QUARTZ_BLOCK_POOLS,
@@ -14859,7 +15039,7 @@ static BLOCKS_QUARTZ_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_QUARTZ_BRICKS: LootTable = LootTable {
     pools: BLOCKS_QUARTZ_BRICKS_POOLS,
@@ -14877,7 +15057,7 @@ static BLOCKS_QUARTZ_PILLAR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_QUARTZ_PILLAR: LootTable = LootTable {
     pools: BLOCKS_QUARTZ_PILLAR_POOLS,
@@ -14885,8 +15065,8 @@ pub static BLOCKS_QUARTZ_PILLAR: LootTable = LootTable {
 static BLOCKS_QUARTZ_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:quartz_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -14913,7 +15093,7 @@ static BLOCKS_QUARTZ_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_QUARTZ_STAIRS: LootTable = LootTable {
     pools: BLOCKS_QUARTZ_STAIRS_POOLS,
@@ -14931,7 +15111,7 @@ static BLOCKS_RAIL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RAIL: LootTable = LootTable {
     pools: BLOCKS_RAIL_POOLS,
@@ -14949,7 +15129,7 @@ static BLOCKS_RAW_COPPER_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RAW_COPPER_BLOCK: LootTable = LootTable {
     pools: BLOCKS_RAW_COPPER_BLOCK_POOLS,
@@ -14967,7 +15147,7 @@ static BLOCKS_RAW_GOLD_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RAW_GOLD_BLOCK: LootTable = LootTable {
     pools: BLOCKS_RAW_GOLD_BLOCK_POOLS,
@@ -14985,7 +15165,7 @@ static BLOCKS_RAW_IRON_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RAW_IRON_BLOCK: LootTable = LootTable {
     pools: BLOCKS_RAW_IRON_BLOCK_POOLS,
@@ -15003,7 +15183,7 @@ static BLOCKS_RED_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_BANNER: LootTable = LootTable {
     pools: BLOCKS_RED_BANNER_POOLS,
@@ -15021,7 +15201,7 @@ static BLOCKS_RED_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_BED: LootTable = LootTable {
     pools: BLOCKS_RED_BED_POOLS,
@@ -15029,8 +15209,8 @@ pub static BLOCKS_RED_BED: LootTable = LootTable {
 static BLOCKS_RED_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:red_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -15075,7 +15255,7 @@ static BLOCKS_RED_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_CARPET: LootTable = LootTable {
     pools: BLOCKS_RED_CARPET_POOLS,
@@ -15093,7 +15273,7 @@ static BLOCKS_RED_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_RED_CONCRETE_POOLS,
@@ -15111,7 +15291,7 @@ static BLOCKS_RED_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_RED_CONCRETE_POWDER_POOLS,
@@ -15129,7 +15309,7 @@ static BLOCKS_RED_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_RED_GLAZED_TERRACOTTA_POOLS,
@@ -15147,7 +15327,7 @@ static BLOCKS_RED_MUSHROOM_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_MUSHROOM: LootTable = LootTable {
     pools: BLOCKS_RED_MUSHROOM_POOLS,
@@ -15158,15 +15338,15 @@ static BLOCKS_RED_MUSHROOM_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:red_mushroom",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: -6i32,
+        max_count: 2i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
 ];
@@ -15183,8 +15363,8 @@ pub static BLOCKS_RED_MUSHROOM_BLOCK: LootTable = LootTable {
 static BLOCKS_RED_NETHER_BRICK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:red_nether_brick_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -15211,7 +15391,7 @@ static BLOCKS_RED_NETHER_BRICK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_NETHER_BRICK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_RED_NETHER_BRICK_STAIRS_POOLS,
@@ -15229,7 +15409,7 @@ static BLOCKS_RED_NETHER_BRICK_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_NETHER_BRICK_WALL: LootTable = LootTable {
     pools: BLOCKS_RED_NETHER_BRICK_WALL_POOLS,
@@ -15247,7 +15427,7 @@ static BLOCKS_RED_NETHER_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_NETHER_BRICKS: LootTable = LootTable {
     pools: BLOCKS_RED_NETHER_BRICKS_POOLS,
@@ -15265,7 +15445,7 @@ static BLOCKS_RED_SAND_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_SAND: LootTable = LootTable {
     pools: BLOCKS_RED_SAND_POOLS,
@@ -15283,7 +15463,7 @@ static BLOCKS_RED_SANDSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_SANDSTONE: LootTable = LootTable {
     pools: BLOCKS_RED_SANDSTONE_POOLS,
@@ -15291,8 +15471,8 @@ pub static BLOCKS_RED_SANDSTONE: LootTable = LootTable {
 static BLOCKS_RED_SANDSTONE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:red_sandstone_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -15319,7 +15499,7 @@ static BLOCKS_RED_SANDSTONE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_SANDSTONE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_RED_SANDSTONE_STAIRS_POOLS,
@@ -15337,7 +15517,7 @@ static BLOCKS_RED_SANDSTONE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_SANDSTONE_WALL: LootTable = LootTable {
     pools: BLOCKS_RED_SANDSTONE_WALL_POOLS,
@@ -15373,7 +15553,7 @@ static BLOCKS_RED_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_RED_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_RED_STAINED_GLASS_POOLS,
@@ -15391,7 +15571,7 @@ static BLOCKS_RED_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_RED_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_RED_STAINED_GLASS_PANE_POOLS,
@@ -15409,7 +15589,7 @@ static BLOCKS_RED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_RED_TERRACOTTA_POOLS,
@@ -15427,7 +15607,7 @@ static BLOCKS_RED_TULIP_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_TULIP: LootTable = LootTable {
     pools: BLOCKS_RED_TULIP_POOLS,
@@ -15445,7 +15625,7 @@ static BLOCKS_RED_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RED_WOOL: LootTable = LootTable {
     pools: BLOCKS_RED_WOOL_POOLS,
@@ -15463,7 +15643,7 @@ static BLOCKS_REDSTONE_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_REDSTONE_BLOCK: LootTable = LootTable {
     pools: BLOCKS_REDSTONE_BLOCK_POOLS,
@@ -15481,7 +15661,7 @@ static BLOCKS_REDSTONE_LAMP_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_REDSTONE_LAMP: LootTable = LootTable {
     pools: BLOCKS_REDSTONE_LAMP_POOLS,
@@ -15492,16 +15672,16 @@ static BLOCKS_REDSTONE_ORE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:redstone",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        min_count: 4i32,
+        max_count: 5i32,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
 ];
 static BLOCKS_REDSTONE_ORE_POOLS: &[LootPool] = &[LootPool {
@@ -15527,7 +15707,7 @@ static BLOCKS_REDSTONE_TORCH_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_REDSTONE_TORCH: LootTable = LootTable {
     pools: BLOCKS_REDSTONE_TORCH_POOLS,
@@ -15545,7 +15725,7 @@ static BLOCKS_REDSTONE_WIRE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_REDSTONE_WIRE: LootTable = LootTable {
     pools: BLOCKS_REDSTONE_WIRE_POOLS,
@@ -15567,7 +15747,7 @@ static BLOCKS_REPEATER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_REPEATER: LootTable = LootTable {
     pools: BLOCKS_REPEATER_POOLS,
@@ -15585,7 +15765,7 @@ static BLOCKS_RESPAWN_ANCHOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_RESPAWN_ANCHOR: LootTable = LootTable {
     pools: BLOCKS_RESPAWN_ANCHOR_POOLS,
@@ -15603,7 +15783,7 @@ static BLOCKS_ROOTED_DIRT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ROOTED_DIRT: LootTable = LootTable {
     pools: BLOCKS_ROOTED_DIRT_POOLS,
@@ -15621,7 +15801,7 @@ static BLOCKS_ROSE_BUSH_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_ROSE_BUSH: LootTable = LootTable {
     pools: BLOCKS_ROSE_BUSH_POOLS,
@@ -15639,7 +15819,7 @@ static BLOCKS_SAND_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SAND: LootTable = LootTable {
     pools: BLOCKS_SAND_POOLS,
@@ -15657,7 +15837,7 @@ static BLOCKS_SANDSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SANDSTONE: LootTable = LootTable {
     pools: BLOCKS_SANDSTONE_POOLS,
@@ -15665,8 +15845,8 @@ pub static BLOCKS_SANDSTONE: LootTable = LootTable {
 static BLOCKS_SANDSTONE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:sandstone_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -15693,7 +15873,7 @@ static BLOCKS_SANDSTONE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SANDSTONE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_SANDSTONE_STAIRS_POOLS,
@@ -15711,7 +15891,7 @@ static BLOCKS_SANDSTONE_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SANDSTONE_WALL: LootTable = LootTable {
     pools: BLOCKS_SANDSTONE_WALL_POOLS,
@@ -15729,7 +15909,7 @@ static BLOCKS_SCAFFOLDING_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SCAFFOLDING: LootTable = LootTable {
     pools: BLOCKS_SCAFFOLDING_POOLS,
@@ -15747,7 +15927,7 @@ static BLOCKS_SCULK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_SCULK: LootTable = LootTable {
     pools: BLOCKS_SCULK_POOLS,
@@ -15765,7 +15945,7 @@ static BLOCKS_SCULK_CATALYST_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_SCULK_CATALYST: LootTable = LootTable {
     pools: BLOCKS_SCULK_CATALYST_POOLS,
@@ -15783,7 +15963,7 @@ static BLOCKS_SCULK_SENSOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_SCULK_SENSOR: LootTable = LootTable {
     pools: BLOCKS_SCULK_SENSOR_POOLS,
@@ -15801,7 +15981,7 @@ static BLOCKS_SCULK_SHRIEKER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_SCULK_SHRIEKER: LootTable = LootTable {
     pools: BLOCKS_SCULK_SHRIEKER_POOLS,
@@ -15811,7 +15991,7 @@ static BLOCKS_SCULK_VEIN_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     weight: 1i32,
     min_count: 1i32,
     max_count: 1i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
     bonus_formula: None,
 }];
 static BLOCKS_SCULK_VEIN_POOLS: &[LootPool] = &[LootPool {
@@ -15830,16 +16010,16 @@ static BLOCKS_SEA_LANTERN_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:prismarine_crystals",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        min_count: 2i32,
+        max_count: 3i32,
+        condition: LootCondition::NoSilkTouch,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
 ];
 static BLOCKS_SEA_LANTERN_POOLS: &[LootPool] = &[LootPool {
@@ -15855,8 +16035,8 @@ pub static BLOCKS_SEA_LANTERN: LootTable = LootTable {
 static BLOCKS_SEA_PICKLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:sea_pickle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -15883,7 +16063,7 @@ static BLOCKS_SEAGRASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::Shears,
 }];
 pub static BLOCKS_SEAGRASS: LootTable = LootTable {
     pools: BLOCKS_SEAGRASS_POOLS,
@@ -15894,7 +16074,7 @@ static BLOCKS_SHORT_GRASS_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::Shears,
         bonus_formula: None,
     },
     LootEntry {
@@ -15902,8 +16082,11 @@ static BLOCKS_SHORT_GRASS_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
-        bonus_formula: None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::RandomChance { chance: 0.125f32 },
+        ]),
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(2i32)),
     },
 ];
 static BLOCKS_SHORT_GRASS_POOLS: &[LootPool] = &[LootPool {
@@ -15929,7 +16112,7 @@ static BLOCKS_SHROOMLIGHT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SHROOMLIGHT: LootTable = LootTable {
     pools: BLOCKS_SHROOMLIGHT_POOLS,
@@ -15983,7 +16166,7 @@ static BLOCKS_SLIME_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SLIME_BLOCK: LootTable = LootTable {
     pools: BLOCKS_SLIME_BLOCK_POOLS,
@@ -16001,7 +16184,7 @@ static BLOCKS_SMALL_AMETHYST_BUD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_SMALL_AMETHYST_BUD: LootTable = LootTable {
     pools: BLOCKS_SMALL_AMETHYST_BUD_POOLS,
@@ -16019,7 +16202,7 @@ static BLOCKS_SMALL_DRIPLEAF_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::Shears,
 }];
 pub static BLOCKS_SMALL_DRIPLEAF: LootTable = LootTable {
     pools: BLOCKS_SMALL_DRIPLEAF_POOLS,
@@ -16037,7 +16220,7 @@ static BLOCKS_SMITHING_TABLE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SMITHING_TABLE: LootTable = LootTable {
     pools: BLOCKS_SMITHING_TABLE_POOLS,
@@ -16055,7 +16238,7 @@ static BLOCKS_SMOKER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SMOKER: LootTable = LootTable {
     pools: BLOCKS_SMOKER_POOLS,
@@ -16073,7 +16256,7 @@ static BLOCKS_SMOOTH_BASALT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SMOOTH_BASALT: LootTable = LootTable {
     pools: BLOCKS_SMOOTH_BASALT_POOLS,
@@ -16091,7 +16274,7 @@ static BLOCKS_SMOOTH_QUARTZ_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SMOOTH_QUARTZ: LootTable = LootTable {
     pools: BLOCKS_SMOOTH_QUARTZ_POOLS,
@@ -16099,8 +16282,8 @@ pub static BLOCKS_SMOOTH_QUARTZ: LootTable = LootTable {
 static BLOCKS_SMOOTH_QUARTZ_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:smooth_quartz_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -16127,7 +16310,7 @@ static BLOCKS_SMOOTH_QUARTZ_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SMOOTH_QUARTZ_STAIRS: LootTable = LootTable {
     pools: BLOCKS_SMOOTH_QUARTZ_STAIRS_POOLS,
@@ -16145,7 +16328,7 @@ static BLOCKS_SMOOTH_RED_SANDSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SMOOTH_RED_SANDSTONE: LootTable = LootTable {
     pools: BLOCKS_SMOOTH_RED_SANDSTONE_POOLS,
@@ -16153,8 +16336,8 @@ pub static BLOCKS_SMOOTH_RED_SANDSTONE: LootTable = LootTable {
 static BLOCKS_SMOOTH_RED_SANDSTONE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:smooth_red_sandstone_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -16181,7 +16364,7 @@ static BLOCKS_SMOOTH_RED_SANDSTONE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SMOOTH_RED_SANDSTONE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_SMOOTH_RED_SANDSTONE_STAIRS_POOLS,
@@ -16199,7 +16382,7 @@ static BLOCKS_SMOOTH_SANDSTONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SMOOTH_SANDSTONE: LootTable = LootTable {
     pools: BLOCKS_SMOOTH_SANDSTONE_POOLS,
@@ -16207,8 +16390,8 @@ pub static BLOCKS_SMOOTH_SANDSTONE: LootTable = LootTable {
 static BLOCKS_SMOOTH_SANDSTONE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:smooth_sandstone_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -16235,7 +16418,7 @@ static BLOCKS_SMOOTH_SANDSTONE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SMOOTH_SANDSTONE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_SMOOTH_SANDSTONE_STAIRS_POOLS,
@@ -16253,7 +16436,7 @@ static BLOCKS_SMOOTH_STONE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SMOOTH_STONE: LootTable = LootTable {
     pools: BLOCKS_SMOOTH_STONE_POOLS,
@@ -16261,8 +16444,8 @@ pub static BLOCKS_SMOOTH_STONE: LootTable = LootTable {
 static BLOCKS_SMOOTH_STONE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:smooth_stone_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -16289,7 +16472,7 @@ static BLOCKS_SNIFFER_EGG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SNIFFER_EGG: LootTable = LootTable {
     pools: BLOCKS_SNIFFER_EGG_POOLS,
@@ -16300,63 +16483,63 @@ static BLOCKS_SNOW_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snowball",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 2i32,
+        max_count: 2i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snowball",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 3i32,
+        max_count: 3i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snowball",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 4i32,
+        max_count: 4i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snowball",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 5i32,
+        max_count: 5i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snowball",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 6i32,
+        max_count: 6i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snowball",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 7i32,
+        max_count: 7i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snowball",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 8i32,
+        max_count: 8i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -16370,48 +16553,48 @@ static BLOCKS_SNOW_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:snow",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snow",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snow",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snow",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 5i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snow",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 6i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snow",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 7i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -16440,15 +16623,15 @@ static BLOCKS_SNOW_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snowball",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 4i32,
+        max_count: 4i32,
+        condition: LootCondition::NoSilkTouch,
         bonus_formula: None,
     },
 ];
@@ -16468,7 +16651,7 @@ static BLOCKS_SOUL_CAMPFIRE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -16476,7 +16659,10 @@ static BLOCKS_SOUL_CAMPFIRE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -16507,7 +16693,7 @@ static BLOCKS_SOUL_LANTERN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SOUL_LANTERN: LootTable = LootTable {
     pools: BLOCKS_SOUL_LANTERN_POOLS,
@@ -16525,7 +16711,7 @@ static BLOCKS_SOUL_SAND_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SOUL_SAND: LootTable = LootTable {
     pools: BLOCKS_SOUL_SAND_POOLS,
@@ -16543,7 +16729,7 @@ static BLOCKS_SOUL_SOIL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SOUL_SOIL: LootTable = LootTable {
     pools: BLOCKS_SOUL_SOIL_POOLS,
@@ -16561,7 +16747,7 @@ static BLOCKS_SOUL_TORCH_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SOUL_TORCH: LootTable = LootTable {
     pools: BLOCKS_SOUL_TORCH_POOLS,
@@ -16583,7 +16769,7 @@ static BLOCKS_SPONGE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPONGE: LootTable = LootTable {
     pools: BLOCKS_SPONGE_POOLS,
@@ -16601,7 +16787,7 @@ static BLOCKS_SPORE_BLOSSOM_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPORE_BLOSSOM: LootTable = LootTable {
     pools: BLOCKS_SPORE_BLOSSOM_POOLS,
@@ -16619,7 +16805,7 @@ static BLOCKS_SPRUCE_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_BUTTON: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_BUTTON_POOLS,
@@ -16637,7 +16823,7 @@ static BLOCKS_SPRUCE_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_DOOR: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_DOOR_POOLS,
@@ -16655,7 +16841,7 @@ static BLOCKS_SPRUCE_FENCE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_FENCE: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_FENCE_POOLS,
@@ -16673,7 +16859,7 @@ static BLOCKS_SPRUCE_FENCE_GATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_FENCE_GATE: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_FENCE_GATE_POOLS,
@@ -16691,7 +16877,7 @@ static BLOCKS_SPRUCE_HANGING_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_HANGING_SIGN: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_HANGING_SIGN_POOLS,
@@ -16702,7 +16888,7 @@ static BLOCKS_SPRUCE_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -16710,7 +16896,15 @@ static BLOCKS_SPRUCE_LEAVES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::TableBonus {
+                    chances: &[0.05f32, 0.0625f32, 0.083333336f32, 0.1f32],
+                },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -16718,8 +16912,10 @@ static BLOCKS_SPRUCE_LEAVES_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:stick",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
-    condition: LootCondition::None,
+    max_count: 2i32,
+    condition: LootCondition::TableBonus {
+        chances: &[0.02f32, 0.022222223f32, 0.025f32, 0.033333335f32, 0.1f32],
+    },
     bonus_formula: None,
 }];
 static BLOCKS_SPRUCE_LEAVES_POOLS: &[LootPool] = &[
@@ -16735,7 +16931,7 @@ static BLOCKS_SPRUCE_LEAVES_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::NoSilkTouchOrShears,
     },
 ];
 pub static BLOCKS_SPRUCE_LEAVES: LootTable = LootTable {
@@ -16754,7 +16950,7 @@ static BLOCKS_SPRUCE_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_LOG: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_LOG_POOLS,
@@ -16772,7 +16968,7 @@ static BLOCKS_SPRUCE_PLANKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_PLANKS: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_PLANKS_POOLS,
@@ -16790,7 +16986,7 @@ static BLOCKS_SPRUCE_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_PRESSURE_PLATE_POOLS,
@@ -16808,7 +17004,7 @@ static BLOCKS_SPRUCE_SAPLING_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_SAPLING: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_SAPLING_POOLS,
@@ -16826,7 +17022,7 @@ static BLOCKS_SPRUCE_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_SIGN: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_SIGN_POOLS,
@@ -16834,8 +17030,8 @@ pub static BLOCKS_SPRUCE_SIGN: LootTable = LootTable {
 static BLOCKS_SPRUCE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:spruce_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -16862,7 +17058,7 @@ static BLOCKS_SPRUCE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_STAIRS_POOLS,
@@ -16880,7 +17076,7 @@ static BLOCKS_SPRUCE_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_TRAPDOOR_POOLS,
@@ -16898,7 +17094,7 @@ static BLOCKS_SPRUCE_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SPRUCE_WOOD: LootTable = LootTable {
     pools: BLOCKS_SPRUCE_WOOD_POOLS,
@@ -16916,7 +17112,7 @@ static BLOCKS_STICKY_PISTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STICKY_PISTON: LootTable = LootTable {
     pools: BLOCKS_STICKY_PISTON_POOLS,
@@ -16927,7 +17123,7 @@ static BLOCKS_STONE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -16935,7 +17131,10 @@ static BLOCKS_STONE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -16952,8 +17151,8 @@ pub static BLOCKS_STONE: LootTable = LootTable {
 static BLOCKS_STONE_BRICK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:stone_brick_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -16980,7 +17179,7 @@ static BLOCKS_STONE_BRICK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STONE_BRICK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_STONE_BRICK_STAIRS_POOLS,
@@ -16998,7 +17197,7 @@ static BLOCKS_STONE_BRICK_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STONE_BRICK_WALL: LootTable = LootTable {
     pools: BLOCKS_STONE_BRICK_WALL_POOLS,
@@ -17016,7 +17215,7 @@ static BLOCKS_STONE_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STONE_BRICKS: LootTable = LootTable {
     pools: BLOCKS_STONE_BRICKS_POOLS,
@@ -17034,7 +17233,7 @@ static BLOCKS_STONE_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STONE_BUTTON: LootTable = LootTable {
     pools: BLOCKS_STONE_BUTTON_POOLS,
@@ -17052,7 +17251,7 @@ static BLOCKS_STONE_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STONE_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_STONE_PRESSURE_PLATE_POOLS,
@@ -17060,8 +17259,8 @@ pub static BLOCKS_STONE_PRESSURE_PLATE: LootTable = LootTable {
 static BLOCKS_STONE_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:stone_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -17088,7 +17287,7 @@ static BLOCKS_STONE_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STONE_STAIRS: LootTable = LootTable {
     pools: BLOCKS_STONE_STAIRS_POOLS,
@@ -17106,7 +17305,7 @@ static BLOCKS_STONECUTTER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STONECUTTER: LootTable = LootTable {
     pools: BLOCKS_STONECUTTER_POOLS,
@@ -17124,7 +17323,7 @@ static BLOCKS_STRIPPED_ACACIA_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_ACACIA_LOG: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_ACACIA_LOG_POOLS,
@@ -17142,7 +17341,7 @@ static BLOCKS_STRIPPED_ACACIA_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_ACACIA_WOOD: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_ACACIA_WOOD_POOLS,
@@ -17160,7 +17359,7 @@ static BLOCKS_STRIPPED_BAMBOO_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_BAMBOO_BLOCK: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_BAMBOO_BLOCK_POOLS,
@@ -17178,7 +17377,7 @@ static BLOCKS_STRIPPED_BIRCH_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_BIRCH_LOG: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_BIRCH_LOG_POOLS,
@@ -17196,7 +17395,7 @@ static BLOCKS_STRIPPED_BIRCH_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_BIRCH_WOOD: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_BIRCH_WOOD_POOLS,
@@ -17214,7 +17413,7 @@ static BLOCKS_STRIPPED_CHERRY_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_CHERRY_LOG: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_CHERRY_LOG_POOLS,
@@ -17232,7 +17431,7 @@ static BLOCKS_STRIPPED_CHERRY_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_CHERRY_WOOD: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_CHERRY_WOOD_POOLS,
@@ -17250,7 +17449,7 @@ static BLOCKS_STRIPPED_CRIMSON_HYPHAE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_CRIMSON_HYPHAE: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_CRIMSON_HYPHAE_POOLS,
@@ -17268,7 +17467,7 @@ static BLOCKS_STRIPPED_CRIMSON_STEM_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_CRIMSON_STEM: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_CRIMSON_STEM_POOLS,
@@ -17286,7 +17485,7 @@ static BLOCKS_STRIPPED_DARK_OAK_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_DARK_OAK_LOG: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_DARK_OAK_LOG_POOLS,
@@ -17304,7 +17503,7 @@ static BLOCKS_STRIPPED_DARK_OAK_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_DARK_OAK_WOOD: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_DARK_OAK_WOOD_POOLS,
@@ -17322,7 +17521,7 @@ static BLOCKS_STRIPPED_JUNGLE_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_JUNGLE_LOG: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_JUNGLE_LOG_POOLS,
@@ -17340,7 +17539,7 @@ static BLOCKS_STRIPPED_JUNGLE_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_JUNGLE_WOOD: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_JUNGLE_WOOD_POOLS,
@@ -17358,7 +17557,7 @@ static BLOCKS_STRIPPED_MANGROVE_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_MANGROVE_LOG: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_MANGROVE_LOG_POOLS,
@@ -17376,7 +17575,7 @@ static BLOCKS_STRIPPED_MANGROVE_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_MANGROVE_WOOD: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_MANGROVE_WOOD_POOLS,
@@ -17394,7 +17593,7 @@ static BLOCKS_STRIPPED_OAK_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_OAK_LOG: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_OAK_LOG_POOLS,
@@ -17412,7 +17611,7 @@ static BLOCKS_STRIPPED_OAK_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_OAK_WOOD: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_OAK_WOOD_POOLS,
@@ -17430,7 +17629,7 @@ static BLOCKS_STRIPPED_SPRUCE_LOG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_SPRUCE_LOG: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_SPRUCE_LOG_POOLS,
@@ -17448,7 +17647,7 @@ static BLOCKS_STRIPPED_SPRUCE_WOOD_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_SPRUCE_WOOD: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_SPRUCE_WOOD_POOLS,
@@ -17466,7 +17665,7 @@ static BLOCKS_STRIPPED_WARPED_HYPHAE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_WARPED_HYPHAE: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_WARPED_HYPHAE_POOLS,
@@ -17484,7 +17683,7 @@ static BLOCKS_STRIPPED_WARPED_STEM_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_STRIPPED_WARPED_STEM: LootTable = LootTable {
     pools: BLOCKS_STRIPPED_WARPED_STEM_POOLS,
@@ -17502,7 +17701,7 @@ static BLOCKS_SUGAR_CANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SUGAR_CANE: LootTable = LootTable {
     pools: BLOCKS_SUGAR_CANE_POOLS,
@@ -17520,7 +17719,7 @@ static BLOCKS_SUNFLOWER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_SUNFLOWER: LootTable = LootTable {
     pools: BLOCKS_SUNFLOWER_POOLS,
@@ -17572,9 +17771,9 @@ static BLOCKS_TALL_GRASS_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:short_grass",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 2i32,
+        max_count: 2i32,
+        condition: LootCondition::Shears,
         bonus_formula: None,
     },
     LootEntry {
@@ -17582,7 +17781,13 @@ static BLOCKS_TALL_GRASS_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::RandomChance { chance: 0.125f32 },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -17590,9 +17795,9 @@ static BLOCKS_TALL_GRASS_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:short_grass",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
-        condition: LootCondition::None,
+        min_count: 2i32,
+        max_count: 2i32,
+        condition: LootCondition::Shears,
         bonus_formula: None,
     },
     LootEntry {
@@ -17600,7 +17805,13 @@ static BLOCKS_TALL_GRASS_POOL1_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::AllOf(&[
+                LootCondition::SurvivesExplosion,
+                LootCondition::RandomChance { chance: 0.125f32 },
+            ]),
+        ]),
         bonus_formula: None,
     },
 ];
@@ -17626,8 +17837,8 @@ pub static BLOCKS_TALL_GRASS: LootTable = LootTable {
 static BLOCKS_TALL_SEAGRASS_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:seagrass",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -17636,7 +17847,7 @@ static BLOCKS_TALL_SEAGRASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::Shears,
 }];
 pub static BLOCKS_TALL_SEAGRASS: LootTable = LootTable {
     pools: BLOCKS_TALL_SEAGRASS_POOLS,
@@ -17654,7 +17865,7 @@ static BLOCKS_TARGET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TARGET: LootTable = LootTable {
     pools: BLOCKS_TARGET_POOLS,
@@ -17672,7 +17883,7 @@ static BLOCKS_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_TERRACOTTA_POOLS,
@@ -17690,7 +17901,7 @@ static BLOCKS_TINTED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TINTED_GLASS: LootTable = LootTable {
     pools: BLOCKS_TINTED_GLASS_POOLS,
@@ -17708,7 +17919,7 @@ static BLOCKS_TNT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TNT: LootTable = LootTable {
     pools: BLOCKS_TNT_POOLS,
@@ -17726,7 +17937,7 @@ static BLOCKS_TORCH_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TORCH: LootTable = LootTable {
     pools: BLOCKS_TORCH_POOLS,
@@ -17744,7 +17955,7 @@ static BLOCKS_TORCHFLOWER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TORCHFLOWER: LootTable = LootTable {
     pools: BLOCKS_TORCHFLOWER_POOLS,
@@ -17780,7 +17991,7 @@ static BLOCKS_TRAPPED_CHEST_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TRAPPED_CHEST: LootTable = LootTable {
     pools: BLOCKS_TRAPPED_CHEST_POOLS,
@@ -17802,7 +18013,7 @@ static BLOCKS_TRIPWIRE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TRIPWIRE: LootTable = LootTable {
     pools: BLOCKS_TRIPWIRE_POOLS,
@@ -17820,7 +18031,7 @@ static BLOCKS_TRIPWIRE_HOOK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TRIPWIRE_HOOK: LootTable = LootTable {
     pools: BLOCKS_TRIPWIRE_HOOK_POOLS,
@@ -17838,7 +18049,7 @@ static BLOCKS_TUBE_CORAL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_TUBE_CORAL: LootTable = LootTable {
     pools: BLOCKS_TUBE_CORAL_POOLS,
@@ -17849,7 +18060,7 @@ static BLOCKS_TUBE_CORAL_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -17857,7 +18068,10 @@ static BLOCKS_TUBE_CORAL_BLOCK_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -17884,7 +18098,7 @@ static BLOCKS_TUBE_CORAL_FAN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_TUBE_CORAL_FAN: LootTable = LootTable {
     pools: BLOCKS_TUBE_CORAL_FAN_POOLS,
@@ -17902,7 +18116,7 @@ static BLOCKS_TUFF_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TUFF: LootTable = LootTable {
     pools: BLOCKS_TUFF_POOLS,
@@ -17910,8 +18124,8 @@ pub static BLOCKS_TUFF: LootTable = LootTable {
 static BLOCKS_TUFF_BRICK_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:tuff_brick_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -17938,7 +18152,7 @@ static BLOCKS_TUFF_BRICK_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TUFF_BRICK_STAIRS: LootTable = LootTable {
     pools: BLOCKS_TUFF_BRICK_STAIRS_POOLS,
@@ -17956,7 +18170,7 @@ static BLOCKS_TUFF_BRICK_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TUFF_BRICK_WALL: LootTable = LootTable {
     pools: BLOCKS_TUFF_BRICK_WALL_POOLS,
@@ -17974,7 +18188,7 @@ static BLOCKS_TUFF_BRICKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TUFF_BRICKS: LootTable = LootTable {
     pools: BLOCKS_TUFF_BRICKS_POOLS,
@@ -17982,8 +18196,8 @@ pub static BLOCKS_TUFF_BRICKS: LootTable = LootTable {
 static BLOCKS_TUFF_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:tuff_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -18010,7 +18224,7 @@ static BLOCKS_TUFF_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TUFF_STAIRS: LootTable = LootTable {
     pools: BLOCKS_TUFF_STAIRS_POOLS,
@@ -18028,7 +18242,7 @@ static BLOCKS_TUFF_WALL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_TUFF_WALL: LootTable = LootTable {
     pools: BLOCKS_TUFF_WALL_POOLS,
@@ -18046,7 +18260,7 @@ static BLOCKS_TURTLE_EGG_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_TURTLE_EGG: LootTable = LootTable {
     pools: BLOCKS_TURTLE_EGG_POOLS,
@@ -18057,7 +18271,7 @@ static BLOCKS_TWISTING_VINES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -18065,7 +18279,12 @@ static BLOCKS_TWISTING_VINES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::TableBonus {
+                chances: &[0.33f32, 0.55f32, 0.77f32, 1f32],
+            },
+        ]),
         bonus_formula: None,
     },
 ];
@@ -18085,7 +18304,7 @@ static BLOCKS_TWISTING_VINES_PLANT_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -18093,7 +18312,12 @@ static BLOCKS_TWISTING_VINES_PLANT_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::TableBonus {
+                chances: &[0.33f32, 0.55f32, 0.77f32, 1f32],
+            },
+        ]),
         bonus_formula: None,
     },
 ];
@@ -18124,7 +18348,7 @@ static BLOCKS_VERDANT_FROGLIGHT_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_VERDANT_FROGLIGHT: LootTable = LootTable {
     pools: BLOCKS_VERDANT_FROGLIGHT_POOLS,
@@ -18142,7 +18366,7 @@ static BLOCKS_VINE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::Shears,
 }];
 pub static BLOCKS_VINE: LootTable = LootTable {
     pools: BLOCKS_VINE_POOLS,
@@ -18160,7 +18384,7 @@ static BLOCKS_WARPED_BUTTON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_BUTTON: LootTable = LootTable {
     pools: BLOCKS_WARPED_BUTTON_POOLS,
@@ -18178,7 +18402,7 @@ static BLOCKS_WARPED_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_DOOR: LootTable = LootTable {
     pools: BLOCKS_WARPED_DOOR_POOLS,
@@ -18196,7 +18420,7 @@ static BLOCKS_WARPED_FENCE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_FENCE: LootTable = LootTable {
     pools: BLOCKS_WARPED_FENCE_POOLS,
@@ -18214,7 +18438,7 @@ static BLOCKS_WARPED_FENCE_GATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_FENCE_GATE: LootTable = LootTable {
     pools: BLOCKS_WARPED_FENCE_GATE_POOLS,
@@ -18232,7 +18456,7 @@ static BLOCKS_WARPED_FUNGUS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_FUNGUS: LootTable = LootTable {
     pools: BLOCKS_WARPED_FUNGUS_POOLS,
@@ -18250,7 +18474,7 @@ static BLOCKS_WARPED_HANGING_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_HANGING_SIGN: LootTable = LootTable {
     pools: BLOCKS_WARPED_HANGING_SIGN_POOLS,
@@ -18268,7 +18492,7 @@ static BLOCKS_WARPED_HYPHAE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_HYPHAE: LootTable = LootTable {
     pools: BLOCKS_WARPED_HYPHAE_POOLS,
@@ -18279,7 +18503,7 @@ static BLOCKS_WARPED_NYLIUM_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouch,
         bonus_formula: None,
     },
     LootEntry {
@@ -18287,7 +18511,10 @@ static BLOCKS_WARPED_NYLIUM_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouch,
+            LootCondition::SurvivesExplosion,
+        ]),
         bonus_formula: None,
     },
 ];
@@ -18314,7 +18541,7 @@ static BLOCKS_WARPED_PLANKS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_PLANKS: LootTable = LootTable {
     pools: BLOCKS_WARPED_PLANKS_POOLS,
@@ -18332,7 +18559,7 @@ static BLOCKS_WARPED_PRESSURE_PLATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_PRESSURE_PLATE: LootTable = LootTable {
     pools: BLOCKS_WARPED_PRESSURE_PLATE_POOLS,
@@ -18350,7 +18577,7 @@ static BLOCKS_WARPED_ROOTS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_ROOTS: LootTable = LootTable {
     pools: BLOCKS_WARPED_ROOTS_POOLS,
@@ -18368,7 +18595,7 @@ static BLOCKS_WARPED_SIGN_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_SIGN: LootTable = LootTable {
     pools: BLOCKS_WARPED_SIGN_POOLS,
@@ -18376,8 +18603,8 @@ pub static BLOCKS_WARPED_SIGN: LootTable = LootTable {
 static BLOCKS_WARPED_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:warped_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -18404,7 +18631,7 @@ static BLOCKS_WARPED_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_STAIRS: LootTable = LootTable {
     pools: BLOCKS_WARPED_STAIRS_POOLS,
@@ -18422,7 +18649,7 @@ static BLOCKS_WARPED_STEM_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_STEM: LootTable = LootTable {
     pools: BLOCKS_WARPED_STEM_POOLS,
@@ -18440,7 +18667,7 @@ static BLOCKS_WARPED_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_WARPED_TRAPDOOR_POOLS,
@@ -18458,7 +18685,7 @@ static BLOCKS_WARPED_WART_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WARPED_WART_BLOCK: LootTable = LootTable {
     pools: BLOCKS_WARPED_WART_BLOCK_POOLS,
@@ -18476,7 +18703,7 @@ static BLOCKS_WATER_CAULDRON_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WATER_CAULDRON: LootTable = LootTable {
     pools: BLOCKS_WATER_CAULDRON_POOLS,
@@ -18494,7 +18721,7 @@ static BLOCKS_WAXED_CHISELED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_CHISELED_COPPER: LootTable = LootTable {
     pools: BLOCKS_WAXED_CHISELED_COPPER_POOLS,
@@ -18512,7 +18739,7 @@ static BLOCKS_WAXED_COPPER_BLOCK_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_COPPER_BLOCK: LootTable = LootTable {
     pools: BLOCKS_WAXED_COPPER_BLOCK_POOLS,
@@ -18530,7 +18757,7 @@ static BLOCKS_WAXED_COPPER_BULB_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_COPPER_BULB: LootTable = LootTable {
     pools: BLOCKS_WAXED_COPPER_BULB_POOLS,
@@ -18548,7 +18775,7 @@ static BLOCKS_WAXED_COPPER_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_COPPER_DOOR: LootTable = LootTable {
     pools: BLOCKS_WAXED_COPPER_DOOR_POOLS,
@@ -18566,7 +18793,7 @@ static BLOCKS_WAXED_COPPER_GRATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_COPPER_GRATE: LootTable = LootTable {
     pools: BLOCKS_WAXED_COPPER_GRATE_POOLS,
@@ -18584,7 +18811,7 @@ static BLOCKS_WAXED_COPPER_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_COPPER_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_WAXED_COPPER_TRAPDOOR_POOLS,
@@ -18602,7 +18829,7 @@ static BLOCKS_WAXED_CUT_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_CUT_COPPER: LootTable = LootTable {
     pools: BLOCKS_WAXED_CUT_COPPER_POOLS,
@@ -18610,8 +18837,8 @@ pub static BLOCKS_WAXED_CUT_COPPER: LootTable = LootTable {
 static BLOCKS_WAXED_CUT_COPPER_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:waxed_cut_copper_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -18638,7 +18865,7 @@ static BLOCKS_WAXED_CUT_COPPER_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_CUT_COPPER_STAIRS: LootTable = LootTable {
     pools: BLOCKS_WAXED_CUT_COPPER_STAIRS_POOLS,
@@ -18656,7 +18883,7 @@ static BLOCKS_WAXED_EXPOSED_CHISELED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_EXPOSED_CHISELED_COPPER: LootTable = LootTable {
     pools: BLOCKS_WAXED_EXPOSED_CHISELED_COPPER_POOLS,
@@ -18674,7 +18901,7 @@ static BLOCKS_WAXED_EXPOSED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_EXPOSED_COPPER: LootTable = LootTable {
     pools: BLOCKS_WAXED_EXPOSED_COPPER_POOLS,
@@ -18692,7 +18919,7 @@ static BLOCKS_WAXED_EXPOSED_COPPER_BULB_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_EXPOSED_COPPER_BULB: LootTable = LootTable {
     pools: BLOCKS_WAXED_EXPOSED_COPPER_BULB_POOLS,
@@ -18710,7 +18937,7 @@ static BLOCKS_WAXED_EXPOSED_COPPER_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_EXPOSED_COPPER_DOOR: LootTable = LootTable {
     pools: BLOCKS_WAXED_EXPOSED_COPPER_DOOR_POOLS,
@@ -18728,7 +18955,7 @@ static BLOCKS_WAXED_EXPOSED_COPPER_GRATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_EXPOSED_COPPER_GRATE: LootTable = LootTable {
     pools: BLOCKS_WAXED_EXPOSED_COPPER_GRATE_POOLS,
@@ -18746,7 +18973,7 @@ static BLOCKS_WAXED_EXPOSED_COPPER_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_EXPOSED_COPPER_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_WAXED_EXPOSED_COPPER_TRAPDOOR_POOLS,
@@ -18764,7 +18991,7 @@ static BLOCKS_WAXED_EXPOSED_CUT_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_EXPOSED_CUT_COPPER: LootTable = LootTable {
     pools: BLOCKS_WAXED_EXPOSED_CUT_COPPER_POOLS,
@@ -18772,8 +18999,8 @@ pub static BLOCKS_WAXED_EXPOSED_CUT_COPPER: LootTable = LootTable {
 static BLOCKS_WAXED_EXPOSED_CUT_COPPER_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:waxed_exposed_cut_copper_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -18800,7 +19027,7 @@ static BLOCKS_WAXED_EXPOSED_CUT_COPPER_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_EXPOSED_CUT_COPPER_STAIRS: LootTable = LootTable {
     pools: BLOCKS_WAXED_EXPOSED_CUT_COPPER_STAIRS_POOLS,
@@ -18818,7 +19045,7 @@ static BLOCKS_WAXED_OXIDIZED_CHISELED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_OXIDIZED_CHISELED_COPPER: LootTable = LootTable {
     pools: BLOCKS_WAXED_OXIDIZED_CHISELED_COPPER_POOLS,
@@ -18836,7 +19063,7 @@ static BLOCKS_WAXED_OXIDIZED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_OXIDIZED_COPPER: LootTable = LootTable {
     pools: BLOCKS_WAXED_OXIDIZED_COPPER_POOLS,
@@ -18854,7 +19081,7 @@ static BLOCKS_WAXED_OXIDIZED_COPPER_BULB_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_OXIDIZED_COPPER_BULB: LootTable = LootTable {
     pools: BLOCKS_WAXED_OXIDIZED_COPPER_BULB_POOLS,
@@ -18872,7 +19099,7 @@ static BLOCKS_WAXED_OXIDIZED_COPPER_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_OXIDIZED_COPPER_DOOR: LootTable = LootTable {
     pools: BLOCKS_WAXED_OXIDIZED_COPPER_DOOR_POOLS,
@@ -18890,7 +19117,7 @@ static BLOCKS_WAXED_OXIDIZED_COPPER_GRATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_OXIDIZED_COPPER_GRATE: LootTable = LootTable {
     pools: BLOCKS_WAXED_OXIDIZED_COPPER_GRATE_POOLS,
@@ -18908,7 +19135,7 @@ static BLOCKS_WAXED_OXIDIZED_COPPER_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_OXIDIZED_COPPER_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_WAXED_OXIDIZED_COPPER_TRAPDOOR_POOLS,
@@ -18926,7 +19153,7 @@ static BLOCKS_WAXED_OXIDIZED_CUT_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_OXIDIZED_CUT_COPPER: LootTable = LootTable {
     pools: BLOCKS_WAXED_OXIDIZED_CUT_COPPER_POOLS,
@@ -18934,8 +19161,8 @@ pub static BLOCKS_WAXED_OXIDIZED_CUT_COPPER: LootTable = LootTable {
 static BLOCKS_WAXED_OXIDIZED_CUT_COPPER_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:waxed_oxidized_cut_copper_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -18962,7 +19189,7 @@ static BLOCKS_WAXED_OXIDIZED_CUT_COPPER_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_OXIDIZED_CUT_COPPER_STAIRS: LootTable = LootTable {
     pools: BLOCKS_WAXED_OXIDIZED_CUT_COPPER_STAIRS_POOLS,
@@ -18980,7 +19207,7 @@ static BLOCKS_WAXED_WEATHERED_CHISELED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_WEATHERED_CHISELED_COPPER: LootTable = LootTable {
     pools: BLOCKS_WAXED_WEATHERED_CHISELED_COPPER_POOLS,
@@ -18998,7 +19225,7 @@ static BLOCKS_WAXED_WEATHERED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_WEATHERED_COPPER: LootTable = LootTable {
     pools: BLOCKS_WAXED_WEATHERED_COPPER_POOLS,
@@ -19016,7 +19243,7 @@ static BLOCKS_WAXED_WEATHERED_COPPER_BULB_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_WEATHERED_COPPER_BULB: LootTable = LootTable {
     pools: BLOCKS_WAXED_WEATHERED_COPPER_BULB_POOLS,
@@ -19034,7 +19261,7 @@ static BLOCKS_WAXED_WEATHERED_COPPER_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_WEATHERED_COPPER_DOOR: LootTable = LootTable {
     pools: BLOCKS_WAXED_WEATHERED_COPPER_DOOR_POOLS,
@@ -19052,7 +19279,7 @@ static BLOCKS_WAXED_WEATHERED_COPPER_GRATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_WEATHERED_COPPER_GRATE: LootTable = LootTable {
     pools: BLOCKS_WAXED_WEATHERED_COPPER_GRATE_POOLS,
@@ -19070,7 +19297,7 @@ static BLOCKS_WAXED_WEATHERED_COPPER_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_WEATHERED_COPPER_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_WAXED_WEATHERED_COPPER_TRAPDOOR_POOLS,
@@ -19088,7 +19315,7 @@ static BLOCKS_WAXED_WEATHERED_CUT_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_WEATHERED_CUT_COPPER: LootTable = LootTable {
     pools: BLOCKS_WAXED_WEATHERED_CUT_COPPER_POOLS,
@@ -19096,8 +19323,8 @@ pub static BLOCKS_WAXED_WEATHERED_CUT_COPPER: LootTable = LootTable {
 static BLOCKS_WAXED_WEATHERED_CUT_COPPER_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:waxed_weathered_cut_copper_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -19124,7 +19351,7 @@ static BLOCKS_WAXED_WEATHERED_CUT_COPPER_STAIRS_POOLS: &[LootPool] = &[LootPool 
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WAXED_WEATHERED_CUT_COPPER_STAIRS: LootTable = LootTable {
     pools: BLOCKS_WAXED_WEATHERED_CUT_COPPER_STAIRS_POOLS,
@@ -19142,7 +19369,7 @@ static BLOCKS_WEATHERED_CHISELED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WEATHERED_CHISELED_COPPER: LootTable = LootTable {
     pools: BLOCKS_WEATHERED_CHISELED_COPPER_POOLS,
@@ -19160,7 +19387,7 @@ static BLOCKS_WEATHERED_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WEATHERED_COPPER: LootTable = LootTable {
     pools: BLOCKS_WEATHERED_COPPER_POOLS,
@@ -19178,7 +19405,7 @@ static BLOCKS_WEATHERED_COPPER_BULB_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WEATHERED_COPPER_BULB: LootTable = LootTable {
     pools: BLOCKS_WEATHERED_COPPER_BULB_POOLS,
@@ -19196,7 +19423,7 @@ static BLOCKS_WEATHERED_COPPER_DOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WEATHERED_COPPER_DOOR: LootTable = LootTable {
     pools: BLOCKS_WEATHERED_COPPER_DOOR_POOLS,
@@ -19214,7 +19441,7 @@ static BLOCKS_WEATHERED_COPPER_GRATE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WEATHERED_COPPER_GRATE: LootTable = LootTable {
     pools: BLOCKS_WEATHERED_COPPER_GRATE_POOLS,
@@ -19232,7 +19459,7 @@ static BLOCKS_WEATHERED_COPPER_TRAPDOOR_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WEATHERED_COPPER_TRAPDOOR: LootTable = LootTable {
     pools: BLOCKS_WEATHERED_COPPER_TRAPDOOR_POOLS,
@@ -19250,7 +19477,7 @@ static BLOCKS_WEATHERED_CUT_COPPER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WEATHERED_CUT_COPPER: LootTable = LootTable {
     pools: BLOCKS_WEATHERED_CUT_COPPER_POOLS,
@@ -19258,8 +19485,8 @@ pub static BLOCKS_WEATHERED_CUT_COPPER: LootTable = LootTable {
 static BLOCKS_WEATHERED_CUT_COPPER_SLAB_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:weathered_cut_copper_slab",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -19286,7 +19513,7 @@ static BLOCKS_WEATHERED_CUT_COPPER_STAIRS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WEATHERED_CUT_COPPER_STAIRS: LootTable = LootTable {
     pools: BLOCKS_WEATHERED_CUT_COPPER_STAIRS_POOLS,
@@ -19297,7 +19524,7 @@ static BLOCKS_WEEPING_VINES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -19305,7 +19532,12 @@ static BLOCKS_WEEPING_VINES_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::TableBonus {
+                chances: &[0.33f32, 0.55f32, 0.77f32, 1f32],
+            },
+        ]),
         bonus_formula: None,
     },
 ];
@@ -19325,7 +19557,7 @@ static BLOCKS_WEEPING_VINES_PLANT_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::SilkTouchOrShears,
         bonus_formula: None,
     },
     LootEntry {
@@ -19333,7 +19565,12 @@ static BLOCKS_WEEPING_VINES_PLANT_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::NoSilkTouchOrShears,
+            LootCondition::TableBonus {
+                chances: &[0.33f32, 0.55f32, 0.77f32, 1f32],
+            },
+        ]),
         bonus_formula: None,
     },
 ];
@@ -19360,7 +19597,7 @@ static BLOCKS_WET_SPONGE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WET_SPONGE: LootTable = LootTable {
     pools: BLOCKS_WET_SPONGE_POOLS,
@@ -19389,7 +19626,10 @@ static BLOCKS_WHEAT_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     min_count: 1i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::BinomialWithBonusCount {
+        extra: 3i32,
+        probability: 0.5714286f32,
+    }),
 }];
 static BLOCKS_WHEAT_POOLS: &[LootPool] = &[
     LootPool {
@@ -19423,7 +19663,7 @@ static BLOCKS_WHITE_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WHITE_BANNER: LootTable = LootTable {
     pools: BLOCKS_WHITE_BANNER_POOLS,
@@ -19441,7 +19681,7 @@ static BLOCKS_WHITE_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WHITE_BED: LootTable = LootTable {
     pools: BLOCKS_WHITE_BED_POOLS,
@@ -19449,8 +19689,8 @@ pub static BLOCKS_WHITE_BED: LootTable = LootTable {
 static BLOCKS_WHITE_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:white_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -19495,7 +19735,7 @@ static BLOCKS_WHITE_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WHITE_CARPET: LootTable = LootTable {
     pools: BLOCKS_WHITE_CARPET_POOLS,
@@ -19513,7 +19753,7 @@ static BLOCKS_WHITE_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WHITE_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_WHITE_CONCRETE_POOLS,
@@ -19531,7 +19771,7 @@ static BLOCKS_WHITE_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WHITE_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_WHITE_CONCRETE_POWDER_POOLS,
@@ -19549,7 +19789,7 @@ static BLOCKS_WHITE_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WHITE_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_WHITE_GLAZED_TERRACOTTA_POOLS,
@@ -19585,7 +19825,7 @@ static BLOCKS_WHITE_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_WHITE_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_WHITE_STAINED_GLASS_POOLS,
@@ -19603,7 +19843,7 @@ static BLOCKS_WHITE_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_WHITE_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_WHITE_STAINED_GLASS_PANE_POOLS,
@@ -19621,7 +19861,7 @@ static BLOCKS_WHITE_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WHITE_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_WHITE_TERRACOTTA_POOLS,
@@ -19639,7 +19879,7 @@ static BLOCKS_WHITE_TULIP_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WHITE_TULIP: LootTable = LootTable {
     pools: BLOCKS_WHITE_TULIP_POOLS,
@@ -19657,7 +19897,7 @@ static BLOCKS_WHITE_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WHITE_WOOL: LootTable = LootTable {
     pools: BLOCKS_WHITE_WOOL_POOLS,
@@ -19675,7 +19915,7 @@ static BLOCKS_WITHER_ROSE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_WITHER_ROSE: LootTable = LootTable {
     pools: BLOCKS_WITHER_ROSE_POOLS,
@@ -19711,7 +19951,7 @@ static BLOCKS_YELLOW_BANNER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_YELLOW_BANNER: LootTable = LootTable {
     pools: BLOCKS_YELLOW_BANNER_POOLS,
@@ -19729,7 +19969,7 @@ static BLOCKS_YELLOW_BED_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_YELLOW_BED: LootTable = LootTable {
     pools: BLOCKS_YELLOW_BED_POOLS,
@@ -19737,8 +19977,8 @@ pub static BLOCKS_YELLOW_BED: LootTable = LootTable {
 static BLOCKS_YELLOW_CANDLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:yellow_candle",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -19783,7 +20023,7 @@ static BLOCKS_YELLOW_CARPET_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_YELLOW_CARPET: LootTable = LootTable {
     pools: BLOCKS_YELLOW_CARPET_POOLS,
@@ -19801,7 +20041,7 @@ static BLOCKS_YELLOW_CONCRETE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_YELLOW_CONCRETE: LootTable = LootTable {
     pools: BLOCKS_YELLOW_CONCRETE_POOLS,
@@ -19819,7 +20059,7 @@ static BLOCKS_YELLOW_CONCRETE_POWDER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_YELLOW_CONCRETE_POWDER: LootTable = LootTable {
     pools: BLOCKS_YELLOW_CONCRETE_POWDER_POOLS,
@@ -19837,7 +20077,7 @@ static BLOCKS_YELLOW_GLAZED_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_YELLOW_GLAZED_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_YELLOW_GLAZED_TERRACOTTA_POOLS,
@@ -19873,7 +20113,7 @@ static BLOCKS_YELLOW_STAINED_GLASS_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_YELLOW_STAINED_GLASS: LootTable = LootTable {
     pools: BLOCKS_YELLOW_STAINED_GLASS_POOLS,
@@ -19891,7 +20131,7 @@ static BLOCKS_YELLOW_STAINED_GLASS_PANE_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SilkTouch,
 }];
 pub static BLOCKS_YELLOW_STAINED_GLASS_PANE: LootTable = LootTable {
     pools: BLOCKS_YELLOW_STAINED_GLASS_PANE_POOLS,
@@ -19909,7 +20149,7 @@ static BLOCKS_YELLOW_TERRACOTTA_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_YELLOW_TERRACOTTA: LootTable = LootTable {
     pools: BLOCKS_YELLOW_TERRACOTTA_POOLS,
@@ -19927,7 +20167,7 @@ static BLOCKS_YELLOW_WOOL_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::SurvivesExplosion,
 }];
 pub static BLOCKS_YELLOW_WOOL: LootTable = LootTable {
     pools: BLOCKS_YELLOW_WOOL_POOLS,
@@ -19997,7 +20237,7 @@ static CHESTS_ABANDONED_MINESHAFT_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20005,23 +20245,23 @@ static CHESTS_ABANDONED_MINESHAFT_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_ingot",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:redstone",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 9i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:lapis_lazuli",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 9i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20029,15 +20269,15 @@ static CHESTS_ABANDONED_MINESHAFT_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:coal",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20045,39 +20285,39 @@ static CHESTS_ABANDONED_MINESHAFT_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:glow_berries",
         weight: 15i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:melon_seeds",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:pumpkin_seeds",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:beetroot_seeds",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20086,8 +20326,8 @@ static CHESTS_ABANDONED_MINESHAFT_POOL2_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:rail",
         weight: 20i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20095,7 +20335,7 @@ static CHESTS_ABANDONED_MINESHAFT_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:powered_rail",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20103,7 +20343,7 @@ static CHESTS_ABANDONED_MINESHAFT_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:detector_rail",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20111,7 +20351,7 @@ static CHESTS_ABANDONED_MINESHAFT_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:activator_rail",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20119,7 +20359,7 @@ static CHESTS_ABANDONED_MINESHAFT_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:torch",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 16i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20155,7 +20395,7 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:enchanted_golden_apple",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20179,7 +20419,7 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:sculk_catalyst",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20258,8 +20498,8 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:sculk",
         weight: 3i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20267,7 +20507,7 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:sculk_sensor",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20275,7 +20515,7 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:candle",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20283,7 +20523,7 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:amethyst_shard",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 15i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20291,7 +20531,7 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:experience_bottle",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20299,7 +20539,7 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:glow_berries",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 15i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20315,7 +20555,7 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:echo_shard",
         weight: 4i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20323,7 +20563,7 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:disc_fragment_5",
         weight: 4i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20331,7 +20571,7 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:potion",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20346,8 +20586,8 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:book",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20355,7 +20595,7 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bone",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 15i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20363,15 +20603,15 @@ static CHESTS_ANCIENT_CITY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:soul_torch",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 15i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:coal",
         weight: 7i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 6i32,
+        max_count: 15i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20417,8 +20657,8 @@ static CHESTS_ANCIENT_CITY_ICE_BOX_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:suspicious_stew",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20426,7 +20666,7 @@ static CHESTS_ANCIENT_CITY_ICE_BOX_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:golden_carrot",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20434,23 +20674,23 @@ static CHESTS_ANCIENT_CITY_ICE_BOX_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:baked_potato",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:packed_ice",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snowball",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20485,24 +20725,24 @@ static CHESTS_BASTION_BRIDGE_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:spectral_arrow",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 10i32,
+        max_count: 28i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gilded_blackstone",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 8i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:crying_obsidian",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20517,16 +20757,16 @@ static CHESTS_BASTION_BRIDGE_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:gold_ingot",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 9i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:iron_ingot",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 9i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20584,7 +20824,7 @@ static CHESTS_BASTION_BRIDGE_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:string",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20592,31 +20832,31 @@ static CHESTS_BASTION_BRIDGE_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:leather",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:arrow",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 5i32,
+        max_count: 17i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:iron_nugget",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gold_nugget",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20713,8 +20953,8 @@ static CHESTS_BASTION_HOGLIN_STABLE_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:ancient_debris",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20729,16 +20969,16 @@ static CHESTS_BASTION_HOGLIN_STABLE_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:gold_block",
         weight: 16i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:golden_carrot",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 8i32,
+        max_count: 17i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20764,47 +21004,47 @@ static CHESTS_BASTION_HOGLIN_STABLE_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:crying_obsidian",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:glowstone",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gilded_blackstone",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:soul_sand",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:crimson_nylium",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gold_nugget",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20812,55 +21052,55 @@ static CHESTS_BASTION_HOGLIN_STABLE_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:leather",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:arrow",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 5i32,
+        max_count: 17i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:string",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:porkchop",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:cooked_porkchop",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:crimson_fungus",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:crimson_roots",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20958,8 +21198,8 @@ static CHESTS_BASTION_OTHER_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:spectral_arrow",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 10i32,
+        max_count: 22i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -20982,8 +21222,8 @@ static CHESTS_BASTION_OTHER_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:golden_carrot",
         weight: 12i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 6i32,
+        max_count: 17i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21057,7 +21297,7 @@ static CHESTS_BASTION_OTHER_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_ingot",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21065,7 +21305,7 @@ static CHESTS_BASTION_OTHER_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21113,7 +21353,7 @@ static CHESTS_BASTION_OTHER_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:crying_obsidian",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21123,71 +21363,71 @@ static CHESTS_BASTION_OTHER_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gilded_blackstone",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:chain",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:magma_cream",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:bone_block",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:iron_nugget",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:obsidian",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gold_nugget",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:string",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:arrow",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 5i32,
+        max_count: 17i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21284,8 +21524,8 @@ static CHESTS_BASTION_TREASURE_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:ancient_debris",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21372,8 +21612,8 @@ static CHESTS_BASTION_TREASURE_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:diamond",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21390,72 +21630,72 @@ static CHESTS_BASTION_TREASURE_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:spectral_arrow",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 12i32,
+        max_count: 25i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gold_block",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:iron_block",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gold_ingot",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 9i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:iron_ingot",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 9i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:crying_obsidian",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:quartz",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 8i32,
+        max_count: 23i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gilded_blackstone",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 5i32,
+        max_count: 15i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:magma_cream",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21522,7 +21762,7 @@ static CHESTS_BURIED_TREASURE_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 20i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21530,7 +21770,7 @@ static CHESTS_BURIED_TREASURE_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_ingot",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21538,7 +21778,7 @@ static CHESTS_BURIED_TREASURE_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:tnt",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21547,8 +21787,8 @@ static CHESTS_BURIED_TREASURE_POOL2_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:emerald",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21556,7 +21796,7 @@ static CHESTS_BURIED_TREASURE_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21564,7 +21804,7 @@ static CHESTS_BURIED_TREASURE_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:prismarine_crystals",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21591,16 +21831,16 @@ static CHESTS_BURIED_TREASURE_POOL4_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:cooked_cod",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:cooked_salmon",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21665,7 +21905,7 @@ static CHESTS_DESERT_PYRAMID_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21673,15 +21913,15 @@ static CHESTS_DESERT_PYRAMID_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gold_ingot",
         weight: 15i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21689,15 +21929,15 @@ static CHESTS_DESERT_PYRAMID_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:emerald",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:bone",
         weight: 25i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21705,15 +21945,15 @@ static CHESTS_DESERT_PYRAMID_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:spider_eye",
         weight: 25i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:rotten_flesh",
         weight: 25i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21779,7 +22019,7 @@ static CHESTS_DESERT_PYRAMID_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bone",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21787,7 +22027,7 @@ static CHESTS_DESERT_PYRAMID_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gunpowder",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21795,7 +22035,7 @@ static CHESTS_DESERT_PYRAMID_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:rotten_flesh",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21803,7 +22043,7 @@ static CHESTS_DESERT_PYRAMID_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:string",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21811,7 +22051,7 @@ static CHESTS_DESERT_PYRAMID_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:sand",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21819,8 +22059,8 @@ static CHESTS_DESERT_PYRAMID_POOL1_ENTRIES: &[LootEntry] = &[
 static CHESTS_DESERT_PYRAMID_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:dune_armor_trim_smithing_template",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -21854,32 +22094,32 @@ static CHESTS_END_CITY_TREASURE_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:diamond",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:iron_ingot",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gold_ingot",
         weight: 15i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:emerald",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -21887,7 +22127,7 @@ static CHESTS_END_CITY_TREASURE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:beetroot_seeds",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22068,7 +22308,7 @@ static CHESTS_IGLOO_CHEST_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:apple",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22076,7 +22316,7 @@ static CHESTS_IGLOO_CHEST_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:coal",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22084,7 +22324,7 @@ static CHESTS_IGLOO_CHEST_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_nugget",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22115,8 +22355,8 @@ static CHESTS_IGLOO_CHEST_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:wheat",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22153,7 +22393,7 @@ static CHESTS_JUNGLE_TEMPLE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22161,15 +22401,15 @@ static CHESTS_JUNGLE_TEMPLE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gold_ingot",
         weight: 15i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22177,7 +22417,7 @@ static CHESTS_JUNGLE_TEMPLE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bamboo",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22185,23 +22425,23 @@ static CHESTS_JUNGLE_TEMPLE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:emerald",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:bone",
         weight: 20i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:rotten_flesh",
         weight: 16i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22249,8 +22489,8 @@ static CHESTS_JUNGLE_TEMPLE_POOL0_ENTRIES: &[LootEntry] = &[
 static CHESTS_JUNGLE_TEMPLE_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:wild_armor_trim_smithing_template",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -22276,8 +22516,8 @@ pub static CHESTS_JUNGLE_TEMPLE: LootTable = LootTable {
 static CHESTS_JUNGLE_TEMPLE_DISPENSER_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:arrow",
     weight: 30i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 7i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -22296,7 +22536,7 @@ static CHESTS_NETHER_BRIDGE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22304,7 +22544,7 @@ static CHESTS_NETHER_BRIDGE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22312,7 +22552,7 @@ static CHESTS_NETHER_BRIDGE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_ingot",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22343,8 +22583,8 @@ static CHESTS_NETHER_BRIDGE_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:nether_wart",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22383,8 +22623,8 @@ static CHESTS_NETHER_BRIDGE_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:obsidian",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22428,24 +22668,24 @@ static CHESTS_PILLAGER_OUTPOST_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:wheat",
         weight: 7i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:potato",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:carrot",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22453,8 +22693,8 @@ static CHESTS_PILLAGER_OUTPOST_POOL1_ENTRIES: &[LootEntry] = &[
 static CHESTS_PILLAGER_OUTPOST_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:dark_oak_log",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 3i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -22471,15 +22711,15 @@ static CHESTS_PILLAGER_OUTPOST_POOL3_ENTRIES: &[LootEntry] = &[
         item: "minecraft:string",
         weight: 4i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:arrow",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22487,7 +22727,7 @@ static CHESTS_PILLAGER_OUTPOST_POOL3_ENTRIES: &[LootEntry] = &[
         item: "minecraft:tripwire_hook",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22495,7 +22735,7 @@ static CHESTS_PILLAGER_OUTPOST_POOL3_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22519,8 +22759,8 @@ static CHESTS_PILLAGER_OUTPOST_POOL4_ENTRIES: &[LootEntry] = &[LootEntry {
 static CHESTS_PILLAGER_OUTPOST_POOL5_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:sentry_armor_trim_smithing_template",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -22576,7 +22816,7 @@ static CHESTS_RUINED_PORTAL_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:obsidian",
         weight: 40i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22584,15 +22824,15 @@ static CHESTS_RUINED_PORTAL_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:flint",
         weight: 40i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:iron_nugget",
         weight: 40i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 9i32,
+        max_count: 18i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22623,8 +22863,8 @@ static CHESTS_RUINED_PORTAL_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:gold_nugget",
         weight: 15i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 24i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22703,8 +22943,8 @@ static CHESTS_RUINED_PORTAL_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:glistering_melon_slice",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22727,8 +22967,8 @@ static CHESTS_RUINED_PORTAL_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:golden_carrot",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22743,8 +22983,8 @@ static CHESTS_RUINED_PORTAL_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:gold_ingot",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22768,7 +23008,7 @@ static CHESTS_RUINED_PORTAL_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_block",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22820,7 +23060,7 @@ static CHESTS_SHIPWRECK_MAP_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:paper",
         weight: 20i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22828,7 +23068,7 @@ static CHESTS_SHIPWRECK_MAP_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:feather",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22836,7 +23076,7 @@ static CHESTS_SHIPWRECK_MAP_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:book",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22844,8 +23084,8 @@ static CHESTS_SHIPWRECK_MAP_POOL1_ENTRIES: &[LootEntry] = &[
 static CHESTS_SHIPWRECK_MAP_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:coast_armor_trim_smithing_template",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -22880,15 +23120,15 @@ static CHESTS_SHIPWRECK_SUPPLY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:paper",
         weight: 8i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:potato",
         weight: 7i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22896,31 +23136,31 @@ static CHESTS_SHIPWRECK_SUPPLY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:moss_block",
         weight: 7i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:poisonous_potato",
         weight: 7i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:carrot",
         weight: 7i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:wheat",
         weight: 7i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 8i32,
+        max_count: 21i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22935,16 +23175,16 @@ static CHESTS_SHIPWRECK_SUPPLY_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:coal",
         weight: 6i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:rotten_flesh",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 5i32,
+        max_count: 24i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22952,7 +23192,7 @@ static CHESTS_SHIPWRECK_SUPPLY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:pumpkin",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22960,7 +23200,7 @@ static CHESTS_SHIPWRECK_SUPPLY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bamboo",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22968,7 +23208,7 @@ static CHESTS_SHIPWRECK_SUPPLY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gunpowder",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -22976,7 +23216,7 @@ static CHESTS_SHIPWRECK_SUPPLY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:tnt",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23016,8 +23256,8 @@ static CHESTS_SHIPWRECK_SUPPLY_POOL0_ENTRIES: &[LootEntry] = &[
 static CHESTS_SHIPWRECK_SUPPLY_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:coast_armor_trim_smithing_template",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -23045,7 +23285,7 @@ static CHESTS_SHIPWRECK_TREASURE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 90i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23053,7 +23293,7 @@ static CHESTS_SHIPWRECK_TREASURE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_ingot",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23061,7 +23301,7 @@ static CHESTS_SHIPWRECK_TREASURE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:emerald",
         weight: 40i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23087,7 +23327,7 @@ static CHESTS_SHIPWRECK_TREASURE_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_nugget",
         weight: 50i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23095,7 +23335,7 @@ static CHESTS_SHIPWRECK_TREASURE_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_nugget",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23103,7 +23343,7 @@ static CHESTS_SHIPWRECK_TREASURE_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:lapis_lazuli",
         weight: 20i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23111,8 +23351,8 @@ static CHESTS_SHIPWRECK_TREASURE_POOL1_ENTRIES: &[LootEntry] = &[
 static CHESTS_SHIPWRECK_TREASURE_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:coast_armor_trim_smithing_template",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -23237,7 +23477,7 @@ static CHESTS_SIMPLE_DUNGEON_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23245,7 +23485,7 @@ static CHESTS_SIMPLE_DUNGEON_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_ingot",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23261,7 +23501,7 @@ static CHESTS_SIMPLE_DUNGEON_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:wheat",
         weight: 20i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23277,7 +23517,7 @@ static CHESTS_SIMPLE_DUNGEON_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:redstone",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23285,31 +23525,31 @@ static CHESTS_SIMPLE_DUNGEON_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:coal",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:melon_seeds",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:pumpkin_seeds",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:beetroot_seeds",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23319,7 +23559,7 @@ static CHESTS_SIMPLE_DUNGEON_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bone",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23327,7 +23567,7 @@ static CHESTS_SIMPLE_DUNGEON_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gunpowder",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23335,7 +23575,7 @@ static CHESTS_SIMPLE_DUNGEON_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:rotten_flesh",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23343,7 +23583,7 @@ static CHESTS_SIMPLE_DUNGEON_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:string",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23415,7 +23655,7 @@ static CHESTS_SPAWN_BONUS_CHEST_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:apple",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23423,7 +23663,7 @@ static CHESTS_SPAWN_BONUS_CHEST_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23431,7 +23671,7 @@ static CHESTS_SPAWN_BONUS_CHEST_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:salmon",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23441,7 +23681,7 @@ static CHESTS_SPAWN_BONUS_CHEST_POOL3_ENTRIES: &[LootEntry] = &[
         item: "minecraft:stick",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23449,7 +23689,7 @@ static CHESTS_SPAWN_BONUS_CHEST_POOL3_ENTRIES: &[LootEntry] = &[
         item: "minecraft:oak_planks",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23457,7 +23697,7 @@ static CHESTS_SPAWN_BONUS_CHEST_POOL3_ENTRIES: &[LootEntry] = &[
         item: "minecraft:oak_log",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23465,7 +23705,7 @@ static CHESTS_SPAWN_BONUS_CHEST_POOL3_ENTRIES: &[LootEntry] = &[
         item: "minecraft:spruce_log",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23473,7 +23713,7 @@ static CHESTS_SPAWN_BONUS_CHEST_POOL3_ENTRIES: &[LootEntry] = &[
         item: "minecraft:birch_log",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23481,7 +23721,7 @@ static CHESTS_SPAWN_BONUS_CHEST_POOL3_ENTRIES: &[LootEntry] = &[
         item: "minecraft:jungle_log",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23489,7 +23729,7 @@ static CHESTS_SPAWN_BONUS_CHEST_POOL3_ENTRIES: &[LootEntry] = &[
         item: "minecraft:acacia_log",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23497,7 +23737,7 @@ static CHESTS_SPAWN_BONUS_CHEST_POOL3_ENTRIES: &[LootEntry] = &[
         item: "minecraft:dark_oak_log",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23505,7 +23745,7 @@ static CHESTS_SPAWN_BONUS_CHEST_POOL3_ENTRIES: &[LootEntry] = &[
         item: "minecraft:mangrove_log",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23556,7 +23796,7 @@ static CHESTS_STRONGHOLD_CORRIDOR_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23564,7 +23804,7 @@ static CHESTS_STRONGHOLD_CORRIDOR_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23572,15 +23812,15 @@ static CHESTS_STRONGHOLD_CORRIDOR_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_ingot",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:redstone",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 9i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23588,7 +23828,7 @@ static CHESTS_STRONGHOLD_CORRIDOR_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23596,7 +23836,7 @@ static CHESTS_STRONGHOLD_CORRIDOR_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:apple",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23737,7 +23977,7 @@ static CHESTS_STRONGHOLD_CROSSING_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23745,23 +23985,23 @@ static CHESTS_STRONGHOLD_CROSSING_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_ingot",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:redstone",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 9i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:coal",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23769,7 +24009,7 @@ static CHESTS_STRONGHOLD_CROSSING_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23777,7 +24017,7 @@ static CHESTS_STRONGHOLD_CROSSING_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:apple",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23813,15 +24053,15 @@ static CHESTS_STRONGHOLD_LIBRARY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:book",
         weight: 20i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:paper",
         weight: 20i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23889,8 +24129,8 @@ static CHESTS_TRIAL_CHAMBERS_CORRIDOR_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:honeycomb",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23914,7 +24154,7 @@ static CHESTS_TRIAL_CHAMBERS_CORRIDOR_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:ender_pearl",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23922,39 +24162,39 @@ static CHESTS_TRIAL_CHAMBERS_CORRIDOR_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bamboo_hanging_sign",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:bamboo_planks",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:scaffolding",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:torch",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:tuff",
         weight: 3i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 8i32,
+        max_count: 20i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23981,8 +24221,8 @@ static CHESTS_TRIAL_CHAMBERS_ENTRANCE_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:stick",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -23997,16 +24237,16 @@ static CHESTS_TRIAL_CHAMBERS_ENTRANCE_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:honeycomb",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:arrow",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 5i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24034,7 +24274,7 @@ static CHESTS_TRIAL_CHAMBERS_INTERSECTION_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:emerald_block",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24058,7 +24298,7 @@ static CHESTS_TRIAL_CHAMBERS_INTERSECTION_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24066,15 +24306,15 @@ static CHESTS_TRIAL_CHAMBERS_INTERSECTION_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:cake",
         weight: 20i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:amethyst_shard",
         weight: 20i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 8i32,
+        max_count: 20i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24082,7 +24322,7 @@ static CHESTS_TRIAL_CHAMBERS_INTERSECTION_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_block",
         weight: 20i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24118,7 +24358,7 @@ static CHESTS_TRIAL_CHAMBERS_INTERSECTION_BARREL_POOL0_ENTRIES: &[LootEntry] = &
         item: "minecraft:diamond",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24134,7 +24374,7 @@ static CHESTS_TRIAL_CHAMBERS_INTERSECTION_BARREL_POOL0_ENTRIES: &[LootEntry] = &
         item: "minecraft:bucket",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24157,16 +24397,16 @@ static CHESTS_TRIAL_CHAMBERS_INTERSECTION_BARREL_POOL0_ENTRIES: &[LootEntry] = &
     LootEntry {
         item: "minecraft:bamboo_planks",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 5i32,
+        max_count: 15i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:baked_potato",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 6i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24185,8 +24425,8 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:emerald",
         weight: 3i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24234,7 +24474,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:golden_carrot",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24273,24 +24513,24 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:arrow",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:emerald",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24298,7 +24538,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:wind_charge",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24306,7 +24546,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24314,7 +24554,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:honey_bottle",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24329,8 +24569,8 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:wind_charge",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24338,7 +24578,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24347,24 +24587,24 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:arrow",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:emerald",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24372,7 +24612,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:wind_charge",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24380,7 +24620,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24388,7 +24628,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:honey_bottle",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24403,8 +24643,8 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:wind_charge",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24412,7 +24652,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24479,7 +24719,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.25f32 },
     },
 ];
 pub static CHESTS_TRIAL_CHAMBERS_REWARD: LootTable = LootTable {
@@ -24489,24 +24729,24 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_COMMON_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:arrow",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:emerald",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24514,7 +24754,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_COMMON_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:wind_charge",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24522,7 +24762,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_COMMON_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24530,7 +24770,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_COMMON_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:honey_bottle",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24545,8 +24785,8 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_COMMON_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:wind_charge",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24554,7 +24794,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_COMMON_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24653,32 +24893,32 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_OMINOUS_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:emerald",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:wind_charge",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 8i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 3i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:diamond",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24695,32 +24935,32 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_OMINOUS_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:emerald",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:wind_charge",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 8i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 3i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:diamond",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -24795,7 +25035,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_OMINOUS_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.75f32 },
     },
 ];
 pub static CHESTS_TRIAL_CHAMBERS_REWARD_OMINOUS: LootTable = LootTable {
@@ -24805,32 +25045,32 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_OMINOUS_COMMON_POOL0_ENTRIES: &[LootEntry] =
     LootEntry {
         item: "minecraft:emerald",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:wind_charge",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 8i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 3i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:diamond",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25001,8 +25241,8 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_RARE_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:emerald",
         weight: 3i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25050,7 +25290,7 @@ static CHESTS_TRIAL_CHAMBERS_REWARD_RARE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:golden_carrot",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25153,96 +25393,96 @@ static CHESTS_TRIAL_CHAMBERS_SUPPLY_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:arrow",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 14i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:baked_potato",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:glow_berries",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:acacia_planks",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:moss_block",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:bone_meal",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:tuff",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 5i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:torch",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:potion",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:potion",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25278,7 +25518,7 @@ static CHESTS_UNDERWATER_RUIN_BIG_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:coal",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25286,7 +25526,7 @@ static CHESTS_UNDERWATER_RUIN_BIG_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_nugget",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25301,8 +25541,8 @@ static CHESTS_UNDERWATER_RUIN_BIG_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:wheat",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25381,7 +25621,7 @@ static CHESTS_UNDERWATER_RUIN_SMALL_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:coal",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25412,8 +25652,8 @@ static CHESTS_UNDERWATER_RUIN_SMALL_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:wheat",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25476,7 +25716,7 @@ static CHESTS_VILLAGE_VILLAGE_ARMORER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25484,7 +25724,7 @@ static CHESTS_VILLAGE_VILLAGE_ARMORER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 4i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25528,7 +25768,7 @@ static CHESTS_VILLAGE_VILLAGE_BUTCHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:porkchop",
         weight: 6i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25536,7 +25776,7 @@ static CHESTS_VILLAGE_VILLAGE_BUTCHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:wheat",
         weight: 6i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25544,7 +25784,7 @@ static CHESTS_VILLAGE_VILLAGE_BUTCHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:beef",
         weight: 6i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25552,7 +25792,7 @@ static CHESTS_VILLAGE_VILLAGE_BUTCHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:mutton",
         weight: 6i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25560,7 +25800,7 @@ static CHESTS_VILLAGE_VILLAGE_BUTCHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:coal",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25580,7 +25820,7 @@ static CHESTS_VILLAGE_VILLAGE_CARTOGRAPHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:map",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25588,7 +25828,7 @@ static CHESTS_VILLAGE_VILLAGE_CARTOGRAPHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:paper",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25604,7 +25844,7 @@ static CHESTS_VILLAGE_VILLAGE_CARTOGRAPHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25612,7 +25852,7 @@ static CHESTS_VILLAGE_VILLAGE_CARTOGRAPHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:stick",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25648,7 +25888,7 @@ static CHESTS_VILLAGE_VILLAGE_DESERT_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:cactus",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25656,7 +25896,7 @@ static CHESTS_VILLAGE_VILLAGE_DESERT_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:wheat",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25664,7 +25904,7 @@ static CHESTS_VILLAGE_VILLAGE_DESERT_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25680,7 +25920,7 @@ static CHESTS_VILLAGE_VILLAGE_DESERT_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:dead_bush",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25688,7 +25928,7 @@ static CHESTS_VILLAGE_VILLAGE_DESERT_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:emerald",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25716,7 +25956,7 @@ static CHESTS_VILLAGE_VILLAGE_FISHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:cod",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25724,7 +25964,7 @@ static CHESTS_VILLAGE_VILLAGE_FISHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:salmon",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25732,7 +25972,7 @@ static CHESTS_VILLAGE_VILLAGE_FISHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:water_bucket",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25740,7 +25980,7 @@ static CHESTS_VILLAGE_VILLAGE_FISHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:barrel",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25748,7 +25988,7 @@ static CHESTS_VILLAGE_VILLAGE_FISHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:wheat_seeds",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25756,7 +25996,7 @@ static CHESTS_VILLAGE_VILLAGE_FISHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:coal",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25784,7 +26024,7 @@ static CHESTS_VILLAGE_VILLAGE_FLETCHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:arrow",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25792,7 +26032,7 @@ static CHESTS_VILLAGE_VILLAGE_FLETCHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:feather",
         weight: 6i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25800,7 +26040,7 @@ static CHESTS_VILLAGE_VILLAGE_FLETCHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:egg",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25808,7 +26048,7 @@ static CHESTS_VILLAGE_VILLAGE_FLETCHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:flint",
         weight: 6i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25816,7 +26056,7 @@ static CHESTS_VILLAGE_VILLAGE_FLETCHER_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:stick",
         weight: 6i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25836,7 +26076,7 @@ static CHESTS_VILLAGE_VILLAGE_MASON_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:clay_ball",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25868,7 +26108,7 @@ static CHESTS_VILLAGE_VILLAGE_MASON_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 4i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25912,7 +26152,7 @@ static CHESTS_VILLAGE_VILLAGE_PLAINS_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_nugget",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25936,7 +26176,7 @@ static CHESTS_VILLAGE_VILLAGE_PLAINS_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:potato",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25944,7 +26184,7 @@ static CHESTS_VILLAGE_VILLAGE_PLAINS_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25952,7 +26192,7 @@ static CHESTS_VILLAGE_VILLAGE_PLAINS_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:apple",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25976,7 +26216,7 @@ static CHESTS_VILLAGE_VILLAGE_PLAINS_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:emerald",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -25984,7 +26224,7 @@ static CHESTS_VILLAGE_VILLAGE_PLAINS_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:oak_sapling",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26004,7 +26244,7 @@ static CHESTS_VILLAGE_VILLAGE_SAVANNA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_nugget",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26028,7 +26268,7 @@ static CHESTS_VILLAGE_VILLAGE_SAVANNA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26036,7 +26276,7 @@ static CHESTS_VILLAGE_VILLAGE_SAVANNA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:wheat_seeds",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26044,7 +26284,7 @@ static CHESTS_VILLAGE_VILLAGE_SAVANNA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:emerald",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26052,7 +26292,7 @@ static CHESTS_VILLAGE_VILLAGE_SAVANNA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:acacia_sapling",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26068,7 +26308,7 @@ static CHESTS_VILLAGE_VILLAGE_SAVANNA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:torch",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26096,7 +26336,7 @@ static CHESTS_VILLAGE_VILLAGE_SHEPHERD_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:white_wool",
         weight: 6i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26104,7 +26344,7 @@ static CHESTS_VILLAGE_VILLAGE_SHEPHERD_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:black_wool",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26112,7 +26352,7 @@ static CHESTS_VILLAGE_VILLAGE_SHEPHERD_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gray_wool",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26120,7 +26360,7 @@ static CHESTS_VILLAGE_VILLAGE_SHEPHERD_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:brown_wool",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26128,7 +26368,7 @@ static CHESTS_VILLAGE_VILLAGE_SHEPHERD_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:light_gray_wool",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26152,7 +26392,7 @@ static CHESTS_VILLAGE_VILLAGE_SHEPHERD_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:wheat",
         weight: 6i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 6i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26188,7 +26428,7 @@ static CHESTS_VILLAGE_VILLAGE_SNOWY_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:potato",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26196,7 +26436,7 @@ static CHESTS_VILLAGE_VILLAGE_SNOWY_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26204,7 +26444,7 @@ static CHESTS_VILLAGE_VILLAGE_SNOWY_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:beetroot_seeds",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26228,7 +26468,7 @@ static CHESTS_VILLAGE_VILLAGE_SNOWY_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:emerald",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26236,7 +26476,7 @@ static CHESTS_VILLAGE_VILLAGE_SNOWY_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:snowball",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26244,7 +26484,7 @@ static CHESTS_VILLAGE_VILLAGE_SNOWY_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:coal",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26264,7 +26504,7 @@ static CHESTS_VILLAGE_VILLAGE_TAIGA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_nugget",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26288,7 +26528,7 @@ static CHESTS_VILLAGE_VILLAGE_TAIGA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:potato",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26296,7 +26536,7 @@ static CHESTS_VILLAGE_VILLAGE_TAIGA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:sweet_berries",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26304,7 +26544,7 @@ static CHESTS_VILLAGE_VILLAGE_TAIGA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26312,7 +26552,7 @@ static CHESTS_VILLAGE_VILLAGE_TAIGA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:pumpkin_seeds",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26328,7 +26568,7 @@ static CHESTS_VILLAGE_VILLAGE_TAIGA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:emerald",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26336,7 +26576,7 @@ static CHESTS_VILLAGE_VILLAGE_TAIGA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:spruce_sapling",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26352,7 +26592,7 @@ static CHESTS_VILLAGE_VILLAGE_TAIGA_HOUSE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:spruce_log",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26372,7 +26612,7 @@ static CHESTS_VILLAGE_VILLAGE_TANNERY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:leather",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26404,7 +26644,7 @@ static CHESTS_VILLAGE_VILLAGE_TANNERY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26428,7 +26668,7 @@ static CHESTS_VILLAGE_VILLAGE_TANNERY_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:emerald",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26448,7 +26688,7 @@ static CHESTS_VILLAGE_VILLAGE_TEMPLE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:redstone",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26456,7 +26696,7 @@ static CHESTS_VILLAGE_VILLAGE_TEMPLE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 7i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26464,7 +26704,7 @@ static CHESTS_VILLAGE_VILLAGE_TEMPLE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:rotten_flesh",
         weight: 7i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26472,7 +26712,7 @@ static CHESTS_VILLAGE_VILLAGE_TEMPLE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:lapis_lazuli",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26480,7 +26720,7 @@ static CHESTS_VILLAGE_VILLAGE_TEMPLE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_ingot",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26488,7 +26728,7 @@ static CHESTS_VILLAGE_VILLAGE_TEMPLE_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:emerald",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26508,7 +26748,7 @@ static CHESTS_VILLAGE_VILLAGE_TOOLSMITH_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26516,7 +26756,7 @@ static CHESTS_VILLAGE_VILLAGE_TOOLSMITH_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26524,7 +26764,7 @@ static CHESTS_VILLAGE_VILLAGE_TOOLSMITH_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_ingot",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26532,7 +26772,7 @@ static CHESTS_VILLAGE_VILLAGE_TOOLSMITH_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26548,7 +26788,7 @@ static CHESTS_VILLAGE_VILLAGE_TOOLSMITH_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:coal",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26556,7 +26796,7 @@ static CHESTS_VILLAGE_VILLAGE_TOOLSMITH_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:stick",
         weight: 20i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26584,7 +26824,7 @@ static CHESTS_VILLAGE_VILLAGE_WEAPONSMITH_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26592,7 +26832,7 @@ static CHESTS_VILLAGE_VILLAGE_WEAPONSMITH_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26600,7 +26840,7 @@ static CHESTS_VILLAGE_VILLAGE_WEAPONSMITH_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_ingot",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26608,7 +26848,7 @@ static CHESTS_VILLAGE_VILLAGE_WEAPONSMITH_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26616,7 +26856,7 @@ static CHESTS_VILLAGE_VILLAGE_WEAPONSMITH_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:apple",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26671,16 +26911,16 @@ static CHESTS_VILLAGE_VILLAGE_WEAPONSMITH_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:obsidian",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:oak_sapling",
         weight: 5i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 7i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26814,7 +27054,7 @@ static CHESTS_WOODLAND_MANSION_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26822,7 +27062,7 @@ static CHESTS_WOODLAND_MANSION_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gold_ingot",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26838,7 +27078,7 @@ static CHESTS_WOODLAND_MANSION_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:wheat",
         weight: 20i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26854,7 +27094,7 @@ static CHESTS_WOODLAND_MANSION_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:redstone",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26862,31 +27102,31 @@ static CHESTS_WOODLAND_MANSION_POOL1_ENTRIES: &[LootEntry] = &[
         item: "minecraft:coal",
         weight: 15i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:melon_seeds",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:pumpkin_seeds",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:beetroot_seeds",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26896,7 +27136,7 @@ static CHESTS_WOODLAND_MANSION_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bone",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26904,7 +27144,7 @@ static CHESTS_WOODLAND_MANSION_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:gunpowder",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26912,7 +27152,7 @@ static CHESTS_WOODLAND_MANSION_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:rotten_flesh",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26920,7 +27160,7 @@ static CHESTS_WOODLAND_MANSION_POOL2_ENTRIES: &[LootEntry] = &[
         item: "minecraft:string",
         weight: 10i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -26978,88 +27218,88 @@ static DISPENSERS_TRIAL_CHAMBERS_CHAMBER_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:arrow",
         weight: 4i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:snowball",
         weight: 6i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:egg",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:fire_charge",
         weight: 6i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 4i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:splash_potion",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:splash_potion",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:splash_potion",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:lingering_potion",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:lingering_potion",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:lingering_potion",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:lingering_potion",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 5i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -27077,8 +27317,8 @@ pub static DISPENSERS_TRIAL_CHAMBERS_CHAMBER: LootTable = LootTable {
 static DISPENSERS_TRIAL_CHAMBERS_CORRIDOR_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:arrow",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 4i32,
+    max_count: 8i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -27137,17 +27377,17 @@ pub static ENTITIES_BEE: LootTable = LootTable {
 static ENTITIES_BLAZE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:blaze_rod",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_BLAZE_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_BLAZE_POOL0_ENTRIES,
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::KilledByPlayer,
 }];
 pub static ENTITIES_BLAZE: LootTable = LootTable {
     pools: ENTITIES_BLAZE_POOLS,
@@ -27155,26 +27395,26 @@ pub static ENTITIES_BLAZE: LootTable = LootTable {
 static ENTITIES_BOGGED_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:arrow",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_BOGGED_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:bone",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_BOGGED_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:tipped_arrow",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_BOGGED_POOLS: &[LootPool] = &[
     LootPool {
@@ -27196,7 +27436,7 @@ static ENTITIES_BOGGED_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::KilledByPlayer,
     },
 ];
 pub static ENTITIES_BOGGED: LootTable = LootTable {
@@ -27206,16 +27446,16 @@ static ENTITIES_BREEZE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:breeze_rod",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(2i32)),
 }];
 static ENTITIES_BREEZE_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_BREEZE_POOL0_ENTRIES,
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::KilledByPlayer,
 }];
 pub static ENTITIES_BREEZE: LootTable = LootTable {
     pools: ENTITIES_BREEZE_POOLS,
@@ -27227,8 +27467,8 @@ pub static ENTITIES_CAMEL: LootTable = LootTable {
 static ENTITIES_CAT_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:string",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -27245,18 +27485,18 @@ pub static ENTITIES_CAT: LootTable = LootTable {
 static ENTITIES_CAVE_SPIDER_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:string",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_CAVE_SPIDER_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:spider_eye",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: -1i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_CAVE_SPIDER_POOLS: &[LootPool] = &[
     LootPool {
@@ -27271,7 +27511,7 @@ static ENTITIES_CAVE_SPIDER_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::KilledByPlayer,
     },
 ];
 pub static ENTITIES_CAVE_SPIDER: LootTable = LootTable {
@@ -27280,10 +27520,10 @@ pub static ENTITIES_CAVE_SPIDER: LootTable = LootTable {
 static ENTITIES_CHICKEN_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:feather",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_CHICKEN_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:chicken",
@@ -27291,7 +27531,7 @@ static ENTITIES_CHICKEN_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     min_count: 1i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_CHICKEN_POOLS: &[LootPool] = &[
     LootPool {
@@ -27341,7 +27581,7 @@ static ENTITIES_COD_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.05f32 },
     },
 ];
 pub static ENTITIES_COD: LootTable = LootTable {
@@ -27350,18 +27590,18 @@ pub static ENTITIES_COD: LootTable = LootTable {
 static ENTITIES_COW_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:leather",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_COW_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:beef",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 3i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_COW_POOLS: &[LootPool] = &[
     LootPool {
@@ -27385,10 +27625,10 @@ pub static ENTITIES_COW: LootTable = LootTable {
 static ENTITIES_CREEPER_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:gunpowder",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_CREEPER_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
@@ -27510,10 +27750,10 @@ pub static ENTITIES_CREEPER: LootTable = LootTable {
 static ENTITIES_DOLPHIN_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:cod",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_DOLPHIN_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_DOLPHIN_POOL0_ENTRIES,
@@ -27528,10 +27768,10 @@ pub static ENTITIES_DOLPHIN: LootTable = LootTable {
 static ENTITIES_DONKEY_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:leather",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_DONKEY_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_DONKEY_POOL0_ENTRIES,
@@ -27546,10 +27786,10 @@ pub static ENTITIES_DONKEY: LootTable = LootTable {
 static ENTITIES_DROWNED_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:rotten_flesh",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_DROWNED_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:copper_ingot",
@@ -27572,7 +27812,14 @@ static ENTITIES_DROWNED_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::KilledByPlayer,
+            LootCondition::RandomChanceWithEnchantedBonus {
+                unenchanted_chance: 0.11f32,
+                enchanted_chance_base: 0.13f32,
+                enchanted_chance_per_level_above_first: 0.02f32,
+            },
+        ]),
     },
 ];
 pub static ENTITIES_DROWNED: LootTable = LootTable {
@@ -27581,10 +27828,10 @@ pub static ENTITIES_DROWNED: LootTable = LootTable {
 static ENTITIES_ELDER_GUARDIAN_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:prismarine_shard",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_ELDER_GUARDIAN_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
@@ -27593,7 +27840,7 @@ static ENTITIES_ELDER_GUARDIAN_POOL1_ENTRIES: &[LootEntry] = &[
         min_count: 1i32,
         max_count: 1i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
     LootEntry {
         item: "minecraft:prismarine_crystals",
@@ -27601,7 +27848,7 @@ static ENTITIES_ELDER_GUARDIAN_POOL1_ENTRIES: &[LootEntry] = &[
         min_count: 1i32,
         max_count: 1i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
 ];
 static ENTITIES_ELDER_GUARDIAN_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
@@ -27674,14 +27921,21 @@ static ENTITIES_ELDER_GUARDIAN_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::KilledByPlayer,
     },
     LootPool {
         entries: ENTITIES_ELDER_GUARDIAN_POOL3_ENTRIES,
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::KilledByPlayer,
+            LootCondition::RandomChanceWithEnchantedBonus {
+                unenchanted_chance: 0.025f32,
+                enchanted_chance_base: 0.035f32,
+                enchanted_chance_per_level_above_first: 0.01f32,
+            },
+        ]),
     },
     LootPool {
         entries: ENTITIES_ELDER_GUARDIAN_POOL4_ENTRIES,
@@ -27701,10 +27955,10 @@ pub static ENTITIES_ENDER_DRAGON: LootTable = LootTable {
 static ENTITIES_ENDERMAN_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:ender_pearl",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_ENDERMAN_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_ENDERMAN_POOL0_ENTRIES,
@@ -27731,10 +27985,10 @@ static ENTITIES_EVOKER_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
 static ENTITIES_EVOKER_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:emerald",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_EVOKER_POOLS: &[LootPool] = &[
     LootPool {
@@ -27749,7 +28003,7 @@ static ENTITIES_EVOKER_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::KilledByPlayer,
     },
 ];
 pub static ENTITIES_EVOKER: LootTable = LootTable {
@@ -27766,18 +28020,18 @@ pub static ENTITIES_FROG: LootTable = LootTable {
 static ENTITIES_GHAST_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:ghast_tear",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_GHAST_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:gunpowder",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_GHAST_POOLS: &[LootPool] = &[
     LootPool {
@@ -27806,9 +28060,9 @@ static ENTITIES_GLOW_SQUID_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:glow_ink_sac",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 3i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_GLOW_SQUID_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_GLOW_SQUID_POOL0_ENTRIES,
@@ -27827,10 +28081,10 @@ pub static ENTITIES_GOAT: LootTable = LootTable {
 static ENTITIES_GUARDIAN_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:prismarine_shard",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_GUARDIAN_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
@@ -27839,7 +28093,7 @@ static ENTITIES_GUARDIAN_POOL1_ENTRIES: &[LootEntry] = &[
         min_count: 1i32,
         max_count: 1i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
     LootEntry {
         item: "minecraft:prismarine_crystals",
@@ -27847,7 +28101,7 @@ static ENTITIES_GUARDIAN_POOL1_ENTRIES: &[LootEntry] = &[
         min_count: 1i32,
         max_count: 1i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
 ];
 static ENTITIES_GUARDIAN_POOL2_ENTRIES: &[LootEntry] = &[
@@ -27904,7 +28158,14 @@ static ENTITIES_GUARDIAN_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::KilledByPlayer,
+            LootCondition::RandomChanceWithEnchantedBonus {
+                unenchanted_chance: 0.025f32,
+                enchanted_chance_base: 0.035f32,
+                enchanted_chance_per_level_above_first: 0.01f32,
+            },
+        ]),
     },
 ];
 pub static ENTITIES_GUARDIAN: LootTable = LootTable {
@@ -27913,18 +28174,18 @@ pub static ENTITIES_GUARDIAN: LootTable = LootTable {
 static ENTITIES_HOGLIN_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:porkchop",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 4i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_HOGLIN_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:leather",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_HOGLIN_POOLS: &[LootPool] = &[
     LootPool {
@@ -27948,10 +28209,10 @@ pub static ENTITIES_HOGLIN: LootTable = LootTable {
 static ENTITIES_HORSE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:leather",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_HORSE_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_HORSE_POOL0_ENTRIES,
@@ -27966,10 +28227,10 @@ pub static ENTITIES_HORSE: LootTable = LootTable {
 static ENTITIES_HUSK_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:rotten_flesh",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_HUSK_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
@@ -28010,7 +28271,14 @@ static ENTITIES_HUSK_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::KilledByPlayer,
+            LootCondition::RandomChanceWithEnchantedBonus {
+                unenchanted_chance: 0.025f32,
+                enchanted_chance_base: 0.035f32,
+                enchanted_chance_per_level_above_first: 0.01f32,
+            },
+        ]),
     },
 ];
 pub static ENTITIES_HUSK: LootTable = LootTable {
@@ -28023,16 +28291,16 @@ pub static ENTITIES_ILLUSIONER: LootTable = LootTable {
 static ENTITIES_IRON_GOLEM_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:poppy",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
 static ENTITIES_IRON_GOLEM_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:iron_ingot",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 3i32,
+    max_count: 5i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -28058,10 +28326,10 @@ pub static ENTITIES_IRON_GOLEM: LootTable = LootTable {
 static ENTITIES_LLAMA_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:leather",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_LLAMA_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_LLAMA_POOL0_ENTRIES,
@@ -28077,10 +28345,10 @@ static ENTITIES_MAGMA_CUBE_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:magma_cream",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: -2i32,
         max_count: 1i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
     LootEntry {
         item: "minecraft:pearlescent_froglight",
@@ -28120,18 +28388,18 @@ pub static ENTITIES_MAGMA_CUBE: LootTable = LootTable {
 static ENTITIES_MOOSHROOM_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:leather",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_MOOSHROOM_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:beef",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 3i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_MOOSHROOM_POOLS: &[LootPool] = &[
     LootPool {
@@ -28155,10 +28423,10 @@ pub static ENTITIES_MOOSHROOM: LootTable = LootTable {
 static ENTITIES_MULE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:leather",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_MULE_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_MULE_POOL0_ENTRIES,
@@ -28196,9 +28464,9 @@ static ENTITIES_PARROT_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:feather",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_PARROT_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_PARROT_POOL0_ENTRIES,
@@ -28213,17 +28481,17 @@ pub static ENTITIES_PARROT: LootTable = LootTable {
 static ENTITIES_PHANTOM_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:phantom_membrane",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_PHANTOM_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_PHANTOM_POOL0_ENTRIES,
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::KilledByPlayer,
 }];
 pub static ENTITIES_PHANTOM: LootTable = LootTable {
     pools: ENTITIES_PHANTOM_POOLS,
@@ -28232,9 +28500,9 @@ static ENTITIES_PIG_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:porkchop",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 3i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_PIG_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_PIG_POOL0_ENTRIES,
@@ -28280,18 +28548,18 @@ static ENTITIES_POLAR_BEAR_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:cod",
         weight: 3i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 0i32,
+        max_count: 2i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
     LootEntry {
         item: "minecraft:salmon",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 0i32,
+        max_count: 2i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
 ];
 static ENTITIES_POLAR_BEAR_POOLS: &[LootPool] = &[LootPool {
@@ -28333,7 +28601,7 @@ static ENTITIES_PUFFERFISH_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.05f32 },
     },
 ];
 pub static ENTITIES_PUFFERFISH: LootTable = LootTable {
@@ -28342,10 +28610,10 @@ pub static ENTITIES_PUFFERFISH: LootTable = LootTable {
 static ENTITIES_RABBIT_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:rabbit_hide",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_RABBIT_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:rabbit",
@@ -28353,7 +28621,7 @@ static ENTITIES_RABBIT_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     min_count: 1i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_RABBIT_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:rabbit_foot",
@@ -28383,7 +28651,14 @@ static ENTITIES_RABBIT_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::KilledByPlayer,
+            LootCondition::RandomChanceWithEnchantedBonus {
+                unenchanted_chance: 0.1f32,
+                enchanted_chance_base: 0.13f32,
+                enchanted_chance_per_level_above_first: 0.03f32,
+            },
+        ]),
     },
 ];
 pub static ENTITIES_RABBIT: LootTable = LootTable {
@@ -28436,7 +28711,7 @@ static ENTITIES_SALMON_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.05f32 },
     },
 ];
 pub static ENTITIES_SALMON: LootTable = LootTable {
@@ -28446,9 +28721,9 @@ static ENTITIES_SHEEP_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_SHEEP_POOL0_ENTRIES,
@@ -28472,9 +28747,9 @@ static ENTITIES_SHEEP_BLACK_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_BLACK_POOLS: &[LootPool] = &[
     LootPool {
@@ -28507,9 +28782,9 @@ static ENTITIES_SHEEP_BLUE_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_BLUE_POOLS: &[LootPool] = &[
     LootPool {
@@ -28542,9 +28817,9 @@ static ENTITIES_SHEEP_BROWN_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_BROWN_POOLS: &[LootPool] = &[
     LootPool {
@@ -28577,9 +28852,9 @@ static ENTITIES_SHEEP_CYAN_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_CYAN_POOLS: &[LootPool] = &[
     LootPool {
@@ -28612,9 +28887,9 @@ static ENTITIES_SHEEP_GRAY_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_GRAY_POOLS: &[LootPool] = &[
     LootPool {
@@ -28647,9 +28922,9 @@ static ENTITIES_SHEEP_GREEN_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_GREEN_POOLS: &[LootPool] = &[
     LootPool {
@@ -28682,9 +28957,9 @@ static ENTITIES_SHEEP_LIGHT_BLUE_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_LIGHT_BLUE_POOLS: &[LootPool] = &[
     LootPool {
@@ -28717,9 +28992,9 @@ static ENTITIES_SHEEP_LIGHT_GRAY_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_LIGHT_GRAY_POOLS: &[LootPool] = &[
     LootPool {
@@ -28752,9 +29027,9 @@ static ENTITIES_SHEEP_LIME_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_LIME_POOLS: &[LootPool] = &[
     LootPool {
@@ -28787,9 +29062,9 @@ static ENTITIES_SHEEP_MAGENTA_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_MAGENTA_POOLS: &[LootPool] = &[
     LootPool {
@@ -28822,9 +29097,9 @@ static ENTITIES_SHEEP_ORANGE_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_ORANGE_POOLS: &[LootPool] = &[
     LootPool {
@@ -28857,9 +29132,9 @@ static ENTITIES_SHEEP_PINK_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_PINK_POOLS: &[LootPool] = &[
     LootPool {
@@ -28892,9 +29167,9 @@ static ENTITIES_SHEEP_PURPLE_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_PURPLE_POOLS: &[LootPool] = &[
     LootPool {
@@ -28927,9 +29202,9 @@ static ENTITIES_SHEEP_RED_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_RED_POOLS: &[LootPool] = &[
     LootPool {
@@ -28962,9 +29237,9 @@ static ENTITIES_SHEEP_WHITE_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_WHITE_POOLS: &[LootPool] = &[
     LootPool {
@@ -28997,9 +29272,9 @@ static ENTITIES_SHEEP_YELLOW_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:mutton",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SHEEP_YELLOW_POOLS: &[LootPool] = &[
     LootPool {
@@ -29033,7 +29308,11 @@ static ENTITIES_SHULKER_POOLS: &[LootPool] = &[LootPool {
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::RandomChanceWithEnchantedBonus {
+        unenchanted_chance: 0.5f32,
+        enchanted_chance_base: 0.5625f32,
+        enchanted_chance_per_level_above_first: 0.0625f32,
+    },
 }];
 pub static ENTITIES_SHULKER: LootTable = LootTable {
     pools: ENTITIES_SHULKER_POOLS,
@@ -29045,18 +29324,18 @@ pub static ENTITIES_SILVERFISH: LootTable = LootTable {
 static ENTITIES_SKELETON_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:arrow",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SKELETON_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:bone",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SKELETON_POOLS: &[LootPool] = &[
     LootPool {
@@ -29080,10 +29359,10 @@ pub static ENTITIES_SKELETON: LootTable = LootTable {
 static ENTITIES_SKELETON_HORSE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:bone",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SKELETON_HORSE_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_SKELETON_HORSE_POOL0_ENTRIES,
@@ -29099,10 +29378,10 @@ static ENTITIES_SLIME_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:slime_ball",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 0i32,
+        max_count: 2i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
     LootEntry {
         item: "minecraft:slime_ball",
@@ -29130,8 +29409,8 @@ pub static ENTITIES_SNIFFER: LootTable = LootTable {
 static ENTITIES_SNOW_GOLEM_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:snowball",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 15i32,
     condition: LootCondition::None,
     bonus_formula: None,
 }];
@@ -29148,18 +29427,18 @@ pub static ENTITIES_SNOW_GOLEM: LootTable = LootTable {
 static ENTITIES_SPIDER_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:string",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SPIDER_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:spider_eye",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: -1i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SPIDER_POOLS: &[LootPool] = &[
     LootPool {
@@ -29174,7 +29453,7 @@ static ENTITIES_SPIDER_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::KilledByPlayer,
     },
 ];
 pub static ENTITIES_SPIDER: LootTable = LootTable {
@@ -29184,9 +29463,9 @@ static ENTITIES_SQUID_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:ink_sac",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 3i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_SQUID_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_SQUID_POOL0_ENTRIES,
@@ -29201,26 +29480,26 @@ pub static ENTITIES_SQUID: LootTable = LootTable {
 static ENTITIES_STRAY_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:arrow",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_STRAY_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:bone",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_STRAY_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:tipped_arrow",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_STRAY_POOLS: &[LootPool] = &[
     LootPool {
@@ -29242,7 +29521,7 @@ static ENTITIES_STRAY_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::KilledByPlayer,
     },
 ];
 pub static ENTITIES_STRAY: LootTable = LootTable {
@@ -29251,10 +29530,10 @@ pub static ENTITIES_STRAY: LootTable = LootTable {
 static ENTITIES_STRIDER_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:string",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 2i32,
+    max_count: 5i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_STRIDER_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_STRIDER_POOL0_ENTRIES,
@@ -29273,10 +29552,10 @@ pub static ENTITIES_TADPOLE: LootTable = LootTable {
 static ENTITIES_TRADER_LLAMA_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:leather",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_TRADER_LLAMA_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_TRADER_LLAMA_POOL0_ENTRIES,
@@ -29317,7 +29596,7 @@ static ENTITIES_TROPICAL_FISH_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.05f32 },
     },
 ];
 pub static ENTITIES_TROPICAL_FISH: LootTable = LootTable {
@@ -29326,10 +29605,10 @@ pub static ENTITIES_TROPICAL_FISH: LootTable = LootTable {
 static ENTITIES_TURTLE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:seagrass",
     weight: 3i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_TURTLE_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:bowl",
@@ -29369,17 +29648,17 @@ pub static ENTITIES_VILLAGER: LootTable = LootTable {
 static ENTITIES_VINDICATOR_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:emerald",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_VINDICATOR_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_VINDICATOR_POOL0_ENTRIES,
     min_rolls: 1i32,
     max_rolls: 1i32,
     empty_weight: 0i32,
-    condition: LootCondition::None,
+    condition: LootCondition::KilledByPlayer,
 }];
 pub static ENTITIES_VINDICATOR: LootTable = LootTable {
     pools: ENTITIES_VINDICATOR_POOLS,
@@ -29410,59 +29689,59 @@ static ENTITIES_WITCH_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:glowstone_dust",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 0i32,
+        max_count: 2i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
     LootEntry {
         item: "minecraft:sugar",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 0i32,
+        max_count: 2i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
     LootEntry {
         item: "minecraft:spider_eye",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 0i32,
+        max_count: 2i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
     LootEntry {
         item: "minecraft:glass_bottle",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 0i32,
+        max_count: 2i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
     LootEntry {
         item: "minecraft:gunpowder",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 0i32,
+        max_count: 2i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
     LootEntry {
         item: "minecraft:stick",
         weight: 2i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 0i32,
+        max_count: 2i32,
         condition: LootCondition::None,
-        bonus_formula: None,
+        bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
     },
 ];
 static ENTITIES_WITCH_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:redstone",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 4i32,
+    max_count: 8i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_WITCH_POOLS: &[LootPool] = &[
     LootPool {
@@ -29490,18 +29769,18 @@ pub static ENTITIES_WITHER: LootTable = LootTable {
 static ENTITIES_WITHER_SKELETON_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:coal",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: -1i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_WITHER_SKELETON_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:bone",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_WITHER_SKELETON_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:wither_skeleton_skull",
@@ -29531,7 +29810,14 @@ static ENTITIES_WITHER_SKELETON_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::KilledByPlayer,
+            LootCondition::RandomChanceWithEnchantedBonus {
+                unenchanted_chance: 0.025f32,
+                enchanted_chance_base: 0.035f32,
+                enchanted_chance_per_level_above_first: 0.01f32,
+            },
+        ]),
     },
 ];
 pub static ENTITIES_WITHER_SKELETON: LootTable = LootTable {
@@ -29545,9 +29831,9 @@ static ENTITIES_ZOGLIN_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:rotten_flesh",
     weight: 1i32,
     min_count: 1i32,
-    max_count: 1i32,
+    max_count: 3i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_ZOGLIN_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_ZOGLIN_POOL0_ENTRIES,
@@ -29562,10 +29848,10 @@ pub static ENTITIES_ZOGLIN: LootTable = LootTable {
 static ENTITIES_ZOMBIE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:rotten_flesh",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_ZOMBIE_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
@@ -29606,7 +29892,14 @@ static ENTITIES_ZOMBIE_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::KilledByPlayer,
+            LootCondition::RandomChanceWithEnchantedBonus {
+                unenchanted_chance: 0.025f32,
+                enchanted_chance_base: 0.035f32,
+                enchanted_chance_per_level_above_first: 0.01f32,
+            },
+        ]),
     },
 ];
 pub static ENTITIES_ZOMBIE: LootTable = LootTable {
@@ -29615,10 +29908,10 @@ pub static ENTITIES_ZOMBIE: LootTable = LootTable {
 static ENTITIES_ZOMBIE_HORSE_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:rotten_flesh",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_ZOMBIE_HORSE_POOLS: &[LootPool] = &[LootPool {
     entries: ENTITIES_ZOMBIE_HORSE_POOL0_ENTRIES,
@@ -29633,10 +29926,10 @@ pub static ENTITIES_ZOMBIE_HORSE: LootTable = LootTable {
 static ENTITIES_ZOMBIE_VILLAGER_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:rotten_flesh",
     weight: 1i32,
-    min_count: 1i32,
-    max_count: 1i32,
+    min_count: 0i32,
+    max_count: 2i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_ZOMBIE_VILLAGER_POOL1_ENTRIES: &[LootEntry] = &[
     LootEntry {
@@ -29677,7 +29970,14 @@ static ENTITIES_ZOMBIE_VILLAGER_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::KilledByPlayer,
+            LootCondition::RandomChanceWithEnchantedBonus {
+                unenchanted_chance: 0.025f32,
+                enchanted_chance_base: 0.035f32,
+                enchanted_chance_per_level_above_first: 0.01f32,
+            },
+        ]),
     },
 ];
 pub static ENTITIES_ZOMBIE_VILLAGER: LootTable = LootTable {
@@ -29686,18 +29986,18 @@ pub static ENTITIES_ZOMBIE_VILLAGER: LootTable = LootTable {
 static ENTITIES_ZOMBIFIED_PIGLIN_POOL0_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:rotten_flesh",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_ZOMBIFIED_PIGLIN_POOL1_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:gold_nugget",
     weight: 1i32,
-    min_count: 1i32,
+    min_count: 0i32,
     max_count: 1i32,
     condition: LootCondition::None,
-    bonus_formula: None,
+    bonus_formula: Some(LootBonusFormula::UniformBonusCount(1i32)),
 }];
 static ENTITIES_ZOMBIFIED_PIGLIN_POOL2_ENTRIES: &[LootEntry] = &[LootEntry {
     item: "minecraft:gold_ingot",
@@ -29727,7 +30027,14 @@ static ENTITIES_ZOMBIFIED_PIGLIN_POOLS: &[LootPool] = &[
         min_rolls: 1i32,
         max_rolls: 1i32,
         empty_weight: 0i32,
-        condition: LootCondition::None,
+        condition: LootCondition::AllOf(&[
+            LootCondition::KilledByPlayer,
+            LootCondition::RandomChanceWithEnchantedBonus {
+                unenchanted_chance: 0.025f32,
+                enchanted_chance_base: 0.035f32,
+                enchanted_chance_per_level_above_first: 0.01f32,
+            },
+        ]),
     },
 ];
 pub static ENTITIES_ZOMBIFIED_PIGLIN: LootTable = LootTable {
@@ -29739,7 +30046,7 @@ static EQUIPMENT_TRIAL_CHAMBER_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29747,7 +30054,7 @@ static EQUIPMENT_TRIAL_CHAMBER_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29755,7 +30062,7 @@ static EQUIPMENT_TRIAL_CHAMBER_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29763,7 +30070,7 @@ static EQUIPMENT_TRIAL_CHAMBER_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29771,7 +30078,7 @@ static EQUIPMENT_TRIAL_CHAMBER_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29779,7 +30086,7 @@ static EQUIPMENT_TRIAL_CHAMBER_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
 ];
@@ -29799,7 +30106,7 @@ static EQUIPMENT_TRIAL_CHAMBER_MELEE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29807,7 +30114,7 @@ static EQUIPMENT_TRIAL_CHAMBER_MELEE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29815,7 +30122,7 @@ static EQUIPMENT_TRIAL_CHAMBER_MELEE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29823,7 +30130,7 @@ static EQUIPMENT_TRIAL_CHAMBER_MELEE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29831,7 +30138,7 @@ static EQUIPMENT_TRIAL_CHAMBER_MELEE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29839,7 +30146,7 @@ static EQUIPMENT_TRIAL_CHAMBER_MELEE_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
 ];
@@ -29902,7 +30209,7 @@ static EQUIPMENT_TRIAL_CHAMBER_RANGED_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29910,7 +30217,7 @@ static EQUIPMENT_TRIAL_CHAMBER_RANGED_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29918,7 +30225,7 @@ static EQUIPMENT_TRIAL_CHAMBER_RANGED_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29926,7 +30233,7 @@ static EQUIPMENT_TRIAL_CHAMBER_RANGED_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29934,7 +30241,7 @@ static EQUIPMENT_TRIAL_CHAMBER_RANGED_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
     LootEntry {
@@ -29942,7 +30249,7 @@ static EQUIPMENT_TRIAL_CHAMBER_RANGED_POOL0_ENTRIES: &[LootEntry] = &[
         weight: 1i32,
         min_count: 1i32,
         max_count: 1i32,
-        condition: LootCondition::None,
+        condition: LootCondition::RandomChance { chance: 0.5f32 },
         bonus_formula: None,
     },
 ];
@@ -30135,8 +30442,8 @@ static GAMEPLAY_FISHING_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:ink_sac",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 10i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -30375,8 +30682,8 @@ static GAMEPLAY_FISHING_JUNK_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:ink_sac",
         weight: 1i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 10i32,
+        max_count: 10i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -30703,7 +31010,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -30711,7 +31018,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -30719,7 +31026,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -30727,7 +31034,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -30735,7 +31042,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -30743,7 +31050,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -30751,7 +31058,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -30759,7 +31066,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -30767,7 +31074,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -30775,7 +31082,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -30783,7 +31090,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -30791,7 +31098,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -30799,7 +31106,7 @@ static GAMEPLAY_HERO_OF_THE_VILLAGE_FLETCHER_GIFT_POOL0_ENTRIES: &[LootEntry] = 
     LootEntry {
         item: "minecraft:tipped_arrow",
         weight: 1i32,
-        min_count: 1i32,
+        min_count: 0i32,
         max_count: 1i32,
         condition: LootCondition::None,
         bonus_formula: None,
@@ -31151,32 +31458,32 @@ static GAMEPLAY_PIGLIN_BARTERING_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:iron_nugget",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 10i32,
+        max_count: 36i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:ender_pearl",
         weight: 10i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:string",
         weight: 20i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 3i32,
+        max_count: 9i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:quartz",
         weight: 20i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 5i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -31192,7 +31499,7 @@ static GAMEPLAY_PIGLIN_BARTERING_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:crying_obsidian",
         weight: 40i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -31207,48 +31514,48 @@ static GAMEPLAY_PIGLIN_BARTERING_POOL0_ENTRIES: &[LootEntry] = &[
     LootEntry {
         item: "minecraft:leather",
         weight: 40i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:soul_sand",
         weight: 40i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:nether_brick",
         weight: 40i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:spectral_arrow",
         weight: 40i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 6i32,
+        max_count: 12i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:gravel",
         weight: 40i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 8i32,
+        max_count: 16i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:blackstone",
         weight: 40i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 8i32,
+        max_count: 16i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -31296,15 +31603,15 @@ static POTS_TRIAL_CHAMBERS_CORRIDOR_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:emerald",
         weight: 125i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:arrow",
         weight: 100i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 8i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -31312,7 +31619,7 @@ static POTS_TRIAL_CHAMBERS_CORRIDOR_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:iron_ingot",
         weight: 100i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -31336,7 +31643,7 @@ static POTS_TRIAL_CHAMBERS_CORRIDOR_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:diamond",
         weight: 5i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -31400,15 +31707,15 @@ static SPAWNERS_OMINOUS_TRIAL_CHAMBER_CONSUMABLES_POOL0_ENTRIES: &[LootEntry] = 
         item: "minecraft:cooked_beef",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
     LootEntry {
         item: "minecraft:baked_potato",
         weight: 3i32,
-        min_count: 1i32,
-        max_count: 1i32,
+        min_count: 2i32,
+        max_count: 4i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -31416,7 +31723,7 @@ static SPAWNERS_OMINOUS_TRIAL_CHAMBER_CONSUMABLES_POOL0_ENTRIES: &[LootEntry] = 
         item: "minecraft:golden_carrot",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 2i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -31478,7 +31785,7 @@ static SPAWNERS_TRIAL_CHAMBER_CONSUMABLES_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:bread",
         weight: 3i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -31486,7 +31793,7 @@ static SPAWNERS_TRIAL_CHAMBER_CONSUMABLES_POOL0_ENTRIES: &[LootEntry] = &[
         item: "minecraft:baked_potato",
         weight: 2i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -31604,7 +31911,7 @@ static SPAWNERS_TRIAL_CHAMBER_ITEMS_TO_DROP_WHEN_OMINOUS_POOL1_ENTRIES: &[LootEn
         item: "minecraft:fire_charge",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },
@@ -31612,7 +31919,7 @@ static SPAWNERS_TRIAL_CHAMBER_ITEMS_TO_DROP_WHEN_OMINOUS_POOL1_ENTRIES: &[LootEn
         item: "minecraft:wind_charge",
         weight: 1i32,
         min_count: 1i32,
-        max_count: 1i32,
+        max_count: 3i32,
         condition: LootCondition::None,
         bonus_formula: None,
     },

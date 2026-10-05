@@ -101,7 +101,8 @@ enum ConditionValue {
 
 #[derive(Deserialize, Clone, Debug)]
 struct ConditionStruct {
-    #[serde(rename = "type", default)]
+    /// `condition` in 1.21.1's format, `type` in later ones.
+    #[serde(rename = "type", alias = "condition", default)]
     condition: String,
     #[allow(dead_code)]
     #[serde(default)]
@@ -240,8 +241,8 @@ fn parse_condition(cond: &ConditionStruct) -> LootCondition {
     }
 }
 
-fn condition_of(value: Option<&ConditionValue>) -> LootCondition {
-    value.map_or(LootCondition::None, resolve_condition)
+fn condition_of(conditions: &[ConditionValue]) -> LootCondition {
+    combine_conditions(conditions)
 }
 
 fn combine_conditions(conditions: &[ConditionValue]) -> LootCondition {
@@ -291,7 +292,8 @@ where
 
 #[derive(Deserialize, Clone, Debug)]
 struct EntryFunctionStruct {
-    #[serde(rename = "type")]
+    /// `function` in 1.21.1's format, `type` in later ones.
+    #[serde(rename = "type", alias = "function")]
     function: String,
     #[serde(default)]
     formula: Option<String>,
@@ -319,10 +321,17 @@ struct PoolEntryStruct {
     value: Option<LootTableValue>,
     #[serde(default = "default_weight")]
     weight: i32,
-    #[serde(rename = "modifier", default, deserialize_with = "one_or_many")]
+    /// `functions` in 1.21.1's format, `modifier` in later ones.
+    #[serde(
+        rename = "modifier",
+        alias = "functions",
+        default,
+        deserialize_with = "one_or_many"
+    )]
     functions: Vec<EntryFunctionStruct>,
-    #[serde(default)]
-    condition: Option<ConditionValue>,
+    /// `conditions` (a list, all must pass) in 1.21.1's format, `condition` in later ones.
+    #[serde(alias = "conditions", default, deserialize_with = "one_or_many")]
+    condition: Vec<ConditionValue>,
     #[serde(default)]
     children: Vec<PoolEntryStruct>,
 }
@@ -337,8 +346,8 @@ struct PoolStruct {
     entries: Vec<PoolEntryStruct>,
     #[serde(default = "default_rolls")]
     rolls: RollsStruct,
-    #[serde(default)]
-    condition: Option<ConditionValue>,
+    #[serde(alias = "conditions", default, deserialize_with = "one_or_many")]
+    condition: Vec<ConditionValue>,
 }
 
 fn default_rolls() -> RollsStruct {
@@ -388,7 +397,7 @@ fn extract_entries_with_depth(
         return;
     }
 
-    let entry_cond = match (inherited_condition, condition_of(entry.condition.as_ref())) {
+    let entry_cond = match (inherited_condition, condition_of(&entry.condition)) {
         (LootCondition::None, cond) | (cond, LootCondition::None) => cond,
         (first, second) if first == second => first,
         (first, second) => LootCondition::AllOf(Box::leak(vec![first, second].into_boxed_slice())),
@@ -496,7 +505,7 @@ fn extract_entries_with_depth(
                     if let Ok(nested_table) = serde_json::from_str::<ChestLootTableJson>(&content) {
                         for pool in &nested_table.pools {
                             let mut pool_cond = entry_cond;
-                            let parsed = condition_of(pool.condition.as_ref());
+                            let parsed = condition_of(&pool.condition);
                             if parsed != LootCondition::None {
                                 pool_cond = parsed;
                             }
@@ -516,7 +525,7 @@ fn extract_entries_with_depth(
             Some(LootTableValue::Inline(nested_table)) => {
                 for pool in &nested_table.pools {
                     let mut pool_cond = entry_cond;
-                    let parsed = condition_of(pool.condition.as_ref());
+                    let parsed = condition_of(&pool.condition);
                     if parsed != LootCondition::None {
                         pool_cond = parsed;
                     }
@@ -542,7 +551,7 @@ fn extract_entries_with_depth(
                         {
                             for pool in &nested_table.pools {
                                 let mut pool_cond = entry_cond;
-                                let parsed = condition_of(pool.condition.as_ref());
+                                let parsed = condition_of(&pool.condition);
                                 if parsed != LootCondition::None {
                                     pool_cond = parsed;
                                 }
@@ -566,7 +575,7 @@ fn extract_entries_with_depth(
             let mut saw_shears = false;
 
             for child in &entry.children {
-                let child_cond = condition_of(child.condition.as_ref());
+                let child_cond = condition_of(&child.condition);
 
                 let effective_cond = if child_cond == LootCondition::SilkTouch {
                     saw_silk = true;
@@ -665,7 +674,7 @@ fn emit_table(
         let min_rolls = pool.rolls.min();
         let max_rolls = pool.rolls.max();
 
-        let pool_cond = condition_of(pool.condition.as_ref());
+        let pool_cond = condition_of(&pool.condition);
 
         let mut parsed_entries = Vec::new();
         let mut empty_weight: i32 = 0;
