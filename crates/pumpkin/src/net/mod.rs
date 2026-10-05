@@ -23,8 +23,6 @@ use pumpkin_util::{
     version::{BedrockMinecraftVersion, JavaMinecraftVersion},
 };
 use serde::{Deserialize, Deserializer};
-use sha1::Digest;
-use sha2::Sha256;
 use tokio::task::JoinHandle;
 
 use thiserror::Error;
@@ -71,8 +69,11 @@ where
     Ok(ArcSwap::new(Arc::new(v)))
 }
 
+/// Vanilla's `UUIDUtil.createOfflinePlayerUUID`:
+/// `UUID.nameUUIDFromBytes("OfflinePlayer:" + name)`, a version 3 UUID of the name's MD5.
 pub fn offline_uuid(username: &str) -> Result<Uuid, uuid::Error> {
-    Uuid::from_slice(&Sha256::digest(username)[..16])
+    let digest = md5::compute(format!("OfflinePlayer:{username}"));
+    Ok(uuid::Builder::from_md5_bytes(digest.0).into_uuid())
 }
 
 /// Represents a player's configuration settings.
@@ -594,7 +595,20 @@ pub enum DisconnectReason {
 
 #[cfg(test)]
 mod tests {
-    use crate::net::is_valid_player_name;
+    use crate::net::{is_valid_player_name, offline_uuid};
+
+    #[test]
+    fn offline_uuids_match_vanilla() {
+        // Names of the player files vanilla writes in offline mode.
+        assert_eq!(
+            offline_uuid("WorldTester").unwrap().to_string(),
+            "c525e329-c5fd-361b-b5c7-71a763094157"
+        );
+        assert_eq!(
+            offline_uuid("Notch").unwrap().to_string(),
+            "b50ad385-829d-3141-a216-7e7d7539ba7f"
+        );
+    }
 
     /// Test case for a standard, valid English name at max length.
     #[test]
