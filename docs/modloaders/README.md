@@ -19,7 +19,7 @@ loader's source for Minecraft 26.3 and cites the classes.
 | NeoForge | 🟡 handshake, registry sync and NeoForge's config done; a plain NeoForge client joins (2026-10-03); no mods tested yet | [neoforge.md](neoforge.md) |
 | Forge (MinecraftForge) | 🟡 handshake, registry sync and menus done; Storage Drawers works on a Forge client next to Fabric players (2026-10-04); entity spawn data not done | [forge.md](forge.md) |
 
-On branch `version-1.21.1`, Fabric and NeoForge 1.21.1 clients are served, and Forge is not;
+On branch `1.21.1`, Fabric and NeoForge 1.21.1 clients are served, and Forge is not;
 each file has an "On 1.21.1" section with what differs from 26.3.
 
 Others considered: Sinytra Connector runs Fabric mods on NeoForge, so its clients use the

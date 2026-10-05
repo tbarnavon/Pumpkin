@@ -1,4 +1,4 @@
-# Branch `version-1.21.1`
+# Branch `1.21.1`
 
 This branch runs Pumpkin as a Minecraft 1.21.1 server (protocol 767). It sits on top of `latest`
 and changes the data the server is generated from. The game code stays as close to `latest` as
