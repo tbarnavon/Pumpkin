@@ -1629,12 +1629,13 @@ impl wit::HostWithStore<PluginHostState> for HasSelf<PluginHostState> {
                                 )
                             }
                             _ => {
-                                // fabric-menu-api-v1 `Networking.OpenScreenPayload.write`.
+                                // fabric-screen-handler-api-v1 `Networking.OpenScreenPayload.write`
+                                // (1.21.1).
                                 let written = payload
                                     .write_string(&menu_type)
                                     .and_then(|()| payload.write_u8(sync_id))
                                     .and_then(|()| payload.write_component(&open.title, &version));
-                                ("fabric-menu-api-v1:open_screen", written)
+                                ("fabric-screen-handler-api-v1:open_screen", written)
                             }
                         };
                         if let Err(error) = written {

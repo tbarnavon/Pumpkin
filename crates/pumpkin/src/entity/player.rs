@@ -5986,7 +5986,7 @@ impl Player {
     }
 
     /// Opens a screen whose open packet `send_open` sends, for menu types the client learns about
-    /// from another packet than `COpenScreen` (Fabric's `fabric-menu-api-v1:open_screen`).
+    /// from another packet than `COpenScreen` (Fabric's `fabric-screen-handler-api-v1:open_screen`).
     /// `create` builds the screen handler for the new sync id.
     pub fn open_custom_screen(
         &self,
