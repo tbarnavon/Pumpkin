@@ -1,4 +1,5 @@
 use super::BlockEntity;
+use pumpkin_data::data_component_impl::{DataComponentImpl, PotDecorationsImpl};
 use pumpkin_data::item_stack::ItemStack;
 use pumpkin_nbt::compound::NbtCompound;
 use pumpkin_nbt::tag::NbtTag;
@@ -47,6 +48,37 @@ impl BlockEntity for DecoratedPotBlockEntity {
             let mut it_nbt = NbtCompound::new();
             it.write_item_stack(&mut it_nbt);
             nbt.put_compound("item", it_nbt);
+        }
+    }
+
+    /// `DecoratedPotBlockEntity.applyImplicitComponents`: the sherds, back, left, right, front.
+    fn apply_item_components(&self, stack: &ItemStack) {
+        let Some(decorations) = stack.get_data_component::<PotDecorationsImpl>() else {
+            return;
+        };
+        *self
+            .sherds
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner) = Some(
+            decorations
+                .write_data()
+                .extract_list()
+                .unwrap_or_default()
+                .to_vec(),
+        );
+    }
+
+    /// `DecoratedPotBlockEntity.collectImplicitComponents`: the dropped pot keeps its sherds.
+    fn collect_item_components(&self, stack: &mut ItemStack) {
+        let sherds = self
+            .sherds
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone();
+        if let Some(decorations) =
+            sherds.and_then(|sherds| PotDecorationsImpl::read_data(&NbtTag::List(sherds)))
+        {
+            stack.set_data_component(decorations);
         }
     }
 

@@ -24705,7 +24705,17 @@ impl Item {
                 },
             ),
             (Lore, &LoreImpl { lines: Vec::new() }),
-            (PotDecorations, &PotDecorationsImpl),
+            (
+                PotDecorations,
+                &PotDecorationsImpl {
+                    sherds: [
+                        Cow::Borrowed("minecraft:brick"),
+                        Cow::Borrowed("minecraft:brick"),
+                        Cow::Borrowed("minecraft:brick"),
+                        Cow::Borrowed("minecraft:brick"),
+                    ],
+                },
+            ),
             (
                 Rarity,
                 &RarityImpl {

@@ -911,6 +911,17 @@ mod tests {
             CanPlaceOnImpl::read_data,
         );
         assert_round_trip(LockImpl { predicate }, LockImpl::read_data);
+        assert_round_trip(
+            PotDecorationsImpl {
+                sherds: [
+                    Cow::Borrowed("minecraft:angler_pottery_sherd"),
+                    Cow::Borrowed("minecraft:brick"),
+                    Cow::Borrowed("minecraft:brick"),
+                    Cow::Borrowed("minecraft:heart_pottery_sherd"),
+                ],
+            },
+            PotDecorationsImpl::read_data,
+        );
     }
 
     #[test]

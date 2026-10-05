@@ -523,14 +523,36 @@ impl DataComponentImpl for BannerPatternsImpl {
     default_impl!(BannerPatterns);
 }
 
+/// A decorated pot's sherds: back, left, right, front (`PotDecorations.ordered`), bricks where
+/// a side has none.
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct PotDecorationsImpl;
+pub struct PotDecorationsImpl {
+    pub sherds: [Cow<'static, str>; 4],
+}
 impl PotDecorationsImpl {
-    pub const fn read_data(_data: &NbtTag) -> Option<Self> {
-        Some(Self)
+    const BRICK: Cow<'static, str> = Cow::Borrowed("minecraft:brick");
+
+    #[must_use]
+    pub fn read_data(data: &NbtTag) -> Option<Self> {
+        let NbtTag::List(list) = data else {
+            return None;
+        };
+        let mut sherds = [Self::BRICK, Self::BRICK, Self::BRICK, Self::BRICK];
+        for (sherd, tag) in sherds.iter_mut().zip(list) {
+            *sherd = Cow::Owned(tag.extract_string()?.to_string());
+        }
+        Some(Self { sherds })
     }
 }
 impl DataComponentImpl for PotDecorationsImpl {
+    fn write_data(&self) -> NbtTag {
+        NbtTag::List(
+            self.sherds
+                .iter()
+                .map(|sherd| NbtTag::String(sherd.to_string().into()))
+                .collect(),
+        )
+    }
     default_impl!(PotDecorations);
 }
 
