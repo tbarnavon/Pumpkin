@@ -210,6 +210,9 @@ send upstream (`ROADMAP.md`, item 12); once merged there, drop them here.
 - `b2a0f0534` decorated pots lost their sherds (`pot_decorations` kept no data)
   (`pumpkin-data/src/data_component_impl/basic.rs`, `pumpkin/src/block/entities/decorated_pot.rs`,
   `pumpkin-protocol/src/codec/data_component.rs`, `tools/pumpkin-codegen/src/item.rs`)
+- `5aa0f45ce` goat horns always played Ponder: `instrument` kept no data and was sent as an empty
+  inline instrument (`pumpkin-data/src/data_component_impl/basic.rs`,
+  `pumpkin/src/item/items/goat_horn.rs`, `pumpkin-protocol/src/codec/data_component.rs`)
 
 ## 11. Docs
 
