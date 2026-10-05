@@ -145,6 +145,19 @@ impl JavaClient {
             return Ok(());
         }
 
+        // `ItemStack.useOn`: a player who may not build uses an item on a block only where its
+        // `can_place_on` allows.
+        if !player.may_build()
+            && !crate::entity::player::adventure::can_place_on(&item, &world, &position)
+        {
+            let state_id = world.get_block_state_id(&position);
+            player.try_send_client_packet(&CBlockUpdate::new(
+                position,
+                VarInt(i32::from(state_id.as_u16())),
+            ));
+            return Ok(());
+        }
+
         let before = item.clone();
 
         let item_result = server

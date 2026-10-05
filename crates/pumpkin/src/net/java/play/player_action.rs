@@ -27,6 +27,17 @@ impl JavaClient {
                     let position = player_action.position;
                     let entity = &player.get_entity();
                     let world = entity.world.load_full();
+                    // `ServerPlayerGameMode.handleBlockBreakAction`: an adventure player breaks
+                    // only what its held item's `can_break` allows.
+                    if player.block_action_restricted(&world, &position) {
+                        let state_id = world.get_block_state_id(&position);
+                        player.try_send_client_packet(&CBlockUpdate::new(
+                            position,
+                            VarInt(i32::from(state_id.as_u16())),
+                        ));
+                        self.update_sequence(player_action.sequence.0);
+                        return;
+                    }
                     let (block, state) = world.get_block_and_state(&position);
 
                     if let Some(server_arc) = world.server.upgrade() {
@@ -219,6 +230,16 @@ impl JavaClient {
                     // Block break & play sound
                     let entity = &player.get_entity();
                     let world = entity.world.load_full();
+                    // `ServerPlayerGameMode.destroyBlock`
+                    if player.block_action_restricted(&world, &location) {
+                        let state_id = world.get_block_state_id(&location);
+                        player.try_send_client_packet(&CBlockUpdate::new(
+                            location,
+                            VarInt(i32::from(state_id.as_u16())),
+                        ));
+                        self.update_sequence(player_action.sequence.0);
+                        return;
+                    }
 
                     player.mining.store(false, Ordering::Relaxed);
                     world.set_block_breaking(entity, location, BlockBreakingProgress::Stop);

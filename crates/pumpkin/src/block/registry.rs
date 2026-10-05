@@ -638,9 +638,21 @@ impl BlockRegistry {
     ) -> Result<Option<(BlockPos, BlockStateId)>, BlockPlacingError> {
         let entity = &player.get_entity();
 
+        // Adventure players place only on blocks the item's `can_place_on` allows
+        // (`ItemStack.useOn`); the block they clicked is `location`.
         match player.gamemode.load() {
-            pumpkin_util::GameMode::Spectator | pumpkin_util::GameMode::Adventure => {
+            pumpkin_util::GameMode::Spectator => {
                 return Err(BlockPlacingError::InvalidGamemode);
+            }
+            pumpkin_util::GameMode::Adventure if !player.may_build() => {
+                let world = player.get_entity().world.load_full();
+                let stack = pumpkin_util::Hand::from_packet_id(use_item_on.hand.0).map_or_else(
+                    |_| pumpkin_data::item_stack::ItemStack::EMPTY.clone(),
+                    |hand| player.inventory().get_stack_in_hand(hand),
+                );
+                if !crate::entity::player::adventure::can_place_on(&stack, &world, &location) {
+                    return Err(BlockPlacingError::InvalidGamemode);
+                }
             }
             _ => {}
         }
