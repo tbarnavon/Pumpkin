@@ -983,6 +983,7 @@ impl ProtoChunk {
             &terrain_cache.secondary_noise,
             settings.sea_level,
         );
+        context.legacy_random_deriver = random_config.legacy_random_deriver.as_ref();
         for local_x in 0..16 {
             for local_z in 0..16 {
                 let x = start_x + local_x;

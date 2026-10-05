@@ -284,6 +284,7 @@ impl ToTokens for MaterialConditionStruct {
                 let hi = u64::from_be_bytes(bytes[8..16].try_into().expect("incorrect length"));
                 tokens.extend(quote!(
                     MaterialCondition::VerticalGradient(VerticalGradientMaterialCondition {
+                        random_name: #random_name,
                         random_lo: #lo,
                         random_hi: #hi,
                         true_at_and_below: #true_at_and_below,
@@ -649,6 +650,7 @@ pub fn build() -> TokenStream {
         }
 
         pub struct VerticalGradientMaterialCondition {
+            pub random_name: &'static str,
             pub random_lo: u64,
             pub random_hi: u64,
             pub true_at_and_below: YOffset,

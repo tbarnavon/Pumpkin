@@ -95,6 +95,7 @@ impl CarvingContext<'_> {
             self.secondary_noise,
             self.sea_level,
         );
+        context.legacy_random_deriver = self.random_config.legacy_random_deriver.as_ref();
         context.init_horizontal(x, z);
         context.biome = chunk.get_terrain_gen_biome(x, y, z);
         context.set_steep_material_condition(steep);

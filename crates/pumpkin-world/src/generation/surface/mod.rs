@@ -8,7 +8,7 @@ use pumpkin_data::{
 };
 use pumpkin_util::{
     math::{lerp2, vertical_surface_type::VerticalSurfaceType},
-    random::{RandomImpl, xoroshiro128::XoroshiroSplitter},
+    random::{RandomDeriver, RandomDeriverImpl, RandomImpl, xoroshiro128::XoroshiroSplitter},
 };
 
 use terrain::SurfaceTerrainBuilder;
@@ -33,6 +33,8 @@ pub struct MaterialRuleContext<'a> {
     pub min_y: i8,
     pub height: u16,
     pub random_deriver: &'a XoroshiroSplitter,
+    /// The legacy positional random, for dimensions with the legacy random source.
+    pub legacy_random_deriver: Option<&'a RandomDeriver>,
     fluid_height: i32,
     pub block_pos_x: i32,
     pub block_pos_y: i32,
@@ -85,6 +87,7 @@ impl<'a> MaterialRuleContext<'a> {
             last_unique_horizontal_pos_value: HORIZONTAL_POS - 1,
             last_est_heiht_unique_horizontal_pos_value: HORIZONTAL_POS - 1,
             random_deriver,
+            legacy_random_deriver: None,
             terrain_builder,
             fluid_height: 0,
             block_pos_x: 0,
@@ -107,13 +110,20 @@ impl<'a> MaterialRuleContext<'a> {
         let noise =
             self.surface_noise
                 .sample(self.block_pos_x as f64, 0.0, self.block_pos_z as f64);
-        (noise * 2.75
-            + 3.0
-            + (self
-                .random_deriver
-                .split_pos(self.block_pos_x, 0, self.block_pos_z)
-                .next_f64()
-                * 0.25) as f32) as i32
+        // `SurfaceSystem.getSurfaceDepth`: `noiseRandom` is the world's positional random.
+        let random = self.legacy_random_deriver.map_or_else(
+            || {
+                self.random_deriver
+                    .split_pos(self.block_pos_x, 0, self.block_pos_z)
+                    .next_f64()
+            },
+            |legacy| {
+                legacy
+                    .split_pos(self.block_pos_x, 0, self.block_pos_z)
+                    .next_f64()
+            },
+        );
+        (noise * 2.75 + 3.0 + (random * 0.25) as f32) as i32
     }
 
     pub fn init_horizontal(&mut self, x: i32, z: i32) {
@@ -400,11 +410,27 @@ pub fn test_vertical_gradient(
     if block_y >= false_at {
         return false;
     }
-    let splitter = context
-        .random_deriver
-        .from_lo_and_hi(condition.random_lo, condition.random_hi)
-        .next_splitter();
-    let mapped = pumpkin_util::math::map(block_y as f32, true_at as f32, false_at as f32, 1.0, 0.0);
-    let mut random = splitter.split_pos(context.block_pos_x, block_y, context.block_pos_z);
-    random.next_f32() < mapped
+    // `RandomState.getOrCreateRandomFactory`: the world random hashed with the name, forked.
+    let mapped = pumpkin_util::math::map(
+        f64::from(block_y),
+        f64::from(true_at),
+        f64::from(false_at),
+        1.0,
+        0.0,
+    );
+    let value = if let Some(legacy) = context.legacy_random_deriver {
+        legacy
+            .split_string(condition.random_name)
+            .next_splitter()
+            .split_pos(context.block_pos_x, block_y, context.block_pos_z)
+            .next_f32()
+    } else {
+        context
+            .random_deriver
+            .from_lo_and_hi(condition.random_lo, condition.random_hi)
+            .next_splitter()
+            .split_pos(context.block_pos_x, block_y, context.block_pos_z)
+            .next_f32()
+    };
+    f64::from(value) < mapped
 }

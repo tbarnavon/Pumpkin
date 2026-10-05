@@ -21,7 +21,11 @@ mod surface;
 use generator::VanillaGenerator;
 use pumpkin_data::dimension::Dimension;
 use pumpkin_util::{
-    random::xoroshiro128::{Xoroshiro, XoroshiroSplitter},
+    random::{
+        RandomDeriver, RandomImpl,
+        legacy_rand::LegacyRand,
+        xoroshiro128::{Xoroshiro, XoroshiroSplitter},
+    },
     world_seed::Seed,
 };
 
@@ -92,6 +96,9 @@ pub struct GlobalRandomConfig {
     pub base_random_deriver: XoroshiroSplitter,
     aquifer_random_deriver: XoroshiroSplitter,
     pub ore_random_deriver: XoroshiroSplitter,
+    /// For dimensions with the legacy random source, vanilla's positional random of
+    /// `RandomState`: `new LegacyRandomSource(seed).forkPositional()`.
+    pub legacy_random_deriver: Option<RandomDeriver>,
 }
 
 impl GlobalRandomConfig {
@@ -109,6 +116,8 @@ impl GlobalRandomConfig {
             base_random_deriver: random_deriver,
             aquifer_random_deriver: aquifer_deriver,
             ore_random_deriver: ore_deriver,
+            legacy_random_deriver: legacy_random_source
+                .then(|| LegacyRand::from_seed(seed).next_splitter()),
         }
     }
 
