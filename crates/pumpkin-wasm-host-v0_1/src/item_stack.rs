@@ -75,7 +75,7 @@ pub const fn to_wit_item_operation(op: Operation) -> WitModifierOperation {
 impl ItemStackInterfaceHost for PluginHostState {}
 
 impl HostItemStack for PluginHostState {
-    async fn new(
+    fn new(
         &mut self,
         registry_key: String,
         count: u8,
@@ -805,10 +805,7 @@ impl HostItemStack for PluginHostState {
         Ok(to_wit_nbt_tree(NbtTag::Compound(compound)))
     }
 
-    async fn from_nbt(
-        &mut self,
-        nbt: WitNbtTree,
-    ) -> wasmtime::Result<Option<Resource<ItemStackHandle>>> {
+    fn from_nbt(&mut self, nbt: WitNbtTree) -> wasmtime::Result<Option<Resource<ItemStackHandle>>> {
         let Ok(NbtTag::Compound(compound)) = from_wit_nbt_tree(&nbt) else {
             return Ok(None);
         };
@@ -817,7 +814,7 @@ impl HostItemStack for PluginHostState {
             .transpose()
     }
 
-    async fn drop(&mut self, rep: Resource<ItemStackHandle>) -> wasmtime::Result<()> {
+    fn drop(&mut self, rep: Resource<ItemStackHandle>) -> wasmtime::Result<()> {
         self.drop(rep)
     }
 }

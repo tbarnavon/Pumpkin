@@ -166,7 +166,7 @@ impl wit::Host for PluginHostState {
         Ok(())
     }
 
-    async fn close(&mut self, handler_id: u32, menu_id: u32) -> wasmtime::Result<()> {
+    fn close(&mut self, handler_id: u32, menu_id: u32) -> wasmtime::Result<()> {
         let state = self;
         let Some(plugin) = state.plugin.as_ref().and_then(Weak::upgrade) else {
             return Ok(());

@@ -3,11 +3,7 @@ use pumpkin_wasm_host_common::state::PluginHostState;
 use std::sync::{Arc, atomic::Ordering};
 
 impl scheduler::Host for PluginHostState {
-    async fn schedule_delayed_task(
-        &mut self,
-        handler_id: u32,
-        delay: u64,
-    ) -> wasmtime::Result<u32> {
+    fn schedule_delayed_task(&mut self, handler_id: u32, delay: u64) -> wasmtime::Result<u32> {
         let plugin = self
             .plugin
             .as_ref()
@@ -23,7 +19,7 @@ impl scheduler::Host for PluginHostState {
         Ok(task_id)
     }
 
-    async fn schedule_repeating_task(
+    fn schedule_repeating_task(
         &mut self,
         handler_id: u32,
         delay: u64,
@@ -45,7 +41,7 @@ impl scheduler::Host for PluginHostState {
         Ok(task_id)
     }
 
-    async fn spawn_job(&mut self, kind: u32, input: Vec<u8>) -> wasmtime::Result<u64> {
+    fn spawn_job(&mut self, kind: u32, input: Vec<u8>) -> wasmtime::Result<u64> {
         let plugin = self
             .plugin
             .as_ref()
@@ -58,7 +54,7 @@ impl scheduler::Host for PluginHostState {
         Ok(plugin.spawn_job(server, kind, input))
     }
 
-    async fn cancel_task(&mut self, task_id: u32) -> wasmtime::Result<()> {
+    fn cancel_task(&mut self, task_id: u32) -> wasmtime::Result<()> {
         let plugin = self
             .plugin
             .as_ref()

@@ -32,7 +32,7 @@ use pumpkin_wasm_host_common::state::PluginHostState;
 impl pumpkin::plugin::server::Host for PluginHostState {}
 
 impl pumpkin::plugin::server::HostServer for PluginHostState {
-    async fn get_sys_info(&mut self, _res: Resource<Server>) -> wasmtime::Result<SysInfo> {
+    fn get_sys_info(&mut self, _res: Resource<Server>) -> wasmtime::Result<SysInfo> {
         let has_perm = |p: &str| self.permissions.iter().any(|perm| perm == p);
 
         let mut sys = sysinfo::System::new_all();
@@ -65,7 +65,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         })
     }
 
-    async fn get_difficulty(&mut self, _res: Resource<Server>) -> wasmtime::Result<Difficulty> {
+    fn get_difficulty(&mut self, _res: Resource<Server>) -> wasmtime::Result<Difficulty> {
         let server = self
             .server
             .as_ref()
@@ -79,7 +79,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         })
     }
 
-    async fn get_player_count(&mut self, _res: Resource<Server>) -> wasmtime::Result<u32> {
+    fn get_player_count(&mut self, _res: Resource<Server>) -> wasmtime::Result<u32> {
         let server = self
             .server
             .as_ref()
@@ -87,7 +87,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(server.get_player_count() as u32)
     }
 
-    async fn get_mspt(&mut self, _res: Resource<Server>) -> wasmtime::Result<f64> {
+    fn get_mspt(&mut self, _res: Resource<Server>) -> wasmtime::Result<f64> {
         let server = self
             .server
             .as_ref()
@@ -95,7 +95,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(server.get_mspt())
     }
 
-    async fn get_tps(&mut self, _res: Resource<Server>) -> wasmtime::Result<f64> {
+    fn get_tps(&mut self, _res: Resource<Server>) -> wasmtime::Result<f64> {
         let server = self
             .server
             .as_ref()
@@ -103,7 +103,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(server.get_tps())
     }
 
-    async fn get_all_players(
+    fn get_all_players(
         &mut self,
         _res: Resource<Server>,
     ) -> wasmtime::Result<Vec<Resource<Player>>> {
@@ -119,7 +119,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
             .collect())
     }
 
-    async fn get_player_by_name(
+    fn get_player_by_name(
         &mut self,
         _rep: Resource<Server>,
         name: String,
@@ -135,7 +135,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
             .transpose()
     }
 
-    async fn get_player_by_uuid(
+    fn get_player_by_uuid(
         &mut self,
         _rep: Resource<Server>,
         id: WitUuid,
@@ -153,7 +153,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
             .transpose()
     }
 
-    async fn get_all_worlds(
+    fn get_all_worlds(
         &mut self,
         _rep: Resource<Server>,
     ) -> wasmtime::Result<Vec<Resource<pumpkin::plugin::world::World>>> {
@@ -173,7 +173,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
             .collect())
     }
 
-    async fn get_world_by_name(
+    fn get_world_by_name(
         &mut self,
         _rep: Resource<Server>,
         name: String,
@@ -194,7 +194,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
             }))
     }
 
-    async fn has_world(&mut self, _rep: Resource<Server>, name: String) -> wasmtime::Result<bool> {
+    fn has_world(&mut self, _rep: Resource<Server>, name: String) -> wasmtime::Result<bool> {
         let server = self
             .server
             .as_ref()
@@ -207,7 +207,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
             .any(|world| world.get_world_name() == name || world.dimension.minecraft_name == name))
     }
 
-    async fn get_players_in_world(
+    fn get_players_in_world(
         &mut self,
         _rep: Resource<Server>,
         world: Resource<pumpkin::plugin::world::World>,
@@ -222,7 +222,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(player_resources)
     }
 
-    async fn get_players_tracking_chunk(
+    fn get_players_tracking_chunk(
         &mut self,
         _rep: Resource<Server>,
         world: Resource<pumpkin::plugin::world::World>,
@@ -244,7 +244,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
             .collect()
     }
 
-    async fn get_players_tracking_entity(
+    fn get_players_tracking_entity(
         &mut self,
         _rep: Resource<Server>,
         world: Resource<pumpkin::plugin::world::World>,
@@ -263,7 +263,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
             .collect()
     }
 
-    async fn set_flammable(
+    fn set_flammable(
         &mut self,
         _rep: Resource<Server>,
         block: String,
@@ -277,7 +277,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(Ok(()))
     }
 
-    async fn get_player_count_in_world(
+    fn get_player_count_in_world(
         &mut self,
         _rep: Resource<Server>,
         world: Resource<pumpkin::plugin::world::World>,
@@ -286,7 +286,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(world_res.players.load().len() as u32)
     }
 
-    async fn delete_message_by_signature(
+    fn delete_message_by_signature(
         &mut self,
         _rep: Resource<Server>,
         signature: Vec<u8>,
@@ -300,7 +300,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(())
     }
 
-    async fn delete_message_by_id(
+    fn delete_message_by_id(
         &mut self,
         _rep: Resource<Server>,
         signature_id: i32,
@@ -314,7 +314,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(())
     }
 
-    async fn broadcast_tab_list_header_footer(
+    fn broadcast_tab_list_header_footer(
         &mut self,
         _rep: Resource<Server>,
         header: Resource<pumpkin::plugin::text::TextComponent>,
@@ -330,7 +330,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(())
     }
 
-    async fn get_max_players(&mut self, _rep: Resource<Server>) -> wasmtime::Result<u32> {
+    fn get_max_players(&mut self, _rep: Resource<Server>) -> wasmtime::Result<u32> {
         let server = self
             .server
             .as_ref()
@@ -339,7 +339,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(server.advanced_config.networking.java.max_players)
     }
 
-    async fn is_hardcore(&mut self, _rep: Resource<Server>) -> wasmtime::Result<bool> {
+    fn is_hardcore(&mut self, _rep: Resource<Server>) -> wasmtime::Result<bool> {
         let server = self
             .server
             .as_ref()
@@ -348,7 +348,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(server.basic_config.hardcore)
     }
 
-    async fn is_online_mode(&mut self, _rep: Resource<Server>) -> wasmtime::Result<bool> {
+    fn is_online_mode(&mut self, _rep: Resource<Server>) -> wasmtime::Result<bool> {
         let server = self
             .server
             .as_ref()
@@ -357,7 +357,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(server.advanced_config.networking.java.online_mode)
     }
 
-    async fn get_motd(&mut self, _rep: Resource<Server>) -> wasmtime::Result<String> {
+    fn get_motd(&mut self, _rep: Resource<Server>) -> wasmtime::Result<String> {
         let server = self
             .server
             .as_ref()
@@ -366,7 +366,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(server.advanced_config.networking.java.motd.clone())
     }
 
-    async fn has_whitelist(&mut self, _rep: Resource<Server>) -> wasmtime::Result<bool> {
+    fn has_whitelist(&mut self, _rep: Resource<Server>) -> wasmtime::Result<bool> {
         let server = self
             .server
             .as_ref()
@@ -375,7 +375,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(server.basic_config.white_list)
     }
 
-    async fn get_allow_nether(&mut self, _rep: Resource<Server>) -> wasmtime::Result<bool> {
+    fn get_allow_nether(&mut self, _rep: Resource<Server>) -> wasmtime::Result<bool> {
         let server = self
             .server
             .as_ref()
@@ -384,7 +384,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(server.basic_config.allow_nether)
     }
 
-    async fn get_allow_end(&mut self, _rep: Resource<Server>) -> wasmtime::Result<bool> {
+    fn get_allow_end(&mut self, _rep: Resource<Server>) -> wasmtime::Result<bool> {
         let server = self
             .server
             .as_ref()
@@ -393,7 +393,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(server.basic_config.allow_end)
     }
 
-    async fn get_view_distance(&mut self, _rep: Resource<Server>) -> wasmtime::Result<u8> {
+    fn get_view_distance(&mut self, _rep: Resource<Server>) -> wasmtime::Result<u8> {
         let server = self
             .server
             .as_ref()
@@ -402,7 +402,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(server.advanced_config.networking.java.view_distance.get())
     }
 
-    async fn get_simulation_distance(&mut self, _rep: Resource<Server>) -> wasmtime::Result<u8> {
+    fn get_simulation_distance(&mut self, _rep: Resource<Server>) -> wasmtime::Result<u8> {
         let server = self
             .server
             .as_ref()
@@ -416,7 +416,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
             .get())
     }
 
-    async fn get_default_gamemode(
+    fn get_default_gamemode(
         &mut self,
         _rep: Resource<Server>,
     ) -> wasmtime::Result<pumpkin::plugin::common::GameMode> {
@@ -430,7 +430,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         ))
     }
 
-    async fn get_recipe_manager(
+    fn get_recipe_manager(
         &mut self,
         _rep: Resource<Server>,
     ) -> wasmtime::Result<Resource<WitRecipeManager>> {
@@ -441,7 +441,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         self.add(server.recipe_manager.clone())
     }
 
-    async fn get_op_manager(
+    fn get_op_manager(
         &mut self,
         _rep: Resource<Server>,
     ) -> wasmtime::Result<Resource<WitOpManager>> {
@@ -452,7 +452,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         self.add(server.clone())
     }
 
-    async fn get_ban_manager(
+    fn get_ban_manager(
         &mut self,
         _rep: Resource<Server>,
     ) -> wasmtime::Result<Resource<WitBanManager>> {
@@ -463,7 +463,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         self.add(server.clone())
     }
 
-    async fn get_whitelist_manager(
+    fn get_whitelist_manager(
         &mut self,
         _rep: Resource<Server>,
     ) -> wasmtime::Result<Resource<WitWhitelistManager>> {
@@ -474,7 +474,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         self.add(server.clone())
     }
 
-    async fn get_advancement(
+    fn get_advancement(
         &mut self,
         _rep: Resource<Server>,
         id: String,
@@ -485,10 +485,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         crate::advancement::to_wasm_advancement_info(self, advancement).map(Some)
     }
 
-    async fn get_all_advancement_ids(
-        &mut self,
-        _rep: Resource<Server>,
-    ) -> wasmtime::Result<Vec<String>> {
+    fn get_all_advancement_ids(&mut self, _rep: Resource<Server>) -> wasmtime::Result<Vec<String>> {
         let ids = pumpkin_data::Advancement::get_identifier_list()
             .iter()
             .map(ToString::to_string)
@@ -496,7 +493,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(ids)
     }
 
-    async fn get_enchantment_manager(
+    fn get_enchantment_manager(
         &mut self,
         _rep: Resource<Server>,
     ) -> wasmtime::Result<Resource<WitEnchantmentManager>> {
@@ -579,7 +576,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(ids)
     }
 
-    async fn get_datapack_manager(
+    fn get_datapack_manager(
         &mut self,
         _rep: Resource<Server>,
     ) -> wasmtime::Result<Resource<WitDatapackManager>> {
@@ -590,7 +587,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         self.add(server.clone())
     }
 
-    async fn set_server_links(
+    fn set_server_links(
         &mut self,
         _rep: Resource<Server>,
         links: Vec<pumpkin::plugin::player::ServerLink>,
@@ -611,7 +608,7 @@ impl pumpkin::plugin::server::HostServer for PluginHostState {
         Ok(())
     }
 
-    async fn drop(&mut self, rep: Resource<Server>) -> wasmtime::Result<()> {
+    fn drop(&mut self, rep: Resource<Server>) -> wasmtime::Result<()> {
         self.drop(rep)
     }
 }
@@ -773,7 +770,7 @@ impl pumpkin::plugin::server::HostServerWithStore<PluginHostState> for HasSelf<P
 }
 
 impl pumpkin::plugin::server::HostOpManager for PluginHostState {
-    async fn is_op(&mut self, _res: Resource<WitOpManager>, id: WitUuid) -> wasmtime::Result<bool> {
+    fn is_op(&mut self, _res: Resource<WitOpManager>, id: WitUuid) -> wasmtime::Result<bool> {
         let server = self
             .server
             .as_ref()
@@ -787,7 +784,7 @@ impl pumpkin::plugin::server::HostOpManager for PluginHostState {
         Ok(ops.get_entry(&uuid).is_some())
     }
 
-    async fn get_op(
+    fn get_op(
         &mut self,
         _res: Resource<WitOpManager>,
         id: WitUuid,
@@ -810,7 +807,7 @@ impl pumpkin::plugin::server::HostOpManager for PluginHostState {
         }))
     }
 
-    async fn get_permission_level(
+    fn get_permission_level(
         &mut self,
         _res: Resource<WitOpManager>,
         id: WitUuid,
@@ -831,7 +828,7 @@ impl pumpkin::plugin::server::HostOpManager for PluginHostState {
         ))
     }
 
-    async fn list_ops(&mut self, _res: Resource<WitOpManager>) -> wasmtime::Result<Vec<OpEntry>> {
+    fn list_ops(&mut self, _res: Resource<WitOpManager>) -> wasmtime::Result<Vec<OpEntry>> {
         let server = self
             .server
             .as_ref()
@@ -853,7 +850,7 @@ impl pumpkin::plugin::server::HostOpManager for PluginHostState {
             .collect())
     }
 
-    async fn drop(&mut self, rep: Resource<WitOpManager>) -> wasmtime::Result<()> {
+    fn drop(&mut self, rep: Resource<WitOpManager>) -> wasmtime::Result<()> {
         self.drop(rep)
     }
 }
@@ -973,7 +970,7 @@ impl pumpkin::plugin::server::HostOpManagerWithStore<PluginHostState> for HasSel
 }
 
 impl pumpkin::plugin::server::HostBanManager for PluginHostState {
-    async fn is_player_banned(
+    fn is_player_banned(
         &mut self,
         _res: Resource<WitBanManager>,
         id: WitUuid,
@@ -991,7 +988,7 @@ impl pumpkin::plugin::server::HostBanManager for PluginHostState {
         Ok(list.banned_players.iter().any(|e| e.uuid == uuid))
     }
 
-    async fn get_player_ban(
+    fn get_player_ban(
         &mut self,
         _res: Resource<WitBanManager>,
         id: WitUuid,
@@ -1026,7 +1023,7 @@ impl pumpkin::plugin::server::HostBanManager for PluginHostState {
             }))
     }
 
-    async fn unban_player(
+    fn unban_player(
         &mut self,
         _res: Resource<WitBanManager>,
         id: WitUuid,
@@ -1048,7 +1045,7 @@ impl pumpkin::plugin::server::HostBanManager for PluginHostState {
             }))
     }
 
-    async fn list_player_bans(
+    fn list_player_bans(
         &mut self,
         _res: Resource<WitBanManager>,
     ) -> wasmtime::Result<Vec<BannedPlayerEntry>> {
@@ -1081,7 +1078,7 @@ impl pumpkin::plugin::server::HostBanManager for PluginHostState {
             .collect())
     }
 
-    async fn is_ip_banned(
+    fn is_ip_banned(
         &mut self,
         _res: Resource<WitBanManager>,
         ip: String,
@@ -1101,7 +1098,7 @@ impl pumpkin::plugin::server::HostBanManager for PluginHostState {
         Ok(list.banned_ips.iter().any(|e| e.ip == ip_addr))
     }
 
-    async fn get_ip_ban(
+    fn get_ip_ban(
         &mut self,
         _res: Resource<WitBanManager>,
         ip: String,
@@ -1137,11 +1134,7 @@ impl pumpkin::plugin::server::HostBanManager for PluginHostState {
             }))
     }
 
-    async fn unban_ip(
-        &mut self,
-        _res: Resource<WitBanManager>,
-        ip: String,
-    ) -> wasmtime::Result<bool> {
+    fn unban_ip(&mut self, _res: Resource<WitBanManager>, ip: String) -> wasmtime::Result<bool> {
         let server = self
             .server
             .as_ref()
@@ -1161,7 +1154,7 @@ impl pumpkin::plugin::server::HostBanManager for PluginHostState {
             }))
     }
 
-    async fn list_ip_bans(
+    fn list_ip_bans(
         &mut self,
         _res: Resource<WitBanManager>,
     ) -> wasmtime::Result<Vec<BannedIpEntry>> {
@@ -1193,7 +1186,7 @@ impl pumpkin::plugin::server::HostBanManager for PluginHostState {
             .collect())
     }
 
-    async fn drop(&mut self, rep: Resource<WitBanManager>) -> wasmtime::Result<()> {
+    fn drop(&mut self, rep: Resource<WitBanManager>) -> wasmtime::Result<()> {
         self.drop(rep)
     }
 }
@@ -1353,7 +1346,7 @@ impl pumpkin::plugin::server::HostBanManagerWithStore<PluginHostState>
 }
 
 impl pumpkin::plugin::server::HostWhitelistManager for PluginHostState {
-    async fn is_enabled(&mut self, _res: Resource<WitWhitelistManager>) -> wasmtime::Result<bool> {
+    fn is_enabled(&mut self, _res: Resource<WitWhitelistManager>) -> wasmtime::Result<bool> {
         let server = self
             .server
             .as_ref()
@@ -1361,7 +1354,7 @@ impl pumpkin::plugin::server::HostWhitelistManager for PluginHostState {
         Ok(server.white_list.load(std::sync::atomic::Ordering::Relaxed))
     }
 
-    async fn is_whitelisted(
+    fn is_whitelisted(
         &mut self,
         _res: Resource<WitWhitelistManager>,
         id: WitUuid,
@@ -1375,7 +1368,7 @@ impl pumpkin::plugin::server::HostWhitelistManager for PluginHostState {
         Ok(whitelist.whitelist.iter().any(|e| e.uuid == uuid))
     }
 
-    async fn add_player(
+    fn add_player(
         &mut self,
         _res: Resource<WitWhitelistManager>,
         name: String,
@@ -1398,7 +1391,7 @@ impl pumpkin::plugin::server::HostWhitelistManager for PluginHostState {
         }
     }
 
-    async fn remove_player(
+    fn remove_player(
         &mut self,
         _res: Resource<WitWhitelistManager>,
         id: WitUuid,
@@ -1420,7 +1413,7 @@ impl pumpkin::plugin::server::HostWhitelistManager for PluginHostState {
             }))
     }
 
-    async fn list_entries(
+    fn list_entries(
         &mut self,
         _res: Resource<WitWhitelistManager>,
     ) -> wasmtime::Result<Vec<WitWhitelistEntry>> {
@@ -1439,7 +1432,7 @@ impl pumpkin::plugin::server::HostWhitelistManager for PluginHostState {
             .collect())
     }
 
-    async fn drop(&mut self, rep: Resource<WitWhitelistManager>) -> wasmtime::Result<()> {
+    fn drop(&mut self, rep: Resource<WitWhitelistManager>) -> wasmtime::Result<()> {
         self.drop(rep)
     }
 }
