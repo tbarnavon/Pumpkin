@@ -26,8 +26,54 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use tracing::{error, warn};
 use uuid::Uuid;
 
-#[derive(Clone, Serialize, Deserialize, Debug, Default)]
+#[derive(Clone, Debug, Default)]
 pub struct CriterionProgress(pub Option<SystemTime>);
+
+/// Vanilla's criterion date format (`CriterionProgress.DATE_FORMAT`).
+const CRITERION_DATE_FORMAT: &[time::format_description::BorrowedFormatItem<'static>] = time::macros::format_description!(
+    "[year]-[month]-[day] [hour]:[minute]:[second] [offset_hour sign:mandatory][offset_minute]"
+);
+
+impl Serialize for CriterionProgress {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        match self.0 {
+            Some(time) => {
+                let date = time::OffsetDateTime::from(time);
+                serializer.serialize_str(&format!(
+                    "{:04}-{:02}-{:02} {:02}:{:02}:{:02} +0000",
+                    date.year(),
+                    u8::from(date.month()),
+                    date.day(),
+                    date.hour(),
+                    date.minute(),
+                    date.second()
+                ))
+            }
+            None => serializer.serialize_none(),
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for CriterionProgress {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        // Vanilla's date string; older Pumpkin files stored a `SystemTime` object.
+        #[derive(Deserialize)]
+        #[serde(untagged)]
+        enum Stored {
+            Date(String),
+            Time(SystemTime),
+        }
+        Ok(Self(match Option::<Stored>::deserialize(deserializer)? {
+            Some(Stored::Date(date)) => Some(
+                time::OffsetDateTime::parse(&date, CRITERION_DATE_FORMAT)
+                    .map(SystemTime::from)
+                    .map_err(serde::de::Error::custom)?,
+            ),
+            Some(Stored::Time(time)) => Some(time),
+            None => None,
+        }))
+    }
+}
 
 impl CriterionProgress {
     pub fn grant(&mut self) {
@@ -148,7 +194,18 @@ impl<'de> Deserialize<'de> for AdvancementProgress {
     where
         D: Deserializer<'de>,
     {
-        let criteria = HashMap::<Arc<str>, CriterionProgress>::deserialize(deserializer)?;
+        // Vanilla's `{criteria, done}`; older Pumpkin files stored the criteria directly.
+        #[derive(Deserialize)]
+        #[serde(untagged)]
+        enum Stored {
+            Vanilla {
+                criteria: HashMap<Arc<str>, CriterionProgress>,
+            },
+            Criteria(HashMap<Arc<str>, CriterionProgress>),
+        }
+        let criteria = match Stored::deserialize(deserializer)? {
+            Stored::Vanilla { criteria } | Stored::Criteria(criteria) => criteria,
+        };
         Ok(Self {
             criteria,
             requirements: AdvancementRequirement::default(),
@@ -316,11 +373,14 @@ impl PlayerAdvancement {
 
         let json = read(&self.path).map_err(AdvancementDataError::Io)?;
 
-        let loaded_data: HashMap<String, AdvancementProgress> =
+        let mut loaded_data: HashMap<String, serde_json::Value> =
             serde_json::from_slice(&json).map_err(AdvancementDataError::Json)?;
+        loaded_data.remove("DataVersion");
 
         self.progress.clear();
-        for (advancement_id, mut progress) in loaded_data {
+        for (advancement_id, progress) in loaded_data {
+            let mut progress: AdvancementProgress =
+                serde_json::from_value(progress).map_err(AdvancementDataError::Json)?;
             if let Some(advancement_ref) = Advancement::from_minecraft_name(&advancement_id) {
                 progress.update(AdvancementRequirement::from_const(
                     advancement_ref.requirements,
@@ -547,11 +607,19 @@ impl Serialize for PlayerAdvancement {
             .filter(|(_key, value)| value.has_progress())
             .map(|(&key, val)| (key, val))
             .collect();
-        let mut map = serializer.serialize_map(Some(filtered_map.len()))?;
+        // `PlayerAdvancements.save`: `{criteria, done}` per advancement, then the data version.
+        let mut map = serializer.serialize_map(Some(filtered_map.len() + 1))?;
 
         for (advancement, progress) in &filtered_map {
-            map.serialize_entry(&advancement.id, &progress.criteria)?;
+            map.serialize_entry(
+                &advancement.id,
+                &serde_json::json!({
+                    "criteria": progress,
+                    "done": progress.is_done(),
+                }),
+            )?;
         }
+        map.serialize_entry("DataVersion", &crate::entity::player::DATA_VERSION)?;
         map.end()
     }
 }
@@ -653,8 +721,17 @@ mod tests {
         // Content should be valid JSON
         let content = std::fs::read_to_string(&pa.path).unwrap();
         assert!(!content.is_empty(), "Saved file should not be empty");
-        let _: HashMap<String, AdvancementProgress> =
+        // Vanilla's layout: `{criteria: {name: date}, done}` and the data version.
+        let saved: serde_json::Value =
             serde_json::from_str(&content).expect("Saved content should be valid JSON");
+        let root = &saved[adv.id.to_string()];
+        assert_eq!(root["done"], serde_json::Value::Bool(true));
+        let date = root["criteria"]["crafting_table"].as_str().unwrap();
+        assert!(
+            time::OffsetDateTime::parse(date, CRITERION_DATE_FORMAT).is_ok(),
+            "{date}"
+        );
+        assert!(saved["DataVersion"].is_number());
     }
 
     #[tokio::test]
@@ -706,10 +783,13 @@ mod tests {
         let mut pa = PlayerAdvancement::new(manager, id);
         // Create a JSON file with advancement data
         let adv = Advancement::STORY_ROOT;
-        let mut progress = AdvancementProgress::default();
-        progress.update(AdvancementRequirement::from_const(adv.requirements));
-        progress.grant_progress("crafting_table");
-        let data = serde_json::json!({ adv.id.to_string():progress });
+        let data = serde_json::json!({
+            adv.id.to_string(): {
+                "criteria": { "crafting_table": "2026-10-05 09:18:09 +0200" },
+                "done": true,
+            },
+            "DataVersion": 3955,
+        });
         std::fs::write(&pa.path, data.to_string()).unwrap();
 
         // Load the file
@@ -815,9 +895,13 @@ mod tests {
 
         // Verify both were saved
         let content = std::fs::read_to_string(&pa.path).unwrap();
-        let saved_data: HashMap<String, AdvancementProgress> =
+        let saved_data: HashMap<String, serde_json::Value> =
             serde_json::from_str(&content).unwrap();
-        assert_eq!(saved_data.len(), 2, "Should have saved both advancements");
+        assert_eq!(
+            saved_data.len(),
+            3,
+            "Should have saved both advancements and the data version"
+        );
     }
 
     #[tokio::test]
