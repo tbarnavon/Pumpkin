@@ -62,9 +62,11 @@ have no 1.21.1 counterpart, and the server sends what 1.21.1 uses instead:
 **Item stacks** have their own codec for 1.20.5 to 1.21.1 (`data_component_v1_21.rs`),
 written from 1.21.1's component stream codecs. It writes the tooltip flags, the older food,
 tool, custom model data and potion layouts, and network NBT for components without a network
-codec. Components 1.21.1 doesn't know are never sent. Components the server can't express in
-1.21.1's form are left out of the stack: `can_place_on`, `can_break`, `instrument`,
-`recipes`, `lock` and `pot_decorations`. Items from clients are read with the same codec.
+codec. Components 1.21.1 doesn't know are never sent. `can_place_on` and `can_break` are sent
+as 1.21.1's block predicates; one naming a block or tag the client lacks, or keeping its NBT
+as an unparsed string, is left out, since the client couldn't decode it. Instruments use
+1.21.1's built-in registry order (`instruments.json`), and the lock is 1.21.1's name string.
+Items from clients are read with the same codec.
 
 **Particles** sent without options (commands, plugins) get default options in 1.21.1's
 layouts, since the client can't decode an option particle without them.
@@ -102,21 +104,18 @@ not supported on 1.21.1. What differs from 26.3 is listed in each loader's file 
 Storage Drawers 1.21.1-13.11.4 dump is the test fixture, and its Fabric registry sync carries the
 same bytes as Fabric's own server.
 
+Mod recipes reach the client in `update_recipes`, after vanilla's, in 1.21.1's serializer
+layouts, and the recipe book lists them; placing one from the book names it by id, which the
+server maps to its own order.
+
 ## Tests
 
 - **Worldgen fixtures:** the noise, surface and biome fixtures in `assets/tests/` are dumped from
   1.21.1's own generator by the Extractor, and the tests allow no mismatch.
 - **Expected values:** tests that pinned 26.x ids now pin 1.21.1's.
-- **Skipped:** the modded recipe book test: 1.21.1 has no `recipe_book_add` (see Known gaps).
 
 ## Known gaps
 
-- **Saddles:** pigs, striders and horses show a saddle through entity data in 1.21.1, not
-  through the saddle equipment slot of later versions, which isn't sent. Saddled animals look
-  unsaddled.
-- **Unsent components:** see Protocol.
-- **Modded recipes:** `update_recipes` lists only vanilla recipes, so a modded client's recipe
-  book doesn't show mod recipes.
 - **Content:** content added after 1.21.1 is removed (copper golem, creaking, happy ghast,
   nautilus, cushions, shelves, spears, ...). Where a mechanic differs, the code follows 1.21.1:
   - boats are one entity with a wood type;
