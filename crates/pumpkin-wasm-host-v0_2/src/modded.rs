@@ -613,7 +613,7 @@ async fn call_item_hook(
 }
 
 impl wit::Host for PluginHostState {
-    async fn set_block_collision_shape(
+    fn set_block_collision_shape(
         &mut self,
         world: Resource<WitWorld>,
         pos: WitBlockPos,
@@ -634,7 +634,7 @@ impl wit::Host for PluginHostState {
         Ok(())
     }
 
-    async fn register_loader_channels(
+    fn register_loader_channels(
         &mut self,
         loader: wit::Loader,
         channels: Vec<wit::LoaderChannel>,
@@ -673,7 +673,7 @@ impl wit::Host for PluginHostState {
         Ok(Ok(()))
     }
 
-    async fn register_component_stream_codec(
+    fn register_component_stream_codec(
         &mut self,
         component: String,
         nodes: Vec<wit::StreamCodecNode>,

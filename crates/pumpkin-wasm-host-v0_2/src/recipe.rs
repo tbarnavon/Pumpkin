@@ -302,7 +302,7 @@ fn crafting_recipes_for(
 }
 
 impl HostRecipeManager for PluginHostState {
-    async fn crafting_recipes_for(
+    fn crafting_recipes_for(
         &mut self,
         _res: Resource<WitRecipeManager>,
         item: String,
@@ -509,7 +509,7 @@ impl HostRecipeManager for PluginHostState {
         Ok(())
     }
 
-    async fn drop(&mut self, _rep: Resource<WitRecipeManager>) -> wasmtime::Result<()> {
+    fn drop(&mut self, _rep: Resource<WitRecipeManager>) -> wasmtime::Result<()> {
         Ok(())
     }
 }
