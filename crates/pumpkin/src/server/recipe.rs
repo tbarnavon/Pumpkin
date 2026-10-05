@@ -48,35 +48,39 @@ impl RecipeManager {
     }
 
     pub fn add_recipe(&self, recipe: DynamicRecipe) {
-        let mut recipes = self
-            .dynamic_recipes
-            .write()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        recipes.push(recipe);
+        self.update(|recipes| recipes.push(recipe));
     }
 
     pub fn add_recipes(&self, new_recipes: impl IntoIterator<Item = DynamicRecipe>) {
-        let mut recipes = self
-            .dynamic_recipes
-            .write()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        recipes.extend(new_recipes);
+        self.update(|recipes| recipes.extend(new_recipes));
     }
 
     pub fn set_recipes(&self, new_recipes: Vec<DynamicRecipe>) {
-        let mut recipes = self
-            .dynamic_recipes
-            .write()
-            .unwrap_or_else(std::sync::PoisonError::into_inner);
-        *recipes = new_recipes;
+        self.update(|recipes| *recipes = new_recipes);
     }
 
     pub fn clear(&self) {
+        self.update(Vec::clear);
+    }
+
+    /// Changes the dynamic recipes and tells the protocol their ids: clients before 1.21.2 name
+    /// recipes by id when placing them from the book.
+    fn update(&self, change: impl FnOnce(&mut Vec<DynamicRecipe>)) {
         let mut recipes = self
             .dynamic_recipes
             .write()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
-        recipes.clear();
+        change(&mut recipes);
+        pumpkin_protocol::java::server::play::set_dynamic_recipe_ids(
+            recipes
+                .iter()
+                .map(|recipe| {
+                    pumpkin_protocol::java::client::play::dynamic_recipe_id(recipe)
+                        .unwrap_or_default()
+                        .to_string()
+                })
+                .collect(),
+        );
     }
 
     pub fn get_dynamic_recipes_internal(&self) -> Vec<DynamicRecipe> {

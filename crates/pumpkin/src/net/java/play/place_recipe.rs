@@ -345,7 +345,7 @@ impl JavaClient {
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .sync_id();
         player.try_send_client_packet(
-            &pumpkin_protocol::java::client::play::CPlaceGhostRecipe::new(sync_id, recipe_id),
+            &pumpkin_protocol::java::client::play::CPlaceGhostRecipe::new(sync_id, &recipe_id),
         );
     }
 }

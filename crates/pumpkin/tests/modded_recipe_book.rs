@@ -1,20 +1,18 @@
-//! Encodes the `recipe_book_add` packet a player receives with Storage Drawers installed.
+//! Encodes the recipes a 1.21.1 player receives with Storage Drawers installed.
 //!
-//! With `PUMPKIN_PACKET_OUT=<dir>` the packet body is written to `<dir>/recipe_book_add.bin`, so
-//! the Extractor's packet check (`-Dpumpkin.checkPackets=<dir>`) can decode it with Minecraft's own
-//! codec on a Fabric server running the same mod.
+//! 1.21.1 clients build their recipe book from `update_recipes`, so every recipe of the mod that
+//! Pumpkin parses must be in it after vanilla's.
 #![allow(clippy::expect_used)]
 
 use std::path::Path;
 
 use pumpkin::data::datapack::recipe_loader::parse_recipe;
-use pumpkin_data::packet::CURRENT_MC_VERSION;
-use pumpkin_protocol::ClientPacket;
-use pumpkin_protocol::java::client::play::CRecipeBookAdd;
+use pumpkin_data::recipe_sync::SYNCED_RECIPES;
+use pumpkin_protocol::java::client::play::encode_before_1_21_2;
+use pumpkin_protocol::ser::NetworkReadExt;
 
 #[test]
-#[ignore = "1.21.1 has no recipe_book_add: its clients get recipes from update_recipes, which has no modded recipes yet"]
-fn modded_recipe_book_encodes() {
+fn modded_recipes_are_sent_to_1_21_1_clients() {
     let dumps = pumpkin_registry_ext::read_dumps(Path::new(
         "../pumpkin-registry-ext/tests/fixtures/mod-data",
     ))
@@ -30,15 +28,10 @@ fn modded_recipe_book_encodes() {
             parse_recipe(namespace, name, &json.to_string())
         })
         .collect();
-    assert_eq!(recipes.len(), 127);
+    // The rest use the mod's own recipe types, crafted by its plugin.
+    assert_eq!(recipes.len(), 121);
 
-    let mut body = Vec::new();
-    CRecipeBookAdd::new(true, &recipes)
-        .write_packet_data(&mut body, &CURRENT_MC_VERSION)
-        .expect("encode");
-
-    if let Ok(dir) = std::env::var("PUMPKIN_PACKET_OUT") {
-        std::fs::create_dir_all(&dir).expect("create output dir");
-        std::fs::write(Path::new(&dir).join("recipe_book_add.bin"), &body).expect("write packet");
-    }
+    let body = encode_before_1_21_2(&recipes).expect("encode");
+    let count = (&mut body.as_slice()).get_var_int().expect("count").0;
+    assert_eq!(count as usize, SYNCED_RECIPES.len() + recipes.len());
 }

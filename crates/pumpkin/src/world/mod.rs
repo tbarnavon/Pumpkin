@@ -3309,8 +3309,10 @@ impl World {
         if client.version.load() < JavaMinecraftVersion::V_1_21_2
             && client.version.load() >= JavaMinecraftVersion::V_1_21
         {
-            match CUpdateRecipes::before_1_21_2() {
-                Ok(packet) => client.send_packet(&packet).await,
+            match pumpkin_protocol::java::client::play::encode_before_1_21_2(
+                &server.recipe_manager.get_dynamic_recipes_internal(),
+            ) {
+                Ok(data) => client.send_packet(&CUpdateRecipes::new(&data)).await,
                 Err(error) => warn!(
                     "Failed to encode the recipes for {}: {error}",
                     player.gameprofile.name
@@ -3772,10 +3774,16 @@ impl World {
             && java_client.version.load() >= JavaMinecraftVersion::V_1_21
         {
             // Every recipe is unlocked; special recipes never show in the book.
+            let dynamic_recipes = server.recipe_manager.get_dynamic_recipes_internal();
             let recipes: Vec<&str> = SYNCED_RECIPES
                 .iter()
                 .filter(|recipe| !matches!(recipe.data, SyncedRecipeData::Special { .. }))
                 .map(|recipe| recipe.id)
+                .chain(
+                    dynamic_recipes
+                        .iter()
+                        .filter_map(pumpkin_protocol::java::client::play::dynamic_recipe_id),
+                )
                 .collect();
             java_client
                 .send_packet(&CRecipe {
