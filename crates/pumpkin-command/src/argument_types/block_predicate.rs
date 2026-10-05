@@ -63,7 +63,7 @@ impl BlockPredicate {
     }
 }
 
-fn parse_properties(
+pub(crate) fn parse_properties(
     reader: &mut StringReader,
 ) -> Result<HashMap<String, String>, CommandSyntaxError> {
     let mut properties = HashMap::new();
@@ -115,7 +115,9 @@ fn parse_properties(
     Ok(properties)
 }
 
-fn parse_nbt(reader: &mut StringReader) -> Result<Option<NbtCompound>, CommandSyntaxError> {
+pub(crate) fn parse_nbt(
+    reader: &mut StringReader,
+) -> Result<Option<NbtCompound>, CommandSyntaxError> {
     if reader.peek() == Some('{') {
         let tag =
             ArgumentType::<crate::source::DummySource>::parse(&NbtCompoundArgumentType, reader)?;
