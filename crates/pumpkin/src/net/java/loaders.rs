@@ -304,7 +304,7 @@ mod tests {
     #[test]
     fn a_register_with_fabric_registry_sync_means_fabric() {
         let mut handshake = detecting(&["mod"], true);
-        handshake.on_payload(register::REGISTER_CHANNEL, b"fabric:registry/sync");
+        handshake.on_payload(register::REGISTER_CHANNEL, b"fabric:registry/sync/direct");
         assert!(matches!(handshake.on_pong(PING_ID), Step::Send(_)));
         assert!(matches!(handshake, LoaderHandshake::Fabric(_)));
     }

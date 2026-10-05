@@ -7,7 +7,7 @@
 //! 1. Server sends `minecraft:register` (its configuration channels) and Ping `0xFAB71C`, then
 //!    waits. A `minecraft:register` back means a Fabric client; the pong arriving first means a
 //!    vanilla client.
-//! 2. Early tasks (`BEFORE_CONFIGURE`): `fabric:registry/sync`, waiting for
+//! 2. Early tasks (`BEFORE_CONFIGURE`): `fabric:registry/sync/direct`, waiting for
 //!    `fabric:registry/sync/complete` (`RegistrySyncManager.configureClient`).
 //! 3. `CONFIGURE` tasks: `c:version`, then `c:register` with the server's play channels, each
 //!    waiting for the client's answer.
@@ -153,10 +153,16 @@ impl FabricHandshake {
                     return Step::Disconnect(self.missing_mods_message());
                 }
                 self.state = State::AwaitingSyncComplete;
-                Step::Send(vec![Outgoing::Payload {
-                    channel: registry_sync::SYNC_CHANNEL,
-                    data: registry_sync::encode(&sync_map::build()),
-                }])
+                let body = registry_sync::encode(&sync_map::build());
+                Step::Send(
+                    registry_sync::into_payloads(&body)
+                        .into_iter()
+                        .map(|data| Outgoing::Payload {
+                            channel: registry_sync::SYNC_CHANNEL,
+                            data,
+                        })
+                        .collect(),
+                )
             }
             (State::AwaitingSyncComplete, registry_sync::SYNC_COMPLETE_CHANNEL) => {
                 self.state = State::AwaitingVersion;

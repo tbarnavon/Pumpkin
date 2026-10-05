@@ -1,6 +1,7 @@
-//! Pumpkin's `fabric:registry/sync` for Storage Drawers must be byte-identical to what Fabric's
-//! server sends for the same mod. The reference bytes were produced by `RegistrySyncPayload.CODEC`
-//! on a Fabric 26.3 server with Storage Drawers 26.3.0.1 (Extractor mod dump).
+//! Pumpkin's `fabric:registry/sync/direct` for Storage Drawers must carry the same bytes Fabric's
+//! server sends for the same mod. The reference payloads were produced by
+//! `DirectRegistryPacketHandler.sendPacket` on a Fabric 1.21.1 server with Storage Drawers
+//! 1.21.1-13.11.4 (Extractor mod dump).
 //!
 //! The registry overlay is process-global, so everything that needs it runs in one test.
 #![allow(clippy::expect_used, clippy::panic)]
@@ -12,30 +13,42 @@ use pumpkin_fabric::handshake::{FabricHandshake, Outgoing, PING_ID, Step};
 use pumpkin_fabric::sync_map;
 use pumpkin_fabric::wire::{common, register, registry_sync};
 
-fn reference_payload() -> Vec<u8> {
+fn reference_payloads() -> Vec<Vec<u8>> {
     let text = std::fs::read_to_string("tests/fixtures/fabric_registry_sync_payload.json")
         .expect("fixture");
     let json: serde_json::Value = serde_json::from_str(&text).expect("json");
     assert_eq!(json["channel"], registry_sync::SYNC_CHANNEL);
-    base64::engine::general_purpose::STANDARD
-        .decode(json["payload"].as_str().expect("payload"))
-        .expect("base64")
+    json["payloads"]
+        .as_array()
+        .expect("payloads")
+        .iter()
+        .map(|payload| {
+            base64::engine::general_purpose::STANDARD
+                .decode(payload.as_str().expect("payload"))
+                .expect("base64")
+        })
+        .collect()
 }
 
-fn payload(step: &Step, channel: &str) -> Vec<u8> {
+fn payloads(step: &Step, channel: &str) -> Vec<Vec<u8>> {
     let Step::Send(out) = step else {
         panic!("expected packets, got {step:?}");
     };
     out.iter()
-        .find_map(|o| match o {
+        .filter_map(|o| match o {
             Outgoing::Payload { channel: c, data } if *c == channel => Some(data.clone()),
             _ => None,
         })
-        .unwrap_or_else(|| panic!("no {channel} in {out:?}"))
+        .collect()
+}
+
+fn payload(step: &Step, channel: &str) -> Vec<u8> {
+    payloads(step, channel)
+        .pop()
+        .unwrap_or_else(|| panic!("no {channel} in {step:?}"))
 }
 
 #[test]
-#[ignore = "the Storage Drawers fixtures are 26.3 dumps; 1.21.1 needs its own"]
 fn storage_drawers_sync_is_byte_identical_and_handshake_completes() {
     let dumps = pumpkin_registry_ext::read_dumps(Path::new(
         "../pumpkin-registry-ext/tests/fixtures/mod-data",
@@ -43,14 +56,20 @@ fn storage_drawers_sync_is_byte_identical_and_handshake_completes() {
     .expect("read dumps");
     pumpkin_registry_ext::install(dumps).expect("install");
 
-    let reference = reference_payload();
+    let reference = reference_payloads();
     let ours = registry_sync::encode(&sync_map::build());
     // Compare decoded first for a readable failure, then the exact bytes.
     assert_eq!(
         registry_sync::decode(&ours).expect("decode ours"),
-        registry_sync::decode(&reference).expect("decode reference")
+        registry_sync::decode(&reference.concat()).expect("decode reference")
     );
-    assert_eq!(ours, reference);
+    // Fabric sends its buffer's whole backing array: the same bytes, then zeros up to the
+    // buffer's capacity, which the client never reads.
+    let reference_body = reference.concat();
+    assert_eq!(&reference_body[..ours.len()], ours.as_slice());
+    assert!(reference_body[ours.len()..].iter().all(|byte| *byte == 0));
+    let ours_sent = registry_sync::into_payloads(&ours);
+    assert_eq!(ours_sent.len(), reference.len());
 
     // Fabric client: register -> sync -> complete -> c:version -> c:register -> done.
     let mut handshake = FabricHandshake::new(
@@ -65,7 +84,7 @@ fn storage_drawers_sync_is_byte_identical_and_handshake_completes() {
         common::REGISTER_CHANNEL,
     ]);
     let sync = handshake.on_payload(register::REGISTER_CHANNEL, &client_channels);
-    assert_eq!(payload(&sync, registry_sync::SYNC_CHANNEL), reference);
+    assert_eq!(payloads(&sync, registry_sync::SYNC_CHANNEL), ours_sent);
     // The client also answers the ping; that must not be taken for a vanilla client now.
     assert_eq!(handshake.on_pong(PING_ID), Step::Wait);
     let version = handshake.on_payload(registry_sync::SYNC_COMPLETE_CHANNEL, &[]);

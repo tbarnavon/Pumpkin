@@ -13,6 +13,9 @@ pub struct ModDump {
     pub menus: Vec<NamedEntry>,
     pub data_component_types: Vec<NamedEntry>,
     pub entity_types: Vec<NamedEntry>,
+    /// Absent from dumps made before recipe serializers were dumped.
+    #[serde(default)]
+    pub recipe_serializers: Vec<NamedEntry>,
     pub tags: TagsDump,
     /// Recipe id to recipe JSON, as encoded by `Recipe.DIRECT_CODEC`.
     pub recipes: BTreeMap<String, serde_json::Value>,

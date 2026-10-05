@@ -105,6 +105,9 @@ pub fn build() -> TokenStream {
 
         /// Every recipe, ordered by id like `recipes::RECIPES_CRAFTING`.
         pub static SYNCED_RECIPES: &[SyncedRecipe] = &[#(#recipes),*];
+
+        /// The `recipe_serializer` registry, by network id.
+        pub static RECIPE_SERIALIZERS: &[&str] = &[#(#serializers),*];
     }
 }
 

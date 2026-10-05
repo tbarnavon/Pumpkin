@@ -1,4 +1,4 @@
-//! Builds the `fabric:registry/sync` contents from Pumpkin's registries.
+//! Builds the `fabric:registry/sync/direct` contents from Pumpkin's registries.
 //!
 //! Fabric's server sends every registry that is both SYNCED and MODDED, with all of its entries,
 //! vanilla ones included (`RegistrySyncManager.createAndPopulateRegistryMap`, lines 160-260).
@@ -9,31 +9,35 @@ use pumpkin_data::data_component::DataComponent;
 use pumpkin_data::dynamic::names::{self, SyncedRegistry as NamedRegistry};
 use pumpkin_data::entity::EntityType;
 use pumpkin_data::item::Item;
+use pumpkin_data::recipe_sync::RECIPE_SERIALIZERS;
 use pumpkin_data::screen::WindowType;
 use pumpkin_data::{Block, BlockId};
 
 use crate::wire::registry_sync::SyncedRegistry;
 
-/// The registries to sync, in the order a Fabric 26.3 server sends them (the iteration order of
-/// `BuiltInRegistries.REGISTRY` there). The client does not depend on this order; keeping it
-/// makes Pumpkin's payload byte-identical to Fabric's for the same content.
+/// The registries to sync, in the order a Fabric 1.21.1 server sends them: the iteration order of
+/// `BuiltInRegistries.REGISTRY.keySet()`, a `HashMap` of 78 ids (128 buckets). The client does
+/// not depend on this order; keeping it makes Pumpkin's payload byte-identical to Fabric's for
+/// the same content.
 #[derive(Clone, Copy)]
 enum Synced {
     Item,
     BlockEntityType,
     DataComponentType,
+    RecipeSerializer,
     Menu,
     Block,
     EntityType,
 }
 
-const ORDER: [Synced; 6] = [
+const ORDER: [Synced; 7] = [
     Synced::Item,
     Synced::BlockEntityType,
     Synced::DataComponentType,
+    Synced::RecipeSerializer,
+    Synced::EntityType,
     Synced::Menu,
     Synced::Block,
-    Synced::EntityType,
 ];
 
 fn namespaced(path: &str) -> String {
@@ -102,7 +106,15 @@ fn entries(registry: Synced) -> Option<(&'static str, Vec<String>)> {
                 NamedRegistry::DataComponentType,
                 (0..=u8::MAX)
                     .map_while(DataComponent::try_from_id)
+                    .take_while(|component| component.is_networked())
                     .map(|component| component.to_name().to_string()),
+            )?,
+        ),
+        Synced::RecipeSerializer => (
+            NamedRegistry::RecipeSerializer.id(),
+            named(
+                NamedRegistry::RecipeSerializer,
+                RECIPE_SERIALIZERS.iter().map(|name| (*name).to_string()),
             )?,
         ),
         Synced::EntityType => (
@@ -125,7 +137,6 @@ pub fn build() -> Vec<SyncedRegistry> {
         .filter_map(entries)
         .map(|(id, names)| SyncedRegistry {
             id: id.to_string(),
-            optional: false,
             entries: names
                 .into_iter()
                 .zip(0u32..)

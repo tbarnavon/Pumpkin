@@ -1,14 +1,14 @@
-//! `fabric:registry/sync` and `fabric:registry/sync/complete`.
+//! `fabric:registry/sync/direct` and `fabric:registry/sync/complete`.
 //!
-//! fabric-registry-sync-v0 `impl/registry/sync/packet/RegistrySyncPayload.java`, `write` at
-//! line 122 and `read` at line 76:
+//! fabric-registry-sync-v0 for 1.21.1, `impl/registry/sync/packet/DirectRegistryPacketHandler.java`,
+//! `sendPacket` and `receivePayload`. The body is cut into payloads of at most
+//! [`MAX_PAYLOAD_SIZE`] bytes, followed by an empty payload that ends it:
 //!
 //! ```text
 //! VarInt  registry namespace group count
-//!   String  namespace ("" stands for "minecraft", optimizeNamespace at :215)
+//!   String  namespace ("" stands for "minecraft", optimizeNamespace)
 //!   VarInt  registry count
 //!     String  registry path
-//!     byte    attributes (bit 0 = OPTIONAL, encodeRegistryAttributes at :194)
 //!     VarInt  entry namespace group count
 //!       String  namespace ("" stands for "minecraft")
 //!       VarInt  bulk count
@@ -20,12 +20,14 @@
 
 use super::{ReadError, Reader, write_string, write_var_int};
 
-/// `RegistrySyncPayload.ID` (`RegistrySyncPayload.java:59`).
-pub const SYNC_CHANNEL: &str = "fabric:registry/sync";
+/// `DirectRegistryPacketHandler.Payload.ID`.
+pub const SYNC_CHANNEL: &str = "fabric:registry/sync/direct";
 /// `SyncCompletePayload.ID`: serverbound, empty body.
 pub const SYNC_COMPLETE_CHANNEL: &str = "fabric:registry/sync/complete";
 
-const OPTIONAL: u8 = 0x1;
+/// `DirectRegistryPacketHandler.MAX_PAYLOAD_SIZE` (the `fabric.registry.direct.maxPayloadSize`
+/// default).
+pub const MAX_PAYLOAD_SIZE: usize = 0x10_0000;
 /// Upper bound on list lengths read back, well above any real registry.
 const MAX_ENTRIES: usize = 1 << 20;
 
@@ -34,7 +36,6 @@ const MAX_ENTRIES: usize = 1 << 20;
 pub struct SyncedRegistry {
     /// For example `minecraft:block`.
     pub id: String,
-    pub optional: bool,
     /// `(namespaced entry id, raw id)`.
     pub entries: Vec<(String, u32)>,
 }
@@ -87,7 +88,6 @@ pub fn encode(registries: &[SyncedRegistry]) -> Vec<u8> {
         write_var_int(&mut out, group.len() as i32);
         for registry in group {
             write_string(&mut out, split(&registry.id).1);
-            out.push(if registry.optional { OPTIONAL } else { 0 });
 
             let entry_groups = group_by_first_occurrence(
                 registry
@@ -126,7 +126,17 @@ pub fn encode(registries: &[SyncedRegistry]) -> Vec<u8> {
     out
 }
 
-/// Decodes a payload body, like `RegistrySyncPayload.read`.
+/// Cuts an encoded body into the payloads to send: slices of at most [`MAX_PAYLOAD_SIZE`]
+/// bytes, then an empty one (`DirectRegistryPacketHandler.sendPacket`).
+#[must_use]
+pub fn into_payloads(body: &[u8]) -> Vec<Vec<u8>> {
+    body.chunks(MAX_PAYLOAD_SIZE)
+        .map(<[u8]>::to_vec)
+        .chain(std::iter::once(Vec::new()))
+        .collect()
+}
+
+/// Decodes a body (the payloads joined), like `DirectRegistryPacketHandler.receivePayload`.
 pub fn decode(payload: &[u8]) -> Result<Vec<SyncedRegistry>, ReadError> {
     let mut reader = Reader::new(payload);
     let mut registries = Vec::new();
@@ -136,7 +146,6 @@ pub fn decode(payload: &[u8]) -> Result<Vec<SyncedRegistry>, ReadError> {
         let registry_count = reader.length(MAX_ENTRIES)?;
         for _ in 0..registry_count {
             let path = reader.string()?;
-            let attributes = reader.byte()?;
             let mut entries = Vec::new();
             let mut last_bulk_last_raw_id = 0u32;
             let entry_group_count = reader.length(MAX_ENTRIES)?;
@@ -156,13 +165,36 @@ pub fn decode(payload: &[u8]) -> Result<Vec<SyncedRegistry>, ReadError> {
             }
             registries.push(SyncedRegistry {
                 id: format!("{namespace}:{path}"),
-                optional: attributes & OPTIONAL != 0,
                 entries,
             });
         }
     }
-    if !reader.is_empty() {
-        return Err(ReadError::BadLength(reader.rest().len() as i32));
-    }
+    // Trailing bytes are ignored, as `receivePayload` does: Fabric's sender sends its buffer's
+    // whole backing array, padded with zeros up to its capacity.
     Ok(registries)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn body_round_trips_and_ends_with_an_empty_payload() {
+        let registries = vec![SyncedRegistry {
+            id: "minecraft:item".into(),
+            entries: vec![
+                ("minecraft:air".into(), 0),
+                ("minecraft:stone".into(), 1),
+                ("mod:thing".into(), 5),
+            ],
+        }];
+        let body = encode(&registries);
+        assert_eq!(decode(&body), Ok(registries));
+
+        let big = vec![7u8; MAX_PAYLOAD_SIZE + 3];
+        let payloads = into_payloads(&big);
+        let sizes: Vec<usize> = payloads.iter().map(Vec::len).collect();
+        assert_eq!(sizes, [MAX_PAYLOAD_SIZE, 3, 0]);
+        assert_eq!(into_payloads(&[]), [Vec::<u8>::new()]);
+    }
 }

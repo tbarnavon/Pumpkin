@@ -214,7 +214,6 @@ mod tests {
     fn runs_every_task_in_order() {
         let registry = SyncedRegistry {
             id: "minecraft:block".into(),
-            optional: false,
             entries: vec![("minecraft:air".into(), 0)],
         };
         let config = vec![("forge-server.toml".to_string(), b"[server]\n".to_vec())];

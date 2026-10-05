@@ -13,14 +13,16 @@ pub enum SyncedRegistry {
     EntityType,
     Menu,
     DataComponentType,
+    RecipeSerializer,
 }
 
 impl SyncedRegistry {
-    pub const ALL: [Self; 4] = [
+    pub const ALL: [Self; 5] = [
         Self::BlockEntityType,
         Self::EntityType,
         Self::Menu,
         Self::DataComponentType,
+        Self::RecipeSerializer,
     ];
 
     /// The registry's identifier, as used by the protocol and Fabric registry sync.
@@ -31,6 +33,7 @@ impl SyncedRegistry {
             Self::EntityType => "minecraft:entity_type",
             Self::Menu => "minecraft:menu",
             Self::DataComponentType => "minecraft:data_component_type",
+            Self::RecipeSerializer => "minecraft:recipe_serializer",
         }
     }
 
@@ -48,14 +51,20 @@ impl SyncedRegistry {
             Self::EntityType => crate::entity::EntityType::ALL.len() as u16,
             #[cfg(feature = "screen")]
             Self::Menu => crate::screen::WindowType::VANILLA_NAMES.len() as u16,
+            // Only the components the client knows: the later ones Pumpkin keeps internally
+            // aren't in its registry.
             #[cfg(feature = "data_component")]
             Self::DataComponentType => {
                 let mut count = 0u16;
-                while crate::data_component::DataComponent::try_from_id(count as u8).is_some() {
+                while crate::data_component::DataComponent::try_from_id(count as u8)
+                    .is_some_and(crate::data_component::DataComponent::is_networked)
+                {
                     count += 1;
                 }
                 count
             }
+            #[cfg(feature = "recipes")]
+            Self::RecipeSerializer => crate::recipe_sync::RECIPE_SERIALIZERS.len() as u16,
             #[allow(unreachable_patterns)]
             _ => 0,
         }
@@ -86,6 +95,10 @@ impl SyncedRegistry {
                 }
                 false
             }
+            #[cfg(feature = "recipes")]
+            Self::RecipeSerializer => crate::recipe_sync::RECIPE_SERIALIZERS
+                .iter()
+                .any(|serializer| serializer.strip_prefix("minecraft:") == Some(path)),
             #[allow(unreachable_patterns)]
             _ => false,
         }
@@ -94,8 +107,8 @@ impl SyncedRegistry {
 
 /// Modded entries of every [`SyncedRegistry`], indexed by `raw id - vanilla_len`.
 pub(crate) struct NameTables {
-    entries: [Vec<&'static str>; 4],
-    vanilla_len: [u16; 4],
+    entries: [Vec<&'static str>; 5],
+    vanilla_len: [u16; 5],
 }
 
 static NAMES: OnceLock<NameTables> = OnceLock::new();

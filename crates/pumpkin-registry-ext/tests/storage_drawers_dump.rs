@@ -1,5 +1,5 @@
-//! Installs the real Storage Drawers 26.3.0.1 dump (made by the Extractor's mod dump on a Fabric
-//! 26.3 server) and checks Pumpkin ends up with the same ids that server assigned.
+//! Installs the real Storage Drawers 1.21.1-13.11.4 dump (made by the Extractor's mod dump on a
+//! Fabric 1.21.1 server) and checks Pumpkin ends up with the same ids that server assigned.
 #![allow(clippy::expect_used)]
 
 use std::path::Path;
@@ -11,7 +11,6 @@ use pumpkin_data::tag::{self, Taggable};
 use pumpkin_data::{Block, BlockId, BlockStateId};
 
 #[test]
-#[ignore = "the Storage Drawers fixtures are 26.3 dumps; 1.21.1 needs its own"]
 fn storage_drawers_dump_installs_with_reference_ids() {
     let dumps =
         pumpkin_registry_ext::read_dumps(Path::new("tests/fixtures/mod-data")).expect("read");
@@ -25,12 +24,12 @@ fn storage_drawers_dump_installs_with_reference_ids() {
         pumpkin_registry_ext::installed().expect("installed")
     ));
     assert_eq!(installed.namespaces, ["storagedrawers"]);
-    assert_eq!(installed.recipes.len(), 132);
-    assert_eq!(installed.loot_tables.len(), 15);
+    assert_eq!(installed.recipes.len(), 126);
+    assert_eq!(installed.loot_tables.len(), 14);
 
-    assert_eq!(BlockId::count(), BlockId::VANILLA_COUNT + 150);
-    assert_eq!(BlockStateId::count(), BlockStateId::VANILLA_COUNT + 965);
-    assert_eq!(Item::count(), Item::VANILLA_COUNT + 166);
+    assert_eq!(BlockId::count(), BlockId::VANILLA_COUNT + 143);
+    assert_eq!(BlockStateId::count(), BlockStateId::VANILLA_COUNT + 940);
+    assert_eq!(Item::count(), Item::VANILLA_COUNT + 159);
 
     let drawer = Block::from_name("storagedrawers:oak_full_drawers_1").expect("block");
     assert_eq!(drawer.id.as_u16(), BlockId::VANILLA_COUNT);

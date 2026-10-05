@@ -140,6 +140,7 @@ pub fn install(dumps: Vec<ModDump>) -> Result<Option<&'static InstalledMods>, Lo
             (SyncedRegistry::Menu, dump.menus),
             (SyncedRegistry::DataComponentType, dump.data_component_types),
             (SyncedRegistry::EntityType, dump.entity_types),
+            (SyncedRegistry::RecipeSerializer, dump.recipe_serializers),
         ];
         for (registry, list) in named {
             entries.extend(list.into_iter().map(|entry| (registry, entry)));

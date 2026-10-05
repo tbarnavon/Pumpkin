@@ -1,7 +1,7 @@
 //! Byte layouts of the Fabric payloads Pumpkin speaks.
 //!
 //! Everything version-sensitive about Fabric's protocol lives in this module, one file per
-//! payload, each citing the Java it mirrors (fabric-api, branch 26.3, 0.161.0). Updating to a new
+//! payload, each citing the Java it mirrors (fabric-api, branch 1.21.1, 0.116.17). Updating to a new
 //! Fabric API means re-reading those files. The `FriendlyByteBuf` helpers here are shared with
 //! the other loaders' crates; `minecraft:register` and the `c:` channels are common to them.
 
