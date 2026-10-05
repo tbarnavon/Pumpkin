@@ -60,15 +60,15 @@ impl JavaClient {
                     }
                 }
             }
-            // <= 1.21.5
+            // <= 1.21.5: pressing and releasing shift set and clear the sneak input.
             Action::StartSneaking | Action::StopSneaking => {
-                self.handle_player_input(
-                    player,
-                    &SPlayerInput {
-                        input: SPlayerInput::SNEAK,
-                    },
-                    server,
-                );
+                let last = player.last_input.load(Ordering::Relaxed);
+                let input = if matches!(command.action, Action::StartSneaking) {
+                    last | SPlayerInput::SNEAK
+                } else {
+                    last & !SPlayerInput::SNEAK
+                };
+                self.handle_player_input(player, &SPlayerInput { input }, server);
             }
         }
     }
