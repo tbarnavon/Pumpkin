@@ -98,6 +98,12 @@ impl JavaClient {
                                     return;
                                 }
                             }
+                            // Vanilla `Entity.interactAt` does nothing but for armor stands; the
+                            // client follows it with `Interact`, which runs the interaction. Doing
+                            // it on both would mount, feed or trade twice.
+                            if event.action == ActionType::InteractAt {
+                                return;
+                            }
                             let mut stack = player.inventory().held_item();
 
                             let item_id = stack.item.id;
