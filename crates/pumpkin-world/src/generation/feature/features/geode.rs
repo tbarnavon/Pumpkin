@@ -30,7 +30,7 @@ impl NormalNoise {
 
     #[inline]
     fn get_value(&self, x: f64, y: f64, z: f64) -> f64 {
-        f64::from(self.0.sample(x, y, z))
+        self.0.sample(x, y, z)
     }
 }
 

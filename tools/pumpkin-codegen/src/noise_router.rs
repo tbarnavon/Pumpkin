@@ -58,7 +58,21 @@ impl Hash for HashableF64 {
 
 impl ToTokens for HashableF64 {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        self.0.to_tokens(tokens);
+        let value = self.0;
+        if value.is_finite() {
+            value.to_tokens(tokens);
+        } else {
+            tokens.append(Ident::new("f64", Span::call_site()));
+            tokens.append(Punct::new(':', Spacing::Joint));
+            tokens.append(Punct::new(':', Spacing::Joint));
+            if value.is_nan() {
+                tokens.append(Ident::new("NAN", Span::call_site()));
+            } else if value > 0.0 {
+                tokens.append(Ident::new("INFINITY", Span::call_site()));
+            } else {
+                tokens.append(Ident::new("NEG_INFINITY", Span::call_site()));
+            }
+        }
     }
 }
 
@@ -371,9 +385,9 @@ struct ClampedYGradientData {
     #[serde(rename(deserialize = "toY"))]
     to_y: i32,
     #[serde(rename(deserialize = "fromValue"))]
-    from_value: HashableF32,
+    from_value: HashableF64,
     #[serde(rename(deserialize = "toValue"))]
-    to_value: HashableF32,
+    to_value: HashableF64,
 }
 
 #[derive(Deserialize, Hash, Clone)]
@@ -382,8 +396,8 @@ struct GradientData {
     tiling: Tiling,
     from_coordinate: i32,
     to_coordinate: i32,
-    from_value: HashableF32,
-    to_value: HashableF32,
+    from_value: HashableF64,
+    to_value: HashableF64,
 }
 
 #[derive(Deserialize, Hash, Clone)]
@@ -402,20 +416,20 @@ struct BinaryData {
     #[serde(rename(deserialize = "type"))]
     operation: BinaryOperation,
     #[serde(rename(deserialize = "minValue"))]
-    min_value: HashableF32,
+    min_value: HashableF64,
     #[serde(rename(deserialize = "maxValue"))]
-    max_value: HashableF32,
+    max_value: HashableF64,
 }
 
 #[derive(Deserialize, Hash, Clone)]
 struct LinearData {
     #[serde(rename(deserialize = "specificType"))]
     operation: LinearOperation,
-    argument: HashableF32,
+    argument: HashableF64,
     #[serde(rename(deserialize = "minValue"))]
-    min_value: HashableF32,
+    min_value: HashableF64,
     #[serde(rename(deserialize = "maxValue"))]
-    max_value: HashableF32,
+    max_value: HashableF64,
 }
 
 #[derive(Deserialize, Hash, Clone)]
@@ -431,33 +445,33 @@ struct UnaryData {
     #[serde(rename(deserialize = "type"))]
     operation: UnaryOperation,
     #[serde(rename(deserialize = "minValue"))]
-    min_value: HashableF32,
+    min_value: HashableF64,
     #[serde(rename(deserialize = "maxValue"))]
-    max_value: HashableF32,
+    max_value: HashableF64,
 }
 
 #[derive(Deserialize, Hash, Clone)]
 struct ClampData {
     #[serde(rename(deserialize = "minValue"))]
-    min_value: HashableF32,
+    min_value: HashableF64,
     #[serde(rename(deserialize = "maxValue"))]
-    max_value: HashableF32,
+    max_value: HashableF64,
 }
 
 #[derive(Deserialize, Hash, Clone)]
 struct RangeChoiceData {
     #[serde(rename(deserialize = "minInclusive"))]
-    min_inclusive: HashableF32,
+    min_inclusive: HashableF64,
     #[serde(rename(deserialize = "maxExclusive"))]
-    max_exclusive: HashableF32,
+    max_exclusive: HashableF64,
 }
 
 #[derive(Deserialize, Hash, Clone)]
 struct SplineData {
     #[serde(rename(deserialize = "minValue"))]
-    min_value: HashableF32,
+    min_value: HashableF64,
     #[serde(rename(deserialize = "maxValue"))]
-    max_value: HashableF32,
+    max_value: HashableF64,
 }
 
 /// Deserialized representation of any density function node in the noise router tree.
@@ -507,7 +521,7 @@ enum DensityFunctionRepr {
     #[serde(rename(deserialize = "IntervalSelect"))]
     IntervalSelect {
         input: Box<Self>,
-        thresholds: Box<[HashableF32]>,
+        thresholds: Box<[HashableF64]>,
         functions: Box<[Self]>,
     },
     #[serde(rename(deserialize = "Wrapping"))]
@@ -518,7 +532,7 @@ enum DensityFunctionRepr {
         wrapper: WrapperType,
     },
     Constant {
-        value: HashableF32,
+        value: HashableF64,
     },
     #[serde(rename(deserialize = "YClampedGradient"))]
     ClampedYGradient {
@@ -819,7 +833,7 @@ impl DensityFunctionRepr {
                 let input = std::mem::replace(
                     self,
                     Self::Constant {
-                        value: HashableF32(0.0),
+                        value: HashableF64(0.0),
                     },
                 );
                 *self = Self::Slice {
@@ -910,7 +924,7 @@ impl DensityFunctionRepr {
                         LinearOperation::Mul => value.0 * data.argument.0,
                     };
                     *self = Self::Constant {
-                        value: HashableF32((val) as f32),
+                        value: HashableF64(val),
                     };
                     return;
                 }
@@ -941,7 +955,7 @@ impl DensityFunctionRepr {
                         BinaryOperation::Pow => v1.0.powf(v2.0),
                     };
                     *self = Self::Constant {
-                        value: HashableF32((res) as f32),
+                        value: HashableF64(res),
                     };
                     return;
                 }
@@ -973,7 +987,7 @@ impl DensityFunctionRepr {
                         }
                         UnaryOperation::Invert => {
                             if value.0 == 0.0 {
-                                f32::INFINITY
+                                f64::INFINITY
                             } else {
                                 1.0 / value.0
                             }
@@ -992,7 +1006,7 @@ impl DensityFunctionRepr {
                         }
                     };
                     *self = Self::Constant {
-                        value: HashableF32((val) as f32),
+                        value: HashableF64(val),
                     };
                 }
             }
@@ -1000,9 +1014,7 @@ impl DensityFunctionRepr {
                 input.optimize();
                 if let Self::Constant { value } = &**input {
                     *self = Self::Constant {
-                        value: HashableF32(
-                            (value.0.clamp(data.min_value.0, data.max_value.0) as f32),
-                        ),
+                        value: HashableF64(value.0.clamp(data.min_value.0, data.max_value.0)),
                     };
                 }
             }
@@ -1026,22 +1038,22 @@ impl DensityFunctionRepr {
                 let val = value.0;
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         let _ = (pos, ctx);
                         #val
                     }
                 }
             }
             Self::ClampedYGradient { data } => {
-                let from_y = data.from_y as f32;
-                let to_y = data.to_y as f32;
+                let from_y = data.from_y as f64;
+                let to_y = data.to_y as f64;
                 let from_val = data.from_value.0;
                 let to_val = data.to_value.0;
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         let _ = ctx;
-                        let y = pos.y as f32;
+                        let y = pos.y as f64;
                         let clamped = y.clamp(#from_y, #to_y);
                         let delta = (clamped - #from_y) / (#to_y - #from_y);
                         #from_val + delta * (#to_val - #from_val)
@@ -1059,34 +1071,34 @@ impl DensityFunctionRepr {
                     Axis::Z => quote! { pos.z },
                 };
                 let range = to_coord - from_coord;
-                let factor = (to_val - from_val) / (range as f32);
+                let factor = (to_val - from_val) / (range as f64);
                 let body = match data.tiling {
                     Tiling::ClampToEdge => {
                         let min_c = from_coord.min(to_coord);
                         let max_c = from_coord.max(to_coord);
                         quote! {
                             let rel = coord.clamp(#min_c, #max_c) - #from_coord;
-                            #from_val + rel as f32 * #factor
+                            #from_val + rel as f64 * #factor
                         }
                     }
                     Tiling::Repeat => quote! {
                         let rel = coord - #from_coord;
-                        #from_val + rel.rem_euclid(#range) as f32 * #factor
+                        #from_val + rel.rem_euclid(#range) as f64 * #factor
                     },
                     Tiling::MirroredRepeat => quote! {
                         let rel = coord - #from_coord;
                         let tile = rel.div_euclid(#range);
                         let local = rel - tile * #range;
                         if (tile & 1) == 0 {
-                            #from_val + local as f32 * #factor
+                            #from_val + local as f64 * #factor
                         } else {
-                            #from_val + (#range - local) as f32 * #factor
+                            #from_val + (#range - local) as f64 * #factor
                         }
                     },
                 };
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         let _ = ctx;
                         let coord = #coord;
                         #body
@@ -1105,11 +1117,11 @@ impl DensityFunctionRepr {
                 };
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         let _ = ctx;
-                        let dx = (pos.x - #px) as f32;
-                        let dy = (pos.y - #py) as f32;
-                        let dz = (pos.z - #pz) as f32;
+                        let dx = (pos.x - #px) as f64;
+                        let dy = (pos.y - #py) as f64;
+                        let dz = (pos.z - #pz) as f64;
                         #body
                     }
                 }
@@ -1127,7 +1139,7 @@ impl DensityFunctionRepr {
                 let s_fn = syn::Ident::new(&format!("{}_{}", fn_prefix, s_idx), Span::call_site());
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         let a = #a_fn(pos, ctx);
                         let f = #f_fn(pos, ctx);
                         let s = #s_fn(pos, ctx);
@@ -1162,7 +1174,7 @@ impl DensityFunctionRepr {
                 };
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         let v = #in_fn(pos, ctx);
                         let m = #mul_fn(pos, ctx);
                         #body
@@ -1190,7 +1202,7 @@ impl DensityFunctionRepr {
                 };
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         let slice_pos = #slice_pos;
                         #child_fn(&slice_pos, ctx)
                     }
@@ -1207,7 +1219,7 @@ impl DensityFunctionRepr {
                 };
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         #body
                     }
                 }
@@ -1230,7 +1242,7 @@ impl DensityFunctionRepr {
                         quote! { let c = #child_fn(pos, ctx).clamp(-1.0, 1.0); c / 2.0 - c * c * c / 24.0 }
                     }
                     UnaryOperation::Invert => {
-                        quote! { let v = #child_fn(pos, ctx); if v == 0.0 { f32::INFINITY } else { 1.0 / v } }
+                        quote! { let v = #child_fn(pos, ctx); if v == 0.0 { f64::INFINITY } else { 1.0 / v } }
                     }
                     UnaryOperation::Negate => quote! { -#child_fn(pos, ctx) },
                     UnaryOperation::Sqrt => quote! { #child_fn(pos, ctx).sqrt() },
@@ -1241,7 +1253,7 @@ impl DensityFunctionRepr {
                 };
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         #body
                     }
                 }
@@ -1254,7 +1266,7 @@ impl DensityFunctionRepr {
                 let max_v = data.max_value.0;
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         #child_fn(pos, ctx).clamp(#min_v, #max_v)
                     }
                 }
@@ -1289,7 +1301,7 @@ impl DensityFunctionRepr {
                 };
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         #body
                     }
                 }
@@ -1316,7 +1328,7 @@ impl DensityFunctionRepr {
                 let max_exc = data.max_exclusive.0;
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         let val = #input_fn(pos, ctx);
                         if val >= #min_inc && val < #max_exc {
                             #when_in_fn(pos, ctx)
@@ -1332,7 +1344,7 @@ impl DensityFunctionRepr {
                 let y_scale = data.y_scale.0;
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         ctx.sample_noise(DoublePerlinNoiseParameters::#noise_id, f64::from(pos.x) * #xz_scale, f64::from(pos.y) * #y_scale, f64::from(pos.z) * #xz_scale)
                     }
                 }
@@ -1341,7 +1353,7 @@ impl DensityFunctionRepr {
                 let noise_id = quote::format_ident!("{}", noise_id.to_shouty_snake_case());
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         ctx.sample_shift_a(DoublePerlinNoiseParameters::#noise_id, pos)
                     }
                 }
@@ -1350,7 +1362,7 @@ impl DensityFunctionRepr {
                 let noise_id = quote::format_ident!("{}", noise_id.to_shouty_snake_case());
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         ctx.sample_shift_b(DoublePerlinNoiseParameters::#noise_id, pos)
                     }
                 }
@@ -1375,7 +1387,7 @@ impl DensityFunctionRepr {
                 let y_scale = data.y_scale.0;
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         let sx = #sx_fn(pos, ctx);
                         let sy = #sy_fn(pos, ctx);
                         let sz = #sz_fn(pos, ctx);
@@ -1386,7 +1398,7 @@ impl DensityFunctionRepr {
             Self::BlendAlpha => {
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         ctx.sample_blend_alpha(pos)
                     }
                 }
@@ -1394,7 +1406,7 @@ impl DensityFunctionRepr {
             Self::BlendOffset => {
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         ctx.sample_blend_offset(pos)
                     }
                 }
@@ -1405,7 +1417,7 @@ impl DensityFunctionRepr {
                     syn::Ident::new(&format!("{}_{}", fn_prefix, child_idx), Span::call_site());
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         let val = #child_fn(pos, ctx);
                         ctx.sample_blend_density(val, pos)
                     }
@@ -1414,7 +1426,7 @@ impl DensityFunctionRepr {
             Self::Beardifier => {
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         ctx.sample_beardifier(pos)
                     }
                 }
@@ -1422,7 +1434,7 @@ impl DensityFunctionRepr {
             Self::EndIslands => {
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         ctx.sample_end_islands(pos)
                     }
                 }
@@ -1435,7 +1447,7 @@ impl DensityFunctionRepr {
                 let comp_idx = index;
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         ctx.sample_wrapper(#comp_idx, #wrapper_repr, pos, &#child_fn)
                     }
                 }
@@ -1465,7 +1477,7 @@ impl DensityFunctionRepr {
                 };
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         let input_val = #input_fn(pos, ctx);
                         let thresholds = &[#(#threshold_values),*];
                         let mut selected = thresholds.len();
@@ -1485,7 +1497,7 @@ impl DensityFunctionRepr {
             Self::InterpolatedNoiseSampler { .. } => {
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         ctx.sample_interpolated_noise(pos)
                     }
                 }
@@ -1504,19 +1516,19 @@ impl DensityFunctionRepr {
                         syn::Ident::new(&format!("{}_{}", fn_prefix, loc_idx), Span::call_site());
                     quote! {
                         #[inline(always)]
-                        pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
-                            let location_val = #loc_fn(pos, ctx);
-                            ctx.sample_spline(#index, location_val, pos)
+                        pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
+                            let location_val = #loc_fn(pos, ctx) as f32;
+                            f64::from(ctx.sample_spline(#index, location_val, pos))
                         }
                     }
                 } else {
                     let val = match spline {
-                        SplineRepr::Fixed { value } => value.0 as f32,
+                        SplineRepr::Fixed { value } => f64::from(value.0),
                         _ => 0.0,
                     };
                     quote! {
                         #[inline(always)]
-                        pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                        pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                             let _ = (pos, ctx);
                             #val
                         }
@@ -1536,7 +1548,7 @@ impl DensityFunctionRepr {
                 let cell_h = data.cell_height;
                 quote! {
                     #[inline(always)]
-                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f32 {
+                    pub fn #fn_name<C: NoiseEvaluationContext>(pos: &pumpkin_util::math::vector3::Vector3<i32>, ctx: &mut C) -> f64 {
                         ctx.sample_find_top_surface(&#d_fn, &#u_fn, #lower, #cell_h, pos)
                     }
                 }
@@ -1748,8 +1760,8 @@ impl DensityFunctionRepr {
                 }
             }
             Self::ClampedYGradient { data } => {
-                let from_y = data.from_y as f32;
-                let to_y = data.to_y as f32;
+                let from_y = data.from_y as f64;
+                let to_y = data.to_y as f64;
                 let from_value = &data.from_value;
                 let to_value = &data.to_value;
 
@@ -2250,7 +2262,7 @@ thread_local! {
 fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> DensityFunctionRepr {
     match val {
         serde_json::Value::Number(n) => DensityFunctionRepr::Constant {
-            value: HashableF32(n.as_f64().unwrap_or(0.0) as f32),
+            value: HashableF64(n.as_f64().unwrap_or(0.0)),
         },
         serde_json::Value::String(s) => {
             if s == "minecraft:y" {
@@ -2260,13 +2272,13 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                         tiling: Tiling::ClampToEdge,
                         from_coordinate: -4064,
                         to_coordinate: 4062,
-                        from_value: HashableF32((-4064.0) as f32),
-                        to_value: HashableF32((4062.0) as f32),
+                        from_value: HashableF64(-4064.0),
+                        to_value: HashableF64(4062.0),
                     },
                 }
             } else if s == "minecraft:zero" {
                 DensityFunctionRepr::Constant {
-                    value: HashableF32((0.0) as f32),
+                    value: HashableF64(0.0),
                 }
             } else {
                 let loaded = load_df_json(base_df_dir, s);
@@ -2288,7 +2300,7 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                         .and_then(|v| v.as_f64())
                         .unwrap_or(0.0);
                     DensityFunctionRepr::Constant {
-                        value: HashableF32((num) as f32),
+                        value: HashableF64(num),
                     }
                 }
                 "y_clamped_gradient" => {
@@ -2305,8 +2317,8 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                             tiling: Tiling::ClampToEdge,
                             from_coordinate: from_y,
                             to_coordinate: to_y,
-                            from_value: HashableF32((from_value) as f32),
-                            to_value: HashableF32((to_value) as f32),
+                            from_value: HashableF64(from_value),
+                            to_value: HashableF64(to_value),
                         },
                     }
                 }
@@ -2342,8 +2354,8 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                             tiling,
                             from_coordinate,
                             to_coordinate,
-                            from_value: HashableF32((from_value) as f32),
-                            to_value: HashableF32((to_value) as f32),
+                            from_value: HashableF64(from_value),
+                            to_value: HashableF64(to_value),
                         },
                     }
                 }
@@ -2396,7 +2408,7 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                         parse_vanilla_df(base_df_dir, m)
                     } else {
                         DensityFunctionRepr::Constant {
-                            value: HashableF32((1.0) as f32),
+                            value: HashableF64(1.0),
                         }
                     };
                     DensityFunctionRepr::Rounding {
@@ -2480,8 +2492,8 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                                 data: LinearData {
                                     operation: linear_op,
                                     argument: c,
-                                    min_value: HashableF32((min_value) as f32),
-                                    max_value: HashableF32((max_value) as f32),
+                                    min_value: HashableF64(min_value),
+                                    max_value: HashableF64(max_value),
                                 },
                             };
                         } else if let DensityFunctionRepr::Constant { value: c } = arg2 {
@@ -2490,8 +2502,8 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                                 data: LinearData {
                                     operation: linear_op,
                                     argument: c,
-                                    min_value: HashableF32((min_value) as f32),
-                                    max_value: HashableF32((max_value) as f32),
+                                    min_value: HashableF64(min_value),
+                                    max_value: HashableF64(max_value),
                                 },
                             };
                         }
@@ -2513,8 +2525,8 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                         argument2: Box::new(arg2),
                         data: BinaryData {
                             operation: op,
-                            min_value: HashableF32((min_value) as f32),
-                            max_value: HashableF32((max_value) as f32),
+                            min_value: HashableF64(min_value),
+                            max_value: HashableF64(max_value),
                         },
                     }
                 }
@@ -2551,8 +2563,8 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                         input: Box::new(input),
                         data: UnaryData {
                             operation: op,
-                            min_value: HashableF32((min_value) as f32),
-                            max_value: HashableF32((max_value) as f32),
+                            min_value: HashableF64(min_value),
+                            max_value: HashableF64(max_value),
                         },
                     }
                 }
@@ -2575,8 +2587,8 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                     DensityFunctionRepr::Clamp {
                         input: Box::new(input),
                         data: ClampData {
-                            min_value: HashableF32((min_val) as f32),
-                            max_value: HashableF32((max_val) as f32),
+                            min_value: HashableF64(min_val),
+                            max_value: HashableF64(max_val),
                         },
                     }
                 }
@@ -2605,20 +2617,20 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                         when_in_range: Box::new(when_in),
                         when_out_range: Box::new(when_out),
                         data: RangeChoiceData {
-                            min_inclusive: HashableF32((min_inc) as f32),
-                            max_exclusive: HashableF32((max_exc) as f32),
+                            min_inclusive: HashableF64(min_inc),
+                            max_exclusive: HashableF64(max_exc),
                         },
                     }
                 }
                 "interval_select" => {
                     let input =
                         parse_vanilla_df(base_df_dir, obj.get("input").expect("Missing input"));
-                    let thresholds: Vec<HashableF32> = obj
+                    let thresholds: Vec<HashableF64> = obj
                         .get("thresholds")
                         .and_then(|v| v.as_array())
                         .expect("Missing thresholds array")
                         .iter()
-                        .map(|v| HashableF32(v.as_f64().unwrap_or(0.0) as f32))
+                        .map(|v| HashableF64(v.as_f64().unwrap_or(0.0)))
                         .collect();
                     let funcs: Vec<DensityFunctionRepr> = obj
                         .get("functions")
@@ -2648,8 +2660,8 @@ fn parse_vanilla_df(base_df_dir: &std::path::Path, val: &serde_json::Value) -> D
                     DensityFunctionRepr::Spline {
                         spline,
                         data: SplineData {
-                            min_value: HashableF32((min_value) as f32),
-                            max_value: HashableF32((max_value) as f32),
+                            min_value: HashableF64(min_value),
+                            max_value: HashableF64(max_value),
                         },
                     }
                 }
@@ -3113,19 +3125,19 @@ pub fn build() -> TokenStream {
         use crate::chunk::DoublePerlinNoiseParameters;
 
         pub trait NoiseEvaluationContext {
-            fn sample_noise(&mut self, noise_id: DoublePerlinNoiseParameters, x: f64, y: f64, z: f64) -> f32;
-            fn sample_shift_a(&mut self, noise_id: DoublePerlinNoiseParameters, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
-            fn sample_shift_b(&mut self, noise_id: DoublePerlinNoiseParameters, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
-            fn sample_shifted_noise(&mut self, noise_id: DoublePerlinNoiseParameters, shift_x: f32, shift_y: f32, shift_z: f32, xz_scale: f64, y_scale: f64) -> f32;
-            fn sample_interpolated_noise(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
-            fn sample_beardifier(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
-            fn sample_blend_alpha(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
-            fn sample_blend_offset(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
-            fn sample_blend_density(&mut self, input_val: f32, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
-            fn sample_end_islands(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
-            fn sample_wrapper(&mut self, wrapper_index: usize, wrapper_type: WrapperType, pos: &pumpkin_util::math::vector3::Vector3<i32>, eval_input: &dyn Fn(&pumpkin_util::math::vector3::Vector3<i32>, &mut Self) -> f32) -> f32;
+            fn sample_noise(&mut self, noise_id: DoublePerlinNoiseParameters, x: f64, y: f64, z: f64) -> f64;
+            fn sample_shift_a(&mut self, noise_id: DoublePerlinNoiseParameters, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
+            fn sample_shift_b(&mut self, noise_id: DoublePerlinNoiseParameters, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
+            fn sample_shifted_noise(&mut self, noise_id: DoublePerlinNoiseParameters, shift_x: f64, shift_y: f64, shift_z: f64, xz_scale: f64, y_scale: f64) -> f64;
+            fn sample_interpolated_noise(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
+            fn sample_beardifier(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
+            fn sample_blend_alpha(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
+            fn sample_blend_offset(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
+            fn sample_blend_density(&mut self, input_val: f64, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
+            fn sample_end_islands(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
+            fn sample_wrapper(&mut self, wrapper_index: usize, wrapper_type: WrapperType, pos: &pumpkin_util::math::vector3::Vector3<i32>, eval_input: &dyn Fn(&pumpkin_util::math::vector3::Vector3<i32>, &mut Self) -> f64) -> f64;
             fn sample_spline(&mut self, spline_index: usize, location_value: f32, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
-            fn sample_find_top_surface(&mut self, density_fn: &dyn Fn(&pumpkin_util::math::vector3::Vector3<i32>, &mut Self) -> f32, upper_bound_fn: &dyn Fn(&pumpkin_util::math::vector3::Vector3<i32>, &mut Self) -> f32, lower_bound: i32, cell_height: i32, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
+            fn sample_find_top_surface(&mut self, density_fn: &dyn Fn(&pumpkin_util::math::vector3::Vector3<i32>, &mut Self) -> f64, upper_bound_fn: &dyn Fn(&pumpkin_util::math::vector3::Vector3<i32>, &mut Self) -> f64, lower_bound: i32, cell_height: i32, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
         }
 
         #overworld_compiled
@@ -3160,10 +3172,10 @@ pub fn build() -> TokenStream {
         }
 
         pub struct ClampedYGradientData {
-            pub from_y: f32,
-            pub to_y: f32,
-            pub from_value: f32,
-            pub to_value: f32,
+            pub from_y: f64,
+            pub to_y: f64,
+            pub from_value: f64,
+            pub to_value: f64,
         }
 
         #[derive(Copy, Clone)]
@@ -3185,8 +3197,8 @@ pub fn build() -> TokenStream {
             pub tiling: Tiling,
             pub from_coordinate: i32,
             pub to_coordinate: i32,
-            pub from_value: f32,
-            pub to_value: f32,
+            pub from_value: f64,
+            pub to_value: f64,
         }
 
         #[derive(Copy, Clone)]
@@ -3232,7 +3244,7 @@ pub fn build() -> TokenStream {
         impl BinaryData {
             #[inline]
             #[must_use]
-            pub const fn apply_density(&self, a: f32, b: f32) -> f32 {
+            pub const fn apply_density(&self, a: f64, b: f64) -> f64 {
                 match self.operation {
                     BinaryOperation::Add => a + b,
                     BinaryOperation::Mul => a * b,
@@ -3253,13 +3265,13 @@ pub fn build() -> TokenStream {
 
         pub struct LinearData {
             pub operation: LinearOperation,
-            pub argument: f32,
+            pub argument: f64,
         }
 
         impl LinearData {
             #[inline]
             #[must_use]
-            pub const fn apply_density(&self, density: f32) -> f32 {
+            pub const fn apply_density(&self, density: f64) -> f64 {
                 match self.operation {
                     LinearOperation::Add => density + self.argument,
                     LinearOperation::Mul => density * self.argument,
@@ -3289,7 +3301,7 @@ pub fn build() -> TokenStream {
         impl UnaryData {
             #[inline]
             #[must_use]
-            pub fn apply_density(&self, density: f32) -> f32 {
+            pub fn apply_density(&self, density: f64) -> f64 {
                 match self.operation {
                     UnaryOperation::Abs => density.abs(),
                     UnaryOperation::Square => density * density,
@@ -3313,7 +3325,7 @@ pub fn build() -> TokenStream {
                         clamped / 2.0 - clamped * clamped * clamped / 24.0
                     }
                     UnaryOperation::Invert => {
-                        if density == 0.0 { f32::INFINITY } else { 1.0 / density }
+                        if density == 0.0 { f64::INFINITY } else { 1.0 / density }
                     }
                     UnaryOperation::Negate => -density,
                     UnaryOperation::Sqrt => density.sqrt(),
@@ -3326,21 +3338,21 @@ pub fn build() -> TokenStream {
         }
 
         pub struct ClampData {
-            pub min_value: f32,
-            pub max_value: f32,
+            pub min_value: f64,
+            pub max_value: f64,
         }
 
         impl ClampData {
             #[inline]
             #[must_use]
-            pub const fn apply_density(&self, density: f32) -> f32 {
+            pub const fn apply_density(&self, density: f64) -> f64 {
                 density.clamp(self.min_value, self.max_value)
             }
         }
 
         pub struct RangeChoiceData {
-            pub min_inclusive: f32,
-            pub max_exclusive: f32,
+            pub min_inclusive: f64,
+            pub max_exclusive: f64,
         }
 
         pub struct SplinePoint {
@@ -3396,7 +3408,7 @@ pub fn build() -> TokenStream {
             },
             IntervalSelect {
                 input_index: usize,
-                thresholds: &'static [f32],
+                thresholds: &'static [f64],
                 functions_indices: &'static [usize],
             },
             Wrapper {
@@ -3404,7 +3416,7 @@ pub fn build() -> TokenStream {
                 wrapper: WrapperType,
             },
             Constant {
-                value: f32,
+                value: f64,
             },
             ClampedYGradient {
                 data: &'static ClampedYGradientData,

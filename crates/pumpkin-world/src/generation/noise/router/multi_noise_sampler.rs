@@ -61,12 +61,12 @@ impl<'a> MultiNoiseSampler<'a> {
             && let Some(index) = volume.index_of_block(block_x, block_y, block_z)
         {
             return NoiseValuePoint {
-                temperature: to_long(buffers[0][index]),
-                humidity: to_long(buffers[1][index]),
-                continentalness: to_long(buffers[2][index]),
-                erosion: to_long(buffers[3][index]),
-                depth: to_long(buffers[4][index]),
-                weirdness: to_long(buffers[5][index]),
+                temperature: to_long(buffers[0][index] as f32),
+                humidity: to_long(buffers[1][index] as f32),
+                continentalness: to_long(buffers[2][index] as f32),
+                erosion: to_long(buffers[3][index] as f32),
+                depth: to_long(buffers[4][index] as f32),
+                weirdness: to_long(buffers[5][index] as f32),
             };
         }
 
@@ -103,16 +103,16 @@ impl<'a> MultiNoiseSampler<'a> {
         );
 
         NoiseValuePoint {
-            temperature: to_long(temperature),
-            humidity: to_long(humidity),
-            continentalness: to_long(continentalness),
-            erosion: to_long(erosion),
-            depth: to_long(depth),
-            weirdness: to_long(weirdness),
+            temperature: to_long(temperature as f32),
+            humidity: to_long(humidity as f32),
+            continentalness: to_long(continentalness as f32),
+            erosion: to_long(erosion as f32),
+            depth: to_long(depth as f32),
+            weirdness: to_long(weirdness as f32),
         }
     }
 
-    pub fn sample_erosion(&mut self, block_x: i32, block_y: i32, block_z: i32) -> f32 {
+    pub fn sample_erosion(&mut self, block_x: i32, block_y: i32, block_z: i32) -> f64 {
         let pos = Vector3::new(block_x, block_y, block_z);
 
         ChunkNoiseFunctionComponent::sample_from_stack(

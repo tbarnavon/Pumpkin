@@ -10,8 +10,8 @@ use crate::generation::noise::router::{
 pub struct FindTopSurface {
     density_index: usize,
     upper_bound_index: usize,
-    min_value: f32,
-    max_value: f32,
+    min_value: f64,
+    max_value: f64,
     data: &'static FindTopSurfaceData,
 }
 
@@ -20,8 +20,8 @@ impl FindTopSurface {
     pub const fn new(
         density_index: usize,
         upper_bound_index: usize,
-        min_value: f32,
-        max_value: f32,
+        min_value: f64,
+        max_value: f64,
         data: &'static FindTopSurfaceData,
     ) -> Self {
         Self {
@@ -51,12 +51,12 @@ impl FindTopSurface {
 
 impl NoiseFunctionComponentRange for FindTopSurface {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.min_value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.max_value
     }
 }
@@ -66,7 +66,7 @@ impl StaticChunkNoiseFunctionComponentImpl for FindTopSurface {
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         let upper = ChunkNoiseFunctionComponent::sample_from_stack(
             &mut component_stack[..=self.upper_bound_index],
             &Vector3::new(pos.x, 0, pos.z),
@@ -77,7 +77,7 @@ impl StaticChunkNoiseFunctionComponentImpl for FindTopSurface {
     fn sample_volume(
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         if volume.size_y != 1 || volume.min_block_y != 0 {
@@ -127,15 +127,15 @@ impl FindTopSurface {
         component_stack: &mut [ChunkNoiseFunctionComponent],
         x: i32,
         z: i32,
-        upper: f32,
-    ) -> f32 {
+        upper: f64,
+    ) -> f64 {
         let cell_height = self.data.cell_height;
         let lower_bound = self.data.lower_bound;
 
-        let top_y = (upper / cell_height as f32).floor() as i32 * cell_height;
+        let top_y = (upper / cell_height as f64).floor() as i32 * cell_height;
 
         if top_y <= lower_bound {
-            return lower_bound as f32;
+            return lower_bound as f64;
         }
 
         let mut y = top_y;
@@ -146,11 +146,11 @@ impl FindTopSurface {
                 &sample_pos,
             );
             if density > 0.0 {
-                return y as f32;
+                return y as f64;
             }
             y -= cell_height;
         }
 
-        lower_bound as f32
+        lower_bound as f64
     }
 }

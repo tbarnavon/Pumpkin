@@ -11,52 +11,52 @@ use crate::generation::noise::router::{
 use super::{NoiseFunctionComponentRange, StaticIndependentChunkNoiseFunctionComponentImpl};
 
 pub struct Constant {
-    value: f32,
+    value: f64,
 }
 
 impl Constant {
-    pub const fn new(value: f32) -> Self {
+    pub const fn new(value: f64) -> Self {
         Self { value }
     }
 }
 
 impl NoiseFunctionComponentRange for Constant {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.value
     }
 }
 
 impl StaticIndependentChunkNoiseFunctionComponentImpl for Constant {
-    fn sample(&self, _pos: &Vector3<i32>) -> f32 {
+    fn sample(&self, _pos: &Vector3<i32>) -> f64 {
         self.value
     }
 
-    fn sample_volume(&self, buffer: &mut [f32], _volume: &DensityVolume) {
+    fn sample_volume(&self, buffer: &mut [f64], _volume: &DensityVolume) {
         buffer.fill(self.value);
     }
 }
 
 pub struct Linear {
     pub(crate) input_index: usize,
-    min_value: f32,
-    max_value: f32,
+    min_value: f64,
+    max_value: f64,
     pub(crate) data: &'static LinearData,
 }
 
 impl NoiseFunctionComponentRange for Linear {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.min_value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.max_value
     }
 }
@@ -66,7 +66,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Linear {
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         let input_density = ChunkNoiseFunctionComponent::sample_from_stack(
             &mut component_stack[..=self.input_index],
             pos,
@@ -77,7 +77,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Linear {
     fn sample_volume(
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         ChunkNoiseFunctionComponent::sample_volume_from_stack(
@@ -94,8 +94,8 @@ impl StaticChunkNoiseFunctionComponentImpl for Linear {
 impl Linear {
     pub const fn new(
         input_index: usize,
-        min_value: f32,
-        max_value: f32,
+        min_value: f64,
+        max_value: f64,
         data: &'static LinearData,
     ) -> Self {
         Self {
@@ -110,19 +110,19 @@ impl Linear {
 pub struct Binary {
     pub(crate) input1_index: usize,
     pub(crate) input2_index: usize,
-    min_value: f32,
-    max_value: f32,
+    min_value: f64,
+    max_value: f64,
     pub(crate) data: &'static BinaryData,
 }
 
 impl NoiseFunctionComponentRange for Binary {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.min_value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.max_value
     }
 }
@@ -132,7 +132,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Binary {
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         let input1_density = ChunkNoiseFunctionComponent::sample_from_stack(
             &mut component_stack[..=self.input1_index],
             pos,
@@ -208,7 +208,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Binary {
                     &mut component_stack[..=self.input2_index],
                     pos,
                 );
-                f64::from(input1_density).powf(f64::from(input2_density)) as f32
+                input1_density.powf(input2_density)
             }
         }
     }
@@ -216,7 +216,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Binary {
     fn sample_volume(
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         ChunkNoiseFunctionComponent::sample_volume_from_stack(
@@ -243,7 +243,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Binary {
             }
             BinaryOperation::Pow => {
                 for (value, input2) in buffer.iter_mut().zip(input2.iter()) {
-                    *value = f64::from(*value).powf(f64::from(*input2)) as f32;
+                    *value = (*value).powf(*input2);
                 }
             }
             _ => {
@@ -259,8 +259,8 @@ impl Binary {
     pub const fn new(
         input1_index: usize,
         input2_index: usize,
-        min_value: f32,
-        max_value: f32,
+        min_value: f64,
+        max_value: f64,
         data: &'static BinaryData,
     ) -> Self {
         Self {
@@ -275,19 +275,19 @@ impl Binary {
 
 pub struct Unary {
     pub(crate) input_index: usize,
-    min_value: f32,
-    max_value: f32,
+    min_value: f64,
+    max_value: f64,
     pub(crate) data: &'static UnaryData,
 }
 
 impl NoiseFunctionComponentRange for Unary {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.min_value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.max_value
     }
 }
@@ -297,7 +297,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Unary {
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         let input_density = ChunkNoiseFunctionComponent::sample_from_stack(
             &mut component_stack[..=self.input_index],
             pos,
@@ -308,7 +308,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Unary {
     fn sample_volume(
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         ChunkNoiseFunctionComponent::sample_volume_from_stack(
@@ -325,8 +325,8 @@ impl StaticChunkNoiseFunctionComponentImpl for Unary {
 impl Unary {
     pub const fn new(
         input_index: usize,
-        min_value: f32,
-        max_value: f32,
+        min_value: f64,
+        max_value: f64,
         data: &'static UnaryData,
     ) -> Self {
         Self {
@@ -351,12 +351,12 @@ impl Clamp {
 
 impl NoiseFunctionComponentRange for Clamp {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.data.min_value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.data.max_value
     }
 }
@@ -366,7 +366,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Clamp {
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         let input_density = ChunkNoiseFunctionComponent::sample_from_stack(
             &mut component_stack[..=self.input_index],
             pos,
@@ -377,7 +377,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Clamp {
     fn sample_volume(
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         ChunkNoiseFunctionComponent::sample_volume_from_stack(
@@ -395,8 +395,8 @@ pub struct Lerp {
     pub(crate) alpha_index: usize,
     pub(crate) first_index: usize,
     pub(crate) second_index: usize,
-    min_value: f32,
-    max_value: f32,
+    min_value: f64,
+    max_value: f64,
 }
 
 impl Lerp {
@@ -404,8 +404,8 @@ impl Lerp {
         alpha_index: usize,
         first_index: usize,
         second_index: usize,
-        min_value: f32,
-        max_value: f32,
+        min_value: f64,
+        max_value: f64,
     ) -> Self {
         Self {
             alpha_index,
@@ -419,12 +419,12 @@ impl Lerp {
 
 impl NoiseFunctionComponentRange for Lerp {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.min_value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.max_value
     }
 }
@@ -434,7 +434,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Lerp {
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         let alpha = ChunkNoiseFunctionComponent::sample_from_stack(
             &mut component_stack[..=self.alpha_index],
             pos,
@@ -465,7 +465,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Lerp {
     fn sample_volume(
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         ChunkNoiseFunctionComponent::sample_volume_from_stack(
@@ -501,8 +501,8 @@ impl StaticChunkNoiseFunctionComponentImpl for Lerp {
 pub struct Rounding {
     pub(crate) input_index: usize,
     pub(crate) multiple_index: usize,
-    min_value: f32,
-    max_value: f32,
+    min_value: f64,
+    max_value: f64,
     pub(crate) data: &'static RoundingData,
 }
 
@@ -510,8 +510,8 @@ impl Rounding {
     pub const fn new(
         input_index: usize,
         multiple_index: usize,
-        min_value: f32,
-        max_value: f32,
+        min_value: f64,
+        max_value: f64,
         data: &'static RoundingData,
     ) -> Self {
         Self {
@@ -526,19 +526,19 @@ impl Rounding {
 
 impl NoiseFunctionComponentRange for Rounding {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.min_value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.max_value
     }
 }
 
 #[inline]
 #[must_use]
-pub fn round_to_integer(input: f32, op: RoundingOperation) -> f32 {
+pub fn round_to_integer(input: f64, op: RoundingOperation) -> f64 {
     match op {
         RoundingOperation::Floor => input.floor(),
         RoundingOperation::Round => (input + 0.5).floor(),
@@ -558,7 +558,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Rounding {
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         let input = ChunkNoiseFunctionComponent::sample_from_stack(
             &mut component_stack[..=self.input_index],
             pos,
@@ -577,7 +577,7 @@ impl StaticChunkNoiseFunctionComponentImpl for Rounding {
     fn sample_volume(
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         ChunkNoiseFunctionComponent::sample_volume_from_stack(

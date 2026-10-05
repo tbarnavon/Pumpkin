@@ -49,7 +49,7 @@ pub enum IndependentProtoNoiseFunctionComponent {
 
 impl NoiseFunctionComponentRange for IndependentProtoNoiseFunctionComponent {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         match self {
             Self::Constant(c) => c.min(),
             Self::EndIsland(e) => e.min(),
@@ -64,7 +64,7 @@ impl NoiseFunctionComponentRange for IndependentProtoNoiseFunctionComponent {
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         match self {
             Self::Constant(c) => c.max(),
             Self::EndIsland(e) => e.max(),
@@ -81,7 +81,7 @@ impl NoiseFunctionComponentRange for IndependentProtoNoiseFunctionComponent {
 
 impl StaticIndependentChunkNoiseFunctionComponentImpl for IndependentProtoNoiseFunctionComponent {
     #[inline]
-    fn sample(&self, pos: &Vector3<i32>) -> f32 {
+    fn sample(&self, pos: &Vector3<i32>) -> f64 {
         match self {
             Self::Constant(c) => c.sample(pos),
             Self::EndIsland(e) => e.sample(pos),
@@ -96,7 +96,7 @@ impl StaticIndependentChunkNoiseFunctionComponentImpl for IndependentProtoNoiseF
     }
 
     #[inline]
-    fn sample_volume(&self, buffer: &mut [f32], volume: &DensityVolume) {
+    fn sample_volume(&self, buffer: &mut [f64], volume: &DensityVolume) {
         match self {
             Self::Constant(c) => c.sample_volume(buffer, volume),
             Self::EndIsland(e) => e.sample_volume(buffer, volume),
@@ -128,7 +128,7 @@ pub enum DependentProtoNoiseFunctionComponent {
 
 impl NoiseFunctionComponentRange for DependentProtoNoiseFunctionComponent {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         match self {
             Self::Linear(l) => l.min(),
             Self::Unary(u) => u.min(),
@@ -146,7 +146,7 @@ impl NoiseFunctionComponentRange for DependentProtoNoiseFunctionComponent {
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         match self {
             Self::Linear(l) => l.max(),
             Self::Unary(u) => u.max(),
@@ -170,7 +170,7 @@ impl StaticChunkNoiseFunctionComponentImpl for DependentProtoNoiseFunctionCompon
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         match self {
             Self::Linear(l) => l.sample(component_stack, pos),
             Self::Unary(u) => u.sample(component_stack, pos),
@@ -191,7 +191,7 @@ impl StaticChunkNoiseFunctionComponentImpl for DependentProtoNoiseFunctionCompon
     fn sample_volume(
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         match self {
@@ -229,7 +229,7 @@ pub enum ProtoNoiseFunctionComponent {
 
 impl NoiseFunctionComponentRange for ProtoNoiseFunctionComponent {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         match self {
             Self::Independent(independent) => independent.min(),
             Self::Dependent(dependent) => dependent.min(),
@@ -240,7 +240,7 @@ impl NoiseFunctionComponentRange for ProtoNoiseFunctionComponent {
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         match self {
             Self::Independent(independent) => independent.max(),
             Self::Dependent(dependent) => dependent.max(),
@@ -348,7 +348,7 @@ impl ProtoNoiseRouters {
                     upper_bound_index,
                     data,
                 } => {
-                    let min_value = data.lower_bound as f32;
+                    let min_value = data.lower_bound as f64;
                     let max_value = stack[*upper_bound_index].max().max(min_value);
 
                     ProtoNoiseFunctionComponent::Dependent(
@@ -517,8 +517,8 @@ impl ProtoNoiseRouters {
                         BinaryOperation::Min => (arg1_min.min(arg2_min), arg1_max.min(arg2_max)),
                         BinaryOperation::Max => (arg1_min.max(arg2_min), arg1_max.max(arg2_max)),
                         BinaryOperation::Sub => (arg1_min - arg2_max, arg1_max - arg2_min),
-                        BinaryOperation::Div => (f32::NEG_INFINITY, f32::INFINITY),
-                        BinaryOperation::Pow => (0.0, f32::INFINITY),
+                        BinaryOperation::Div => (f64::NEG_INFINITY, f64::INFINITY),
+                        BinaryOperation::Pow => (0.0, f64::INFINITY),
                     };
 
                     ProtoNoiseFunctionComponent::Dependent(
@@ -683,14 +683,14 @@ impl ProtoNoiseRouters {
                         | UnaryOperation::HalfNegative => (applied_min_value, applied_max_value),
                         UnaryOperation::Invert => {
                             if arg1_min < 0.0 && arg1_max > 0.0 {
-                                (f32::NEG_INFINITY, f32::INFINITY)
+                                (f64::NEG_INFINITY, f64::INFINITY)
                             } else {
                                 (applied_max_value, applied_min_value)
                             }
                         }
                         UnaryOperation::Negate => (-arg1_max, -arg1_min),
                         UnaryOperation::Sqrt => (0.0, applied_max_value.max(0.0)),
-                        UnaryOperation::Log => (f32::NEG_INFINITY, applied_max_value),
+                        UnaryOperation::Log => (f64::NEG_INFINITY, applied_max_value),
                         UnaryOperation::Sign => (-1.0, 1.0),
                     };
 
@@ -708,8 +708,8 @@ impl ProtoNoiseRouters {
                     thresholds,
                     functions_indices,
                 } => {
-                    let mut min_value = f32::INFINITY;
-                    let mut max_value = f32::NEG_INFINITY;
+                    let mut min_value = f64::INFINITY;
+                    let mut max_value = f64::NEG_INFINITY;
                     for &idx in *functions_indices {
                         let min = stack[idx].min();
                         let max = stack[idx].max();

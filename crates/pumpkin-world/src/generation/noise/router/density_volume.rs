@@ -8,14 +8,14 @@ const MAX_REUSE_SIZE_FACTOR: usize = 2;
 const MAX_POOLED_BUFFERS: usize = 1024;
 
 thread_local! {
-    static DENSITY_BUFFER_POOL: RefCell<Vec<Box<[f32]>>> = const { RefCell::new(Vec::new()) };
+    static DENSITY_BUFFER_POOL: RefCell<Vec<Box<[f64]>>> = const { RefCell::new(Vec::new()) };
 }
 
 fn take_best(
-    pool: &mut Vec<Box<[f32]>>,
+    pool: &mut Vec<Box<[f64]>>,
     min_capacity: usize,
     max_capacity: usize,
-) -> Option<Box<[f32]>> {
+) -> Option<Box<[f64]>> {
     let mut best_index = None;
     let mut best_capacity = max_capacity + 1;
     for i in (0..pool.len()).rev() {
@@ -32,7 +32,7 @@ fn take_best(
 }
 
 pub struct DensityBuffer {
-    values: Box<[f32]>,
+    values: Box<[f64]>,
     len: usize,
 }
 
@@ -64,17 +64,17 @@ impl DensityBuffer {
 }
 
 impl Deref for DensityBuffer {
-    type Target = [f32];
+    type Target = [f64];
 
     #[inline]
-    fn deref(&self) -> &[f32] {
+    fn deref(&self) -> &[f64] {
         &self.values[..self.len]
     }
 }
 
 impl DerefMut for DensityBuffer {
     #[inline]
-    fn deref_mut(&mut self) -> &mut [f32] {
+    fn deref_mut(&mut self) -> &mut [f64] {
         &mut self.values[..self.len]
     }
 }

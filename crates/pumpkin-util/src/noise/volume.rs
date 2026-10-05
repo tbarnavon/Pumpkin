@@ -160,7 +160,7 @@ impl DensityVolume {
         None
     }
 
-    pub fn fill_with(&self, buffer: &mut [f32], mut sample: impl FnMut(&Vector3<i32>) -> f32) {
+    pub fn fill_with(&self, buffer: &mut [f64], mut sample: impl FnMut(&Vector3<i32>) -> f64) {
         debug_assert_eq!(buffer.len(), self.size());
         let mut index = 0;
         for z in 0..self.size_z {

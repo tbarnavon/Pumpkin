@@ -21,12 +21,12 @@ pub trait StaticChunkNoiseFunctionComponentImpl {
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32;
+    ) -> f64;
 
     fn sample_volume(
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         volume.fill_with(buffer, |pos| self.sample(component_stack, pos));
@@ -38,12 +38,12 @@ pub trait MutableChunkNoiseFunctionComponentImpl {
         &mut self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32;
+    ) -> f64;
 
     fn sample_volume(
         &mut self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         volume.fill_with(buffer, |pos| self.sample(component_stack, pos));
@@ -59,7 +59,7 @@ pub enum ChunkNoiseFunctionComponent<'a> {
 
 impl NoiseFunctionComponentRange for ChunkNoiseFunctionComponent<'_> {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         match self {
             Self::Independent(independent) => independent.min(),
             Self::Dependent(dependent) => dependent.min(),
@@ -69,7 +69,7 @@ impl NoiseFunctionComponentRange for ChunkNoiseFunctionComponent<'_> {
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         match self {
             Self::Independent(independent) => independent.max(),
             Self::Dependent(dependent) => dependent.max(),
@@ -85,7 +85,7 @@ impl MutableChunkNoiseFunctionComponentImpl for ChunkNoiseFunctionComponent<'_> 
         &mut self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         match self {
             Self::Independent(independent) => independent.sample(pos),
             Self::Dependent(dependent) => dependent.sample(component_stack, pos),
@@ -101,7 +101,7 @@ impl MutableChunkNoiseFunctionComponentImpl for ChunkNoiseFunctionComponent<'_> 
     fn sample_volume(
         &mut self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         match self {
@@ -124,7 +124,7 @@ impl ChunkNoiseFunctionComponent<'_> {
     pub fn sample_from_stack(
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         let Some((top_component, component_stack)) = component_stack.split_last_mut() else {
             return 0.0;
         };
@@ -133,7 +133,7 @@ impl ChunkNoiseFunctionComponent<'_> {
 
     pub fn sample_volume_from_stack(
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         if let Some((top_component, component_stack)) = component_stack.split_last_mut() {
@@ -148,12 +148,12 @@ pub struct ChunkNoiseDensityFunction<'a> {
 
 impl ChunkNoiseDensityFunction<'_> {
     #[inline]
-    pub fn sample(&mut self, pos: &Vector3<i32>) -> f32 {
+    pub fn sample(&mut self, pos: &Vector3<i32>) -> f64 {
         ChunkNoiseFunctionComponent::sample_from_stack(self.component_stack, pos)
     }
 
     #[inline]
-    pub fn sample_volume(&mut self, buffer: &mut [f32], volume: &DensityVolume) {
+    pub fn sample_volume(&mut self, buffer: &mut [f64], volume: &DensityVolume) {
         ChunkNoiseFunctionComponent::sample_volume_from_stack(self.component_stack, buffer, volume);
     }
 }
@@ -161,7 +161,7 @@ impl ChunkNoiseDensityFunction<'_> {
 macro_rules! sample_function {
     ($name:ident, $volume_name:ident) => {
         #[inline]
-        pub fn $name(&mut self, pos: &Vector3<i32>) -> f32 {
+        pub fn $name(&mut self, pos: &Vector3<i32>) -> f64 {
             ChunkNoiseFunctionComponent::sample_from_stack(
                 &mut self.component_stack[..=self.$name],
                 pos,
@@ -169,7 +169,7 @@ macro_rules! sample_function {
         }
 
         #[inline]
-        pub fn $volume_name(&mut self, buffer: &mut [f32], volume: &DensityVolume) {
+        pub fn $volume_name(&mut self, buffer: &mut [f64], volume: &DensityVolume) {
             ChunkNoiseFunctionComponent::sample_volume_from_stack(
                 &mut self.component_stack[..=self.$name],
                 buffer,

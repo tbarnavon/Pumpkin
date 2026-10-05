@@ -343,7 +343,7 @@ pub fn catmullrom(alpha: f32, p0: f32, p1: f32, p2: f32, p3: f32) -> f32 {
 }
 
 #[must_use]
-pub fn smoothstep(x: f32) -> f32 {
+pub fn smoothstep(x: f64) -> f64 {
     x * x * x * (x * (x * 6.0 - 15.0) + 10.0)
 }
 

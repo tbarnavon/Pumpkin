@@ -13,7 +13,7 @@ pub struct DoublePerlinNoiseSampler {
 
 impl DoublePerlinNoiseSampler {
     #[must_use]
-    pub const fn max_value(&self) -> f32 {
+    pub const fn max_value(&self) -> f64 {
         self.noise.max_value()
     }
 
@@ -38,18 +38,18 @@ impl DoublePerlinNoiseSampler {
 
     #[inline]
     #[must_use]
-    pub fn sample(&self, x: f64, y: f64, z: f64) -> f32 {
+    pub fn sample(&self, x: f64, y: f64, z: f64) -> f64 {
         self.noise.get(x, y, z)
     }
 
     #[inline]
     pub fn add_to_volume(
         &self,
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
         xz_scale: f64,
         y_scale: f64,
-        amplitude: f32,
+        amplitude: f64,
     ) {
         self.noise
             .add_to_volume(buffer, volume, xz_scale, y_scale, amplitude);

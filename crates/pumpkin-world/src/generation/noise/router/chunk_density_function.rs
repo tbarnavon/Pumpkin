@@ -35,14 +35,14 @@ pub struct Cache {
     volume: Option<DensityVolume>,
     buffer: Option<DensityBuffer>,
     value_key: Option<Vector3<i32>>,
-    value: f32,
-    min_value: f32,
-    max_value: f32,
+    value: f64,
+    min_value: f64,
+    max_value: f64,
 }
 
 impl Cache {
     #[must_use]
-    pub const fn new(input_index: usize, min_value: f32, max_value: f32) -> Self {
+    pub const fn new(input_index: usize, min_value: f64, max_value: f64) -> Self {
         Self {
             input_index,
             volume: None,
@@ -57,12 +57,12 @@ impl Cache {
 
 impl NoiseFunctionComponentRange for Cache {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.min_value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.max_value
     }
 }
@@ -72,7 +72,7 @@ impl MutableChunkNoiseFunctionComponentImpl for Cache {
         &mut self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         if self.value_key == Some(*pos) {
             return self.value;
         }
@@ -93,7 +93,7 @@ impl MutableChunkNoiseFunctionComponentImpl for Cache {
     fn sample_volume(
         &mut self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         if self.volume.as_ref() != Some(volume) || self.buffer.is_none() {
@@ -117,10 +117,10 @@ pub struct Interpolated {
     pub(crate) input_index: usize,
     cell_size_xz: i32,
     cell_size_y: i32,
-    cell_size_xz_inv: f32,
-    cell_size_y_inv: f32,
-    min_value: f32,
-    max_value: f32,
+    cell_size_xz_inv: f64,
+    cell_size_y_inv: f64,
+    min_value: f64,
+    max_value: f64,
 }
 
 impl Interpolated {
@@ -129,15 +129,15 @@ impl Interpolated {
         input_index: usize,
         cell_size_xz: i32,
         cell_size_y: i32,
-        min_value: f32,
-        max_value: f32,
+        min_value: f64,
+        max_value: f64,
     ) -> Self {
         Self {
             input_index,
             cell_size_xz,
             cell_size_y,
-            cell_size_xz_inv: 1.0 / cell_size_xz as f32,
-            cell_size_y_inv: 1.0 / cell_size_y as f32,
+            cell_size_xz_inv: 1.0 / cell_size_xz as f64,
+            cell_size_y_inv: 1.0 / cell_size_y as f64,
             min_value,
             max_value,
         }
@@ -155,7 +155,7 @@ impl Interpolated {
     fn sample_with_block_step(
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         let min_cell_x = volume.min_block_x.div_euclid(self.cell_size_xz);
@@ -224,11 +224,11 @@ impl Interpolated {
 
     fn fill_cell(
         &self,
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
         cell_volume: &DensityVolume,
         cell: [usize; 3],
-        [v000, v100, v010, v110, v001, v101, v011, v111]: [f32; 8],
+        [v000, v100, v010, v110, v001, v101, v011, v111]: [f64; 8],
     ) {
         let cell_out_x = cell_volume.block_x(cell[0]) - volume.min_block_x;
         let cell_out_y = cell_volume.block_y(cell[1]) - volume.min_block_y;
@@ -241,19 +241,19 @@ impl Interpolated {
         let z1 = self.cell_size_xz.min(volume.size_z as i32 - cell_out_z) - 1;
 
         for z in z0..=z1 {
-            let alpha_z = z as f32 * self.cell_size_xz_inv;
+            let alpha_z = z as f64 * self.cell_size_xz_inv;
             let out_z = (cell_out_z + z) as usize;
             let v00 = lerp(alpha_z, v000, v001);
             let v01 = lerp(alpha_z, v010, v011);
             let v10 = lerp(alpha_z, v100, v101);
             let v11 = lerp(alpha_z, v110, v111);
             for x in x0..=x1 {
-                let alpha_x = x as f32 * self.cell_size_xz_inv;
+                let alpha_x = x as f64 * self.cell_size_xz_inv;
                 let out_x = (cell_out_x + x) as usize;
                 let v_0 = lerp(alpha_x, v00, v10);
                 let v_1 = lerp(alpha_x, v01, v11);
                 let value_step = (v_1 - v_0) * self.cell_size_y_inv;
-                let mut value = v_0 + value_step * y0 as f32;
+                let mut value = v_0 + value_step * y0 as f64;
                 let start = volume.index_unchecked(out_x, (cell_out_y + y0) as usize, out_z);
                 for slot in &mut buffer[start..start + (y1 - y0 + 1) as usize] {
                     *slot = value;
@@ -266,12 +266,12 @@ impl Interpolated {
 
 impl NoiseFunctionComponentRange for Interpolated {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.min_value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.max_value
     }
 }
@@ -281,7 +281,7 @@ impl MutableChunkNoiseFunctionComponentImpl for Interpolated {
         &mut self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         let x_in_cell = pos.x.rem_euclid(self.cell_size_xz);
         let y_in_cell = pos.y.rem_euclid(self.cell_size_y);
         let z_in_cell = pos.z.rem_euclid(self.cell_size_xz);
@@ -309,9 +309,9 @@ impl MutableChunkNoiseFunctionComponentImpl for Interpolated {
             &cell_volume,
         );
         let corner = |x: usize, y: usize, z: usize| corners[cell_volume.index_unchecked(x, y, z)];
-        let delta_x = x_in_cell as f32 / self.cell_size_xz as f32;
-        let delta_y = y_in_cell as f32 / self.cell_size_y as f32;
-        let delta_z = z_in_cell as f32 / self.cell_size_xz as f32;
+        let delta_x = x_in_cell as f64 / self.cell_size_xz as f64;
+        let delta_y = y_in_cell as f64 / self.cell_size_y as f64;
+        let delta_z = z_in_cell as f64 / self.cell_size_xz as f64;
         lerp(
             delta_z,
             lerp(
@@ -330,7 +330,7 @@ impl MutableChunkNoiseFunctionComponentImpl for Interpolated {
     fn sample_volume(
         &mut self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         if self.is_cell_aligned(volume) {
@@ -376,7 +376,7 @@ pub enum ChunkSpecificNoiseFunctionComponent {
 
 impl NoiseFunctionComponentRange for ChunkSpecificNoiseFunctionComponent {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         match self {
             Self::Cache(c) => c.min(),
             Self::Interpolated(i) => i.min(),
@@ -385,7 +385,7 @@ impl NoiseFunctionComponentRange for ChunkSpecificNoiseFunctionComponent {
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         match self {
             Self::Cache(c) => c.max(),
             Self::Interpolated(i) => i.max(),
@@ -400,7 +400,7 @@ impl MutableChunkNoiseFunctionComponentImpl for ChunkSpecificNoiseFunctionCompon
         &mut self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         match self {
             Self::Cache(c) => c.sample(component_stack, pos),
             Self::Interpolated(i) => i.sample(component_stack, pos),
@@ -412,7 +412,7 @@ impl MutableChunkNoiseFunctionComponentImpl for ChunkSpecificNoiseFunctionCompon
     fn sample_volume(
         &mut self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         match self {

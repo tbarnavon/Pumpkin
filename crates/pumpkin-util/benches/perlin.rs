@@ -24,7 +24,7 @@ fn bench_perlin_sample(c: &mut Criterion) {
 
     c.bench_function("perlin_sample", |b| {
         b.iter(|| {
-            let mut acc = 0.0f32;
+            let mut acc = 0.0f64;
             for &(x, y, z) in &coords {
                 acc += black_box(sampler.get(black_box(x), y, z));
             }
@@ -40,7 +40,7 @@ fn bench_normal_noise_sample(c: &mut Criterion) {
 
     c.bench_function("normal_noise_sample", |b| {
         b.iter(|| {
-            let mut acc = 0.0f32;
+            let mut acc = 0.0f64;
             for &(x, y, z) in &coords {
                 acc += black_box(sampler.get(black_box(x), y, z));
             }
@@ -53,7 +53,7 @@ fn bench_normal_noise_volume(c: &mut Criterion) {
     let mut rand = Xoroshiro::from_seed(1);
     let sampler = NormalNoise::new(&mut rand, -4, &[1.0; 7], false);
     let volume = DensityVolume::with_block_step(16, 384, 16, 0, -64, 0);
-    let mut buffer = vec![0.0f32; volume.size()];
+    let mut buffer = vec![0.0f64; volume.size()];
 
     c.bench_function("normal_noise_volume", |b| {
         b.iter(|| {

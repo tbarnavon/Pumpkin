@@ -314,11 +314,11 @@ impl DualNoiseBlockStateProvider {
     }
 
     fn get_slow_noise(&self, x: f64, y: f64, z: f64, sampler: &DoublePerlinNoiseSampler) -> f64 {
-        f64::from(sampler.sample(
+        sampler.sample(
             x * self.slow_scale,
             y * self.slow_scale,
             z * self.slow_scale,
-        ))
+        )
     }
 }
 
@@ -360,11 +360,11 @@ impl NoiseBlockStateProviderBase {
             &self.noise.amplitudes,
             false,
         );
-        f64::from(sampler.sample(
+        sampler.sample(
             pos.0.x as f64 * f64::from(self.scale),
             pos.0.y as f64 * f64::from(self.scale),
             pos.0.z as f64 * f64::from(self.scale),
-        ))
+        )
     }
 }
 

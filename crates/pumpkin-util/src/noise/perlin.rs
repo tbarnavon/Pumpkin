@@ -6,7 +6,7 @@ use crate::{
 use super::volume::DensityVolume;
 use crate::math::smoothstep;
 
-const GRADIENTS: [[f32; 3]; 16] = [
+const GRADIENTS: [[f64; 3]; 16] = [
     [1.0, 1.0, 0.0],
     [-1.0, 1.0, 0.0],
     [1.0, -1.0, 0.0],
@@ -28,7 +28,7 @@ const GRADIENTS: [[f32; 3]; 16] = [
 const ROUND_OFF: f64 = 33_554_432.0;
 const HALF_ROUND_OFF: f64 = f64::from_bits(0x416F_FFFF_FFFF_FFFF);
 const NOISE_OFFSET_SCALE: f64 = 256.0;
-const SHIFT_UP_EPSILON: f64 = 1.0E-7f32 as f64;
+const SHIFT_UP_EPSILON: f64 = 1.0E-7f32 as f64; // vanilla: (double)1.0E-7F
 const STANDARD_DEVIATION: f64 = 0.270_224_783_124_521_1;
 const TARGET_DEVIATION: f64 = 0.333_333_333_333_333_3;
 const INPUT_FACTOR: f64 = 1.018_126_888_217_522_7;
@@ -36,26 +36,26 @@ const PERSISTENCE: f64 = 0.5;
 const LACUNARITY: f64 = 2.0;
 
 pub trait Noise {
-    fn get(&self, x: f64, y: f64, z: f64) -> f32;
+    fn get(&self, x: f64, y: f64, z: f64) -> f64;
 
     fn add_to_volume(
         &self,
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
         xz_scale: f64,
         y_scale: f64,
-        amplitude: f32,
+        amplitude: f64,
     );
 }
 
 #[inline]
-fn grad_dot(hash: i32, x: f32, y: f32, z: f32) -> f32 {
+fn grad_dot(hash: i32, x: f64, y: f64, z: f64) -> f64 {
     let g = &GRADIENTS[(hash & 15) as usize];
     g[0] * x + g[1] * y + g[2] * z
 }
 
 #[inline]
-fn grad_dot_xz(g: &[f32; 3], x: f32, z: f32) -> f32 {
+fn grad_dot_xz(g: &[f64; 3], x: f64, z: f64) -> f64 {
     g[0] * x + g[2] * z
 }
 
@@ -78,22 +78,22 @@ pub struct PerlinNoise {
 }
 
 struct Corners {
-    d000_xz: f32,
-    d100_xz: f32,
-    d010_xz: f32,
-    d110_xz: f32,
-    d001_xz: f32,
-    d101_xz: f32,
-    d011_xz: f32,
-    d111_xz: f32,
-    g000_y: f32,
-    g100_y: f32,
-    g010_y: f32,
-    g110_y: f32,
-    g001_y: f32,
-    g101_y: f32,
-    g011_y: f32,
-    g111_y: f32,
+    d000_xz: f64,
+    d100_xz: f64,
+    d010_xz: f64,
+    d110_xz: f64,
+    d001_xz: f64,
+    d101_xz: f64,
+    d011_xz: f64,
+    d111_xz: f64,
+    g000_y: f64,
+    g100_y: f64,
+    g010_y: f64,
+    g110_y: f64,
+    g001_y: f64,
+    g101_y: f64,
+    g011_y: f64,
+    g111_y: f64,
 }
 
 impl Corners {
@@ -119,7 +119,7 @@ impl Corners {
     }
 
     #[inline]
-    fn lerp(&self, alpha_x: f32, alpha_y: f32, alpha_z: f32, relative_y: f32) -> f32 {
+    fn lerp(&self, alpha_x: f64, alpha_y: f64, alpha_z: f64, relative_y: f64) -> f64 {
         lerp3(
             alpha_x,
             alpha_y,
@@ -163,7 +163,7 @@ impl PerlinNoise {
     }
 
     #[inline]
-    fn permute_to_grad(&self, x: i32) -> &'static [f32; 3] {
+    fn permute_to_grad(&self, x: i32) -> &'static [f64; 3] {
         &GRADIENTS[(self.permute(x) & 15) as usize]
     }
 
@@ -173,11 +173,11 @@ impl PerlinNoise {
         x: i32,
         y: i32,
         z: i32,
-        relative_x: f32,
-        relative_y: f32,
-        relative_z: f32,
-        original_relative_y: f32,
-    ) -> f32 {
+        relative_x: f64,
+        relative_y: f64,
+        relative_z: f64,
+        original_relative_y: f64,
+    ) -> f64 {
         let x0 = self.permute(x);
         let x1 = self.permute(x + 1);
         let xy00 = self.permute(x0 + y);
@@ -242,8 +242,8 @@ impl PerlinNoise {
         x1: i32,
         floor_y: i32,
         floor_z: i32,
-        relative_x: f32,
-        relative_z: f32,
+        relative_x: f64,
+        relative_z: f64,
         corners: &mut Corners,
     ) {
         let xy00 = self.permute(x0 + floor_y);
@@ -278,16 +278,16 @@ impl PerlinNoise {
 }
 
 impl Noise for PerlinNoise {
-    fn get(&self, x: f64, y: f64, z: f64) -> f32 {
+    fn get(&self, x: f64, y: f64, z: f64) -> f64 {
         let x = wrap(x) + self.offset_x;
         let y = wrap(y) + self.offset_y;
         let z = wrap(z) + self.offset_z;
         let floor_x = x.floor() as i32;
         let floor_y = y.floor() as i32;
         let floor_z = z.floor() as i32;
-        let relative_x = (x - f64::from(floor_x)) as f32;
-        let relative_y = (y - f64::from(floor_y)) as f32;
-        let relative_z = (z - f64::from(floor_z)) as f32;
+        let relative_x = x - f64::from(floor_x);
+        let relative_y = y - f64::from(floor_y);
+        let relative_z = z - f64::from(floor_z);
         self.sample_and_lerp(
             floor_x, floor_y, floor_z, relative_x, relative_y, relative_z, relative_y,
         )
@@ -295,23 +295,23 @@ impl Noise for PerlinNoise {
 
     fn add_to_volume(
         &self,
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
         xz_scale: f64,
         y_scale: f64,
-        amplitude: f32,
+        amplitude: f64,
     ) {
         let mut corners = Corners::zero();
         let mut index = 0;
         for index_z in 0..volume.size_z {
             let z = wrap(f64::from(volume.block_z(index_z)) * xz_scale) + self.offset_z;
             let floor_z = z.floor() as i32;
-            let relative_z = (z - f64::from(floor_z)) as f32;
+            let relative_z = z - f64::from(floor_z);
             let alpha_z = smoothstep(relative_z);
             for index_x in 0..volume.size_x {
                 let x = wrap(f64::from(volume.block_x(index_x)) * xz_scale) + self.offset_x;
                 let floor_x = x.floor() as i32;
-                let relative_x = (x - f64::from(floor_x)) as f32;
+                let relative_x = x - f64::from(floor_x);
                 let x0 = self.permute(floor_x);
                 let x1 = self.permute(floor_x + 1);
                 let alpha_x = smoothstep(relative_x);
@@ -319,7 +319,7 @@ impl Noise for PerlinNoise {
                 for index_y in 0..volume.size_y {
                     let y = wrap(f64::from(volume.block_y(index_y)) * y_scale) + self.offset_y;
                     let floor_y = y.floor() as i32;
-                    let relative_y = (y - f64::from(floor_y)) as f32;
+                    let relative_y = y - f64::from(floor_y);
                     let alpha_y = smoothstep(relative_y);
                     if last_floor_y != floor_y {
                         self.corners(
@@ -368,17 +368,17 @@ impl SmearedPerlinNoise {
 }
 
 impl Noise for SmearedPerlinNoise {
-    fn get(&self, x: f64, original_y: f64, z: f64) -> f32 {
+    fn get(&self, x: f64, original_y: f64, z: f64) -> f64 {
         let x = wrap(x) + self.noise.offset_x;
         let y = wrap(original_y) + self.noise.offset_y;
         let z = wrap(z) + self.noise.offset_z;
         let floor_x = x.floor() as i32;
         let floor_y = y.floor() as i32;
         let floor_z = z.floor() as i32;
-        let relative_x = (x - f64::from(floor_x)) as f32;
+        let relative_x = x - f64::from(floor_x);
         let relative_y = y - f64::from(floor_y);
-        let relative_z = (z - f64::from(floor_z)) as f32;
-        let fudged_relative_y = (relative_y - self.compute_fudge_y(original_y, relative_y)) as f32;
+        let relative_z = z - f64::from(floor_z);
+        let fudged_relative_y = relative_y - self.compute_fudge_y(original_y, relative_y);
         self.noise.sample_and_lerp(
             floor_x,
             floor_y,
@@ -386,29 +386,29 @@ impl Noise for SmearedPerlinNoise {
             relative_x,
             fudged_relative_y,
             relative_z,
-            relative_y as f32,
+            relative_y,
         )
     }
 
     fn add_to_volume(
         &self,
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
         xz_scale: f64,
         y_scale: f64,
-        amplitude: f32,
+        amplitude: f64,
     ) {
         let mut corners = Corners::zero();
         let mut index = 0;
         for index_z in 0..volume.size_z {
             let z = wrap(f64::from(volume.block_z(index_z)) * xz_scale) + self.noise.offset_z;
             let floor_z = z.floor() as i32;
-            let relative_z = (z - f64::from(floor_z)) as f32;
+            let relative_z = z - f64::from(floor_z);
             let alpha_z = smoothstep(relative_z);
             for index_x in 0..volume.size_x {
                 let x = wrap(f64::from(volume.block_x(index_x)) * xz_scale) + self.noise.offset_x;
                 let floor_x = x.floor() as i32;
-                let relative_x = (x - f64::from(floor_x)) as f32;
+                let relative_x = x - f64::from(floor_x);
                 let x0 = self.noise.permute(floor_x);
                 let x1 = self.noise.permute(floor_x + 1);
                 let alpha_x = smoothstep(relative_x);
@@ -418,7 +418,7 @@ impl Noise for SmearedPerlinNoise {
                     let y = wrap(original_y) + self.noise.offset_y;
                     let floor_y = y.floor() as i32;
                     let relative_y = y - f64::from(floor_y);
-                    let alpha_y = smoothstep(relative_y as f32);
+                    let alpha_y = smoothstep(relative_y);
                     if last_floor_y != floor_y {
                         self.noise.corners(
                             x0,
@@ -432,7 +432,7 @@ impl Noise for SmearedPerlinNoise {
                         last_floor_y = floor_y;
                     }
                     let fudged_relative_y =
-                        (relative_y - self.compute_fudge_y(original_y, relative_y)) as f32;
+                        relative_y - self.compute_fudge_y(original_y, relative_y);
                     buffer[index] +=
                         amplitude * corners.lerp(alpha_x, alpha_y, alpha_z, fudged_relative_y);
                     index += 1;
@@ -445,7 +445,7 @@ impl Noise for SmearedPerlinNoise {
 pub struct Layer<N> {
     pub noise: N,
     pub frequency: f64,
-    pub amplitude: f32,
+    pub amplitude: f64,
 }
 
 pub struct NoiseStack<N> {
@@ -462,8 +462,8 @@ impl<N: Noise> NoiseStack<N> {
 }
 
 impl<N: Noise> Noise for NoiseStack<N> {
-    fn get(&self, x: f64, y: f64, z: f64) -> f32 {
-        let mut value = 0.0f32;
+    fn get(&self, x: f64, y: f64, z: f64) -> f64 {
+        let mut value = 0.0f64;
         for layer in &self.layers {
             let frequency = layer.frequency;
             value += layer.amplitude * layer.noise.get(x * frequency, y * frequency, z * frequency);
@@ -473,11 +473,11 @@ impl<N: Noise> Noise for NoiseStack<N> {
 
     fn add_to_volume(
         &self,
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
         xz_scale: f64,
         y_scale: f64,
-        amplitude: f32,
+        amplitude: f64,
     ) {
         for layer in &self.layers {
             let frequency = layer.frequency;
@@ -619,7 +619,7 @@ pub fn legacy_fbm(
             layers.push(Layer {
                 noise,
                 frequency: factor,
-                amplitude: (value_factor * amplitudes[i]) as f32,
+                amplitude: (value_factor * amplitudes[i]),
             });
         }
         factor *= LACUNARITY;
@@ -630,7 +630,7 @@ pub fn legacy_fbm(
 
 pub struct NormalNoise {
     stack: NoiseStack<PerlinNoise>,
-    max_value: f32,
+    max_value: f64,
 }
 
 impl NormalNoise {
@@ -652,7 +652,7 @@ impl NormalNoise {
             }
             let first = legacy_fbm(random, first_octave, amplitudes);
             let second = legacy_fbm(random, first_octave, amplitudes);
-            let value_factor = normalization_factor as f32;
+            let value_factor = normalization_factor;
             let mut layers = Vec::new();
             for layer in first.layers {
                 layers.push(Layer {
@@ -670,7 +670,7 @@ impl NormalNoise {
             }
             return Self {
                 stack: NoiseStack::new(layers),
-                max_value: (target_amplitude * TARGET_DEVIATION * 6.0) as f32,
+                max_value: (target_amplitude * TARGET_DEVIATION * 6.0),
             };
         }
         let base_amplitude = parity_base_amplitude(first_octave, amplitudes);
@@ -682,7 +682,7 @@ impl NormalNoise {
         let mut layers = Vec::with_capacity(octaves.len() * 2);
         for octave in &octaves {
             let seed = format!("octave_{}", octave.index);
-            let value_factor = (normalization_factor * octave.amplitude) as f32;
+            let value_factor = normalization_factor * octave.amplitude;
             layers.push(Layer {
                 noise: PerlinNoise::new(&mut first_random.split_string(&seed)),
                 frequency: octave.frequency,
@@ -696,30 +696,30 @@ impl NormalNoise {
         }
         Self {
             stack: NoiseStack::new(layers),
-            max_value: (target_amplitude * TARGET_DEVIATION * 6.0) as f32,
+            max_value: (target_amplitude * TARGET_DEVIATION * 6.0),
         }
     }
 
     #[must_use]
-    pub const fn max_value(&self) -> f32 {
+    pub const fn max_value(&self) -> f64 {
         self.max_value
     }
 }
 
 impl Noise for NormalNoise {
     #[inline]
-    fn get(&self, x: f64, y: f64, z: f64) -> f32 {
+    fn get(&self, x: f64, y: f64, z: f64) -> f64 {
         self.stack.get(x, y, z)
     }
 
     #[inline]
     fn add_to_volume(
         &self,
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
         xz_scale: f64,
         y_scale: f64,
-        amplitude: f32,
+        amplitude: f64,
     ) {
         self.stack
             .add_to_volume(buffer, volume, xz_scale, y_scale, amplitude);

@@ -7,44 +7,44 @@ pub trait NoiseEvaluationContext {
         x: f64,
         y: f64,
         z: f64,
-    ) -> f32;
+    ) -> f64;
     fn sample_shift_a(
         &mut self,
         noise_id: DoublePerlinNoiseParameters,
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
-    ) -> f32;
+    ) -> f64;
     fn sample_shift_b(
         &mut self,
         noise_id: DoublePerlinNoiseParameters,
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
-    ) -> f32;
+    ) -> f64;
     fn sample_shifted_noise(
         &mut self,
         noise_id: DoublePerlinNoiseParameters,
-        shift_x: f32,
-        shift_y: f32,
-        shift_z: f32,
+        shift_x: f64,
+        shift_y: f64,
+        shift_z: f64,
         xz_scale: f64,
         y_scale: f64,
-    ) -> f32;
+    ) -> f64;
     fn sample_interpolated_noise(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>)
-    -> f32;
-    fn sample_beardifier(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
-    fn sample_blend_alpha(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
-    fn sample_blend_offset(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
+    -> f64;
+    fn sample_beardifier(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
+    fn sample_blend_alpha(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
+    fn sample_blend_offset(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
     fn sample_blend_density(
         &mut self,
-        input_val: f32,
+        input_val: f64,
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
-    ) -> f32;
-    fn sample_end_islands(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f32;
+    ) -> f64;
+    fn sample_end_islands(&mut self, pos: &pumpkin_util::math::vector3::Vector3<i32>) -> f64;
     fn sample_wrapper(
         &mut self,
         wrapper_index: usize,
         wrapper_type: WrapperType,
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
-        eval_input: &dyn Fn(&pumpkin_util::math::vector3::Vector3<i32>, &mut Self) -> f32,
-    ) -> f32;
+        eval_input: &dyn Fn(&pumpkin_util::math::vector3::Vector3<i32>, &mut Self) -> f64,
+    ) -> f64;
     fn sample_spline(
         &mut self,
         spline_index: usize,
@@ -53,12 +53,12 @@ pub trait NoiseEvaluationContext {
     ) -> f32;
     fn sample_find_top_surface(
         &mut self,
-        density_fn: &dyn Fn(&pumpkin_util::math::vector3::Vector3<i32>, &mut Self) -> f32,
-        upper_bound_fn: &dyn Fn(&pumpkin_util::math::vector3::Vector3<i32>, &mut Self) -> f32,
+        density_fn: &dyn Fn(&pumpkin_util::math::vector3::Vector3<i32>, &mut Self) -> f64,
+        upper_bound_fn: &dyn Fn(&pumpkin_util::math::vector3::Vector3<i32>, &mut Self) -> f64,
         lower_bound: i32,
         cell_height: i32,
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
-    ) -> f32;
+    ) -> f64;
 }
 pub mod overworld_compiled {
     use super::*;
@@ -66,51 +66,51 @@ pub mod overworld_compiled {
     pub fn eval_overworld_0<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-64i32, -40i32) - -64i32;
-        0f32 + rel as f32 * 0.041666668f32
+        0f64 + rel as f64 * 0.041666666666666664f64
     }
     #[inline(always)]
     pub fn eval_overworld_1<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(240i32, 256i32) - 240i32;
-        1f32 + rel as f32 * -0.0625f32
+        1f64 + rel as f64 * -0.0625f64
     }
     #[inline(always)]
     pub fn eval_overworld_2<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-64i32, 320i32) - -64i32;
-        1.5f32 + rel as f32 * -0.0078125f32
+        1.5f64 + rel as f64 * -0.0078125f64
     }
     #[inline(always)]
     pub fn eval_overworld_3<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_blend_offset(pos)
     }
     #[inline(always)]
     pub fn eval_overworld_4<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_blend_alpha(pos)
     }
     #[inline(always)]
     pub fn eval_overworld_5<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_4(&slice_pos, ctx)
     }
@@ -118,42 +118,42 @@ pub mod overworld_compiled {
     pub fn eval_overworld_6<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(6usize, WrapperType::Cache, pos, &eval_overworld_5)
     }
     #[inline(always)]
     pub fn eval_overworld_7<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_6(pos, ctx) * -1f32
+    ) -> f64 {
+        eval_overworld_6(pos, ctx) * -1f64
     }
     #[inline(always)]
     pub fn eval_overworld_8<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_7(pos, ctx) + 1f32
+    ) -> f64 {
+        eval_overworld_7(pos, ctx) + 1f64
     }
     #[inline(always)]
     pub fn eval_overworld_9<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_3(pos, ctx) * eval_overworld_8(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_10<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_shift_a(DoublePerlinNoiseParameters::OFFSET, pos)
     }
     #[inline(always)]
     pub fn eval_overworld_11<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_10(&slice_pos, ctx)
     }
@@ -161,14 +161,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_12<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(12usize, WrapperType::Cache, pos, &eval_overworld_11)
     }
     #[inline(always)]
     pub fn eval_overworld_13<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_12(&slice_pos, ctx)
     }
@@ -176,29 +176,29 @@ pub mod overworld_compiled {
     pub fn eval_overworld_14<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(14usize, WrapperType::Cache, pos, &eval_overworld_13)
     }
     #[inline(always)]
     pub fn eval_overworld_15<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        0f32
+        0f64
     }
     #[inline(always)]
     pub fn eval_overworld_16<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_shift_b(DoublePerlinNoiseParameters::OFFSET, pos)
     }
     #[inline(always)]
     pub fn eval_overworld_17<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_16(&slice_pos, ctx)
     }
@@ -206,14 +206,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_18<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(18usize, WrapperType::Cache, pos, &eval_overworld_17)
     }
     #[inline(always)]
     pub fn eval_overworld_19<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_18(&slice_pos, ctx)
     }
@@ -221,14 +221,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_20<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(20usize, WrapperType::Cache, pos, &eval_overworld_19)
     }
     #[inline(always)]
     pub fn eval_overworld_21<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let sx = eval_overworld_14(pos, ctx);
         let sy = eval_overworld_15(pos, ctx);
         let sz = eval_overworld_20(pos, ctx);
@@ -245,7 +245,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_22<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_21(&slice_pos, ctx)
     }
@@ -253,14 +253,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_23<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(23usize, WrapperType::Cache, pos, &eval_overworld_22)
     }
     #[inline(always)]
     pub fn eval_overworld_24<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let sx = eval_overworld_14(pos, ctx);
         let sy = eval_overworld_15(pos, ctx);
         let sz = eval_overworld_20(pos, ctx);
@@ -277,7 +277,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_25<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_24(&slice_pos, ctx)
     }
@@ -285,14 +285,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_26<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(26usize, WrapperType::Cache, pos, &eval_overworld_25)
     }
     #[inline(always)]
     pub fn eval_overworld_27<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let sx = eval_overworld_14(pos, ctx);
         let sy = eval_overworld_15(pos, ctx);
         let sz = eval_overworld_20(pos, ctx);
@@ -309,7 +309,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_28<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_27(&slice_pos, ctx)
     }
@@ -317,78 +317,78 @@ pub mod overworld_compiled {
     pub fn eval_overworld_29<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(29usize, WrapperType::Cache, pos, &eval_overworld_28)
     }
     #[inline(always)]
     pub fn eval_overworld_30<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_29(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_overworld_31<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_30(pos, ctx) + -0.6666667f32
+    ) -> f64 {
+        eval_overworld_30(pos, ctx) + -0.6666666666666666f64
     }
     #[inline(always)]
     pub fn eval_overworld_32<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_31(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_overworld_33<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_32(pos, ctx) + -0.33333334f32
+    ) -> f64 {
+        eval_overworld_32(pos, ctx) + -0.3333333333333333f64
     }
     #[inline(always)]
     pub fn eval_overworld_34<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_33(pos, ctx) * -3f32
+    ) -> f64 {
+        eval_overworld_33(pos, ctx) * -3f64
     }
     #[inline(always)]
     pub fn eval_overworld_35<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        let location_val = eval_overworld_23(pos, ctx);
-        ctx.sample_spline(35usize, location_val, pos)
+    ) -> f64 {
+        let location_val = eval_overworld_23(pos, ctx) as f32;
+        f64::from(ctx.sample_spline(35usize, location_val, pos))
     }
     #[inline(always)]
     pub fn eval_overworld_36<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_35(pos, ctx) + -0.50375f32
+    ) -> f64 {
+        eval_overworld_35(pos, ctx) + -0.5037500262260437f64
     }
     #[inline(always)]
     pub fn eval_overworld_37<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_36(pos, ctx) * eval_overworld_6(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_38<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_9(pos, ctx) + eval_overworld_37(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_39<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_38(&slice_pos, ctx)
     }
@@ -396,14 +396,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_40<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(40usize, WrapperType::Cache, pos, &eval_overworld_39)
     }
     #[inline(always)]
     pub fn eval_overworld_41<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_40(&slice_pos, ctx)
     }
@@ -411,14 +411,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_42<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(42usize, WrapperType::Cache, pos, &eval_overworld_41)
     }
     #[inline(always)]
     pub fn eval_overworld_43<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_42(&slice_pos, ctx)
     }
@@ -426,43 +426,43 @@ pub mod overworld_compiled {
     pub fn eval_overworld_44<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_2(pos, ctx) + eval_overworld_43(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_45<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        let location_val = eval_overworld_23(pos, ctx);
-        ctx.sample_spline(45usize, location_val, pos)
+    ) -> f64 {
+        let location_val = eval_overworld_23(pos, ctx) as f32;
+        f64::from(ctx.sample_spline(45usize, location_val, pos))
     }
     #[inline(always)]
     pub fn eval_overworld_46<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_45(pos, ctx) + -0f32
+    ) -> f64 {
+        eval_overworld_45(pos, ctx) + -0f64
     }
     #[inline(always)]
     pub fn eval_overworld_47<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_4(pos, ctx) * eval_overworld_46(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_48<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_47(pos, ctx) + 0f32
+    ) -> f64 {
+        eval_overworld_47(pos, ctx) + 0f64
     }
     #[inline(always)]
     pub fn eval_overworld_49<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_48(&slice_pos, ctx)
     }
@@ -470,14 +470,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_50<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(50usize, WrapperType::Cache, pos, &eval_overworld_49)
     }
     #[inline(always)]
     pub fn eval_overworld_51<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_50(&slice_pos, ctx)
     }
@@ -485,14 +485,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_52<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(52usize, WrapperType::Cache, pos, &eval_overworld_51)
     }
     #[inline(always)]
     pub fn eval_overworld_53<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::JAGGED,
             f64::from(pos.x) * 1500f64,
@@ -504,7 +504,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_54<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_overworld_53(pos, ctx);
         if v > 0.0 { v } else { v * 0.5 }
     }
@@ -512,14 +512,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_55<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_52(pos, ctx) * eval_overworld_54(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_56<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_55(&slice_pos, ctx)
     }
@@ -527,43 +527,43 @@ pub mod overworld_compiled {
     pub fn eval_overworld_57<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_44(pos, ctx) + eval_overworld_56(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_58<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        let location_val = eval_overworld_23(pos, ctx);
-        ctx.sample_spline(58usize, location_val, pos)
+    ) -> f64 {
+        let location_val = eval_overworld_23(pos, ctx) as f32;
+        f64::from(ctx.sample_spline(58usize, location_val, pos))
     }
     #[inline(always)]
     pub fn eval_overworld_59<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_58(pos, ctx) + -10f32
+    ) -> f64 {
+        eval_overworld_58(pos, ctx) + -10f64
     }
     #[inline(always)]
     pub fn eval_overworld_60<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_4(pos, ctx) * eval_overworld_59(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_61<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_60(pos, ctx) + 10f32
+    ) -> f64 {
+        eval_overworld_60(pos, ctx) + 10f64
     }
     #[inline(always)]
     pub fn eval_overworld_62<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_61(&slice_pos, ctx)
     }
@@ -571,14 +571,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_63<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(63usize, WrapperType::Cache, pos, &eval_overworld_62)
     }
     #[inline(always)]
     pub fn eval_overworld_64<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_63(&slice_pos, ctx)
     }
@@ -586,14 +586,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_65<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(65usize, WrapperType::Cache, pos, &eval_overworld_64)
     }
     #[inline(always)]
     pub fn eval_overworld_66<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_65(&slice_pos, ctx)
     }
@@ -601,14 +601,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_67<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_57(pos, ctx) * eval_overworld_66(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_68<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_overworld_67(pos, ctx);
         if v > 0.0 { v } else { v * 0.25 }
     }
@@ -616,28 +616,28 @@ pub mod overworld_compiled {
     pub fn eval_overworld_69<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_68(pos, ctx) * 4f32
+    ) -> f64 {
+        eval_overworld_68(pos, ctx) * 4f64
     }
     #[inline(always)]
     pub fn eval_overworld_70<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_interpolated_noise(pos)
     }
     #[inline(always)]
     pub fn eval_overworld_71<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_69(pos, ctx) + eval_overworld_70(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_72<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::CAVE_ENTRANCE,
             f64::from(pos.x) * 0.75f64,
@@ -649,31 +649,31 @@ pub mod overworld_compiled {
     pub fn eval_overworld_73<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_72(pos, ctx) + 0.37f32
+    ) -> f64 {
+        eval_overworld_72(pos, ctx) + 0.37f64
     }
     #[inline(always)]
     pub fn eval_overworld_74<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-10i32, 30i32) - -10i32;
-        0.3f32 + rel as f32 * -0.0075000003f32
+        0.3f64 + rel as f64 * -0.0075f64
     }
     #[inline(always)]
     pub fn eval_overworld_75<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_73(pos, ctx) + eval_overworld_74(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_76<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_ROUGHNESS_MODULATOR,
             f64::from(pos.x) * 1f64,
@@ -685,21 +685,21 @@ pub mod overworld_compiled {
     pub fn eval_overworld_77<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_76(pos, ctx) * -0.05f32
+    ) -> f64 {
+        eval_overworld_76(pos, ctx) * -0.05f64
     }
     #[inline(always)]
     pub fn eval_overworld_78<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_77(pos, ctx) + -0.05f32
+    ) -> f64 {
+        eval_overworld_77(pos, ctx) + -0.05f64
     }
     #[inline(always)]
     pub fn eval_overworld_79<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_ROUGHNESS,
             f64::from(pos.x) * 1f64,
@@ -711,35 +711,35 @@ pub mod overworld_compiled {
     pub fn eval_overworld_80<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_79(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_overworld_81<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_80(pos, ctx) + -0.4f32
+    ) -> f64 {
+        eval_overworld_80(pos, ctx) + -0.4f64
     }
     #[inline(always)]
     pub fn eval_overworld_82<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_78(pos, ctx) * eval_overworld_81(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_83<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(83usize, WrapperType::Cache, pos, &eval_overworld_82)
     }
     #[inline(always)]
     pub fn eval_overworld_84<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_RARITY,
             f64::from(pos.x) * 2f64,
@@ -751,14 +751,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_85<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(85usize, WrapperType::Cache, pos, &eval_overworld_84)
     }
     #[inline(always)]
     pub fn eval_overworld_86<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_1,
             f64::from(pos.x) * 1.3333333333333333f64,
@@ -770,14 +770,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_87<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_86(pos, ctx) * 0.75f32
+    ) -> f64 {
+        eval_overworld_86(pos, ctx) * 0.75f64
     }
     #[inline(always)]
     pub fn eval_overworld_88<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_1,
             f64::from(pos.x) * 1f64,
@@ -789,14 +789,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_89<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_88(pos, ctx) * 1f32
+    ) -> f64 {
+        eval_overworld_88(pos, ctx) * 1f64
     }
     #[inline(always)]
     pub fn eval_overworld_90<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_1,
             f64::from(pos.x) * 0.6666666666666666f64,
@@ -808,14 +808,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_91<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_90(pos, ctx) * 1.5f32
+    ) -> f64 {
+        eval_overworld_90(pos, ctx) * 1.5f64
     }
     #[inline(always)]
     pub fn eval_overworld_92<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_1,
             f64::from(pos.x) * 0.5f64,
@@ -827,16 +827,16 @@ pub mod overworld_compiled {
     pub fn eval_overworld_93<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_92(pos, ctx) * 2f32
+    ) -> f64 {
+        eval_overworld_92(pos, ctx) * 2f64
     }
     #[inline(always)]
     pub fn eval_overworld_94<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let input_val = eval_overworld_85(pos, ctx);
-        let thresholds = &[-0.5f32, 0f32, 0.5f32];
+        let thresholds = &[-0.5f64, 0f64, 0.5f64];
         let mut selected = thresholds.len();
         for (i, &t) in thresholds.iter().enumerate() {
             if input_val < t {
@@ -855,14 +855,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_95<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_94(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_overworld_96<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_2,
             f64::from(pos.x) * 1.3333333333333333f64,
@@ -874,14 +874,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_97<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_96(pos, ctx) * 0.75f32
+    ) -> f64 {
+        eval_overworld_96(pos, ctx) * 0.75f64
     }
     #[inline(always)]
     pub fn eval_overworld_98<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_2,
             f64::from(pos.x) * 1f64,
@@ -893,14 +893,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_99<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_98(pos, ctx) * 1f32
+    ) -> f64 {
+        eval_overworld_98(pos, ctx) * 1f64
     }
     #[inline(always)]
     pub fn eval_overworld_100<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_2,
             f64::from(pos.x) * 0.6666666666666666f64,
@@ -912,14 +912,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_101<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_100(pos, ctx) * 1.5f32
+    ) -> f64 {
+        eval_overworld_100(pos, ctx) * 1.5f64
     }
     #[inline(always)]
     pub fn eval_overworld_102<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_2,
             f64::from(pos.x) * 0.5f64,
@@ -931,16 +931,16 @@ pub mod overworld_compiled {
     pub fn eval_overworld_103<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_102(pos, ctx) * 2f32
+    ) -> f64 {
+        eval_overworld_102(pos, ctx) * 2f64
     }
     #[inline(always)]
     pub fn eval_overworld_104<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let input_val = eval_overworld_85(pos, ctx);
-        let thresholds = &[-0.5f32, 0f32, 0.5f32];
+        let thresholds = &[-0.5f64, 0f64, 0.5f64];
         let mut selected = thresholds.len();
         for (i, &t) in thresholds.iter().enumerate() {
             if input_val < t {
@@ -959,21 +959,21 @@ pub mod overworld_compiled {
     pub fn eval_overworld_105<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_104(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_overworld_106<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_95(pos, ctx).max(eval_overworld_105(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_overworld_107<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_THICKNESS,
             f64::from(pos.x) * 1f64,
@@ -985,70 +985,70 @@ pub mod overworld_compiled {
     pub fn eval_overworld_108<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_107(pos, ctx) * -0.0115f32
+    ) -> f64 {
+        eval_overworld_107(pos, ctx) * -0.011499999999999996f64
     }
     #[inline(always)]
     pub fn eval_overworld_109<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_108(pos, ctx) + -0.0765f32
+    ) -> f64 {
+        eval_overworld_108(pos, ctx) + -0.0765f64
     }
     #[inline(always)]
     pub fn eval_overworld_110<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_106(pos, ctx) + eval_overworld_109(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_111<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_110(pos, ctx).clamp(-1f32, 1f32)
+    ) -> f64 {
+        eval_overworld_110(pos, ctx).clamp(-1f64, 1f64)
     }
     #[inline(always)]
     pub fn eval_overworld_112<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_83(pos, ctx) + eval_overworld_111(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_113<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_75(pos, ctx).min(eval_overworld_112(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_overworld_114<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(114usize, WrapperType::Cache, pos, &eval_overworld_113)
     }
     #[inline(always)]
     pub fn eval_overworld_115<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_114(pos, ctx) * 5f32
+    ) -> f64 {
+        eval_overworld_114(pos, ctx) * 5f64
     }
     #[inline(always)]
     pub fn eval_overworld_116<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_71(pos, ctx).min(eval_overworld_115(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_overworld_117<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::CAVE_LAYER,
             f64::from(pos.x) * 1f64,
@@ -1060,7 +1060,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_118<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_overworld_117(pos, ctx);
         v * v
     }
@@ -1068,14 +1068,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_119<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_118(pos, ctx) * 4f32
+    ) -> f64 {
+        eval_overworld_118(pos, ctx) * 4f64
     }
     #[inline(always)]
     pub fn eval_overworld_120<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::CAVE_CHEESE,
             f64::from(pos.x) * 1f64,
@@ -1087,63 +1087,63 @@ pub mod overworld_compiled {
     pub fn eval_overworld_121<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_120(pos, ctx) + 0.27f32
+    ) -> f64 {
+        eval_overworld_120(pos, ctx) + 0.27f64
     }
     #[inline(always)]
     pub fn eval_overworld_122<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_121(pos, ctx).clamp(-1f32, 1f32)
+    ) -> f64 {
+        eval_overworld_121(pos, ctx).clamp(-1f64, 1f64)
     }
     #[inline(always)]
     pub fn eval_overworld_123<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_71(pos, ctx) * -0.64f32
+    ) -> f64 {
+        eval_overworld_71(pos, ctx) * -0.64f64
     }
     #[inline(always)]
     pub fn eval_overworld_124<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_123(pos, ctx) + 1.5f32
+    ) -> f64 {
+        eval_overworld_123(pos, ctx) + 1.5f64
     }
     #[inline(always)]
     pub fn eval_overworld_125<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_124(pos, ctx).clamp(0f32, 0.5f32)
+    ) -> f64 {
+        eval_overworld_124(pos, ctx).clamp(0f64, 0.5f64)
     }
     #[inline(always)]
     pub fn eval_overworld_126<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_122(pos, ctx) + eval_overworld_125(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_127<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_119(pos, ctx) + eval_overworld_126(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_128<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_127(pos, ctx).min(eval_overworld_114(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_overworld_129<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D_MODULATOR,
             f64::from(pos.x) * 2f64,
@@ -1155,7 +1155,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_130<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 2f64,
@@ -1167,14 +1167,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_131<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_130(pos, ctx) * 0.5f32
+    ) -> f64 {
+        eval_overworld_130(pos, ctx) * 0.5f64
     }
     #[inline(always)]
     pub fn eval_overworld_132<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 1.3333333333333333f64,
@@ -1186,14 +1186,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_133<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_132(pos, ctx) * 0.75f32
+    ) -> f64 {
+        eval_overworld_132(pos, ctx) * 0.75f64
     }
     #[inline(always)]
     pub fn eval_overworld_134<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 1f64,
@@ -1205,14 +1205,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_135<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_134(pos, ctx) * 1f32
+    ) -> f64 {
+        eval_overworld_134(pos, ctx) * 1f64
     }
     #[inline(always)]
     pub fn eval_overworld_136<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 0.5f64,
@@ -1224,14 +1224,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_137<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_136(pos, ctx) * 2f32
+    ) -> f64 {
+        eval_overworld_136(pos, ctx) * 2f64
     }
     #[inline(always)]
     pub fn eval_overworld_138<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 0.3333333333333333f64,
@@ -1243,16 +1243,16 @@ pub mod overworld_compiled {
     pub fn eval_overworld_139<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_138(pos, ctx) * 3f32
+    ) -> f64 {
+        eval_overworld_138(pos, ctx) * 3f64
     }
     #[inline(always)]
     pub fn eval_overworld_140<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let input_val = eval_overworld_129(pos, ctx);
-        let thresholds = &[-0.75f32, -0.5f32, 0.5f32, 0.75f32];
+        let thresholds = &[-0.75f64, -0.5f64, 0.5f64, 0.75f64];
         let mut selected = thresholds.len();
         for (i, &t) in thresholds.iter().enumerate() {
             if input_val < t {
@@ -1272,14 +1272,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_141<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_140(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_overworld_142<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D_THICKNESS,
             f64::from(pos.x) * 2f64,
@@ -1291,42 +1291,42 @@ pub mod overworld_compiled {
     pub fn eval_overworld_143<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_142(pos, ctx) * -0.35f32
+    ) -> f64 {
+        eval_overworld_142(pos, ctx) * -0.35000000000000003f64
     }
     #[inline(always)]
     pub fn eval_overworld_144<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_143(pos, ctx) + -0.95f32
+    ) -> f64 {
+        eval_overworld_143(pos, ctx) + -0.95f64
     }
     #[inline(always)]
     pub fn eval_overworld_145<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(145usize, WrapperType::Cache, pos, &eval_overworld_144)
     }
     #[inline(always)]
     pub fn eval_overworld_146<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_145(pos, ctx) * 0.083f32
+    ) -> f64 {
+        eval_overworld_145(pos, ctx) * 0.083f64
     }
     #[inline(always)]
     pub fn eval_overworld_147<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_141(pos, ctx) + eval_overworld_146(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_148<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D_ELEVATION,
             f64::from(pos.x) * 1f64,
@@ -1338,21 +1338,21 @@ pub mod overworld_compiled {
     pub fn eval_overworld_149<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_148(pos, ctx) * 8f32
+    ) -> f64 {
+        eval_overworld_148(pos, ctx) * 8f64
     }
     #[inline(always)]
     pub fn eval_overworld_150<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_149(pos, ctx) + 0f32
+    ) -> f64 {
+        eval_overworld_149(pos, ctx) + 0f64
     }
     #[inline(always)]
     pub fn eval_overworld_151<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_150(&slice_pos, ctx)
     }
@@ -1360,38 +1360,38 @@ pub mod overworld_compiled {
     pub fn eval_overworld_152<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-64i32, 320i32) - -64i32;
-        8f32 + rel as f32 * -0.125f32
+        8f64 + rel as f64 * -0.125f64
     }
     #[inline(always)]
     pub fn eval_overworld_153<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_151(pos, ctx) + eval_overworld_152(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_154<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_153(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_overworld_155<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_154(pos, ctx) + eval_overworld_145(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_156<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_overworld_155(pos, ctx);
         v * v * v
     }
@@ -1399,35 +1399,35 @@ pub mod overworld_compiled {
     pub fn eval_overworld_157<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_147(pos, ctx).max(eval_overworld_156(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_overworld_158<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_157(pos, ctx).clamp(-1f32, 1f32)
+    ) -> f64 {
+        eval_overworld_157(pos, ctx).clamp(-1f64, 1f64)
     }
     #[inline(always)]
     pub fn eval_overworld_159<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_158(pos, ctx) + eval_overworld_83(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_160<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_128(pos, ctx).min(eval_overworld_159(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_overworld_161<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::PILLAR,
             f64::from(pos.x) * 25f64,
@@ -1439,14 +1439,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_162<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_161(pos, ctx) * 2f32
+    ) -> f64 {
+        eval_overworld_161(pos, ctx) * 2f64
     }
     #[inline(always)]
     pub fn eval_overworld_163<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::PILLAR_RARENESS,
             f64::from(pos.x) * 1f64,
@@ -1458,28 +1458,28 @@ pub mod overworld_compiled {
     pub fn eval_overworld_164<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_163(pos, ctx) * -1f32
+    ) -> f64 {
+        eval_overworld_163(pos, ctx) * -1f64
     }
     #[inline(always)]
     pub fn eval_overworld_165<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_164(pos, ctx) + -1f32
+    ) -> f64 {
+        eval_overworld_164(pos, ctx) + -1f64
     }
     #[inline(always)]
     pub fn eval_overworld_166<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_162(pos, ctx) + eval_overworld_165(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_167<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::PILLAR_THICKNESS,
             f64::from(pos.x) * 1f64,
@@ -1491,21 +1491,21 @@ pub mod overworld_compiled {
     pub fn eval_overworld_168<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_167(pos, ctx) * 0.55f32
+    ) -> f64 {
+        eval_overworld_167(pos, ctx) * 0.55f64
     }
     #[inline(always)]
     pub fn eval_overworld_169<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_168(pos, ctx) + 0.55f32
+    ) -> f64 {
+        eval_overworld_168(pos, ctx) + 0.55f64
     }
     #[inline(always)]
     pub fn eval_overworld_170<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_overworld_169(pos, ctx);
         v * v * v
     }
@@ -1513,31 +1513,31 @@ pub mod overworld_compiled {
     pub fn eval_overworld_171<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_166(pos, ctx) * eval_overworld_170(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_172<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(172usize, WrapperType::Cache, pos, &eval_overworld_171)
     }
     #[inline(always)]
     pub fn eval_overworld_173<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        -1000000f32
+        -1000000f64
     }
     #[inline(always)]
     pub fn eval_overworld_174<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_overworld_172(pos, ctx);
-        if val >= -1000000f32 && val < 0.03f32 {
+        if val >= -1000000f64 && val < 0.03f64 {
             eval_overworld_173(pos, ctx)
         } else {
             eval_overworld_172(pos, ctx)
@@ -1547,16 +1547,16 @@ pub mod overworld_compiled {
     pub fn eval_overworld_175<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_160(pos, ctx).max(eval_overworld_174(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_overworld_176<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_overworld_71(pos, ctx);
-        if val >= -1000000f32 && val < 1.5625f32 {
+        if val >= -1000000f64 && val < 1.5625f64 {
             eval_overworld_116(pos, ctx)
         } else {
             eval_overworld_175(pos, ctx)
@@ -1566,49 +1566,49 @@ pub mod overworld_compiled {
     pub fn eval_overworld_177<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_176(pos, ctx) + 0.078125f32
+    ) -> f64 {
+        eval_overworld_176(pos, ctx) + 0.078125f64
     }
     #[inline(always)]
     pub fn eval_overworld_178<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_1(pos, ctx) * eval_overworld_177(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_179<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_178(pos, ctx) + -0.078125f32
+    ) -> f64 {
+        eval_overworld_178(pos, ctx) + -0.078125f64
     }
     #[inline(always)]
     pub fn eval_overworld_180<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_179(pos, ctx) + -0.1171875f32
+    ) -> f64 {
+        eval_overworld_179(pos, ctx) + -0.1171875f64
     }
     #[inline(always)]
     pub fn eval_overworld_181<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_0(pos, ctx) * eval_overworld_180(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_182<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_181(pos, ctx) + 0.1171875f32
+    ) -> f64 {
+        eval_overworld_181(pos, ctx) + 0.1171875f64
     }
     #[inline(always)]
     pub fn eval_overworld_183<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_overworld_182(pos, ctx);
         ctx.sample_blend_density(val, pos)
     }
@@ -1616,7 +1616,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_184<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             184usize,
             WrapperType::Interpolated {
@@ -1631,14 +1631,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_185<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_184(pos, ctx) * 0.64f32
+    ) -> f64 {
+        eval_overworld_184(pos, ctx) * 0.64f64
     }
     #[inline(always)]
     pub fn eval_overworld_186<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let c = eval_overworld_185(pos, ctx).clamp(-1.0, 1.0);
         c / 2.0 - c * c * c / 24.0
     }
@@ -1646,17 +1646,17 @@ pub mod overworld_compiled {
     pub fn eval_overworld_187<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-4064i32, 4062i32) - -4064i32;
-        -4064f32 + rel as f32 * 1f32
+        -4064f64 + rel as f64 * 1f64
     }
     #[inline(always)]
     pub fn eval_overworld_188<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::NOODLE,
             f64::from(pos.x) * 1f64,
@@ -1668,17 +1668,17 @@ pub mod overworld_compiled {
     pub fn eval_overworld_189<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        -1f32
+        -1f64
     }
     #[inline(always)]
     pub fn eval_overworld_190<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_overworld_187(pos, ctx);
-        if val >= -60f32 && val < 321f32 {
+        if val >= -60f64 && val < 321f64 {
             eval_overworld_188(pos, ctx)
         } else {
             eval_overworld_189(pos, ctx)
@@ -1688,7 +1688,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_191<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             191usize,
             WrapperType::Interpolated {
@@ -1703,15 +1703,15 @@ pub mod overworld_compiled {
     pub fn eval_overworld_192<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        64f32
+        64f64
     }
     #[inline(always)]
     pub fn eval_overworld_193<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::NOODLE_THICKNESS,
             f64::from(pos.x) * 1f64,
@@ -1723,23 +1723,23 @@ pub mod overworld_compiled {
     pub fn eval_overworld_194<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_193(pos, ctx) * -0.025f32
+    ) -> f64 {
+        eval_overworld_193(pos, ctx) * -0.025f64
     }
     #[inline(always)]
     pub fn eval_overworld_195<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_194(pos, ctx) + -0.075f32
+    ) -> f64 {
+        eval_overworld_194(pos, ctx) + -0.07500000000000001f64
     }
     #[inline(always)]
     pub fn eval_overworld_196<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_overworld_187(pos, ctx);
-        if val >= -60f32 && val < 321f32 {
+        if val >= -60f64 && val < 321f64 {
             eval_overworld_195(pos, ctx)
         } else {
             eval_overworld_15(pos, ctx)
@@ -1749,7 +1749,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_197<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             197usize,
             WrapperType::Interpolated {
@@ -1764,7 +1764,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_198<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::NOODLE_RIDGE_A,
             f64::from(pos.x) * 2.6666666666666665f64,
@@ -1776,9 +1776,9 @@ pub mod overworld_compiled {
     pub fn eval_overworld_199<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_overworld_187(pos, ctx);
-        if val >= -60f32 && val < 321f32 {
+        if val >= -60f64 && val < 321f64 {
             eval_overworld_198(pos, ctx)
         } else {
             eval_overworld_15(pos, ctx)
@@ -1788,7 +1788,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_200<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             200usize,
             WrapperType::Interpolated {
@@ -1803,14 +1803,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_201<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_200(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_overworld_202<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::NOODLE_RIDGE_B,
             f64::from(pos.x) * 2.6666666666666665f64,
@@ -1822,9 +1822,9 @@ pub mod overworld_compiled {
     pub fn eval_overworld_203<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_overworld_187(pos, ctx);
-        if val >= -60f32 && val < 321f32 {
+        if val >= -60f64 && val < 321f64 {
             eval_overworld_202(pos, ctx)
         } else {
             eval_overworld_15(pos, ctx)
@@ -1834,7 +1834,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_204<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             204usize,
             WrapperType::Interpolated {
@@ -1849,37 +1849,37 @@ pub mod overworld_compiled {
     pub fn eval_overworld_205<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_204(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_overworld_206<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_201(pos, ctx).max(eval_overworld_205(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_overworld_207<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_206(pos, ctx) * 1.5f32
+    ) -> f64 {
+        eval_overworld_206(pos, ctx) * 1.5f64
     }
     #[inline(always)]
     pub fn eval_overworld_208<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_197(pos, ctx) + eval_overworld_207(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_overworld_209<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_overworld_191(pos, ctx);
-        if val >= -1000000f32 && val < 0f32 {
+        if val >= -1000000f64 && val < 0f64 {
             eval_overworld_192(pos, ctx)
         } else {
             eval_overworld_208(pos, ctx)
@@ -1889,14 +1889,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_210<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_186(pos, ctx).min(eval_overworld_209(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_overworld_211<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::AQUIFER_BARRIER,
             f64::from(pos.x) * 1f64,
@@ -1908,7 +1908,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_212<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::AQUIFER_FLUID_LEVEL_FLOODEDNESS,
             f64::from(pos.x) * 1f64,
@@ -1920,7 +1920,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_213<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::AQUIFER_FLUID_LEVEL_SPREAD,
             f64::from(pos.x) * 1f64,
@@ -1932,7 +1932,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_214<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::AQUIFER_LAVA,
             f64::from(pos.x) * 1f64,
@@ -1944,7 +1944,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_215<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::ORE_VEININESS,
             f64::from(pos.x) * 1.5f64,
@@ -1956,9 +1956,9 @@ pub mod overworld_compiled {
     pub fn eval_overworld_216<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_overworld_187(pos, ctx);
-        if val >= -60f32 && val < 51f32 {
+        if val >= -60f64 && val < 51f64 {
             eval_overworld_215(pos, ctx)
         } else {
             eval_overworld_15(pos, ctx)
@@ -1968,7 +1968,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_217<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             217usize,
             WrapperType::Interpolated {
@@ -1983,7 +1983,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_218<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::ORE_VEIN_A,
             f64::from(pos.x) * 4f64,
@@ -1995,9 +1995,9 @@ pub mod overworld_compiled {
     pub fn eval_overworld_219<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_overworld_187(pos, ctx);
-        if val >= -60f32 && val < 51f32 {
+        if val >= -60f64 && val < 51f64 {
             eval_overworld_218(pos, ctx)
         } else {
             eval_overworld_15(pos, ctx)
@@ -2007,7 +2007,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_220<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             220usize,
             WrapperType::Interpolated {
@@ -2022,14 +2022,14 @@ pub mod overworld_compiled {
     pub fn eval_overworld_221<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_220(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_overworld_222<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::ORE_VEIN_B,
             f64::from(pos.x) * 4f64,
@@ -2041,9 +2041,9 @@ pub mod overworld_compiled {
     pub fn eval_overworld_223<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_overworld_187(pos, ctx);
-        if val >= -60f32 && val < 51f32 {
+        if val >= -60f64 && val < 51f64 {
             eval_overworld_222(pos, ctx)
         } else {
             eval_overworld_15(pos, ctx)
@@ -2053,7 +2053,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_224<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             224usize,
             WrapperType::Interpolated {
@@ -2068,28 +2068,28 @@ pub mod overworld_compiled {
     pub fn eval_overworld_225<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_224(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_overworld_226<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_overworld_221(pos, ctx).max(eval_overworld_225(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_overworld_227<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_overworld_226(pos, ctx) + -0.08f32
+    ) -> f64 {
+        eval_overworld_226(pos, ctx) + -0.07999999821186066f64
     }
     #[inline(always)]
     pub fn eval_overworld_228<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::ORE_GAP,
             f64::from(pos.x) * 1f64,
@@ -2101,7 +2101,7 @@ pub mod overworld_compiled {
     pub fn eval_overworld_229<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_overworld_26(&slice_pos, ctx)
     }
@@ -2112,51 +2112,51 @@ pub mod amplified_compiled {
     pub fn eval_amplified_0<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-64i32, -40i32) - -64i32;
-        0f32 + rel as f32 * 0.041666668f32
+        0f64 + rel as f64 * 0.041666666666666664f64
     }
     #[inline(always)]
     pub fn eval_amplified_1<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(304i32, 320i32) - 304i32;
-        1f32 + rel as f32 * -0.0625f32
+        1f64 + rel as f64 * -0.0625f64
     }
     #[inline(always)]
     pub fn eval_amplified_2<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-64i32, 320i32) - -64i32;
-        1.5f32 + rel as f32 * -0.0078125f32
+        1.5f64 + rel as f64 * -0.0078125f64
     }
     #[inline(always)]
     pub fn eval_amplified_3<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_blend_offset(pos)
     }
     #[inline(always)]
     pub fn eval_amplified_4<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_blend_alpha(pos)
     }
     #[inline(always)]
     pub fn eval_amplified_5<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_4(&slice_pos, ctx)
     }
@@ -2164,42 +2164,42 @@ pub mod amplified_compiled {
     pub fn eval_amplified_6<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(6usize, WrapperType::Cache, pos, &eval_amplified_5)
     }
     #[inline(always)]
     pub fn eval_amplified_7<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_6(pos, ctx) * -1f32
+    ) -> f64 {
+        eval_amplified_6(pos, ctx) * -1f64
     }
     #[inline(always)]
     pub fn eval_amplified_8<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_7(pos, ctx) + 1f32
+    ) -> f64 {
+        eval_amplified_7(pos, ctx) + 1f64
     }
     #[inline(always)]
     pub fn eval_amplified_9<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_3(pos, ctx) * eval_amplified_8(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_10<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_shift_a(DoublePerlinNoiseParameters::OFFSET, pos)
     }
     #[inline(always)]
     pub fn eval_amplified_11<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_10(&slice_pos, ctx)
     }
@@ -2207,14 +2207,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_12<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(12usize, WrapperType::Cache, pos, &eval_amplified_11)
     }
     #[inline(always)]
     pub fn eval_amplified_13<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_12(&slice_pos, ctx)
     }
@@ -2222,29 +2222,29 @@ pub mod amplified_compiled {
     pub fn eval_amplified_14<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(14usize, WrapperType::Cache, pos, &eval_amplified_13)
     }
     #[inline(always)]
     pub fn eval_amplified_15<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        0f32
+        0f64
     }
     #[inline(always)]
     pub fn eval_amplified_16<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_shift_b(DoublePerlinNoiseParameters::OFFSET, pos)
     }
     #[inline(always)]
     pub fn eval_amplified_17<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_16(&slice_pos, ctx)
     }
@@ -2252,14 +2252,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_18<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(18usize, WrapperType::Cache, pos, &eval_amplified_17)
     }
     #[inline(always)]
     pub fn eval_amplified_19<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_18(&slice_pos, ctx)
     }
@@ -2267,14 +2267,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_20<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(20usize, WrapperType::Cache, pos, &eval_amplified_19)
     }
     #[inline(always)]
     pub fn eval_amplified_21<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let sx = eval_amplified_14(pos, ctx);
         let sy = eval_amplified_15(pos, ctx);
         let sz = eval_amplified_20(pos, ctx);
@@ -2291,7 +2291,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_22<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_21(&slice_pos, ctx)
     }
@@ -2299,14 +2299,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_23<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(23usize, WrapperType::Cache, pos, &eval_amplified_22)
     }
     #[inline(always)]
     pub fn eval_amplified_24<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let sx = eval_amplified_14(pos, ctx);
         let sy = eval_amplified_15(pos, ctx);
         let sz = eval_amplified_20(pos, ctx);
@@ -2323,7 +2323,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_25<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_24(&slice_pos, ctx)
     }
@@ -2331,14 +2331,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_26<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(26usize, WrapperType::Cache, pos, &eval_amplified_25)
     }
     #[inline(always)]
     pub fn eval_amplified_27<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let sx = eval_amplified_14(pos, ctx);
         let sy = eval_amplified_15(pos, ctx);
         let sz = eval_amplified_20(pos, ctx);
@@ -2355,7 +2355,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_28<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_27(&slice_pos, ctx)
     }
@@ -2363,78 +2363,78 @@ pub mod amplified_compiled {
     pub fn eval_amplified_29<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(29usize, WrapperType::Cache, pos, &eval_amplified_28)
     }
     #[inline(always)]
     pub fn eval_amplified_30<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_29(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_amplified_31<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_30(pos, ctx) + -0.6666667f32
+    ) -> f64 {
+        eval_amplified_30(pos, ctx) + -0.6666666666666666f64
     }
     #[inline(always)]
     pub fn eval_amplified_32<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_31(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_amplified_33<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_32(pos, ctx) + -0.33333334f32
+    ) -> f64 {
+        eval_amplified_32(pos, ctx) + -0.3333333333333333f64
     }
     #[inline(always)]
     pub fn eval_amplified_34<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_33(pos, ctx) * -3f32
+    ) -> f64 {
+        eval_amplified_33(pos, ctx) * -3f64
     }
     #[inline(always)]
     pub fn eval_amplified_35<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        let location_val = eval_amplified_23(pos, ctx);
-        ctx.sample_spline(35usize, location_val, pos)
+    ) -> f64 {
+        let location_val = eval_amplified_23(pos, ctx) as f32;
+        f64::from(ctx.sample_spline(35usize, location_val, pos))
     }
     #[inline(always)]
     pub fn eval_amplified_36<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_35(pos, ctx) + -0.50375f32
+    ) -> f64 {
+        eval_amplified_35(pos, ctx) + -0.5037500262260437f64
     }
     #[inline(always)]
     pub fn eval_amplified_37<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_36(pos, ctx) * eval_amplified_6(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_38<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_9(pos, ctx) + eval_amplified_37(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_39<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_38(&slice_pos, ctx)
     }
@@ -2442,14 +2442,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_40<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(40usize, WrapperType::Cache, pos, &eval_amplified_39)
     }
     #[inline(always)]
     pub fn eval_amplified_41<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_40(&slice_pos, ctx)
     }
@@ -2457,14 +2457,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_42<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(42usize, WrapperType::Cache, pos, &eval_amplified_41)
     }
     #[inline(always)]
     pub fn eval_amplified_43<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_42(&slice_pos, ctx)
     }
@@ -2472,43 +2472,43 @@ pub mod amplified_compiled {
     pub fn eval_amplified_44<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_2(pos, ctx) + eval_amplified_43(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_45<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        let location_val = eval_amplified_23(pos, ctx);
-        ctx.sample_spline(45usize, location_val, pos)
+    ) -> f64 {
+        let location_val = eval_amplified_23(pos, ctx) as f32;
+        f64::from(ctx.sample_spline(45usize, location_val, pos))
     }
     #[inline(always)]
     pub fn eval_amplified_46<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_45(pos, ctx) + -0f32
+    ) -> f64 {
+        eval_amplified_45(pos, ctx) + -0f64
     }
     #[inline(always)]
     pub fn eval_amplified_47<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_4(pos, ctx) * eval_amplified_46(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_48<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_47(pos, ctx) + 0f32
+    ) -> f64 {
+        eval_amplified_47(pos, ctx) + 0f64
     }
     #[inline(always)]
     pub fn eval_amplified_49<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_48(&slice_pos, ctx)
     }
@@ -2516,14 +2516,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_50<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(50usize, WrapperType::Cache, pos, &eval_amplified_49)
     }
     #[inline(always)]
     pub fn eval_amplified_51<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_50(&slice_pos, ctx)
     }
@@ -2531,14 +2531,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_52<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(52usize, WrapperType::Cache, pos, &eval_amplified_51)
     }
     #[inline(always)]
     pub fn eval_amplified_53<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::JAGGED,
             f64::from(pos.x) * 1500f64,
@@ -2550,7 +2550,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_54<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_amplified_53(pos, ctx);
         if v > 0.0 { v } else { v * 0.5 }
     }
@@ -2558,14 +2558,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_55<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_52(pos, ctx) * eval_amplified_54(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_56<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_55(&slice_pos, ctx)
     }
@@ -2573,43 +2573,43 @@ pub mod amplified_compiled {
     pub fn eval_amplified_57<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_44(pos, ctx) + eval_amplified_56(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_58<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        let location_val = eval_amplified_23(pos, ctx);
-        ctx.sample_spline(58usize, location_val, pos)
+    ) -> f64 {
+        let location_val = eval_amplified_23(pos, ctx) as f32;
+        f64::from(ctx.sample_spline(58usize, location_val, pos))
     }
     #[inline(always)]
     pub fn eval_amplified_59<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_58(pos, ctx) + -10f32
+    ) -> f64 {
+        eval_amplified_58(pos, ctx) + -10f64
     }
     #[inline(always)]
     pub fn eval_amplified_60<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_4(pos, ctx) * eval_amplified_59(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_61<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_60(pos, ctx) + 10f32
+    ) -> f64 {
+        eval_amplified_60(pos, ctx) + 10f64
     }
     #[inline(always)]
     pub fn eval_amplified_62<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_61(&slice_pos, ctx)
     }
@@ -2617,14 +2617,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_63<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(63usize, WrapperType::Cache, pos, &eval_amplified_62)
     }
     #[inline(always)]
     pub fn eval_amplified_64<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_63(&slice_pos, ctx)
     }
@@ -2632,14 +2632,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_65<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(65usize, WrapperType::Cache, pos, &eval_amplified_64)
     }
     #[inline(always)]
     pub fn eval_amplified_66<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_65(&slice_pos, ctx)
     }
@@ -2647,14 +2647,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_67<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_57(pos, ctx) * eval_amplified_66(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_68<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_amplified_67(pos, ctx);
         if v > 0.0 { v } else { v * 0.25 }
     }
@@ -2662,28 +2662,28 @@ pub mod amplified_compiled {
     pub fn eval_amplified_69<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_68(pos, ctx) * 4f32
+    ) -> f64 {
+        eval_amplified_68(pos, ctx) * 4f64
     }
     #[inline(always)]
     pub fn eval_amplified_70<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_interpolated_noise(pos)
     }
     #[inline(always)]
     pub fn eval_amplified_71<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_69(pos, ctx) + eval_amplified_70(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_72<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::CAVE_ENTRANCE,
             f64::from(pos.x) * 0.75f64,
@@ -2695,31 +2695,31 @@ pub mod amplified_compiled {
     pub fn eval_amplified_73<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_72(pos, ctx) + 0.37f32
+    ) -> f64 {
+        eval_amplified_72(pos, ctx) + 0.37f64
     }
     #[inline(always)]
     pub fn eval_amplified_74<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-10i32, 30i32) - -10i32;
-        0.3f32 + rel as f32 * -0.0075000003f32
+        0.3f64 + rel as f64 * -0.0075f64
     }
     #[inline(always)]
     pub fn eval_amplified_75<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_73(pos, ctx) + eval_amplified_74(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_76<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_ROUGHNESS_MODULATOR,
             f64::from(pos.x) * 1f64,
@@ -2731,21 +2731,21 @@ pub mod amplified_compiled {
     pub fn eval_amplified_77<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_76(pos, ctx) * -0.05f32
+    ) -> f64 {
+        eval_amplified_76(pos, ctx) * -0.05f64
     }
     #[inline(always)]
     pub fn eval_amplified_78<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_77(pos, ctx) + -0.05f32
+    ) -> f64 {
+        eval_amplified_77(pos, ctx) + -0.05f64
     }
     #[inline(always)]
     pub fn eval_amplified_79<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_ROUGHNESS,
             f64::from(pos.x) * 1f64,
@@ -2757,35 +2757,35 @@ pub mod amplified_compiled {
     pub fn eval_amplified_80<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_79(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_amplified_81<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_80(pos, ctx) + -0.4f32
+    ) -> f64 {
+        eval_amplified_80(pos, ctx) + -0.4f64
     }
     #[inline(always)]
     pub fn eval_amplified_82<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_78(pos, ctx) * eval_amplified_81(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_83<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(83usize, WrapperType::Cache, pos, &eval_amplified_82)
     }
     #[inline(always)]
     pub fn eval_amplified_84<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_RARITY,
             f64::from(pos.x) * 2f64,
@@ -2797,14 +2797,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_85<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(85usize, WrapperType::Cache, pos, &eval_amplified_84)
     }
     #[inline(always)]
     pub fn eval_amplified_86<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_1,
             f64::from(pos.x) * 1.3333333333333333f64,
@@ -2816,14 +2816,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_87<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_86(pos, ctx) * 0.75f32
+    ) -> f64 {
+        eval_amplified_86(pos, ctx) * 0.75f64
     }
     #[inline(always)]
     pub fn eval_amplified_88<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_1,
             f64::from(pos.x) * 1f64,
@@ -2835,14 +2835,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_89<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_88(pos, ctx) * 1f32
+    ) -> f64 {
+        eval_amplified_88(pos, ctx) * 1f64
     }
     #[inline(always)]
     pub fn eval_amplified_90<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_1,
             f64::from(pos.x) * 0.6666666666666666f64,
@@ -2854,14 +2854,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_91<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_90(pos, ctx) * 1.5f32
+    ) -> f64 {
+        eval_amplified_90(pos, ctx) * 1.5f64
     }
     #[inline(always)]
     pub fn eval_amplified_92<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_1,
             f64::from(pos.x) * 0.5f64,
@@ -2873,16 +2873,16 @@ pub mod amplified_compiled {
     pub fn eval_amplified_93<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_92(pos, ctx) * 2f32
+    ) -> f64 {
+        eval_amplified_92(pos, ctx) * 2f64
     }
     #[inline(always)]
     pub fn eval_amplified_94<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let input_val = eval_amplified_85(pos, ctx);
-        let thresholds = &[-0.5f32, 0f32, 0.5f32];
+        let thresholds = &[-0.5f64, 0f64, 0.5f64];
         let mut selected = thresholds.len();
         for (i, &t) in thresholds.iter().enumerate() {
             if input_val < t {
@@ -2901,14 +2901,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_95<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_94(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_amplified_96<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_2,
             f64::from(pos.x) * 1.3333333333333333f64,
@@ -2920,14 +2920,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_97<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_96(pos, ctx) * 0.75f32
+    ) -> f64 {
+        eval_amplified_96(pos, ctx) * 0.75f64
     }
     #[inline(always)]
     pub fn eval_amplified_98<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_2,
             f64::from(pos.x) * 1f64,
@@ -2939,14 +2939,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_99<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_98(pos, ctx) * 1f32
+    ) -> f64 {
+        eval_amplified_98(pos, ctx) * 1f64
     }
     #[inline(always)]
     pub fn eval_amplified_100<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_2,
             f64::from(pos.x) * 0.6666666666666666f64,
@@ -2958,14 +2958,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_101<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_100(pos, ctx) * 1.5f32
+    ) -> f64 {
+        eval_amplified_100(pos, ctx) * 1.5f64
     }
     #[inline(always)]
     pub fn eval_amplified_102<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_2,
             f64::from(pos.x) * 0.5f64,
@@ -2977,16 +2977,16 @@ pub mod amplified_compiled {
     pub fn eval_amplified_103<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_102(pos, ctx) * 2f32
+    ) -> f64 {
+        eval_amplified_102(pos, ctx) * 2f64
     }
     #[inline(always)]
     pub fn eval_amplified_104<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let input_val = eval_amplified_85(pos, ctx);
-        let thresholds = &[-0.5f32, 0f32, 0.5f32];
+        let thresholds = &[-0.5f64, 0f64, 0.5f64];
         let mut selected = thresholds.len();
         for (i, &t) in thresholds.iter().enumerate() {
             if input_val < t {
@@ -3005,21 +3005,21 @@ pub mod amplified_compiled {
     pub fn eval_amplified_105<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_104(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_amplified_106<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_95(pos, ctx).max(eval_amplified_105(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_amplified_107<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_THICKNESS,
             f64::from(pos.x) * 1f64,
@@ -3031,70 +3031,70 @@ pub mod amplified_compiled {
     pub fn eval_amplified_108<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_107(pos, ctx) * -0.0115f32
+    ) -> f64 {
+        eval_amplified_107(pos, ctx) * -0.011499999999999996f64
     }
     #[inline(always)]
     pub fn eval_amplified_109<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_108(pos, ctx) + -0.0765f32
+    ) -> f64 {
+        eval_amplified_108(pos, ctx) + -0.0765f64
     }
     #[inline(always)]
     pub fn eval_amplified_110<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_106(pos, ctx) + eval_amplified_109(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_111<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_110(pos, ctx).clamp(-1f32, 1f32)
+    ) -> f64 {
+        eval_amplified_110(pos, ctx).clamp(-1f64, 1f64)
     }
     #[inline(always)]
     pub fn eval_amplified_112<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_83(pos, ctx) + eval_amplified_111(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_113<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_75(pos, ctx).min(eval_amplified_112(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_amplified_114<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(114usize, WrapperType::Cache, pos, &eval_amplified_113)
     }
     #[inline(always)]
     pub fn eval_amplified_115<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_114(pos, ctx) * 5f32
+    ) -> f64 {
+        eval_amplified_114(pos, ctx) * 5f64
     }
     #[inline(always)]
     pub fn eval_amplified_116<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_71(pos, ctx).min(eval_amplified_115(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_amplified_117<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::CAVE_LAYER,
             f64::from(pos.x) * 1f64,
@@ -3106,7 +3106,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_118<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_amplified_117(pos, ctx);
         v * v
     }
@@ -3114,14 +3114,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_119<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_118(pos, ctx) * 4f32
+    ) -> f64 {
+        eval_amplified_118(pos, ctx) * 4f64
     }
     #[inline(always)]
     pub fn eval_amplified_120<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::CAVE_CHEESE,
             f64::from(pos.x) * 1f64,
@@ -3133,63 +3133,63 @@ pub mod amplified_compiled {
     pub fn eval_amplified_121<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_120(pos, ctx) + 0.27f32
+    ) -> f64 {
+        eval_amplified_120(pos, ctx) + 0.27f64
     }
     #[inline(always)]
     pub fn eval_amplified_122<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_121(pos, ctx).clamp(-1f32, 1f32)
+    ) -> f64 {
+        eval_amplified_121(pos, ctx).clamp(-1f64, 1f64)
     }
     #[inline(always)]
     pub fn eval_amplified_123<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_71(pos, ctx) * -0.64f32
+    ) -> f64 {
+        eval_amplified_71(pos, ctx) * -0.64f64
     }
     #[inline(always)]
     pub fn eval_amplified_124<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_123(pos, ctx) + 1.5f32
+    ) -> f64 {
+        eval_amplified_123(pos, ctx) + 1.5f64
     }
     #[inline(always)]
     pub fn eval_amplified_125<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_124(pos, ctx).clamp(0f32, 0.5f32)
+    ) -> f64 {
+        eval_amplified_124(pos, ctx).clamp(0f64, 0.5f64)
     }
     #[inline(always)]
     pub fn eval_amplified_126<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_122(pos, ctx) + eval_amplified_125(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_127<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_119(pos, ctx) + eval_amplified_126(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_128<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_127(pos, ctx).min(eval_amplified_114(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_amplified_129<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D_MODULATOR,
             f64::from(pos.x) * 2f64,
@@ -3201,7 +3201,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_130<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 2f64,
@@ -3213,14 +3213,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_131<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_130(pos, ctx) * 0.5f32
+    ) -> f64 {
+        eval_amplified_130(pos, ctx) * 0.5f64
     }
     #[inline(always)]
     pub fn eval_amplified_132<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 1.3333333333333333f64,
@@ -3232,14 +3232,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_133<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_132(pos, ctx) * 0.75f32
+    ) -> f64 {
+        eval_amplified_132(pos, ctx) * 0.75f64
     }
     #[inline(always)]
     pub fn eval_amplified_134<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 1f64,
@@ -3251,14 +3251,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_135<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_134(pos, ctx) * 1f32
+    ) -> f64 {
+        eval_amplified_134(pos, ctx) * 1f64
     }
     #[inline(always)]
     pub fn eval_amplified_136<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 0.5f64,
@@ -3270,14 +3270,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_137<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_136(pos, ctx) * 2f32
+    ) -> f64 {
+        eval_amplified_136(pos, ctx) * 2f64
     }
     #[inline(always)]
     pub fn eval_amplified_138<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 0.3333333333333333f64,
@@ -3289,16 +3289,16 @@ pub mod amplified_compiled {
     pub fn eval_amplified_139<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_138(pos, ctx) * 3f32
+    ) -> f64 {
+        eval_amplified_138(pos, ctx) * 3f64
     }
     #[inline(always)]
     pub fn eval_amplified_140<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let input_val = eval_amplified_129(pos, ctx);
-        let thresholds = &[-0.75f32, -0.5f32, 0.5f32, 0.75f32];
+        let thresholds = &[-0.75f64, -0.5f64, 0.5f64, 0.75f64];
         let mut selected = thresholds.len();
         for (i, &t) in thresholds.iter().enumerate() {
             if input_val < t {
@@ -3318,14 +3318,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_141<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_140(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_amplified_142<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D_THICKNESS,
             f64::from(pos.x) * 2f64,
@@ -3337,42 +3337,42 @@ pub mod amplified_compiled {
     pub fn eval_amplified_143<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_142(pos, ctx) * -0.35f32
+    ) -> f64 {
+        eval_amplified_142(pos, ctx) * -0.35000000000000003f64
     }
     #[inline(always)]
     pub fn eval_amplified_144<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_143(pos, ctx) + -0.95f32
+    ) -> f64 {
+        eval_amplified_143(pos, ctx) + -0.95f64
     }
     #[inline(always)]
     pub fn eval_amplified_145<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(145usize, WrapperType::Cache, pos, &eval_amplified_144)
     }
     #[inline(always)]
     pub fn eval_amplified_146<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_145(pos, ctx) * 0.083f32
+    ) -> f64 {
+        eval_amplified_145(pos, ctx) * 0.083f64
     }
     #[inline(always)]
     pub fn eval_amplified_147<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_141(pos, ctx) + eval_amplified_146(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_148<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D_ELEVATION,
             f64::from(pos.x) * 1f64,
@@ -3384,21 +3384,21 @@ pub mod amplified_compiled {
     pub fn eval_amplified_149<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_148(pos, ctx) * 8f32
+    ) -> f64 {
+        eval_amplified_148(pos, ctx) * 8f64
     }
     #[inline(always)]
     pub fn eval_amplified_150<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_149(pos, ctx) + 0f32
+    ) -> f64 {
+        eval_amplified_149(pos, ctx) + 0f64
     }
     #[inline(always)]
     pub fn eval_amplified_151<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_150(&slice_pos, ctx)
     }
@@ -3406,38 +3406,38 @@ pub mod amplified_compiled {
     pub fn eval_amplified_152<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-64i32, 320i32) - -64i32;
-        8f32 + rel as f32 * -0.125f32
+        8f64 + rel as f64 * -0.125f64
     }
     #[inline(always)]
     pub fn eval_amplified_153<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_151(pos, ctx) + eval_amplified_152(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_154<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_153(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_amplified_155<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_154(pos, ctx) + eval_amplified_145(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_156<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_amplified_155(pos, ctx);
         v * v * v
     }
@@ -3445,35 +3445,35 @@ pub mod amplified_compiled {
     pub fn eval_amplified_157<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_147(pos, ctx).max(eval_amplified_156(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_amplified_158<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_157(pos, ctx).clamp(-1f32, 1f32)
+    ) -> f64 {
+        eval_amplified_157(pos, ctx).clamp(-1f64, 1f64)
     }
     #[inline(always)]
     pub fn eval_amplified_159<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_158(pos, ctx) + eval_amplified_83(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_160<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_128(pos, ctx).min(eval_amplified_159(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_amplified_161<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::PILLAR,
             f64::from(pos.x) * 25f64,
@@ -3485,14 +3485,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_162<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_161(pos, ctx) * 2f32
+    ) -> f64 {
+        eval_amplified_161(pos, ctx) * 2f64
     }
     #[inline(always)]
     pub fn eval_amplified_163<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::PILLAR_RARENESS,
             f64::from(pos.x) * 1f64,
@@ -3504,28 +3504,28 @@ pub mod amplified_compiled {
     pub fn eval_amplified_164<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_163(pos, ctx) * -1f32
+    ) -> f64 {
+        eval_amplified_163(pos, ctx) * -1f64
     }
     #[inline(always)]
     pub fn eval_amplified_165<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_164(pos, ctx) + -1f32
+    ) -> f64 {
+        eval_amplified_164(pos, ctx) + -1f64
     }
     #[inline(always)]
     pub fn eval_amplified_166<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_162(pos, ctx) + eval_amplified_165(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_167<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::PILLAR_THICKNESS,
             f64::from(pos.x) * 1f64,
@@ -3537,21 +3537,21 @@ pub mod amplified_compiled {
     pub fn eval_amplified_168<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_167(pos, ctx) * 0.55f32
+    ) -> f64 {
+        eval_amplified_167(pos, ctx) * 0.55f64
     }
     #[inline(always)]
     pub fn eval_amplified_169<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_168(pos, ctx) + 0.55f32
+    ) -> f64 {
+        eval_amplified_168(pos, ctx) + 0.55f64
     }
     #[inline(always)]
     pub fn eval_amplified_170<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_amplified_169(pos, ctx);
         v * v * v
     }
@@ -3559,31 +3559,31 @@ pub mod amplified_compiled {
     pub fn eval_amplified_171<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_166(pos, ctx) * eval_amplified_170(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_172<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(172usize, WrapperType::Cache, pos, &eval_amplified_171)
     }
     #[inline(always)]
     pub fn eval_amplified_173<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        -1000000f32
+        -1000000f64
     }
     #[inline(always)]
     pub fn eval_amplified_174<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_amplified_172(pos, ctx);
-        if val >= -1000000f32 && val < 0.03f32 {
+        if val >= -1000000f64 && val < 0.03f64 {
             eval_amplified_173(pos, ctx)
         } else {
             eval_amplified_172(pos, ctx)
@@ -3593,16 +3593,16 @@ pub mod amplified_compiled {
     pub fn eval_amplified_175<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_160(pos, ctx).max(eval_amplified_174(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_amplified_176<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_amplified_71(pos, ctx);
-        if val >= -1000000f32 && val < 1.5625f32 {
+        if val >= -1000000f64 && val < 1.5625f64 {
             eval_amplified_116(pos, ctx)
         } else {
             eval_amplified_175(pos, ctx)
@@ -3612,49 +3612,49 @@ pub mod amplified_compiled {
     pub fn eval_amplified_177<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_176(pos, ctx) + 0.078125f32
+    ) -> f64 {
+        eval_amplified_176(pos, ctx) + 0.078125f64
     }
     #[inline(always)]
     pub fn eval_amplified_178<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_1(pos, ctx) * eval_amplified_177(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_179<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_178(pos, ctx) + -0.078125f32
+    ) -> f64 {
+        eval_amplified_178(pos, ctx) + -0.078125f64
     }
     #[inline(always)]
     pub fn eval_amplified_180<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_179(pos, ctx) + -0.4f32
+    ) -> f64 {
+        eval_amplified_179(pos, ctx) + -0.4f64
     }
     #[inline(always)]
     pub fn eval_amplified_181<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_0(pos, ctx) * eval_amplified_180(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_182<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_181(pos, ctx) + 0.4f32
+    ) -> f64 {
+        eval_amplified_181(pos, ctx) + 0.4f64
     }
     #[inline(always)]
     pub fn eval_amplified_183<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_amplified_182(pos, ctx);
         ctx.sample_blend_density(val, pos)
     }
@@ -3662,7 +3662,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_184<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             184usize,
             WrapperType::Interpolated {
@@ -3677,14 +3677,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_185<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_184(pos, ctx) * 0.64f32
+    ) -> f64 {
+        eval_amplified_184(pos, ctx) * 0.64f64
     }
     #[inline(always)]
     pub fn eval_amplified_186<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let c = eval_amplified_185(pos, ctx).clamp(-1.0, 1.0);
         c / 2.0 - c * c * c / 24.0
     }
@@ -3692,17 +3692,17 @@ pub mod amplified_compiled {
     pub fn eval_amplified_187<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-4064i32, 4062i32) - -4064i32;
-        -4064f32 + rel as f32 * 1f32
+        -4064f64 + rel as f64 * 1f64
     }
     #[inline(always)]
     pub fn eval_amplified_188<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::NOODLE,
             f64::from(pos.x) * 1f64,
@@ -3714,17 +3714,17 @@ pub mod amplified_compiled {
     pub fn eval_amplified_189<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        -1f32
+        -1f64
     }
     #[inline(always)]
     pub fn eval_amplified_190<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_amplified_187(pos, ctx);
-        if val >= -60f32 && val < 321f32 {
+        if val >= -60f64 && val < 321f64 {
             eval_amplified_188(pos, ctx)
         } else {
             eval_amplified_189(pos, ctx)
@@ -3734,7 +3734,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_191<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             191usize,
             WrapperType::Interpolated {
@@ -3749,15 +3749,15 @@ pub mod amplified_compiled {
     pub fn eval_amplified_192<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        64f32
+        64f64
     }
     #[inline(always)]
     pub fn eval_amplified_193<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::NOODLE_THICKNESS,
             f64::from(pos.x) * 1f64,
@@ -3769,23 +3769,23 @@ pub mod amplified_compiled {
     pub fn eval_amplified_194<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_193(pos, ctx) * -0.025f32
+    ) -> f64 {
+        eval_amplified_193(pos, ctx) * -0.025f64
     }
     #[inline(always)]
     pub fn eval_amplified_195<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_194(pos, ctx) + -0.075f32
+    ) -> f64 {
+        eval_amplified_194(pos, ctx) + -0.07500000000000001f64
     }
     #[inline(always)]
     pub fn eval_amplified_196<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_amplified_187(pos, ctx);
-        if val >= -60f32 && val < 321f32 {
+        if val >= -60f64 && val < 321f64 {
             eval_amplified_195(pos, ctx)
         } else {
             eval_amplified_15(pos, ctx)
@@ -3795,7 +3795,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_197<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             197usize,
             WrapperType::Interpolated {
@@ -3810,7 +3810,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_198<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::NOODLE_RIDGE_A,
             f64::from(pos.x) * 2.6666666666666665f64,
@@ -3822,9 +3822,9 @@ pub mod amplified_compiled {
     pub fn eval_amplified_199<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_amplified_187(pos, ctx);
-        if val >= -60f32 && val < 321f32 {
+        if val >= -60f64 && val < 321f64 {
             eval_amplified_198(pos, ctx)
         } else {
             eval_amplified_15(pos, ctx)
@@ -3834,7 +3834,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_200<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             200usize,
             WrapperType::Interpolated {
@@ -3849,14 +3849,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_201<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_200(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_amplified_202<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::NOODLE_RIDGE_B,
             f64::from(pos.x) * 2.6666666666666665f64,
@@ -3868,9 +3868,9 @@ pub mod amplified_compiled {
     pub fn eval_amplified_203<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_amplified_187(pos, ctx);
-        if val >= -60f32 && val < 321f32 {
+        if val >= -60f64 && val < 321f64 {
             eval_amplified_202(pos, ctx)
         } else {
             eval_amplified_15(pos, ctx)
@@ -3880,7 +3880,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_204<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             204usize,
             WrapperType::Interpolated {
@@ -3895,37 +3895,37 @@ pub mod amplified_compiled {
     pub fn eval_amplified_205<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_204(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_amplified_206<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_201(pos, ctx).max(eval_amplified_205(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_amplified_207<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_206(pos, ctx) * 1.5f32
+    ) -> f64 {
+        eval_amplified_206(pos, ctx) * 1.5f64
     }
     #[inline(always)]
     pub fn eval_amplified_208<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_197(pos, ctx) + eval_amplified_207(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_amplified_209<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_amplified_191(pos, ctx);
-        if val >= -1000000f32 && val < 0f32 {
+        if val >= -1000000f64 && val < 0f64 {
             eval_amplified_192(pos, ctx)
         } else {
             eval_amplified_208(pos, ctx)
@@ -3935,14 +3935,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_210<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_186(pos, ctx).min(eval_amplified_209(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_amplified_211<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::AQUIFER_BARRIER,
             f64::from(pos.x) * 1f64,
@@ -3954,7 +3954,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_212<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::AQUIFER_FLUID_LEVEL_FLOODEDNESS,
             f64::from(pos.x) * 1f64,
@@ -3966,7 +3966,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_213<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::AQUIFER_FLUID_LEVEL_SPREAD,
             f64::from(pos.x) * 1f64,
@@ -3978,7 +3978,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_214<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::AQUIFER_LAVA,
             f64::from(pos.x) * 1f64,
@@ -3990,7 +3990,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_215<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::ORE_VEININESS,
             f64::from(pos.x) * 1.5f64,
@@ -4002,9 +4002,9 @@ pub mod amplified_compiled {
     pub fn eval_amplified_216<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_amplified_187(pos, ctx);
-        if val >= -60f32 && val < 51f32 {
+        if val >= -60f64 && val < 51f64 {
             eval_amplified_215(pos, ctx)
         } else {
             eval_amplified_15(pos, ctx)
@@ -4014,7 +4014,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_217<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             217usize,
             WrapperType::Interpolated {
@@ -4029,7 +4029,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_218<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::ORE_VEIN_A,
             f64::from(pos.x) * 4f64,
@@ -4041,9 +4041,9 @@ pub mod amplified_compiled {
     pub fn eval_amplified_219<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_amplified_187(pos, ctx);
-        if val >= -60f32 && val < 51f32 {
+        if val >= -60f64 && val < 51f64 {
             eval_amplified_218(pos, ctx)
         } else {
             eval_amplified_15(pos, ctx)
@@ -4053,7 +4053,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_220<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             220usize,
             WrapperType::Interpolated {
@@ -4068,14 +4068,14 @@ pub mod amplified_compiled {
     pub fn eval_amplified_221<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_220(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_amplified_222<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::ORE_VEIN_B,
             f64::from(pos.x) * 4f64,
@@ -4087,9 +4087,9 @@ pub mod amplified_compiled {
     pub fn eval_amplified_223<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_amplified_187(pos, ctx);
-        if val >= -60f32 && val < 51f32 {
+        if val >= -60f64 && val < 51f64 {
             eval_amplified_222(pos, ctx)
         } else {
             eval_amplified_15(pos, ctx)
@@ -4099,7 +4099,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_224<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             224usize,
             WrapperType::Interpolated {
@@ -4114,28 +4114,28 @@ pub mod amplified_compiled {
     pub fn eval_amplified_225<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_224(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_amplified_226<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_amplified_221(pos, ctx).max(eval_amplified_225(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_amplified_227<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_amplified_226(pos, ctx) + -0.08f32
+    ) -> f64 {
+        eval_amplified_226(pos, ctx) + -0.07999999821186066f64
     }
     #[inline(always)]
     pub fn eval_amplified_228<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::ORE_GAP,
             f64::from(pos.x) * 1f64,
@@ -4147,7 +4147,7 @@ pub mod amplified_compiled {
     pub fn eval_amplified_229<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_amplified_26(&slice_pos, ctx)
     }
@@ -4158,51 +4158,51 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_0<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-64i32, -40i32) - -64i32;
-        0f32 + rel as f32 * 0.041666668f32
+        0f64 + rel as f64 * 0.041666666666666664f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_1<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(240i32, 256i32) - 240i32;
-        1f32 + rel as f32 * -0.0625f32
+        1f64 + rel as f64 * -0.0625f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_2<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-64i32, 320i32) - -64i32;
-        1.5f32 + rel as f32 * -0.0078125f32
+        1.5f64 + rel as f64 * -0.0078125f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_3<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_blend_offset(pos)
     }
     #[inline(always)]
     pub fn eval_large_biomes_4<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_blend_alpha(pos)
     }
     #[inline(always)]
     pub fn eval_large_biomes_5<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_4(&slice_pos, ctx)
     }
@@ -4210,42 +4210,42 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_6<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(6usize, WrapperType::Cache, pos, &eval_large_biomes_5)
     }
     #[inline(always)]
     pub fn eval_large_biomes_7<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_6(pos, ctx) * -1f32
+    ) -> f64 {
+        eval_large_biomes_6(pos, ctx) * -1f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_8<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_7(pos, ctx) + 1f32
+    ) -> f64 {
+        eval_large_biomes_7(pos, ctx) + 1f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_9<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_3(pos, ctx) * eval_large_biomes_8(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_10<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_shift_a(DoublePerlinNoiseParameters::OFFSET, pos)
     }
     #[inline(always)]
     pub fn eval_large_biomes_11<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_10(&slice_pos, ctx)
     }
@@ -4253,14 +4253,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_12<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(12usize, WrapperType::Cache, pos, &eval_large_biomes_11)
     }
     #[inline(always)]
     pub fn eval_large_biomes_13<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_12(&slice_pos, ctx)
     }
@@ -4268,29 +4268,29 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_14<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(14usize, WrapperType::Cache, pos, &eval_large_biomes_13)
     }
     #[inline(always)]
     pub fn eval_large_biomes_15<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        0f32
+        0f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_16<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_shift_b(DoublePerlinNoiseParameters::OFFSET, pos)
     }
     #[inline(always)]
     pub fn eval_large_biomes_17<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_16(&slice_pos, ctx)
     }
@@ -4298,14 +4298,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_18<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(18usize, WrapperType::Cache, pos, &eval_large_biomes_17)
     }
     #[inline(always)]
     pub fn eval_large_biomes_19<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_18(&slice_pos, ctx)
     }
@@ -4313,14 +4313,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_20<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(20usize, WrapperType::Cache, pos, &eval_large_biomes_19)
     }
     #[inline(always)]
     pub fn eval_large_biomes_21<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let sx = eval_large_biomes_14(pos, ctx);
         let sy = eval_large_biomes_15(pos, ctx);
         let sz = eval_large_biomes_20(pos, ctx);
@@ -4337,7 +4337,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_22<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_21(&slice_pos, ctx)
     }
@@ -4345,14 +4345,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_23<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(23usize, WrapperType::Cache, pos, &eval_large_biomes_22)
     }
     #[inline(always)]
     pub fn eval_large_biomes_24<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let sx = eval_large_biomes_14(pos, ctx);
         let sy = eval_large_biomes_15(pos, ctx);
         let sz = eval_large_biomes_20(pos, ctx);
@@ -4369,7 +4369,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_25<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_24(&slice_pos, ctx)
     }
@@ -4377,14 +4377,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_26<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(26usize, WrapperType::Cache, pos, &eval_large_biomes_25)
     }
     #[inline(always)]
     pub fn eval_large_biomes_27<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let sx = eval_large_biomes_14(pos, ctx);
         let sy = eval_large_biomes_15(pos, ctx);
         let sz = eval_large_biomes_20(pos, ctx);
@@ -4401,7 +4401,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_28<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_27(&slice_pos, ctx)
     }
@@ -4409,78 +4409,78 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_29<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(29usize, WrapperType::Cache, pos, &eval_large_biomes_28)
     }
     #[inline(always)]
     pub fn eval_large_biomes_30<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_29(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_large_biomes_31<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_30(pos, ctx) + -0.6666667f32
+    ) -> f64 {
+        eval_large_biomes_30(pos, ctx) + -0.6666666666666666f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_32<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_31(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_large_biomes_33<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_32(pos, ctx) + -0.33333334f32
+    ) -> f64 {
+        eval_large_biomes_32(pos, ctx) + -0.3333333333333333f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_34<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_33(pos, ctx) * -3f32
+    ) -> f64 {
+        eval_large_biomes_33(pos, ctx) * -3f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_35<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        let location_val = eval_large_biomes_23(pos, ctx);
-        ctx.sample_spline(35usize, location_val, pos)
+    ) -> f64 {
+        let location_val = eval_large_biomes_23(pos, ctx) as f32;
+        f64::from(ctx.sample_spline(35usize, location_val, pos))
     }
     #[inline(always)]
     pub fn eval_large_biomes_36<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_35(pos, ctx) + -0.50375f32
+    ) -> f64 {
+        eval_large_biomes_35(pos, ctx) + -0.5037500262260437f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_37<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_36(pos, ctx) * eval_large_biomes_6(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_38<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_9(pos, ctx) + eval_large_biomes_37(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_39<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_38(&slice_pos, ctx)
     }
@@ -4488,14 +4488,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_40<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(40usize, WrapperType::Cache, pos, &eval_large_biomes_39)
     }
     #[inline(always)]
     pub fn eval_large_biomes_41<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_40(&slice_pos, ctx)
     }
@@ -4503,14 +4503,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_42<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(42usize, WrapperType::Cache, pos, &eval_large_biomes_41)
     }
     #[inline(always)]
     pub fn eval_large_biomes_43<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_42(&slice_pos, ctx)
     }
@@ -4518,43 +4518,43 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_44<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_2(pos, ctx) + eval_large_biomes_43(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_45<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        let location_val = eval_large_biomes_23(pos, ctx);
-        ctx.sample_spline(45usize, location_val, pos)
+    ) -> f64 {
+        let location_val = eval_large_biomes_23(pos, ctx) as f32;
+        f64::from(ctx.sample_spline(45usize, location_val, pos))
     }
     #[inline(always)]
     pub fn eval_large_biomes_46<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_45(pos, ctx) + -0f32
+    ) -> f64 {
+        eval_large_biomes_45(pos, ctx) + -0f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_47<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_4(pos, ctx) * eval_large_biomes_46(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_48<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_47(pos, ctx) + 0f32
+    ) -> f64 {
+        eval_large_biomes_47(pos, ctx) + 0f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_49<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_48(&slice_pos, ctx)
     }
@@ -4562,14 +4562,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_50<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(50usize, WrapperType::Cache, pos, &eval_large_biomes_49)
     }
     #[inline(always)]
     pub fn eval_large_biomes_51<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_50(&slice_pos, ctx)
     }
@@ -4577,14 +4577,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_52<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(52usize, WrapperType::Cache, pos, &eval_large_biomes_51)
     }
     #[inline(always)]
     pub fn eval_large_biomes_53<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::JAGGED,
             f64::from(pos.x) * 1500f64,
@@ -4596,7 +4596,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_54<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_large_biomes_53(pos, ctx);
         if v > 0.0 { v } else { v * 0.5 }
     }
@@ -4604,14 +4604,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_55<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_52(pos, ctx) * eval_large_biomes_54(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_56<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_55(&slice_pos, ctx)
     }
@@ -4619,43 +4619,43 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_57<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_44(pos, ctx) + eval_large_biomes_56(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_58<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        let location_val = eval_large_biomes_23(pos, ctx);
-        ctx.sample_spline(58usize, location_val, pos)
+    ) -> f64 {
+        let location_val = eval_large_biomes_23(pos, ctx) as f32;
+        f64::from(ctx.sample_spline(58usize, location_val, pos))
     }
     #[inline(always)]
     pub fn eval_large_biomes_59<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_58(pos, ctx) + -10f32
+    ) -> f64 {
+        eval_large_biomes_58(pos, ctx) + -10f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_60<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_4(pos, ctx) * eval_large_biomes_59(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_61<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_60(pos, ctx) + 10f32
+    ) -> f64 {
+        eval_large_biomes_60(pos, ctx) + 10f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_62<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_61(&slice_pos, ctx)
     }
@@ -4663,14 +4663,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_63<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(63usize, WrapperType::Cache, pos, &eval_large_biomes_62)
     }
     #[inline(always)]
     pub fn eval_large_biomes_64<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_63(&slice_pos, ctx)
     }
@@ -4678,14 +4678,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_65<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(65usize, WrapperType::Cache, pos, &eval_large_biomes_64)
     }
     #[inline(always)]
     pub fn eval_large_biomes_66<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_65(&slice_pos, ctx)
     }
@@ -4693,14 +4693,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_67<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_57(pos, ctx) * eval_large_biomes_66(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_68<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_large_biomes_67(pos, ctx);
         if v > 0.0 { v } else { v * 0.25 }
     }
@@ -4708,28 +4708,28 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_69<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_68(pos, ctx) * 4f32
+    ) -> f64 {
+        eval_large_biomes_68(pos, ctx) * 4f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_70<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_interpolated_noise(pos)
     }
     #[inline(always)]
     pub fn eval_large_biomes_71<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_69(pos, ctx) + eval_large_biomes_70(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_72<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::CAVE_ENTRANCE,
             f64::from(pos.x) * 0.75f64,
@@ -4741,31 +4741,31 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_73<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_72(pos, ctx) + 0.37f32
+    ) -> f64 {
+        eval_large_biomes_72(pos, ctx) + 0.37f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_74<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-10i32, 30i32) - -10i32;
-        0.3f32 + rel as f32 * -0.0075000003f32
+        0.3f64 + rel as f64 * -0.0075f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_75<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_73(pos, ctx) + eval_large_biomes_74(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_76<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_ROUGHNESS_MODULATOR,
             f64::from(pos.x) * 1f64,
@@ -4777,21 +4777,21 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_77<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_76(pos, ctx) * -0.05f32
+    ) -> f64 {
+        eval_large_biomes_76(pos, ctx) * -0.05f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_78<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_77(pos, ctx) + -0.05f32
+    ) -> f64 {
+        eval_large_biomes_77(pos, ctx) + -0.05f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_79<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_ROUGHNESS,
             f64::from(pos.x) * 1f64,
@@ -4803,35 +4803,35 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_80<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_79(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_large_biomes_81<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_80(pos, ctx) + -0.4f32
+    ) -> f64 {
+        eval_large_biomes_80(pos, ctx) + -0.4f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_82<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_78(pos, ctx) * eval_large_biomes_81(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_83<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(83usize, WrapperType::Cache, pos, &eval_large_biomes_82)
     }
     #[inline(always)]
     pub fn eval_large_biomes_84<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_RARITY,
             f64::from(pos.x) * 2f64,
@@ -4843,14 +4843,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_85<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(85usize, WrapperType::Cache, pos, &eval_large_biomes_84)
     }
     #[inline(always)]
     pub fn eval_large_biomes_86<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_1,
             f64::from(pos.x) * 1.3333333333333333f64,
@@ -4862,14 +4862,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_87<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_86(pos, ctx) * 0.75f32
+    ) -> f64 {
+        eval_large_biomes_86(pos, ctx) * 0.75f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_88<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_1,
             f64::from(pos.x) * 1f64,
@@ -4881,14 +4881,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_89<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_88(pos, ctx) * 1f32
+    ) -> f64 {
+        eval_large_biomes_88(pos, ctx) * 1f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_90<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_1,
             f64::from(pos.x) * 0.6666666666666666f64,
@@ -4900,14 +4900,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_91<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_90(pos, ctx) * 1.5f32
+    ) -> f64 {
+        eval_large_biomes_90(pos, ctx) * 1.5f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_92<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_1,
             f64::from(pos.x) * 0.5f64,
@@ -4919,16 +4919,16 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_93<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_92(pos, ctx) * 2f32
+    ) -> f64 {
+        eval_large_biomes_92(pos, ctx) * 2f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_94<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let input_val = eval_large_biomes_85(pos, ctx);
-        let thresholds = &[-0.5f32, 0f32, 0.5f32];
+        let thresholds = &[-0.5f64, 0f64, 0.5f64];
         let mut selected = thresholds.len();
         for (i, &t) in thresholds.iter().enumerate() {
             if input_val < t {
@@ -4947,14 +4947,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_95<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_94(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_large_biomes_96<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_2,
             f64::from(pos.x) * 1.3333333333333333f64,
@@ -4966,14 +4966,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_97<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_96(pos, ctx) * 0.75f32
+    ) -> f64 {
+        eval_large_biomes_96(pos, ctx) * 0.75f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_98<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_2,
             f64::from(pos.x) * 1f64,
@@ -4985,14 +4985,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_99<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_98(pos, ctx) * 1f32
+    ) -> f64 {
+        eval_large_biomes_98(pos, ctx) * 1f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_100<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_2,
             f64::from(pos.x) * 0.6666666666666666f64,
@@ -5004,14 +5004,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_101<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_100(pos, ctx) * 1.5f32
+    ) -> f64 {
+        eval_large_biomes_100(pos, ctx) * 1.5f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_102<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_2,
             f64::from(pos.x) * 0.5f64,
@@ -5023,16 +5023,16 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_103<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_102(pos, ctx) * 2f32
+    ) -> f64 {
+        eval_large_biomes_102(pos, ctx) * 2f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_104<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let input_val = eval_large_biomes_85(pos, ctx);
-        let thresholds = &[-0.5f32, 0f32, 0.5f32];
+        let thresholds = &[-0.5f64, 0f64, 0.5f64];
         let mut selected = thresholds.len();
         for (i, &t) in thresholds.iter().enumerate() {
             if input_val < t {
@@ -5051,21 +5051,21 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_105<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_104(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_large_biomes_106<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_95(pos, ctx).max(eval_large_biomes_105(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_large_biomes_107<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_3D_THICKNESS,
             f64::from(pos.x) * 1f64,
@@ -5077,70 +5077,70 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_108<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_107(pos, ctx) * -0.0115f32
+    ) -> f64 {
+        eval_large_biomes_107(pos, ctx) * -0.011499999999999996f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_109<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_108(pos, ctx) + -0.0765f32
+    ) -> f64 {
+        eval_large_biomes_108(pos, ctx) + -0.0765f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_110<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_106(pos, ctx) + eval_large_biomes_109(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_111<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_110(pos, ctx).clamp(-1f32, 1f32)
+    ) -> f64 {
+        eval_large_biomes_110(pos, ctx).clamp(-1f64, 1f64)
     }
     #[inline(always)]
     pub fn eval_large_biomes_112<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_83(pos, ctx) + eval_large_biomes_111(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_113<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_75(pos, ctx).min(eval_large_biomes_112(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_large_biomes_114<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(114usize, WrapperType::Cache, pos, &eval_large_biomes_113)
     }
     #[inline(always)]
     pub fn eval_large_biomes_115<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_114(pos, ctx) * 5f32
+    ) -> f64 {
+        eval_large_biomes_114(pos, ctx) * 5f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_116<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_71(pos, ctx).min(eval_large_biomes_115(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_large_biomes_117<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::CAVE_LAYER,
             f64::from(pos.x) * 1f64,
@@ -5152,7 +5152,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_118<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_large_biomes_117(pos, ctx);
         v * v
     }
@@ -5160,14 +5160,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_119<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_118(pos, ctx) * 4f32
+    ) -> f64 {
+        eval_large_biomes_118(pos, ctx) * 4f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_120<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::CAVE_CHEESE,
             f64::from(pos.x) * 1f64,
@@ -5179,63 +5179,63 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_121<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_120(pos, ctx) + 0.27f32
+    ) -> f64 {
+        eval_large_biomes_120(pos, ctx) + 0.27f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_122<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_121(pos, ctx).clamp(-1f32, 1f32)
+    ) -> f64 {
+        eval_large_biomes_121(pos, ctx).clamp(-1f64, 1f64)
     }
     #[inline(always)]
     pub fn eval_large_biomes_123<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_71(pos, ctx) * -0.64f32
+    ) -> f64 {
+        eval_large_biomes_71(pos, ctx) * -0.64f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_124<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_123(pos, ctx) + 1.5f32
+    ) -> f64 {
+        eval_large_biomes_123(pos, ctx) + 1.5f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_125<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_124(pos, ctx).clamp(0f32, 0.5f32)
+    ) -> f64 {
+        eval_large_biomes_124(pos, ctx).clamp(0f64, 0.5f64)
     }
     #[inline(always)]
     pub fn eval_large_biomes_126<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_122(pos, ctx) + eval_large_biomes_125(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_127<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_119(pos, ctx) + eval_large_biomes_126(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_128<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_127(pos, ctx).min(eval_large_biomes_114(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_large_biomes_129<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D_MODULATOR,
             f64::from(pos.x) * 2f64,
@@ -5247,7 +5247,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_130<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 2f64,
@@ -5259,14 +5259,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_131<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_130(pos, ctx) * 0.5f32
+    ) -> f64 {
+        eval_large_biomes_130(pos, ctx) * 0.5f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_132<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 1.3333333333333333f64,
@@ -5278,14 +5278,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_133<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_132(pos, ctx) * 0.75f32
+    ) -> f64 {
+        eval_large_biomes_132(pos, ctx) * 0.75f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_134<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 1f64,
@@ -5297,14 +5297,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_135<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_134(pos, ctx) * 1f32
+    ) -> f64 {
+        eval_large_biomes_134(pos, ctx) * 1f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_136<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 0.5f64,
@@ -5316,14 +5316,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_137<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_136(pos, ctx) * 2f32
+    ) -> f64 {
+        eval_large_biomes_136(pos, ctx) * 2f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_138<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D,
             f64::from(pos.x) * 0.3333333333333333f64,
@@ -5335,16 +5335,16 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_139<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_138(pos, ctx) * 3f32
+    ) -> f64 {
+        eval_large_biomes_138(pos, ctx) * 3f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_140<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let input_val = eval_large_biomes_129(pos, ctx);
-        let thresholds = &[-0.75f32, -0.5f32, 0.5f32, 0.75f32];
+        let thresholds = &[-0.75f64, -0.5f64, 0.5f64, 0.75f64];
         let mut selected = thresholds.len();
         for (i, &t) in thresholds.iter().enumerate() {
             if input_val < t {
@@ -5364,14 +5364,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_141<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_140(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_large_biomes_142<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D_THICKNESS,
             f64::from(pos.x) * 2f64,
@@ -5383,42 +5383,42 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_143<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_142(pos, ctx) * -0.35f32
+    ) -> f64 {
+        eval_large_biomes_142(pos, ctx) * -0.35000000000000003f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_144<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_143(pos, ctx) + -0.95f32
+    ) -> f64 {
+        eval_large_biomes_143(pos, ctx) + -0.95f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_145<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(145usize, WrapperType::Cache, pos, &eval_large_biomes_144)
     }
     #[inline(always)]
     pub fn eval_large_biomes_146<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_145(pos, ctx) * 0.083f32
+    ) -> f64 {
+        eval_large_biomes_145(pos, ctx) * 0.083f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_147<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_141(pos, ctx) + eval_large_biomes_146(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_148<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::SPAGHETTI_2D_ELEVATION,
             f64::from(pos.x) * 1f64,
@@ -5430,21 +5430,21 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_149<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_148(pos, ctx) * 8f32
+    ) -> f64 {
+        eval_large_biomes_148(pos, ctx) * 8f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_150<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_149(pos, ctx) + 0f32
+    ) -> f64 {
+        eval_large_biomes_149(pos, ctx) + 0f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_151<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_150(&slice_pos, ctx)
     }
@@ -5452,38 +5452,38 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_152<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-64i32, 320i32) - -64i32;
-        8f32 + rel as f32 * -0.125f32
+        8f64 + rel as f64 * -0.125f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_153<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_151(pos, ctx) + eval_large_biomes_152(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_154<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_153(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_large_biomes_155<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_154(pos, ctx) + eval_large_biomes_145(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_156<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_large_biomes_155(pos, ctx);
         v * v * v
     }
@@ -5491,35 +5491,35 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_157<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_147(pos, ctx).max(eval_large_biomes_156(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_large_biomes_158<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_157(pos, ctx).clamp(-1f32, 1f32)
+    ) -> f64 {
+        eval_large_biomes_157(pos, ctx).clamp(-1f64, 1f64)
     }
     #[inline(always)]
     pub fn eval_large_biomes_159<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_158(pos, ctx) + eval_large_biomes_83(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_160<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_128(pos, ctx).min(eval_large_biomes_159(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_large_biomes_161<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::PILLAR,
             f64::from(pos.x) * 25f64,
@@ -5531,14 +5531,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_162<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_161(pos, ctx) * 2f32
+    ) -> f64 {
+        eval_large_biomes_161(pos, ctx) * 2f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_163<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::PILLAR_RARENESS,
             f64::from(pos.x) * 1f64,
@@ -5550,28 +5550,28 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_164<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_163(pos, ctx) * -1f32
+    ) -> f64 {
+        eval_large_biomes_163(pos, ctx) * -1f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_165<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_164(pos, ctx) + -1f32
+    ) -> f64 {
+        eval_large_biomes_164(pos, ctx) + -1f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_166<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_162(pos, ctx) + eval_large_biomes_165(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_167<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::PILLAR_THICKNESS,
             f64::from(pos.x) * 1f64,
@@ -5583,21 +5583,21 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_168<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_167(pos, ctx) * 0.55f32
+    ) -> f64 {
+        eval_large_biomes_167(pos, ctx) * 0.55f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_169<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_168(pos, ctx) + 0.55f32
+    ) -> f64 {
+        eval_large_biomes_168(pos, ctx) + 0.55f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_170<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let v = eval_large_biomes_169(pos, ctx);
         v * v * v
     }
@@ -5605,31 +5605,31 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_171<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_166(pos, ctx) * eval_large_biomes_170(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_172<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(172usize, WrapperType::Cache, pos, &eval_large_biomes_171)
     }
     #[inline(always)]
     pub fn eval_large_biomes_173<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        -1000000f32
+        -1000000f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_174<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_large_biomes_172(pos, ctx);
-        if val >= -1000000f32 && val < 0.03f32 {
+        if val >= -1000000f64 && val < 0.03f64 {
             eval_large_biomes_173(pos, ctx)
         } else {
             eval_large_biomes_172(pos, ctx)
@@ -5639,16 +5639,16 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_175<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_160(pos, ctx).max(eval_large_biomes_174(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_large_biomes_176<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_large_biomes_71(pos, ctx);
-        if val >= -1000000f32 && val < 1.5625f32 {
+        if val >= -1000000f64 && val < 1.5625f64 {
             eval_large_biomes_116(pos, ctx)
         } else {
             eval_large_biomes_175(pos, ctx)
@@ -5658,49 +5658,49 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_177<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_176(pos, ctx) + 0.078125f32
+    ) -> f64 {
+        eval_large_biomes_176(pos, ctx) + 0.078125f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_178<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_1(pos, ctx) * eval_large_biomes_177(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_179<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_178(pos, ctx) + -0.078125f32
+    ) -> f64 {
+        eval_large_biomes_178(pos, ctx) + -0.078125f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_180<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_179(pos, ctx) + -0.1171875f32
+    ) -> f64 {
+        eval_large_biomes_179(pos, ctx) + -0.1171875f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_181<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_0(pos, ctx) * eval_large_biomes_180(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_182<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_181(pos, ctx) + 0.1171875f32
+    ) -> f64 {
+        eval_large_biomes_181(pos, ctx) + 0.1171875f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_183<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_large_biomes_182(pos, ctx);
         ctx.sample_blend_density(val, pos)
     }
@@ -5708,7 +5708,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_184<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             184usize,
             WrapperType::Interpolated {
@@ -5723,14 +5723,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_185<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_184(pos, ctx) * 0.64f32
+    ) -> f64 {
+        eval_large_biomes_184(pos, ctx) * 0.64f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_186<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let c = eval_large_biomes_185(pos, ctx).clamp(-1.0, 1.0);
         c / 2.0 - c * c * c / 24.0
     }
@@ -5738,17 +5738,17 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_187<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-4064i32, 4062i32) - -4064i32;
-        -4064f32 + rel as f32 * 1f32
+        -4064f64 + rel as f64 * 1f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_188<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::NOODLE,
             f64::from(pos.x) * 1f64,
@@ -5760,17 +5760,17 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_189<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        -1f32
+        -1f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_190<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_large_biomes_187(pos, ctx);
-        if val >= -60f32 && val < 321f32 {
+        if val >= -60f64 && val < 321f64 {
             eval_large_biomes_188(pos, ctx)
         } else {
             eval_large_biomes_189(pos, ctx)
@@ -5780,7 +5780,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_191<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             191usize,
             WrapperType::Interpolated {
@@ -5795,15 +5795,15 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_192<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        64f32
+        64f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_193<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::NOODLE_THICKNESS,
             f64::from(pos.x) * 1f64,
@@ -5815,23 +5815,23 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_194<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_193(pos, ctx) * -0.025f32
+    ) -> f64 {
+        eval_large_biomes_193(pos, ctx) * -0.025f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_195<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_194(pos, ctx) + -0.075f32
+    ) -> f64 {
+        eval_large_biomes_194(pos, ctx) + -0.07500000000000001f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_196<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_large_biomes_187(pos, ctx);
-        if val >= -60f32 && val < 321f32 {
+        if val >= -60f64 && val < 321f64 {
             eval_large_biomes_195(pos, ctx)
         } else {
             eval_large_biomes_15(pos, ctx)
@@ -5841,7 +5841,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_197<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             197usize,
             WrapperType::Interpolated {
@@ -5856,7 +5856,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_198<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::NOODLE_RIDGE_A,
             f64::from(pos.x) * 2.6666666666666665f64,
@@ -5868,9 +5868,9 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_199<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_large_biomes_187(pos, ctx);
-        if val >= -60f32 && val < 321f32 {
+        if val >= -60f64 && val < 321f64 {
             eval_large_biomes_198(pos, ctx)
         } else {
             eval_large_biomes_15(pos, ctx)
@@ -5880,7 +5880,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_200<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             200usize,
             WrapperType::Interpolated {
@@ -5895,14 +5895,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_201<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_200(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_large_biomes_202<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::NOODLE_RIDGE_B,
             f64::from(pos.x) * 2.6666666666666665f64,
@@ -5914,9 +5914,9 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_203<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_large_biomes_187(pos, ctx);
-        if val >= -60f32 && val < 321f32 {
+        if val >= -60f64 && val < 321f64 {
             eval_large_biomes_202(pos, ctx)
         } else {
             eval_large_biomes_15(pos, ctx)
@@ -5926,7 +5926,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_204<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             204usize,
             WrapperType::Interpolated {
@@ -5941,37 +5941,37 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_205<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_204(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_large_biomes_206<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_201(pos, ctx).max(eval_large_biomes_205(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_large_biomes_207<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_206(pos, ctx) * 1.5f32
+    ) -> f64 {
+        eval_large_biomes_206(pos, ctx) * 1.5f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_208<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_197(pos, ctx) + eval_large_biomes_207(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_large_biomes_209<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_large_biomes_191(pos, ctx);
-        if val >= -1000000f32 && val < 0f32 {
+        if val >= -1000000f64 && val < 0f64 {
             eval_large_biomes_192(pos, ctx)
         } else {
             eval_large_biomes_208(pos, ctx)
@@ -5981,14 +5981,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_210<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_186(pos, ctx).min(eval_large_biomes_209(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_large_biomes_211<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::AQUIFER_BARRIER,
             f64::from(pos.x) * 1f64,
@@ -6000,7 +6000,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_212<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::AQUIFER_FLUID_LEVEL_FLOODEDNESS,
             f64::from(pos.x) * 1f64,
@@ -6012,7 +6012,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_213<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::AQUIFER_FLUID_LEVEL_SPREAD,
             f64::from(pos.x) * 1f64,
@@ -6024,7 +6024,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_214<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::AQUIFER_LAVA,
             f64::from(pos.x) * 1f64,
@@ -6036,7 +6036,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_215<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::ORE_VEININESS,
             f64::from(pos.x) * 1.5f64,
@@ -6048,9 +6048,9 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_216<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_large_biomes_187(pos, ctx);
-        if val >= -60f32 && val < 51f32 {
+        if val >= -60f64 && val < 51f64 {
             eval_large_biomes_215(pos, ctx)
         } else {
             eval_large_biomes_15(pos, ctx)
@@ -6060,7 +6060,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_217<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             217usize,
             WrapperType::Interpolated {
@@ -6075,7 +6075,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_218<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::ORE_VEIN_A,
             f64::from(pos.x) * 4f64,
@@ -6087,9 +6087,9 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_219<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_large_biomes_187(pos, ctx);
-        if val >= -60f32 && val < 51f32 {
+        if val >= -60f64 && val < 51f64 {
             eval_large_biomes_218(pos, ctx)
         } else {
             eval_large_biomes_15(pos, ctx)
@@ -6099,7 +6099,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_220<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             220usize,
             WrapperType::Interpolated {
@@ -6114,14 +6114,14 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_221<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_220(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_large_biomes_222<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::ORE_VEIN_B,
             f64::from(pos.x) * 4f64,
@@ -6133,9 +6133,9 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_223<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_large_biomes_187(pos, ctx);
-        if val >= -60f32 && val < 51f32 {
+        if val >= -60f64 && val < 51f64 {
             eval_large_biomes_222(pos, ctx)
         } else {
             eval_large_biomes_15(pos, ctx)
@@ -6145,7 +6145,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_224<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             224usize,
             WrapperType::Interpolated {
@@ -6160,28 +6160,28 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_225<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_224(pos, ctx).abs()
     }
     #[inline(always)]
     pub fn eval_large_biomes_226<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_large_biomes_221(pos, ctx).max(eval_large_biomes_225(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_large_biomes_227<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_large_biomes_226(pos, ctx) + -0.08f32
+    ) -> f64 {
+        eval_large_biomes_226(pos, ctx) + -0.07999999821186066f64
     }
     #[inline(always)]
     pub fn eval_large_biomes_228<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_noise(
             DoublePerlinNoiseParameters::ORE_GAP,
             f64::from(pos.x) * 1f64,
@@ -6193,7 +6193,7 @@ pub mod large_biomes_compiled {
     pub fn eval_large_biomes_229<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_large_biomes_26(&slice_pos, ctx)
     }
@@ -6204,76 +6204,76 @@ pub mod nether_compiled {
     pub fn eval_nether_0<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(-8i32, 24i32) - -8i32;
-        0f32 + rel as f32 * 0.03125f32
+        0f64 + rel as f64 * 0.03125f64
     }
     #[inline(always)]
     pub fn eval_nether_1<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(104i32, 128i32) - 104i32;
-        1f32 + rel as f32 * -0.041666668f32
+        1f64 + rel as f64 * -0.041666666666666664f64
     }
     #[inline(always)]
     pub fn eval_nether_2<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_interpolated_noise(pos)
     }
     #[inline(always)]
     pub fn eval_nether_3<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_nether_2(pos, ctx) + -0.9375f32
+    ) -> f64 {
+        eval_nether_2(pos, ctx) + -0.9375f64
     }
     #[inline(always)]
     pub fn eval_nether_4<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_nether_1(pos, ctx) * eval_nether_3(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_nether_5<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_nether_4(pos, ctx) + 0.9375f32
+    ) -> f64 {
+        eval_nether_4(pos, ctx) + 0.9375f64
     }
     #[inline(always)]
     pub fn eval_nether_6<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_nether_5(pos, ctx) + -2.5f32
+    ) -> f64 {
+        eval_nether_5(pos, ctx) + -2.5f64
     }
     #[inline(always)]
     pub fn eval_nether_7<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_nether_0(pos, ctx) * eval_nether_6(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_nether_8<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_nether_7(pos, ctx) + 2.5f32
+    ) -> f64 {
+        eval_nether_7(pos, ctx) + 2.5f64
     }
     #[inline(always)]
     pub fn eval_nether_9<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_nether_8(pos, ctx);
         ctx.sample_blend_density(val, pos)
     }
@@ -6281,7 +6281,7 @@ pub mod nether_compiled {
     pub fn eval_nether_10<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             10usize,
             WrapperType::Interpolated {
@@ -6296,14 +6296,14 @@ pub mod nether_compiled {
     pub fn eval_nether_11<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_nether_10(pos, ctx) * 0.64f32
+    ) -> f64 {
+        eval_nether_10(pos, ctx) * 0.64f64
     }
     #[inline(always)]
     pub fn eval_nether_12<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let c = eval_nether_11(pos, ctx).clamp(-1.0, 1.0);
         c / 2.0 - c * c * c / 24.0
     }
@@ -6311,9 +6311,9 @@ pub mod nether_compiled {
     pub fn eval_nether_13<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        0f32
+        0f64
     }
 }
 pub mod end_compiled {
@@ -6322,82 +6322,82 @@ pub mod end_compiled {
     pub fn eval_end_0<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(4i32, 32i32) - 4i32;
-        0f32 + rel as f32 * 0.035714287f32
+        0f64 + rel as f64 * 0.03571428571428571f64
     }
     #[inline(always)]
     pub fn eval_end_1<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
         let coord = pos.y;
         let rel = coord.clamp(56i32, 312i32) - 56i32;
-        1f32 + rel as f32 * -0.00390625f32
+        1f64 + rel as f64 * -0.00390625f64
     }
     #[inline(always)]
     pub fn eval_end_2<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        100f32
+        100f64
     }
     #[inline(always)]
     pub fn eval_end_3<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = ctx;
-        let dx = (pos.x - 0i32) as f32;
-        let dy = (pos.y - 0i32) as f32;
-        let dz = (pos.z - 0i32) as f32;
+        let dx = (pos.x - 0i32) as f64;
+        let dy = (pos.y - 0i32) as f64;
+        let dz = (pos.z - 0i32) as f64;
         (dx * dx + dy * dy + dz * dz).sqrt()
     }
     #[inline(always)]
     pub fn eval_end_4<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_end_2(pos, ctx) - eval_end_3(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_end_5<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_end_4(pos, ctx).clamp(-100f32, 80f32)
+    ) -> f64 {
+        eval_end_4(pos, ctx).clamp(-100f64, 80f64)
     }
     #[inline(always)]
     pub fn eval_end_6<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        8f32
+        8f64
     }
     #[inline(always)]
     pub fn eval_end_7<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_end_5(pos, ctx) - eval_end_6(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_end_8<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_end_7(pos, ctx) * 0.0078125f32
+    ) -> f64 {
+        eval_end_7(pos, ctx) * 0.0078125f64
     }
     #[inline(always)]
     pub fn eval_end_9<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_end_8(&slice_pos, ctx)
     }
@@ -6405,21 +6405,21 @@ pub mod end_compiled {
     pub fn eval_end_10<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_end_islands(pos)
     }
     #[inline(always)]
     pub fn eval_end_11<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_end_9(pos, ctx).max(eval_end_10(pos, ctx))
     }
     #[inline(always)]
     pub fn eval_end_12<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_end_11(&slice_pos, ctx)
     }
@@ -6427,63 +6427,63 @@ pub mod end_compiled {
     pub fn eval_end_13<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_interpolated_noise(pos)
     }
     #[inline(always)]
     pub fn eval_end_14<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_end_12(pos, ctx) + eval_end_13(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_end_15<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_end_14(pos, ctx) + 23.4375f32
+    ) -> f64 {
+        eval_end_14(pos, ctx) + 23.4375f64
     }
     #[inline(always)]
     pub fn eval_end_16<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_end_1(pos, ctx) * eval_end_15(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_end_17<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_end_16(pos, ctx) + -23.4375f32
+    ) -> f64 {
+        eval_end_16(pos, ctx) + -23.4375f64
     }
     #[inline(always)]
     pub fn eval_end_18<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_end_17(pos, ctx) + 0.234375f32
+    ) -> f64 {
+        eval_end_17(pos, ctx) + 0.234375f64
     }
     #[inline(always)]
     pub fn eval_end_19<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         eval_end_0(pos, ctx) * eval_end_18(pos, ctx)
     }
     #[inline(always)]
     pub fn eval_end_20<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_end_19(pos, ctx) + -0.234375f32
+    ) -> f64 {
+        eval_end_19(pos, ctx) + -0.234375f64
     }
     #[inline(always)]
     pub fn eval_end_21<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let val = eval_end_20(pos, ctx);
         ctx.sample_blend_density(val, pos)
     }
@@ -6491,7 +6491,7 @@ pub mod end_compiled {
     pub fn eval_end_22<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(
             22usize,
             WrapperType::Interpolated {
@@ -6506,14 +6506,14 @@ pub mod end_compiled {
     pub fn eval_end_23<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
-        eval_end_22(pos, ctx) * 0.64f32
+    ) -> f64 {
+        eval_end_22(pos, ctx) * 0.64f64
     }
     #[inline(always)]
     pub fn eval_end_24<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let c = eval_end_23(pos, ctx).clamp(-1.0, 1.0);
         c / 2.0 - c * c * c / 24.0
     }
@@ -6521,22 +6521,22 @@ pub mod end_compiled {
     pub fn eval_end_25<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let _ = (pos, ctx);
-        0f32
+        0f64
     }
     #[inline(always)]
     pub fn eval_end_26<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         ctx.sample_wrapper(26usize, WrapperType::Cache, pos, &eval_end_12)
     }
     #[inline(always)]
     pub fn eval_end_27<C: NoiseEvaluationContext>(
         pos: &pumpkin_util::math::vector3::Vector3<i32>,
         ctx: &mut C,
-    ) -> f32 {
+    ) -> f64 {
         let slice_pos = pumpkin_util::math::vector3::Vector3::new(pos.x, 0i32, pos.z);
         eval_end_26(&slice_pos, ctx)
     }
@@ -6563,10 +6563,10 @@ pub struct InterpolatedNoiseSamplerData {
     pub smear_scale_multiplier: f64,
 }
 pub struct ClampedYGradientData {
-    pub from_y: f32,
-    pub to_y: f32,
-    pub from_value: f32,
-    pub to_value: f32,
+    pub from_y: f64,
+    pub to_y: f64,
+    pub from_value: f64,
+    pub to_value: f64,
 }
 #[derive(Copy, Clone)]
 pub enum Axis {
@@ -6585,8 +6585,8 @@ pub struct GradientData {
     pub tiling: Tiling,
     pub from_coordinate: i32,
     pub to_coordinate: i32,
-    pub from_value: f32,
-    pub to_value: f32,
+    pub from_value: f64,
+    pub to_value: f64,
 }
 #[derive(Copy, Clone)]
 pub enum DistanceMetric {
@@ -6625,7 +6625,7 @@ pub struct BinaryData {
 impl BinaryData {
     #[inline]
     #[must_use]
-    pub const fn apply_density(&self, a: f32, b: f32) -> f32 {
+    pub const fn apply_density(&self, a: f64, b: f64) -> f64 {
         match self.operation {
             BinaryOperation::Add => a + b,
             BinaryOperation::Mul => a * b,
@@ -6650,12 +6650,12 @@ pub enum LinearOperation {
 }
 pub struct LinearData {
     pub operation: LinearOperation,
-    pub argument: f32,
+    pub argument: f64,
 }
 impl LinearData {
     #[inline]
     #[must_use]
-    pub const fn apply_density(&self, density: f32) -> f32 {
+    pub const fn apply_density(&self, density: f64) -> f64 {
         match self.operation {
             LinearOperation::Add => density + self.argument,
             LinearOperation::Mul => density * self.argument,
@@ -6682,7 +6682,7 @@ pub struct UnaryData {
 impl UnaryData {
     #[inline]
     #[must_use]
-    pub fn apply_density(&self, density: f32) -> f32 {
+    pub fn apply_density(&self, density: f64) -> f64 {
         match self.operation {
             UnaryOperation::Abs => density.abs(),
             UnaryOperation::Square => density * density,
@@ -6707,7 +6707,7 @@ impl UnaryData {
             }
             UnaryOperation::Invert => {
                 if density == 0.0 {
-                    f32::INFINITY
+                    f64::INFINITY
                 } else {
                     1.0 / density
                 }
@@ -6728,19 +6728,19 @@ impl UnaryData {
     }
 }
 pub struct ClampData {
-    pub min_value: f32,
-    pub max_value: f32,
+    pub min_value: f64,
+    pub max_value: f64,
 }
 impl ClampData {
     #[inline]
     #[must_use]
-    pub const fn apply_density(&self, density: f32) -> f32 {
+    pub const fn apply_density(&self, density: f64) -> f64 {
         density.clamp(self.min_value, self.max_value)
     }
 }
 pub struct RangeChoiceData {
-    pub min_inclusive: f32,
-    pub max_exclusive: f32,
+    pub min_inclusive: f64,
+    pub max_exclusive: f64,
 }
 pub struct SplinePoint {
     pub location: f32,
@@ -6794,7 +6794,7 @@ pub enum BaseNoiseFunctionComponent {
     },
     IntervalSelect {
         input_index: usize,
-        thresholds: &'static [f32],
+        thresholds: &'static [f64],
         functions_indices: &'static [usize],
     },
     Wrapper {
@@ -6802,7 +6802,7 @@ pub enum BaseNoiseFunctionComponent {
         wrapper: WrapperType,
     },
     Constant {
-        value: f32,
+        value: f64,
     },
     ClampedYGradient {
         data: &'static ClampedYGradientData,
@@ -6894,8 +6894,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: -40i32,
-                    from_value: 0f32,
-                    to_value: 1f32,
+                    from_value: 0f64,
+                    to_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -6904,8 +6904,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: 240i32,
                     to_coordinate: 256i32,
-                    from_value: 1f32,
-                    to_value: 0f32,
+                    from_value: 1f64,
+                    to_value: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -6914,8 +6914,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: 320i32,
-                    from_value: 1.5f32,
-                    to_value: -1.5f32,
+                    from_value: 1.5f64,
+                    to_value: -1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendOffset,
@@ -6933,14 +6933,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 6usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 7usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -6971,7 +6971,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 13usize,
                 wrapper: WrapperType::Cache,
             },
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
             BaseNoiseFunctionComponent::ShiftB {
                 noise_id: DoublePerlinNoiseParameters::OFFSET,
             },
@@ -7060,7 +7060,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 30usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.6666667f32,
+                    argument: -0.6666666666666666f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -7073,14 +7073,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 32usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.33333334f32,
+                    argument: -0.3333333333333333f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 33usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -3f32,
+                    argument: -3f64,
                 },
             },
             BaseNoiseFunctionComponent::Spline {
@@ -8685,7 +8685,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 35usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.50375f32,
+                    argument: -0.5037500262260437f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -9046,7 +9046,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 45usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0f32,
+                    argument: -0f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -9060,7 +9060,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 47usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0f32,
+                    argument: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -10026,7 +10026,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 58usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -10f32,
+                    argument: -10f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10040,7 +10040,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 60usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 10f32,
+                    argument: 10f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -10083,7 +10083,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 68usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 4f32,
+                    argument: 4f64,
                 },
             },
             BaseNoiseFunctionComponent::InterpolatedNoiseSampler {
@@ -10113,7 +10113,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 72usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.37f32,
+                    argument: 0.37f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -10122,8 +10122,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -10i32,
                     to_coordinate: 30i32,
-                    from_value: 0.3f32,
-                    to_value: 0f32,
+                    from_value: 0.3f64,
+                    to_value: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10144,14 +10144,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 76usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.05f32,
+                    argument: -0.05f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 77usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.05f32,
+                    argument: -0.05f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10171,7 +10171,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 80usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.4f32,
+                    argument: -0.4f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10207,7 +10207,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 86usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.75f32,
+                    argument: 0.75f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10221,7 +10221,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 88usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10235,7 +10235,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 90usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1.5f32,
+                    argument: 1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10249,12 +10249,12 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 92usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 2f32,
+                    argument: 2f64,
                 },
             },
             BaseNoiseFunctionComponent::IntervalSelect {
                 input_index: 85usize,
-                thresholds: &[-0.5f32, 0f32, 0.5f32],
+                thresholds: &[-0.5f64, 0f64, 0.5f64],
                 functions_indices: &[87usize, 89usize, 91usize, 93usize],
             },
             BaseNoiseFunctionComponent::Unary {
@@ -10274,7 +10274,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 96usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.75f32,
+                    argument: 0.75f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10288,7 +10288,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 98usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10302,7 +10302,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 100usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1.5f32,
+                    argument: 1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10316,12 +10316,12 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 102usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 2f32,
+                    argument: 2f64,
                 },
             },
             BaseNoiseFunctionComponent::IntervalSelect {
                 input_index: 85usize,
-                thresholds: &[-0.5f32, 0f32, 0.5f32],
+                thresholds: &[-0.5f64, 0f64, 0.5f64],
                 functions_indices: &[97usize, 99usize, 101usize, 103usize],
             },
             BaseNoiseFunctionComponent::Unary {
@@ -10348,14 +10348,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 107usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.0115f32,
+                    argument: -0.011499999999999996f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 108usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.0765f32,
+                    argument: -0.0765f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10368,8 +10368,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 110usize,
                 data: &ClampData {
-                    min_value: -1f32,
-                    max_value: 1f32,
+                    min_value: -1f64,
+                    max_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10394,7 +10394,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 114usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 5f32,
+                    argument: 5f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10421,7 +10421,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 118usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 4f32,
+                    argument: 4f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10435,35 +10435,35 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 120usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.27f32,
+                    argument: 0.27f64,
                 },
             },
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 121usize,
                 data: &ClampData {
-                    min_value: -1f32,
-                    max_value: 1f32,
+                    min_value: -1f64,
+                    max_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 71usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.64f32,
+                    argument: -0.64f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 123usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 1.5f32,
+                    argument: 1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 124usize,
                 data: &ClampData {
-                    min_value: 0f32,
-                    max_value: 0.5f32,
+                    min_value: 0f64,
+                    max_value: 0.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10505,7 +10505,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 130usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.5f32,
+                    argument: 0.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10519,7 +10519,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 132usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.75f32,
+                    argument: 0.75f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10533,7 +10533,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 134usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10547,7 +10547,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 136usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 2f32,
+                    argument: 2f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10561,12 +10561,12 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 138usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 3f32,
+                    argument: 3f64,
                 },
             },
             BaseNoiseFunctionComponent::IntervalSelect {
                 input_index: 129usize,
-                thresholds: &[-0.75f32, -0.5f32, 0.5f32, 0.75f32],
+                thresholds: &[-0.75f64, -0.5f64, 0.5f64, 0.75f64],
                 functions_indices: &[131usize, 133usize, 135usize, 137usize, 139usize],
             },
             BaseNoiseFunctionComponent::Unary {
@@ -10586,14 +10586,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 142usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.35f32,
+                    argument: -0.35000000000000003f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 143usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.95f32,
+                    argument: -0.95f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -10604,7 +10604,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 145usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.083f32,
+                    argument: 0.083f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10625,14 +10625,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 148usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 8f32,
+                    argument: 8f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 149usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0f32,
+                    argument: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -10646,8 +10646,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: 320i32,
-                    from_value: 8f32,
-                    to_value: -40f32,
+                    from_value: 8f64,
+                    to_value: -40f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10686,8 +10686,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 157usize,
                 data: &ClampData {
-                    min_value: -1f32,
-                    max_value: 1f32,
+                    min_value: -1f64,
+                    max_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10715,7 +10715,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 161usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 2f32,
+                    argument: 2f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10729,14 +10729,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 163usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 164usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10757,14 +10757,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 167usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.55f32,
+                    argument: 0.55f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 168usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.55f32,
+                    argument: 0.55f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -10784,14 +10784,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 171usize,
                 wrapper: WrapperType::Cache,
             },
-            BaseNoiseFunctionComponent::Constant { value: -1000000f32 },
+            BaseNoiseFunctionComponent::Constant { value: -1000000f64 },
             BaseNoiseFunctionComponent::RangeChoice {
                 input_index: 172usize,
                 when_in_range_index: 173usize,
                 when_out_range_index: 172usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -1000000f32,
-                    max_exclusive: 0.03f32,
+                    min_inclusive: -1000000f64,
+                    max_exclusive: 0.03f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10806,15 +10806,15 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 116usize,
                 when_out_range_index: 175usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -1000000f32,
-                    max_exclusive: 1.5625f32,
+                    min_inclusive: -1000000f64,
+                    max_exclusive: 1.5625f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 176usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.078125f32,
+                    argument: 0.078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10828,14 +10828,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 178usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.078125f32,
+                    argument: -0.078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 179usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.1171875f32,
+                    argument: -0.1171875f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -10849,7 +10849,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 181usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.1171875f32,
+                    argument: 0.1171875f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendDensity {
@@ -10866,7 +10866,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 184usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.64f32,
+                    argument: 0.64f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -10881,8 +10881,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -4064i32,
                     to_coordinate: 4062i32,
-                    from_value: -4064f32,
-                    to_value: 4062f32,
+                    from_value: -4064f64,
+                    to_value: 4062f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -10892,14 +10892,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     y_scale: 1f64,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: -1f32 },
+            BaseNoiseFunctionComponent::Constant { value: -1f64 },
             BaseNoiseFunctionComponent::RangeChoice {
                 input_index: 187usize,
                 when_in_range_index: 188usize,
                 when_out_range_index: 189usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 321f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 321f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -10909,7 +10909,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     cell_size_y: 8i32,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 64f32 },
+            BaseNoiseFunctionComponent::Constant { value: 64f64 },
             BaseNoiseFunctionComponent::Noise {
                 data: &NoiseData {
                     noise_id: DoublePerlinNoiseParameters::NOODLE_THICKNESS,
@@ -10921,14 +10921,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 193usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.025f32,
+                    argument: -0.025f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 194usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.075f32,
+                    argument: -0.07500000000000001f64,
                 },
             },
             BaseNoiseFunctionComponent::RangeChoice {
@@ -10936,8 +10936,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 195usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 321f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 321f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -10959,8 +10959,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 198usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 321f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 321f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -10988,8 +10988,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 202usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 321f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 321f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -11016,7 +11016,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 206usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1.5f32,
+                    argument: 1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -11031,8 +11031,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 192usize,
                 when_out_range_index: 208usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -1000000f32,
-                    max_exclusive: 0f32,
+                    min_inclusive: -1000000f64,
+                    max_exclusive: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -11082,8 +11082,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 215usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 51f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 51f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -11105,8 +11105,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 218usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 51f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 51f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -11134,8 +11134,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 222usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 51f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 51f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -11162,7 +11162,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 226usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.08f32,
+                    argument: -0.07999999821186066f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -11197,8 +11197,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: -40i32,
-                    from_value: 0f32,
-                    to_value: 1f32,
+                    from_value: 0f64,
+                    to_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -11207,8 +11207,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: 240i32,
                     to_coordinate: 256i32,
-                    from_value: 1f32,
-                    to_value: 0f32,
+                    from_value: 1f64,
+                    to_value: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -11217,8 +11217,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: 320i32,
-                    from_value: 1.5f32,
-                    to_value: -1.5f32,
+                    from_value: 1.5f64,
+                    to_value: -1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendOffset,
@@ -11236,14 +11236,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 6usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 7usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -11274,7 +11274,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 13usize,
                 wrapper: WrapperType::Cache,
             },
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
             BaseNoiseFunctionComponent::ShiftB {
                 noise_id: DoublePerlinNoiseParameters::OFFSET,
             },
@@ -11363,7 +11363,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 30usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.6666667f32,
+                    argument: -0.6666666666666666f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -11376,14 +11376,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 32usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.33333334f32,
+                    argument: -0.3333333333333333f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 33usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -3f32,
+                    argument: -3f64,
                 },
             },
             BaseNoiseFunctionComponent::Spline {
@@ -12988,7 +12988,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 35usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.50375f32,
+                    argument: -0.5037500262260437f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -13948,7 +13948,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 45usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -10f32,
+                    argument: -10f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -13962,7 +13962,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 47usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 10f32,
+                    argument: 10f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -14014,28 +14014,28 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 57usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 4f32,
+                    argument: 4f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 58usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.703125f32,
+                    argument: -0.703125f64,
                 },
             },
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 59usize,
                 data: &ClampData {
-                    min_value: -64f32,
-                    max_value: 64f32,
+                    min_value: -64f64,
+                    max_value: 64f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 60usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.078125f32,
+                    argument: 0.078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -14049,14 +14049,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 62usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.078125f32,
+                    argument: -0.078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 63usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.1171875f32,
+                    argument: -0.1171875f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -14070,17 +14070,17 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 65usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.1171875f32,
+                    argument: 0.1171875f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 66usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.390625f32,
+                    argument: -0.390625f64,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 320f32 },
+            BaseNoiseFunctionComponent::Constant { value: 320f64 },
             BaseNoiseFunctionComponent::FindTopSurface {
                 density_index: 67usize,
                 upper_bound_index: 68usize,
@@ -14119,7 +14119,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 3usize,
                 wrapper: WrapperType::Cache,
             },
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
             BaseNoiseFunctionComponent::ShiftB {
                 noise_id: DoublePerlinNoiseParameters::OFFSET,
             },
@@ -14249,8 +14249,8 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: 320i32,
-                    from_value: 1.5f32,
-                    to_value: -1.5f32,
+                    from_value: 1.5f64,
+                    to_value: -1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendOffset,
@@ -14268,14 +14268,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 31usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 32usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -14295,7 +14295,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 35usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.6666667f32,
+                    argument: -0.6666666666666666f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -14308,14 +14308,14 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 37usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.33333334f32,
+                    argument: -0.3333333333333333f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 38usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -3f32,
+                    argument: -3f64,
                 },
             },
             BaseNoiseFunctionComponent::Spline {
@@ -15920,7 +15920,7 @@ pub const OVERWORLD_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 40usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.50375f32,
+                    argument: -0.5037500262260437f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -15985,8 +15985,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: -40i32,
-                    from_value: 0f32,
-                    to_value: 1f32,
+                    from_value: 0f64,
+                    to_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -15995,8 +15995,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: 304i32,
                     to_coordinate: 320i32,
-                    from_value: 1f32,
-                    to_value: 0f32,
+                    from_value: 1f64,
+                    to_value: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -16005,8 +16005,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: 320i32,
-                    from_value: 1.5f32,
-                    to_value: -1.5f32,
+                    from_value: 1.5f64,
+                    to_value: -1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendOffset,
@@ -16024,14 +16024,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 6usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 7usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -16062,7 +16062,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 13usize,
                 wrapper: WrapperType::Cache,
             },
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
             BaseNoiseFunctionComponent::ShiftB {
                 noise_id: DoublePerlinNoiseParameters::OFFSET,
             },
@@ -16151,7 +16151,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 30usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.6666667f32,
+                    argument: -0.6666666666666666f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -16164,14 +16164,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 32usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.33333334f32,
+                    argument: -0.3333333333333333f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 33usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -3f32,
+                    argument: -3f64,
                 },
             },
             BaseNoiseFunctionComponent::Spline {
@@ -17776,7 +17776,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 35usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.50375f32,
+                    argument: -0.5037500262260437f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -18137,7 +18137,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 45usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0f32,
+                    argument: -0f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -18151,7 +18151,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 47usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0f32,
+                    argument: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -19215,7 +19215,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 58usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -10f32,
+                    argument: -10f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -19229,7 +19229,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 60usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 10f32,
+                    argument: 10f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -19272,7 +19272,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 68usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 4f32,
+                    argument: 4f64,
                 },
             },
             BaseNoiseFunctionComponent::InterpolatedNoiseSampler {
@@ -19302,7 +19302,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 72usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.37f32,
+                    argument: 0.37f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -19311,8 +19311,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -10i32,
                     to_coordinate: 30i32,
-                    from_value: 0.3f32,
-                    to_value: 0f32,
+                    from_value: 0.3f64,
+                    to_value: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -19333,14 +19333,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 76usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.05f32,
+                    argument: -0.05f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 77usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.05f32,
+                    argument: -0.05f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19360,7 +19360,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 80usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.4f32,
+                    argument: -0.4f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -19396,7 +19396,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 86usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.75f32,
+                    argument: 0.75f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19410,7 +19410,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 88usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19424,7 +19424,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 90usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1.5f32,
+                    argument: 1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19438,12 +19438,12 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 92usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 2f32,
+                    argument: 2f64,
                 },
             },
             BaseNoiseFunctionComponent::IntervalSelect {
                 input_index: 85usize,
-                thresholds: &[-0.5f32, 0f32, 0.5f32],
+                thresholds: &[-0.5f64, 0f64, 0.5f64],
                 functions_indices: &[87usize, 89usize, 91usize, 93usize],
             },
             BaseNoiseFunctionComponent::Unary {
@@ -19463,7 +19463,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 96usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.75f32,
+                    argument: 0.75f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19477,7 +19477,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 98usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19491,7 +19491,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 100usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1.5f32,
+                    argument: 1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19505,12 +19505,12 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 102usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 2f32,
+                    argument: 2f64,
                 },
             },
             BaseNoiseFunctionComponent::IntervalSelect {
                 input_index: 85usize,
-                thresholds: &[-0.5f32, 0f32, 0.5f32],
+                thresholds: &[-0.5f64, 0f64, 0.5f64],
                 functions_indices: &[97usize, 99usize, 101usize, 103usize],
             },
             BaseNoiseFunctionComponent::Unary {
@@ -19537,14 +19537,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 107usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.0115f32,
+                    argument: -0.011499999999999996f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 108usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.0765f32,
+                    argument: -0.0765f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -19557,8 +19557,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 110usize,
                 data: &ClampData {
-                    min_value: -1f32,
-                    max_value: 1f32,
+                    min_value: -1f64,
+                    max_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -19583,7 +19583,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 114usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 5f32,
+                    argument: 5f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -19610,7 +19610,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 118usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 4f32,
+                    argument: 4f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19624,35 +19624,35 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 120usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.27f32,
+                    argument: 0.27f64,
                 },
             },
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 121usize,
                 data: &ClampData {
-                    min_value: -1f32,
-                    max_value: 1f32,
+                    min_value: -1f64,
+                    max_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 71usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.64f32,
+                    argument: -0.64f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 123usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 1.5f32,
+                    argument: 1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 124usize,
                 data: &ClampData {
-                    min_value: 0f32,
-                    max_value: 0.5f32,
+                    min_value: 0f64,
+                    max_value: 0.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -19694,7 +19694,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 130usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.5f32,
+                    argument: 0.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19708,7 +19708,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 132usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.75f32,
+                    argument: 0.75f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19722,7 +19722,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 134usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19736,7 +19736,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 136usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 2f32,
+                    argument: 2f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19750,12 +19750,12 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 138usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 3f32,
+                    argument: 3f64,
                 },
             },
             BaseNoiseFunctionComponent::IntervalSelect {
                 input_index: 129usize,
-                thresholds: &[-0.75f32, -0.5f32, 0.5f32, 0.75f32],
+                thresholds: &[-0.75f64, -0.5f64, 0.5f64, 0.75f64],
                 functions_indices: &[131usize, 133usize, 135usize, 137usize, 139usize],
             },
             BaseNoiseFunctionComponent::Unary {
@@ -19775,14 +19775,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 142usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.35f32,
+                    argument: -0.35000000000000003f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 143usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.95f32,
+                    argument: -0.95f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -19793,7 +19793,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 145usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.083f32,
+                    argument: 0.083f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -19814,14 +19814,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 148usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 8f32,
+                    argument: 8f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 149usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0f32,
+                    argument: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -19835,8 +19835,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: 320i32,
-                    from_value: 8f32,
-                    to_value: -40f32,
+                    from_value: 8f64,
+                    to_value: -40f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -19875,8 +19875,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 157usize,
                 data: &ClampData {
-                    min_value: -1f32,
-                    max_value: 1f32,
+                    min_value: -1f64,
+                    max_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -19904,7 +19904,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 161usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 2f32,
+                    argument: 2f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -19918,14 +19918,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 163usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 164usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -19946,14 +19946,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 167usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.55f32,
+                    argument: 0.55f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 168usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.55f32,
+                    argument: 0.55f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -19973,14 +19973,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 171usize,
                 wrapper: WrapperType::Cache,
             },
-            BaseNoiseFunctionComponent::Constant { value: -1000000f32 },
+            BaseNoiseFunctionComponent::Constant { value: -1000000f64 },
             BaseNoiseFunctionComponent::RangeChoice {
                 input_index: 172usize,
                 when_in_range_index: 173usize,
                 when_out_range_index: 172usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -1000000f32,
-                    max_exclusive: 0.03f32,
+                    min_inclusive: -1000000f64,
+                    max_exclusive: 0.03f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -19995,15 +19995,15 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 116usize,
                 when_out_range_index: 175usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -1000000f32,
-                    max_exclusive: 1.5625f32,
+                    min_inclusive: -1000000f64,
+                    max_exclusive: 1.5625f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 176usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.078125f32,
+                    argument: 0.078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -20017,14 +20017,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 178usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.078125f32,
+                    argument: -0.078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 179usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.4f32,
+                    argument: -0.4f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -20038,7 +20038,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 181usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.4f32,
+                    argument: 0.4f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendDensity {
@@ -20055,7 +20055,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 184usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.64f32,
+                    argument: 0.64f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -20070,8 +20070,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -4064i32,
                     to_coordinate: 4062i32,
-                    from_value: -4064f32,
-                    to_value: 4062f32,
+                    from_value: -4064f64,
+                    to_value: 4062f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -20081,14 +20081,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     y_scale: 1f64,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: -1f32 },
+            BaseNoiseFunctionComponent::Constant { value: -1f64 },
             BaseNoiseFunctionComponent::RangeChoice {
                 input_index: 187usize,
                 when_in_range_index: 188usize,
                 when_out_range_index: 189usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 321f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 321f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -20098,7 +20098,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     cell_size_y: 8i32,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 64f32 },
+            BaseNoiseFunctionComponent::Constant { value: 64f64 },
             BaseNoiseFunctionComponent::Noise {
                 data: &NoiseData {
                     noise_id: DoublePerlinNoiseParameters::NOODLE_THICKNESS,
@@ -20110,14 +20110,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 193usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.025f32,
+                    argument: -0.025f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 194usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.075f32,
+                    argument: -0.07500000000000001f64,
                 },
             },
             BaseNoiseFunctionComponent::RangeChoice {
@@ -20125,8 +20125,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 195usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 321f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 321f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -20148,8 +20148,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 198usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 321f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 321f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -20177,8 +20177,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 202usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 321f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 321f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -20205,7 +20205,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 206usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1.5f32,
+                    argument: 1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -20220,8 +20220,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 192usize,
                 when_out_range_index: 208usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -1000000f32,
-                    max_exclusive: 0f32,
+                    min_inclusive: -1000000f64,
+                    max_exclusive: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -20271,8 +20271,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 215usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 51f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 51f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -20294,8 +20294,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 218usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 51f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 51f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -20323,8 +20323,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 222usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 51f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 51f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -20351,7 +20351,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 226usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.08f32,
+                    argument: -0.07999999821186066f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -20386,8 +20386,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: -40i32,
-                    from_value: 0f32,
-                    to_value: 1f32,
+                    from_value: 0f64,
+                    to_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -20396,8 +20396,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: 304i32,
                     to_coordinate: 320i32,
-                    from_value: 1f32,
-                    to_value: 0f32,
+                    from_value: 1f64,
+                    to_value: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -20406,8 +20406,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: 320i32,
-                    from_value: 1.5f32,
-                    to_value: -1.5f32,
+                    from_value: 1.5f64,
+                    to_value: -1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendOffset,
@@ -20425,14 +20425,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 6usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 7usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -20463,7 +20463,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 13usize,
                 wrapper: WrapperType::Cache,
             },
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
             BaseNoiseFunctionComponent::ShiftB {
                 noise_id: DoublePerlinNoiseParameters::OFFSET,
             },
@@ -20552,7 +20552,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 30usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.6666667f32,
+                    argument: -0.6666666666666666f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -20565,14 +20565,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 32usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.33333334f32,
+                    argument: -0.3333333333333333f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 33usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -3f32,
+                    argument: -3f64,
                 },
             },
             BaseNoiseFunctionComponent::Spline {
@@ -22177,7 +22177,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 35usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.50375f32,
+                    argument: -0.5037500262260437f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -23235,7 +23235,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 45usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -10f32,
+                    argument: -10f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -23249,7 +23249,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 47usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 10f32,
+                    argument: 10f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -23301,28 +23301,28 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 57usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 4f32,
+                    argument: 4f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 58usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.703125f32,
+                    argument: -0.703125f64,
                 },
             },
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 59usize,
                 data: &ClampData {
-                    min_value: -64f32,
-                    max_value: 64f32,
+                    min_value: -64f64,
+                    max_value: 64f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 60usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.078125f32,
+                    argument: 0.078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -23336,14 +23336,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 62usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.078125f32,
+                    argument: -0.078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 63usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.4f32,
+                    argument: -0.4f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -23357,17 +23357,17 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 65usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.4f32,
+                    argument: 0.4f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 66usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.390625f32,
+                    argument: -0.390625f64,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 320f32 },
+            BaseNoiseFunctionComponent::Constant { value: 320f64 },
             BaseNoiseFunctionComponent::FindTopSurface {
                 density_index: 67usize,
                 upper_bound_index: 68usize,
@@ -23406,7 +23406,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 3usize,
                 wrapper: WrapperType::Cache,
             },
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
             BaseNoiseFunctionComponent::ShiftB {
                 noise_id: DoublePerlinNoiseParameters::OFFSET,
             },
@@ -23536,8 +23536,8 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: 320i32,
-                    from_value: 1.5f32,
-                    to_value: -1.5f32,
+                    from_value: 1.5f64,
+                    to_value: -1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendOffset,
@@ -23555,14 +23555,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 31usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 32usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -23582,7 +23582,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 35usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.6666667f32,
+                    argument: -0.6666666666666666f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -23595,14 +23595,14 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 37usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.33333334f32,
+                    argument: -0.3333333333333333f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 38usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -3f32,
+                    argument: -3f64,
                 },
             },
             BaseNoiseFunctionComponent::Spline {
@@ -25207,7 +25207,7 @@ pub const AMPLIFIED_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 40usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.50375f32,
+                    argument: -0.5037500262260437f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -25272,8 +25272,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: -40i32,
-                    from_value: 0f32,
-                    to_value: 1f32,
+                    from_value: 0f64,
+                    to_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -25282,8 +25282,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: 240i32,
                     to_coordinate: 256i32,
-                    from_value: 1f32,
-                    to_value: 0f32,
+                    from_value: 1f64,
+                    to_value: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -25292,8 +25292,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: 320i32,
-                    from_value: 1.5f32,
-                    to_value: -1.5f32,
+                    from_value: 1.5f64,
+                    to_value: -1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendOffset,
@@ -25311,14 +25311,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 6usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 7usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -25349,7 +25349,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 13usize,
                 wrapper: WrapperType::Cache,
             },
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
             BaseNoiseFunctionComponent::ShiftB {
                 noise_id: DoublePerlinNoiseParameters::OFFSET,
             },
@@ -25438,7 +25438,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 30usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.6666667f32,
+                    argument: -0.6666666666666666f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -25451,14 +25451,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 32usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.33333334f32,
+                    argument: -0.3333333333333333f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 33usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -3f32,
+                    argument: -3f64,
                 },
             },
             BaseNoiseFunctionComponent::Spline {
@@ -27063,7 +27063,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 35usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.50375f32,
+                    argument: -0.5037500262260437f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -27424,7 +27424,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 45usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0f32,
+                    argument: -0f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -27438,7 +27438,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 47usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0f32,
+                    argument: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -28404,7 +28404,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 58usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -10f32,
+                    argument: -10f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -28418,7 +28418,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 60usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 10f32,
+                    argument: 10f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -28461,7 +28461,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 68usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 4f32,
+                    argument: 4f64,
                 },
             },
             BaseNoiseFunctionComponent::InterpolatedNoiseSampler {
@@ -28491,7 +28491,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 72usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.37f32,
+                    argument: 0.37f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -28500,8 +28500,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -10i32,
                     to_coordinate: 30i32,
-                    from_value: 0.3f32,
-                    to_value: 0f32,
+                    from_value: 0.3f64,
+                    to_value: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -28522,14 +28522,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 76usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.05f32,
+                    argument: -0.05f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 77usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.05f32,
+                    argument: -0.05f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -28549,7 +28549,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 80usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.4f32,
+                    argument: -0.4f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -28585,7 +28585,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 86usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.75f32,
+                    argument: 0.75f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -28599,7 +28599,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 88usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -28613,7 +28613,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 90usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1.5f32,
+                    argument: 1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -28627,12 +28627,12 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 92usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 2f32,
+                    argument: 2f64,
                 },
             },
             BaseNoiseFunctionComponent::IntervalSelect {
                 input_index: 85usize,
-                thresholds: &[-0.5f32, 0f32, 0.5f32],
+                thresholds: &[-0.5f64, 0f64, 0.5f64],
                 functions_indices: &[87usize, 89usize, 91usize, 93usize],
             },
             BaseNoiseFunctionComponent::Unary {
@@ -28652,7 +28652,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 96usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.75f32,
+                    argument: 0.75f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -28666,7 +28666,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 98usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -28680,7 +28680,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 100usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1.5f32,
+                    argument: 1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -28694,12 +28694,12 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 102usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 2f32,
+                    argument: 2f64,
                 },
             },
             BaseNoiseFunctionComponent::IntervalSelect {
                 input_index: 85usize,
-                thresholds: &[-0.5f32, 0f32, 0.5f32],
+                thresholds: &[-0.5f64, 0f64, 0.5f64],
                 functions_indices: &[97usize, 99usize, 101usize, 103usize],
             },
             BaseNoiseFunctionComponent::Unary {
@@ -28726,14 +28726,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 107usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.0115f32,
+                    argument: -0.011499999999999996f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 108usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.0765f32,
+                    argument: -0.0765f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -28746,8 +28746,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 110usize,
                 data: &ClampData {
-                    min_value: -1f32,
-                    max_value: 1f32,
+                    min_value: -1f64,
+                    max_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -28772,7 +28772,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 114usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 5f32,
+                    argument: 5f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -28799,7 +28799,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 118usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 4f32,
+                    argument: 4f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -28813,35 +28813,35 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 120usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.27f32,
+                    argument: 0.27f64,
                 },
             },
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 121usize,
                 data: &ClampData {
-                    min_value: -1f32,
-                    max_value: 1f32,
+                    min_value: -1f64,
+                    max_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 71usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.64f32,
+                    argument: -0.64f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 123usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 1.5f32,
+                    argument: 1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 124usize,
                 data: &ClampData {
-                    min_value: 0f32,
-                    max_value: 0.5f32,
+                    min_value: 0f64,
+                    max_value: 0.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -28883,7 +28883,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 130usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.5f32,
+                    argument: 0.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -28897,7 +28897,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 132usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.75f32,
+                    argument: 0.75f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -28911,7 +28911,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 134usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -28925,7 +28925,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 136usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 2f32,
+                    argument: 2f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -28939,12 +28939,12 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 138usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 3f32,
+                    argument: 3f64,
                 },
             },
             BaseNoiseFunctionComponent::IntervalSelect {
                 input_index: 129usize,
-                thresholds: &[-0.75f32, -0.5f32, 0.5f32, 0.75f32],
+                thresholds: &[-0.75f64, -0.5f64, 0.5f64, 0.75f64],
                 functions_indices: &[131usize, 133usize, 135usize, 137usize, 139usize],
             },
             BaseNoiseFunctionComponent::Unary {
@@ -28964,14 +28964,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 142usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.35f32,
+                    argument: -0.35000000000000003f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 143usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.95f32,
+                    argument: -0.95f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -28982,7 +28982,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 145usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.083f32,
+                    argument: 0.083f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -29003,14 +29003,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 148usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 8f32,
+                    argument: 8f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 149usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0f32,
+                    argument: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -29024,8 +29024,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: 320i32,
-                    from_value: 8f32,
-                    to_value: -40f32,
+                    from_value: 8f64,
+                    to_value: -40f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -29064,8 +29064,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 157usize,
                 data: &ClampData {
-                    min_value: -1f32,
-                    max_value: 1f32,
+                    min_value: -1f64,
+                    max_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -29093,7 +29093,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 161usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 2f32,
+                    argument: 2f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -29107,14 +29107,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 163usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 164usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -29135,14 +29135,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 167usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.55f32,
+                    argument: 0.55f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 168usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.55f32,
+                    argument: 0.55f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -29162,14 +29162,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 171usize,
                 wrapper: WrapperType::Cache,
             },
-            BaseNoiseFunctionComponent::Constant { value: -1000000f32 },
+            BaseNoiseFunctionComponent::Constant { value: -1000000f64 },
             BaseNoiseFunctionComponent::RangeChoice {
                 input_index: 172usize,
                 when_in_range_index: 173usize,
                 when_out_range_index: 172usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -1000000f32,
-                    max_exclusive: 0.03f32,
+                    min_inclusive: -1000000f64,
+                    max_exclusive: 0.03f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -29184,15 +29184,15 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 116usize,
                 when_out_range_index: 175usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -1000000f32,
-                    max_exclusive: 1.5625f32,
+                    min_inclusive: -1000000f64,
+                    max_exclusive: 1.5625f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 176usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.078125f32,
+                    argument: 0.078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -29206,14 +29206,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 178usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.078125f32,
+                    argument: -0.078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 179usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.1171875f32,
+                    argument: -0.1171875f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -29227,7 +29227,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 181usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.1171875f32,
+                    argument: 0.1171875f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendDensity {
@@ -29244,7 +29244,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 184usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.64f32,
+                    argument: 0.64f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -29259,8 +29259,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -4064i32,
                     to_coordinate: 4062i32,
-                    from_value: -4064f32,
-                    to_value: 4062f32,
+                    from_value: -4064f64,
+                    to_value: 4062f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -29270,14 +29270,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     y_scale: 1f64,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: -1f32 },
+            BaseNoiseFunctionComponent::Constant { value: -1f64 },
             BaseNoiseFunctionComponent::RangeChoice {
                 input_index: 187usize,
                 when_in_range_index: 188usize,
                 when_out_range_index: 189usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 321f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 321f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -29287,7 +29287,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     cell_size_y: 8i32,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 64f32 },
+            BaseNoiseFunctionComponent::Constant { value: 64f64 },
             BaseNoiseFunctionComponent::Noise {
                 data: &NoiseData {
                     noise_id: DoublePerlinNoiseParameters::NOODLE_THICKNESS,
@@ -29299,14 +29299,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 193usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -0.025f32,
+                    argument: -0.025f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 194usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.075f32,
+                    argument: -0.07500000000000001f64,
                 },
             },
             BaseNoiseFunctionComponent::RangeChoice {
@@ -29314,8 +29314,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 195usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 321f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 321f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -29337,8 +29337,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 198usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 321f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 321f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -29366,8 +29366,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 202usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 321f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 321f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -29394,7 +29394,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 206usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 1.5f32,
+                    argument: 1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -29409,8 +29409,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 192usize,
                 when_out_range_index: 208usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -1000000f32,
-                    max_exclusive: 0f32,
+                    min_inclusive: -1000000f64,
+                    max_exclusive: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -29460,8 +29460,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 215usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 51f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 51f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -29483,8 +29483,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 218usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 51f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 51f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -29512,8 +29512,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 when_in_range_index: 222usize,
                 when_out_range_index: 15usize,
                 data: &RangeChoiceData {
-                    min_inclusive: -60f32,
-                    max_exclusive: 51f32,
+                    min_inclusive: -60f64,
+                    max_exclusive: 51f64,
                 },
             },
             BaseNoiseFunctionComponent::Wrapper {
@@ -29540,7 +29540,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 226usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.08f32,
+                    argument: -0.07999999821186066f64,
                 },
             },
             BaseNoiseFunctionComponent::Noise {
@@ -29575,8 +29575,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: -40i32,
-                    from_value: 0f32,
-                    to_value: 1f32,
+                    from_value: 0f64,
+                    to_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -29585,8 +29585,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: 240i32,
                     to_coordinate: 256i32,
-                    from_value: 1f32,
-                    to_value: 0f32,
+                    from_value: 1f64,
+                    to_value: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -29595,8 +29595,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: 320i32,
-                    from_value: 1.5f32,
-                    to_value: -1.5f32,
+                    from_value: 1.5f64,
+                    to_value: -1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendOffset,
@@ -29614,14 +29614,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 6usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 7usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -29652,7 +29652,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 13usize,
                 wrapper: WrapperType::Cache,
             },
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
             BaseNoiseFunctionComponent::ShiftB {
                 noise_id: DoublePerlinNoiseParameters::OFFSET,
             },
@@ -29741,7 +29741,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 30usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.6666667f32,
+                    argument: -0.6666666666666666f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -29754,14 +29754,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 32usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.33333334f32,
+                    argument: -0.3333333333333333f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 33usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -3f32,
+                    argument: -3f64,
                 },
             },
             BaseNoiseFunctionComponent::Spline {
@@ -31366,7 +31366,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 35usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.50375f32,
+                    argument: -0.5037500262260437f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -32326,7 +32326,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 45usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -10f32,
+                    argument: -10f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -32340,7 +32340,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 47usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 10f32,
+                    argument: 10f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -32392,28 +32392,28 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 57usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 4f32,
+                    argument: 4f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 58usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.703125f32,
+                    argument: -0.703125f64,
                 },
             },
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 59usize,
                 data: &ClampData {
-                    min_value: -64f32,
-                    max_value: 64f32,
+                    min_value: -64f64,
+                    max_value: 64f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 60usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.078125f32,
+                    argument: 0.078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -32427,14 +32427,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 62usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.078125f32,
+                    argument: -0.078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 63usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.1171875f32,
+                    argument: -0.1171875f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -32448,17 +32448,17 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 65usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.1171875f32,
+                    argument: 0.1171875f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 66usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.390625f32,
+                    argument: -0.390625f64,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 320f32 },
+            BaseNoiseFunctionComponent::Constant { value: 320f64 },
             BaseNoiseFunctionComponent::FindTopSurface {
                 density_index: 67usize,
                 upper_bound_index: 68usize,
@@ -32497,7 +32497,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 3usize,
                 wrapper: WrapperType::Cache,
             },
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
             BaseNoiseFunctionComponent::ShiftB {
                 noise_id: DoublePerlinNoiseParameters::OFFSET,
             },
@@ -32627,8 +32627,8 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -64i32,
                     to_coordinate: 320i32,
-                    from_value: 1.5f32,
-                    to_value: -1.5f32,
+                    from_value: 1.5f64,
+                    to_value: -1.5f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendOffset,
@@ -32646,14 +32646,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 31usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -1f32,
+                    argument: -1f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 32usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 1f32,
+                    argument: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -32673,7 +32673,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 35usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.6666667f32,
+                    argument: -0.6666666666666666f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -32686,14 +32686,14 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 37usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.33333334f32,
+                    argument: -0.3333333333333333f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 38usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: -3f32,
+                    argument: -3f64,
                 },
             },
             BaseNoiseFunctionComponent::Spline {
@@ -34298,7 +34298,7 @@ pub const LARGE_BIOMES_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 40usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.50375f32,
+                    argument: -0.5037500262260437f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -34363,8 +34363,8 @@ pub const NETHER_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: -8i32,
                     to_coordinate: 24i32,
-                    from_value: 0f32,
-                    to_value: 1f32,
+                    from_value: 0f64,
+                    to_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -34373,8 +34373,8 @@ pub const NETHER_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: 104i32,
                     to_coordinate: 128i32,
-                    from_value: 1f32,
-                    to_value: 0f32,
+                    from_value: 1f64,
+                    to_value: 0f64,
                 },
             },
             BaseNoiseFunctionComponent::InterpolatedNoiseSampler {
@@ -34390,7 +34390,7 @@ pub const NETHER_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 2usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.9375f32,
+                    argument: -0.9375f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -34404,14 +34404,14 @@ pub const NETHER_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 4usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.9375f32,
+                    argument: 0.9375f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 5usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -2.5f32,
+                    argument: -2.5f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -34425,7 +34425,7 @@ pub const NETHER_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 7usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 2.5f32,
+                    argument: 2.5f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendDensity {
@@ -34442,7 +34442,7 @@ pub const NETHER_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 10usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.64f32,
+                    argument: 0.64f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -34451,7 +34451,7 @@ pub const NETHER_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     operation: UnaryOperation::Squeeze,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
         ],
         barrier_noise: 13usize,
         fluid_level_floodedness_noise: 13usize,
@@ -34467,9 +34467,9 @@ pub const NETHER_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
     surface_estimator: BaseSurfaceEstimator {
         full_component_stack: &[
             BaseNoiseFunctionComponent::Constant {
-                value: -0.390625f32,
+                value: -0.390625f64,
             },
-            BaseNoiseFunctionComponent::Constant { value: 128f32 },
+            BaseNoiseFunctionComponent::Constant { value: 128f64 },
             BaseNoiseFunctionComponent::FindTopSurface {
                 density_index: 0usize,
                 upper_bound_index: 1usize,
@@ -34497,7 +34497,7 @@ pub const NETHER_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
     },
     multi_noise: BaseMultiNoiseRouter {
         full_component_stack: &[
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
             BaseNoiseFunctionComponent::ShiftA {
                 noise_id: DoublePerlinNoiseParameters::OFFSET,
             },
@@ -34588,8 +34588,8 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: 4i32,
                     to_coordinate: 32i32,
-                    from_value: 0f32,
-                    to_value: 1f32,
+                    from_value: 0f64,
+                    to_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -34598,11 +34598,11 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: 56i32,
                     to_coordinate: 312i32,
-                    from_value: 1f32,
-                    to_value: 0f32,
+                    from_value: 1f64,
+                    to_value: 0f64,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 100f32 },
+            BaseNoiseFunctionComponent::Constant { value: 100f64 },
             BaseNoiseFunctionComponent::DistanceToPoint {
                 data: &DistanceToPointData {
                     point: [0i32, 0i32, 0i32],
@@ -34619,11 +34619,11 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 4usize,
                 data: &ClampData {
-                    min_value: -100f32,
-                    max_value: 80f32,
+                    min_value: -100f64,
+                    max_value: 80f64,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 8f32 },
+            BaseNoiseFunctionComponent::Constant { value: 8f64 },
             BaseNoiseFunctionComponent::Binary {
                 argument1_index: 5usize,
                 argument2_index: 6usize,
@@ -34635,7 +34635,7 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 7usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.0078125f32,
+                    argument: 0.0078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -34676,7 +34676,7 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 14usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 23.4375f32,
+                    argument: 23.4375f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -34690,14 +34690,14 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 16usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -23.4375f32,
+                    argument: -23.4375f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 17usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.234375f32,
+                    argument: 0.234375f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -34711,7 +34711,7 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 19usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.234375f32,
+                    argument: -0.234375f64,
                 },
             },
             BaseNoiseFunctionComponent::BlendDensity {
@@ -34728,7 +34728,7 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 22usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.64f32,
+                    argument: 0.64f64,
                 },
             },
             BaseNoiseFunctionComponent::Unary {
@@ -34737,7 +34737,7 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     operation: UnaryOperation::Squeeze,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
             BaseNoiseFunctionComponent::Wrapper {
                 input_index: 12usize,
                 wrapper: WrapperType::Cache,
@@ -34767,8 +34767,8 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: 4i32,
                     to_coordinate: 32i32,
-                    from_value: 0f32,
-                    to_value: 1f32,
+                    from_value: 0f64,
+                    to_value: 1f64,
                 },
             },
             BaseNoiseFunctionComponent::Gradient {
@@ -34777,11 +34777,11 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                     tiling: Tiling::ClampToEdge,
                     from_coordinate: 56i32,
                     to_coordinate: 312i32,
-                    from_value: 1f32,
-                    to_value: 0f32,
+                    from_value: 1f64,
+                    to_value: 0f64,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 100f32 },
+            BaseNoiseFunctionComponent::Constant { value: 100f64 },
             BaseNoiseFunctionComponent::DistanceToPoint {
                 data: &DistanceToPointData {
                     point: [0i32, 0i32, 0i32],
@@ -34798,11 +34798,11 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 4usize,
                 data: &ClampData {
-                    min_value: -100f32,
-                    max_value: 80f32,
+                    min_value: -100f64,
+                    max_value: 80f64,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 8f32 },
+            BaseNoiseFunctionComponent::Constant { value: 8f64 },
             BaseNoiseFunctionComponent::Binary {
                 argument1_index: 5usize,
                 argument2_index: 6usize,
@@ -34814,7 +34814,7 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 7usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.0078125f32,
+                    argument: 0.0078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -34843,14 +34843,14 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 13usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.703125f32,
+                    argument: -0.703125f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 14usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 23.4375f32,
+                    argument: 23.4375f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {
@@ -34869,14 +34869,14 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 17usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -23.4375f32,
+                    argument: -23.4375f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 18usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: 0.234375f32,
+                    argument: 0.234375f64,
                 },
             },
             BaseNoiseFunctionComponent::Binary {
@@ -34890,17 +34890,17 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 20usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.234375f32,
+                    argument: -0.234375f64,
                 },
             },
             BaseNoiseFunctionComponent::Linear {
                 input_index: 21usize,
                 data: &LinearData {
                     operation: LinearOperation::Add,
-                    argument: -0.390625f32,
+                    argument: -0.390625f64,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 128f32 },
+            BaseNoiseFunctionComponent::Constant { value: 128f64 },
             BaseNoiseFunctionComponent::FindTopSurface {
                 density_index: 22usize,
                 upper_bound_index: 23usize,
@@ -34918,8 +34918,8 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
     },
     multi_noise: BaseMultiNoiseRouter {
         full_component_stack: &[
-            BaseNoiseFunctionComponent::Constant { value: 0f32 },
-            BaseNoiseFunctionComponent::Constant { value: 100f32 },
+            BaseNoiseFunctionComponent::Constant { value: 0f64 },
+            BaseNoiseFunctionComponent::Constant { value: 100f64 },
             BaseNoiseFunctionComponent::DistanceToPoint {
                 data: &DistanceToPointData {
                     point: [0i32, 0i32, 0i32],
@@ -34936,11 +34936,11 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
             BaseNoiseFunctionComponent::Clamp {
                 input_index: 3usize,
                 data: &ClampData {
-                    min_value: -100f32,
-                    max_value: 80f32,
+                    min_value: -100f64,
+                    max_value: 80f64,
                 },
             },
-            BaseNoiseFunctionComponent::Constant { value: 8f32 },
+            BaseNoiseFunctionComponent::Constant { value: 8f64 },
             BaseNoiseFunctionComponent::Binary {
                 argument1_index: 4usize,
                 argument2_index: 5usize,
@@ -34952,7 +34952,7 @@ pub const END_BASE_NOISE_ROUTER: BaseNoiseRouters = BaseNoiseRouters {
                 input_index: 6usize,
                 data: &LinearData {
                     operation: LinearOperation::Mul,
-                    argument: 0.0078125f32,
+                    argument: 0.0078125f64,
                 },
             },
             BaseNoiseFunctionComponent::Slice {

@@ -16,7 +16,7 @@ use crate::generation::{
 use super::{NoiseFunctionComponentRange, StaticIndependentChunkNoiseFunctionComponentImpl};
 
 const SHIFT_COORDINATE_FACTOR: f64 = 0.25;
-const SHIFT_VALUE_FACTOR: f32 = 4.0;
+const SHIFT_VALUE_FACTOR: f64 = 4.0;
 const BLENDED_BASE_SCALE: f64 = 684.412;
 const BLENDED_LIMIT_FACTOR: f64 = 0.999_984_74f32 as f64;
 const BLENDED_MAIN_FACTOR: f64 = 12.75;
@@ -37,18 +37,18 @@ impl Noise {
 
 impl NoiseFunctionComponentRange for Noise {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         -self.max()
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.sampler.max_value()
     }
 }
 
 impl StaticIndependentChunkNoiseFunctionComponentImpl for Noise {
-    fn sample(&self, pos: &Vector3<i32>) -> f32 {
+    fn sample(&self, pos: &Vector3<i32>) -> f64 {
         self.sampler.sample(
             f64::from(pos.x) * self.data.xz_scale,
             f64::from(pos.y) * self.data.y_scale,
@@ -56,7 +56,7 @@ impl StaticIndependentChunkNoiseFunctionComponentImpl for Noise {
         )
     }
 
-    fn sample_volume(&self, buffer: &mut [f32], volume: &DensityVolume) {
+    fn sample_volume(&self, buffer: &mut [f64], volume: &DensityVolume) {
         buffer.fill(0.0);
         self.sampler
             .add_to_volume(buffer, volume, self.data.xz_scale, self.data.y_scale, 1.0);
@@ -75,18 +75,18 @@ impl ShiftA {
 
 impl NoiseFunctionComponentRange for ShiftA {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         -self.max()
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.sampler.max_value() * SHIFT_VALUE_FACTOR
     }
 }
 
 impl StaticIndependentChunkNoiseFunctionComponentImpl for ShiftA {
-    fn sample(&self, pos: &Vector3<i32>) -> f32 {
+    fn sample(&self, pos: &Vector3<i32>) -> f64 {
         self.sampler.sample(
             f64::from(pos.x) * SHIFT_COORDINATE_FACTOR,
             f64::from(pos.y) * 0.0,
@@ -94,7 +94,7 @@ impl StaticIndependentChunkNoiseFunctionComponentImpl for ShiftA {
         ) * SHIFT_VALUE_FACTOR
     }
 
-    fn sample_volume(&self, buffer: &mut [f32], volume: &DensityVolume) {
+    fn sample_volume(&self, buffer: &mut [f64], volume: &DensityVolume) {
         buffer.fill(0.0);
         self.sampler
             .add_to_volume(buffer, volume, SHIFT_COORDINATE_FACTOR, 0.0, 1.0);
@@ -116,18 +116,18 @@ impl ShiftB {
 
 impl NoiseFunctionComponentRange for ShiftB {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         -self.max()
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.sampler.max_value() * SHIFT_VALUE_FACTOR
     }
 }
 
 impl StaticIndependentChunkNoiseFunctionComponentImpl for ShiftB {
-    fn sample(&self, pos: &Vector3<i32>) -> f32 {
+    fn sample(&self, pos: &Vector3<i32>) -> f64 {
         self.sampler.sample(
             f64::from(pos.z) * SHIFT_COORDINATE_FACTOR,
             f64::from(pos.x) * SHIFT_COORDINATE_FACTOR,
@@ -135,7 +135,7 @@ impl StaticIndependentChunkNoiseFunctionComponentImpl for ShiftB {
         ) * SHIFT_VALUE_FACTOR
     }
 
-    fn sample_volume(&self, buffer: &mut [f32], volume: &DensityVolume) {
+    fn sample_volume(&self, buffer: &mut [f64], volume: &DensityVolume) {
         let transposed = DensityVolume::new(
             volume.size_z,
             volume.size_x,
@@ -179,26 +179,26 @@ impl ShiftedNoise {
     pub fn sample_with_shifts(
         &self,
         pos: &Vector3<i32>,
-        x_shift: f32,
-        y_shift: f32,
-        z_shift: f32,
-    ) -> f32 {
+        x_shift: f64,
+        y_shift: f64,
+        z_shift: f64,
+    ) -> f64 {
         self.sampler.sample(
-            f64::from(pos.x) * self.data.xz_scale + f64::from(x_shift),
-            f64::from(pos.y) * self.data.y_scale + f64::from(y_shift),
-            f64::from(pos.z) * self.data.xz_scale + f64::from(z_shift),
+            f64::from(pos.x) * self.data.xz_scale + x_shift,
+            f64::from(pos.y) * self.data.y_scale + y_shift,
+            f64::from(pos.z) * self.data.xz_scale + z_shift,
         )
     }
 }
 
 impl NoiseFunctionComponentRange for ShiftedNoise {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         -self.max()
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.sampler.max_value()
     }
 }
@@ -208,7 +208,7 @@ impl StaticChunkNoiseFunctionComponentImpl for ShiftedNoise {
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
+    ) -> f64 {
         let x_shift = ChunkNoiseFunctionComponent::sample_from_stack(
             &mut component_stack[..=self.input_x_index],
             pos,
@@ -228,7 +228,7 @@ impl StaticChunkNoiseFunctionComponentImpl for ShiftedNoise {
     fn sample_volume(
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         ChunkNoiseFunctionComponent::sample_volume_from_stack(
@@ -254,10 +254,10 @@ impl StaticChunkNoiseFunctionComponentImpl for ShiftedNoise {
             for x in 0..volume.size_x {
                 let base_noise_x = f64::from(volume.block_x(x)) * self.data.xz_scale;
                 for y in 0..volume.size_y {
-                    let noise_x = base_noise_x + f64::from(buffer[index]);
-                    let noise_y = f64::from(volume.block_y(y)) * self.data.y_scale
-                        + f64::from(y_shifts[index]);
-                    let noise_z = base_noise_z + f64::from(z_shifts[index]);
+                    let noise_x = base_noise_x + buffer[index];
+                    let noise_y =
+                        f64::from(volume.block_y(y)) * self.data.y_scale + y_shifts[index];
+                    let noise_z = base_noise_z + z_shifts[index];
                     buffer[index] = self.sampler.sample(noise_x, noise_y, noise_z);
                     index += 1;
                 }
@@ -298,7 +298,7 @@ fn create_fbm(
         layers.push(Layer {
             noise: SmearedPerlinNoise::new(random, smear_scale_y * factor),
             frequency: factor,
-            amplitude: value_factor as f32,
+            amplitude: value_factor,
         });
         factor /= 2.0;
         value_factor *= 2.0;
@@ -306,14 +306,14 @@ fn create_fbm(
     NoiseStack::new(layers)
 }
 
-fn fbm_range_max(first_octave: i32, smear_scale_y: f64, value_factor: f64) -> f32 {
+fn fbm_range_max(first_octave: i32, smear_scale_y: f64, value_factor: f64) -> f64 {
     let octaves = -first_octave + 1;
     let mut factor = 1.0;
     let mut value_factor = value_factor / (2f64.powi(octaves) - 1.0);
-    let mut range = 0.0f32;
+    let mut range = 0.0f64;
     for _ in (0..octaves).rev() {
-        let layer_range = ((smear_scale_y * factor).abs() + SMEARED_RANGE_BASE) as f32;
-        range += layer_range * value_factor as f32;
+        let layer_range = (smear_scale_y * factor).abs() + SMEARED_RANGE_BASE;
+        range += layer_range * value_factor;
         factor /= 2.0;
         value_factor *= 2.0;
     }
@@ -328,7 +328,7 @@ pub struct InterpolatedNoiseSampler {
     y_multiplier: f64,
     main_xz_multiplier: f64,
     main_y_multiplier: f64,
-    max_value: f32,
+    max_value: f64,
 }
 
 impl InterpolatedNoiseSampler {
@@ -372,25 +372,25 @@ impl InterpolatedNoiseSampler {
     }
 
     #[inline]
-    fn choice(main: f32) -> f32 {
+    fn choice(main: f64) -> f64 {
         (main + 0.5).clamp(0.0, 1.0)
     }
 }
 
 impl NoiseFunctionComponentRange for InterpolatedNoiseSampler {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         -self.max()
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.max_value
     }
 }
 
 impl StaticIndependentChunkNoiseFunctionComponentImpl for InterpolatedNoiseSampler {
-    fn sample(&self, pos: &Vector3<i32>) -> f32 {
+    fn sample(&self, pos: &Vector3<i32>) -> f64 {
         let x = f64::from(pos.x);
         let y = f64::from(pos.y);
         let z = f64::from(pos.z);
@@ -428,7 +428,7 @@ impl StaticIndependentChunkNoiseFunctionComponentImpl for InterpolatedNoiseSampl
         )
     }
 
-    fn sample_volume(&self, buffer: &mut [f32], volume: &DensityVolume) {
+    fn sample_volume(&self, buffer: &mut [f64], volume: &DensityVolume) {
         buffer.fill(0.0);
         self.main_noise.add_to_volume(
             buffer,

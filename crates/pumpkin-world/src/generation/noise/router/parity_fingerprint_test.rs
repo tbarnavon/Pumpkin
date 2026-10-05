@@ -6,7 +6,7 @@ use crate::generation::noise::router::chunk_density_function::ChunkNoiseFunction
 use crate::generation::noise::router::chunk_noise_router::ChunkNoiseRouter;
 use crate::generation::noise::router::proto_noise_router::ProtoNoiseRouters;
 
-fn fnv1a_hash_f32(values: impl Iterator<Item = f32>) -> u64 {
+fn fnv1a_hash_f64(values: impl Iterator<Item = f64>) -> u64 {
     const FNV_OFFSET: u64 = 0xcbf2_9ce4_8422_2325;
     const FNV_PRIME: u64 = 0x0000_0100_0000_01B3;
     let mut hash = FNV_OFFSET;
@@ -46,9 +46,9 @@ fn overworld_density_fingerprint_is_stable() {
         }
     }
 
-    let hash = fnv1a_hash_f32(results.into_iter());
+    let hash = fnv1a_hash_f64(results.into_iter());
     assert_eq!(
-        hash, 14_114_769_313_327_625_066,
+        hash, 3_040_359_114_231_040_603,
         "Overworld density fingerprint changed"
     );
 }

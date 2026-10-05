@@ -8,7 +8,7 @@
 // use serde::Deserialize;
 
 // // I do a lot of leaking here, but its only for testing
-// pub struct HashableF32(pub f32);
+// pub struct HashableF32(pub f64);
 
 // // Normally this is bad, but we just care about checking if components are the same
 // impl Hash for HashableF32 {
@@ -22,7 +22,7 @@
 //     where
 //         D: serde::Deserializer<'de>,
 //     {
-//         f32::deserialize(deserializer).map(Self)
+//         f64::deserialize(deserializer).map(Self)
 //     }
 // }
 

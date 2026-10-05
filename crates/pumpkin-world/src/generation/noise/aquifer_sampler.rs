@@ -108,7 +108,7 @@ impl<'a> CarverAquiferSampler<'a> {
         }
     }
 
-    pub fn compute(&mut self, pos: &Vector3<i32>, density: f32) -> CarverAquiferResult {
+    pub fn compute(&mut self, pos: &Vector3<i32>, density: f64) -> CarverAquiferResult {
         let (state, should_schedule_fluid_update) =
             self.aquifer
                 .apply_internal(&mut self.router, pos, &mut self.height_estimator, density);
@@ -329,17 +329,17 @@ impl WorldAquiferSampler {
     }
 
     #[inline]
-    fn max_distance(i: i32, a: i32) -> f32 {
-        1.0 - ((a - i).abs() as f32) / 25.0
+    fn max_distance(i: i32, a: i32) -> f64 {
+        1.0 - ((a - i).abs() as f64) / 25.0
     }
 
     fn calculate_density(
-        barrier_sample: &mut Option<f32>,
+        barrier_sample: &mut Option<f64>,
         pos: &Vector3<i32>,
         router: &mut ChunkNoiseRouter,
         level_1: &FluidLevel,
         level_2: &FluidLevel,
-    ) -> f32 {
+    ) -> f64 {
         let y = pos.y;
         let block_state1 = level_1.get_block(y);
         let block_state2 = level_2.get_block(y);
@@ -351,9 +351,9 @@ impl WorldAquiferSampler {
             if level_diff == 0 {
                 0.0
             } else {
-                let avg_level = 0.5 * (level_1.max_y + level_2.max_y) as f32;
-                let scaled_level = y as f32 + 0.5 - avg_level;
-                let halved_diff = level_diff as f32 / 2.0;
+                let avg_level = 0.5 * (level_1.max_y + level_2.max_y) as f64;
+                let scaled_level = y as f64 + 0.5 - avg_level;
+                let halved_diff = level_diff as f64 / 2.0;
 
                 let o = halved_diff - scaled_level.abs();
                 let q = if scaled_level > 0.0 {
@@ -488,7 +488,7 @@ impl WorldAquiferSampler {
         } else {
             let top_y = surface_height_estimate + 8 - block_y;
             let f = if map_y {
-                clamped_map(top_y as f32, 0.0, 64.0, 1.0, 0.0)
+                clamped_map(top_y as f64, 0.0, 64.0, 1.0, 0.0)
             } else {
                 0.0
             };
@@ -564,7 +564,7 @@ impl WorldAquiferSampler {
         router: &mut ChunkNoiseRouter,
         pos: &Vector3<i32>,
         height_estimator: &mut SurfaceHeightEstimateSampler,
-        density: f32,
+        density: f64,
     ) -> (Option<&'static BlockState>, bool) {
         if density > 0.0 {
             return (None, false);
@@ -738,7 +738,7 @@ impl AquiferSamplerImpl for WorldAquiferSampler {
         &mut self,
         router: &mut ChunkNoiseRouter,
         pos: &Vector3<i32>,
-        density: f32,
+        density: f64,
         height_estimator: &mut SurfaceHeightEstimateSampler,
     ) -> (Option<&'static BlockState>, bool) {
         self.apply_internal(router, pos, height_estimator, density)
@@ -761,7 +761,7 @@ impl AquiferSamplerImpl for SeaLevelAquiferSampler {
         &mut self,
         _router: &mut ChunkNoiseRouter,
         pos: &Vector3<i32>,
-        density: f32,
+        density: f64,
         _height_estimator: &mut SurfaceHeightEstimateSampler,
     ) -> (Option<&'static BlockState>, bool) {
         if density > 0.0 {
@@ -785,7 +785,7 @@ pub trait AquiferSamplerImpl {
         &mut self,
         router: &mut ChunkNoiseRouter,
         pos: &Vector3<i32>,
-        density: f32,
+        density: f64,
         height_estimator: &mut SurfaceHeightEstimateSampler,
     ) -> (Option<&'static BlockState>, bool);
 }
@@ -796,7 +796,7 @@ impl AquiferSamplerImpl for AquiferSampler {
         &mut self,
         router: &mut ChunkNoiseRouter,
         pos: &Vector3<i32>,
-        density: f32,
+        density: f64,
         height_estimator: &mut SurfaceHeightEstimateSampler,
     ) -> (Option<&'static BlockState>, bool) {
         match self {
@@ -1810,7 +1810,7 @@ mod random_positions_and_hypot {
                 &level2,
             );
             assert!(
-                (calculated - result as f32).abs() < 1e-4,
+                (calculated - result).abs() < 1e-4,
                 "Failed at pos={pos:?}: got {calculated}, expected {result}"
             );
         }
@@ -1820,7 +1820,7 @@ mod random_positions_and_hypot {
     #[expect(clippy::too_many_lines)]
     fn apply() {
         let (mut aquifer, mut router, mut height_estimator) = create_aquifer(&PROTO_ROUTER);
-        let values = [
+        let values = vec![
             ((112, -100, 64, 0.037482421875), None),
             ((112, -100, 66, 0.037482421875), None),
             ((112, -100, 68, 0.037482421875), None),

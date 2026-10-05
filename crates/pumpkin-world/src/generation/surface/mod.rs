@@ -41,7 +41,7 @@ pub struct MaterialRuleContext<'a> {
     pub block_pos_z: i32,
     pub biome: &'a Biome,
     pub run_depth: i32,
-    pub secondary_depth: f32,
+    pub secondary_depth: f64,
     packed_chunk_pos: i64,
     estimated_surface_heights: [i32; 4],
     last_unique_horizontal_pos_value: i64,
@@ -123,7 +123,7 @@ impl<'a> MaterialRuleContext<'a> {
                     .next_f64()
             },
         );
-        (noise * 2.75 + 3.0 + (random * 0.25) as f32) as i32
+        (noise * 2.75 + 3.0 + random * 0.25) as i32
     }
 
     pub fn init_horizontal(&mut self, x: i32, z: i32) {
@@ -146,7 +146,7 @@ impl<'a> MaterialRuleContext<'a> {
         self.stone_depth_above = stone_depth_above;
     }
 
-    pub fn get_secondary_depth(&mut self) -> f32 {
+    pub fn get_secondary_depth(&mut self) -> f64 {
         if self.last_unique_horizontal_pos_value != self.unique_horizontal_pos_value {
             self.last_unique_horizontal_pos_value = self.unique_horizontal_pos_value;
             self.secondary_depth =
@@ -339,11 +339,11 @@ pub fn test_noise_threshold(
             .push((condition.noise.id, sampler));
         context.noise_threshold_samplers.len() - 1
     });
-    let value = f64::from(context.noise_threshold_samplers[index].1.sample(
+    let value = context.noise_threshold_samplers[index].1.sample(
         context.block_pos_x as f64,
         0.0,
         context.block_pos_z as f64,
-    ));
+    );
     value >= condition.min_threshold && value <= condition.max_threshold
 }
 
@@ -368,7 +368,7 @@ pub fn test_stone_depth(
             -1.0,
             1.0,
             0.0,
-            condition.secondary_depth_range as f32,
+            f64::from(condition.secondary_depth_range),
         ) as i32
     };
     stone_depth <= 1 + condition.offset + depth + depth_range
@@ -418,19 +418,22 @@ pub fn test_vertical_gradient(
         1.0,
         0.0,
     );
-    let value = if let Some(legacy) = context.legacy_random_deriver {
-        legacy
-            .split_string(condition.random_name)
-            .next_splitter()
-            .split_pos(context.block_pos_x, block_y, context.block_pos_z)
-            .next_f32()
-    } else {
-        context
-            .random_deriver
-            .from_lo_and_hi(condition.random_lo, condition.random_hi)
-            .next_splitter()
-            .split_pos(context.block_pos_x, block_y, context.block_pos_z)
-            .next_f32()
-    };
+    let value = context.legacy_random_deriver.map_or_else(
+        || {
+            context
+                .random_deriver
+                .from_lo_and_hi(condition.random_lo, condition.random_hi)
+                .next_splitter()
+                .split_pos(context.block_pos_x, block_y, context.block_pos_z)
+                .next_f32()
+        },
+        |legacy| {
+            legacy
+                .split_string(condition.random_name)
+                .next_splitter()
+                .split_pos(context.block_pos_x, block_y, context.block_pos_z)
+                .next_f32()
+        },
+    );
     f64::from(value) < mapped
 }

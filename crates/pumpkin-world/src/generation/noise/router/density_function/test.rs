@@ -108,7 +108,7 @@ macro_rules! sample_surface_router_function {
 
 // TODO: Test all dimensions/noise routers
 
-fn assert_close(actual: f32, expected: f32) {
+fn assert_close(actual: f64, expected: f64) {
     assert!(
         (actual - expected).abs() <= expected.abs().max(1.0) * 1e-5,
         "{actual} is not close to {expected}"
@@ -127,176 +127,176 @@ fn normal_surface_noisified() {
     // TODO: Move these values to a file and create an extractor for them
     assert_close(
         sample_noise_router_function!(barrier_noise, pos),
-        -0.54002273f32,
+        -0.54002273f64,
     );
     assert_close(
         sample_noise_router_function!(fluid_level_floodedness_noise, pos),
-        -0.4709572f32,
+        -0.4709572f64,
     );
     assert_close(
         sample_noise_router_function!(fluid_level_spread_noise, pos),
-        -0.05726914f32,
+        -0.05726914f64,
     );
     assert_close(
         sample_noise_router_function!(lava_noise, pos),
-        -0.16423604f32,
+        -0.16423604f64,
     );
     assert_close(
         sample_multi_noise_router_function!(temperature, pos),
-        0.11823799f32,
+        0.11823799f64,
     );
     assert_close(
         sample_multi_noise_router_function!(vegetation, pos),
-        -0.0013601681f32,
+        -0.0013601681f64,
     );
     assert_close(
         sample_multi_noise_router_function!(continents, pos),
-        -0.008171953f32,
+        -0.008171953f64,
     );
     assert_close(
         sample_multi_noise_router_function!(erosion, pos),
-        -0.10391074f32,
+        -0.10391074f64,
     );
     assert_close(
         sample_multi_noise_router_function!(depth, pos),
-        0.4118821f32,
+        0.4118821f64,
     );
     assert_close(
         sample_multi_noise_router_function!(ridges, pos),
-        0.011110324f32,
+        0.011110324f64,
     );
-    assert_close(sample_surface_router_function!(pos), 40.0f32);
+    assert_close(sample_surface_router_function!(pos), 40.0f64);
     assert_close(
         sample_noise_router_function!(final_density, pos),
-        0.15719144f32,
+        0.15719144f64,
     );
 
     let values = [
-        ((-100, -200, -100), 0.0f32),
-        ((-100, -200, -50), 0.0f32),
-        ((-100, -200, 0), 0.0f32),
-        ((-100, -200, 50), 0.0f32),
-        ((-100, -200, 100), 0.0f32),
-        ((-100, -100, -100), 0.0f32),
-        ((-100, -100, -50), 0.0f32),
-        ((-100, -100, 0), 0.0f32),
-        ((-100, -100, 50), 0.0f32),
-        ((-100, -100, 100), 0.0f32),
-        ((-100, 0, -100), 0.3462291472930333f32),
-        ((-100, 0, -50), 0.2340445906392791f32),
-        ((-100, 0, 0), -0.028825983399710407f32),
-        ((-100, 0, 50), -0.16684760357850822f32),
-        ((-100, 0, 100), -0.1843465939249143f32),
-        ((-100, 100, -100), 0.0f32),
-        ((-100, 100, -50), 0.0f32),
-        ((-100, 100, 0), 0.0f32),
-        ((-100, 100, 50), 0.0f32),
-        ((-100, 100, 100), 0.0f32),
-        ((-100, 200, -100), 0.0f32),
-        ((-100, 200, -50), 0.0f32),
-        ((-100, 200, 0), 0.0f32),
-        ((-100, 200, 50), 0.0f32),
-        ((-100, 200, 100), 0.0f32),
-        ((-50, -200, -100), 0.0f32),
-        ((-50, -200, -50), 0.0f32),
-        ((-50, -200, 0), 0.0f32),
-        ((-50, -200, 50), 0.0f32),
-        ((-50, -200, 100), 0.0f32),
-        ((-50, -100, -100), 0.0f32),
-        ((-50, -100, -50), 0.0f32),
-        ((-50, -100, 0), 0.0f32),
-        ((-50, -100, 50), 0.0f32),
-        ((-50, -100, 100), 0.0f32),
-        ((-50, 0, -100), 0.05757810206373369f32),
-        ((-50, 0, -50), 0.0014520730707135465f32),
-        ((-50, 0, 0), -0.024149735708339466f32),
-        ((-50, 0, 50), 0.1287619466526521f32),
-        ((-50, 0, 100), 0.25507593901831094f32),
-        ((-50, 100, -100), 0.0f32),
-        ((-50, 100, -50), 0.0f32),
-        ((-50, 100, 0), 0.0f32),
-        ((-50, 100, 50), 0.0f32),
-        ((-50, 100, 100), 0.0f32),
-        ((-50, 200, -100), 0.0f32),
-        ((-50, 200, -50), 0.0f32),
-        ((-50, 200, 0), 0.0f32),
-        ((-50, 200, 50), 0.0f32),
-        ((-50, 200, 100), 0.0f32),
-        ((0, -200, -100), 0.0f32),
-        ((0, -200, -50), 0.0f32),
-        ((0, -200, 0), 0.0f32),
-        ((0, -200, 50), 0.0f32),
-        ((0, -200, 100), 0.0f32),
-        ((0, -100, -100), 0.0f32),
-        ((0, -100, -50), 0.0f32),
-        ((0, -100, 0), 0.0f32),
-        ((0, -100, 50), 0.0f32),
-        ((0, -100, 100), 0.0f32),
-        ((0, 0, -100), -0.24030906682975775f32),
-        ((0, 0, -50), -0.24705110006127165f32),
-        ((0, 0, 0), -0.06643453056181631f32),
-        ((0, 0, 50), 0.25318680526509063f32),
-        ((0, 0, 100), 0.48257536249146743f32),
-        ((0, 100, -100), 0.0f32),
-        ((0, 100, -50), 0.0f32),
-        ((0, 100, 0), 0.0f32),
-        ((0, 100, 50), 0.0f32),
-        ((0, 100, 100), 0.0f32),
-        ((0, 200, -100), 0.0f32),
-        ((0, 200, -50), 0.0f32),
-        ((0, 200, 0), 0.0f32),
-        ((0, 200, 50), 0.0f32),
-        ((0, 200, 100), 0.0f32),
-        ((50, -200, -100), 0.0f32),
-        ((50, -200, -50), 0.0f32),
-        ((50, -200, 0), 0.0f32),
-        ((50, -200, 50), 0.0f32),
-        ((50, -200, 100), 0.0f32),
-        ((50, -100, -100), 0.0f32),
-        ((50, -100, -50), 0.0f32),
-        ((50, -100, 0), 0.0f32),
-        ((50, -100, 50), 0.0f32),
-        ((50, -100, 100), 0.0f32),
-        ((50, 0, -100), 0.035583298926324954f32),
-        ((50, 0, -50), -0.07225351839505538f32),
-        ((50, 0, 0), -0.03474107481998612f32),
-        ((50, 0, 50), 0.12616421777330467f32),
-        ((50, 0, 100), 0.35414843965758613f32),
-        ((50, 100, -100), 0.0f32),
-        ((50, 100, -50), 0.0f32),
-        ((50, 100, 0), 0.0f32),
-        ((50, 100, 50), 0.0f32),
-        ((50, 100, 100), 0.0f32),
-        ((50, 200, -100), 0.0f32),
-        ((50, 200, -50), 0.0f32),
-        ((50, 200, 0), 0.0f32),
-        ((50, 200, 50), 0.0f32),
-        ((50, 200, 100), 0.0f32),
-        ((100, -200, -100), 0.0f32),
-        ((100, -200, -50), 0.0f32),
-        ((100, -200, 0), 0.0f32),
-        ((100, -200, 50), 0.0f32),
-        ((100, -200, 100), 0.0f32),
-        ((100, -100, -100), 0.0f32),
-        ((100, -100, -50), 0.0f32),
-        ((100, -100, 0), 0.0f32),
-        ((100, -100, 50), 0.0f32),
-        ((100, -100, 100), 0.0f32),
-        ((100, 0, -100), 0.4151489417623382f32),
-        ((100, 0, -50), 0.2092632456905039f32),
-        ((100, 0, 0), -0.009920164828456044f32),
-        ((100, 0, 50), -0.14997295538707048f32),
-        ((100, 0, 100), -0.05777616780034325f32),
-        ((100, 100, -100), 0.0f32),
-        ((100, 100, -50), 0.0f32),
-        ((100, 100, 0), 0.0f32),
-        ((100, 100, 50), 0.0f32),
-        ((100, 100, 100), 0.0f32),
-        ((100, 200, -100), 0.0f32),
-        ((100, 200, -50), 0.0f32),
-        ((100, 200, 0), 0.0f32),
-        ((100, 200, 50), 0.0f32),
-        ((100, 200, 100), 0.0f32),
+        ((-100, -200, -100), 0.0f64),
+        ((-100, -200, -50), 0.0f64),
+        ((-100, -200, 0), 0.0f64),
+        ((-100, -200, 50), 0.0f64),
+        ((-100, -200, 100), 0.0f64),
+        ((-100, -100, -100), 0.0f64),
+        ((-100, -100, -50), 0.0f64),
+        ((-100, -100, 0), 0.0f64),
+        ((-100, -100, 50), 0.0f64),
+        ((-100, -100, 100), 0.0f64),
+        ((-100, 0, -100), 0.3462291472930333f64),
+        ((-100, 0, -50), 0.2340445906392791f64),
+        ((-100, 0, 0), -0.028825983399710407f64),
+        ((-100, 0, 50), -0.16684760357850822f64),
+        ((-100, 0, 100), -0.1843465939249143f64),
+        ((-100, 100, -100), 0.0f64),
+        ((-100, 100, -50), 0.0f64),
+        ((-100, 100, 0), 0.0f64),
+        ((-100, 100, 50), 0.0f64),
+        ((-100, 100, 100), 0.0f64),
+        ((-100, 200, -100), 0.0f64),
+        ((-100, 200, -50), 0.0f64),
+        ((-100, 200, 0), 0.0f64),
+        ((-100, 200, 50), 0.0f64),
+        ((-100, 200, 100), 0.0f64),
+        ((-50, -200, -100), 0.0f64),
+        ((-50, -200, -50), 0.0f64),
+        ((-50, -200, 0), 0.0f64),
+        ((-50, -200, 50), 0.0f64),
+        ((-50, -200, 100), 0.0f64),
+        ((-50, -100, -100), 0.0f64),
+        ((-50, -100, -50), 0.0f64),
+        ((-50, -100, 0), 0.0f64),
+        ((-50, -100, 50), 0.0f64),
+        ((-50, -100, 100), 0.0f64),
+        ((-50, 0, -100), 0.05757810206373369f64),
+        ((-50, 0, -50), 0.0014520730707135465f64),
+        ((-50, 0, 0), -0.024149735708339466f64),
+        ((-50, 0, 50), 0.1287619466526521f64),
+        ((-50, 0, 100), 0.25507593901831094f64),
+        ((-50, 100, -100), 0.0f64),
+        ((-50, 100, -50), 0.0f64),
+        ((-50, 100, 0), 0.0f64),
+        ((-50, 100, 50), 0.0f64),
+        ((-50, 100, 100), 0.0f64),
+        ((-50, 200, -100), 0.0f64),
+        ((-50, 200, -50), 0.0f64),
+        ((-50, 200, 0), 0.0f64),
+        ((-50, 200, 50), 0.0f64),
+        ((-50, 200, 100), 0.0f64),
+        ((0, -200, -100), 0.0f64),
+        ((0, -200, -50), 0.0f64),
+        ((0, -200, 0), 0.0f64),
+        ((0, -200, 50), 0.0f64),
+        ((0, -200, 100), 0.0f64),
+        ((0, -100, -100), 0.0f64),
+        ((0, -100, -50), 0.0f64),
+        ((0, -100, 0), 0.0f64),
+        ((0, -100, 50), 0.0f64),
+        ((0, -100, 100), 0.0f64),
+        ((0, 0, -100), -0.24030906682975775f64),
+        ((0, 0, -50), -0.24705110006127165f64),
+        ((0, 0, 0), -0.06643453056181631f64),
+        ((0, 0, 50), 0.25318680526509063f64),
+        ((0, 0, 100), 0.48257536249146743f64),
+        ((0, 100, -100), 0.0f64),
+        ((0, 100, -50), 0.0f64),
+        ((0, 100, 0), 0.0f64),
+        ((0, 100, 50), 0.0f64),
+        ((0, 100, 100), 0.0f64),
+        ((0, 200, -100), 0.0f64),
+        ((0, 200, -50), 0.0f64),
+        ((0, 200, 0), 0.0f64),
+        ((0, 200, 50), 0.0f64),
+        ((0, 200, 100), 0.0f64),
+        ((50, -200, -100), 0.0f64),
+        ((50, -200, -50), 0.0f64),
+        ((50, -200, 0), 0.0f64),
+        ((50, -200, 50), 0.0f64),
+        ((50, -200, 100), 0.0f64),
+        ((50, -100, -100), 0.0f64),
+        ((50, -100, -50), 0.0f64),
+        ((50, -100, 0), 0.0f64),
+        ((50, -100, 50), 0.0f64),
+        ((50, -100, 100), 0.0f64),
+        ((50, 0, -100), 0.035583298926324954f64),
+        ((50, 0, -50), -0.07225351839505538f64),
+        ((50, 0, 0), -0.03474107481998612f64),
+        ((50, 0, 50), 0.12616421777330467f64),
+        ((50, 0, 100), 0.35414843965758613f64),
+        ((50, 100, -100), 0.0f64),
+        ((50, 100, -50), 0.0f64),
+        ((50, 100, 0), 0.0f64),
+        ((50, 100, 50), 0.0f64),
+        ((50, 100, 100), 0.0f64),
+        ((50, 200, -100), 0.0f64),
+        ((50, 200, -50), 0.0f64),
+        ((50, 200, 0), 0.0f64),
+        ((50, 200, 50), 0.0f64),
+        ((50, 200, 100), 0.0f64),
+        ((100, -200, -100), 0.0f64),
+        ((100, -200, -50), 0.0f64),
+        ((100, -200, 0), 0.0f64),
+        ((100, -200, 50), 0.0f64),
+        ((100, -200, 100), 0.0f64),
+        ((100, -100, -100), 0.0f64),
+        ((100, -100, -50), 0.0f64),
+        ((100, -100, 0), 0.0f64),
+        ((100, -100, 50), 0.0f64),
+        ((100, -100, 100), 0.0f64),
+        ((100, 0, -100), 0.4151489417623382f64),
+        ((100, 0, -50), 0.2092632456905039f64),
+        ((100, 0, 0), -0.009920164828456044f64),
+        ((100, 0, 50), -0.14997295538707048f64),
+        ((100, 0, 100), -0.05777616780034325f64),
+        ((100, 100, -100), 0.0f64),
+        ((100, 100, -50), 0.0f64),
+        ((100, 100, 0), 0.0f64),
+        ((100, 100, 50), 0.0f64),
+        ((100, 100, 100), 0.0f64),
+        ((100, 200, -100), 0.0f64),
+        ((100, 200, -50), 0.0f64),
+        ((100, 200, 0), 0.0f64),
+        ((100, 200, 50), 0.0f64),
+        ((100, 200, 100), 0.0f64),
     ];
     for ((x, y, z), value) in &values {
         let pos = Vector3 {
@@ -313,7 +313,7 @@ fn normal_surface_noisified() {
 
 // #[test]
 // fn config_final_density() {
-//     let expected_data: Vec<(i32, i32, i32, f32)> =
+//     let expected_data: Vec<(i32, i32, i32, f64)> =
 //         read_data_from_file!("../../../../../assets/final_density_dump_7_4.json");
 
 //     let router = &OVERWORLD_BASE_NOISE_ROUTER.noise;
@@ -328,7 +328,7 @@ fn normal_surface_noisified() {
 //         assert_eq_delta!(
 //             function.sample(&pos),
 //             sample,
-//             f32::EPSILON
+//             f64::EPSILON
 //         );
 //     }
 // }
@@ -391,14 +391,14 @@ fn normal_surface_noisified() {
 //     let mut stack = build_function_stack!(proto_stack);
 //     let mut function = build_function!(stack);
 
-//     let expected_data: Vec<(i32, i32, i32, f32)> =
+//     let expected_data: Vec<(i32, i32, i32, f64)> =
 //         read_data_from_file!("../../../../../assets/converted_sloped_cheese_7_4.json");
 //     for (x, y, z, sample) in expected_data {
 //         let pos = Vector3 { x, y, z };
 //         assert_eq_delta!(
 //             function.sample(&pos),
 //             sample,
-//             f32::EPSILON
+//             f64::EPSILON
 //         );
 //     }
 // }
@@ -410,14 +410,14 @@ fn normal_surface_noisified() {
 //     let mut stack = build_function_stack!(proto_stack);
 //     let mut function = build_function!(stack);
 
-//     let expected_data: Vec<(i32, i32, i32, f32)> =
+//     let expected_data: Vec<(i32, i32, i32, f64)> =
 //         read_data_from_file!("../../../../../assets/converted_factor_7_4.json");
 //     for (x, y, z, sample) in expected_data {
 //         let pos = Vector3 { x, y, z };
 //         assert_eq_delta!(
 //             function.sample(&pos),
 //             sample,
-//             f32::EPSILON
+//             f64::EPSILON
 //         );
 //     }
 // }
@@ -429,14 +429,14 @@ fn normal_surface_noisified() {
 //     let mut function_stack = build_function_stack!(proto_stack);
 //     let mut function = build_function!(function_stack);
 
-//     let expected_data: Vec<(i32, i32, i32, f32)> =
+//     let expected_data: Vec<(i32, i32, i32, f64)> =
 //         read_data_from_file!("../../../../../assets/converted_depth_7_4.json");
 //     for (x, y, z, sample) in expected_data {
 //         let pos = Vector3 { x, y, z };
 //         assert_eq_delta!(
 //             function.sample(&pos),
 //             sample,
-//             f32::EPSILON
+//             f64::EPSILON
 //         );
 //     }
 // }
@@ -448,14 +448,14 @@ fn normal_surface_noisified() {
 //     let mut function_stack = build_function_stack!(proto_stack);
 //     let mut function = build_function!(function_stack);
 
-//     let expected_data: Vec<(i32, i32, i32, f32)> =
+//     let expected_data: Vec<(i32, i32, i32, f64)> =
 //         read_data_from_file!("../../../../../assets/converted_offset_7_4.json");
 //     for (x, y, z, sample) in expected_data {
 //         let pos = Vector3 { x, y, z };
 //         assert_eq_delta!(
 //             function.sample(&pos),
 //             sample,
-//             f32::EPSILON
+//             f64::EPSILON
 //         );
 //     }
 // }
@@ -467,14 +467,14 @@ fn normal_surface_noisified() {
 //     let mut function_stack = build_function_stack!(proto_stack);
 //     let mut function = build_function!(function_stack);
 
-//     let expected_data: Vec<(i32, i32, i32, f32)> =
+//     let expected_data: Vec<(i32, i32, i32, f64)> =
 //         read_data_from_file!("../../../../../assets/converted_cave_entrances_overworld_7_4.json");
 //     for (x, y, z, sample) in expected_data {
 //         let pos = Vector3 { x, y, z };
 //         assert_eq_delta!(
 //             function.sample(&pos),
 //             sample,
-//             f32::EPSILON
+//             f64::EPSILON
 //         );
 //     }
 // }
@@ -486,14 +486,14 @@ fn normal_surface_noisified() {
 //     let mut function_stack = build_function_stack!(proto_stack);
 //     let mut function = build_function!(function_stack);
 
-//     let expected_data: Vec<(i32, i32, i32, f32)> =
+//     let expected_data: Vec<(i32, i32, i32, f64)> =
 //         read_data_from_file!("../../../../../assets/converted_3d_overworld_7_4.json");
 //     for (x, y, z, sample) in expected_data {
 //         let pos = Vector3 { x, y, z };
 //         assert_eq_delta!(
 //             function.sample(&pos),
 //             sample,
-//             f32::EPSILON
+//             f64::EPSILON
 //         );
 //     }
 // }
@@ -507,7 +507,7 @@ fn normal_surface_noisified() {
 //     let mut function_stack = build_function_stack!(proto_stack);
 //     let mut function = build_function!(function_stack);
 
-//     let expected_data: Vec<(i32, i32, i32, f32)> = read_data_from_file!(
+//     let expected_data: Vec<(i32, i32, i32, f64)> = read_data_from_file!(
 //         "../../../../../assets/converted_cave_spaghetti_rough_overworld_7_4.json"
 //     );
 //     for (x, y, z, sample) in expected_data {
@@ -515,7 +515,7 @@ fn normal_surface_noisified() {
 //         assert_eq_delta!(
 //             function.sample(&pos),
 //             sample,
-//             f32::EPSILON
+//             f64::EPSILON
 //         );
 //     }
 // }
@@ -527,14 +527,14 @@ fn normal_surface_noisified() {
 //     let mut function_stack = build_function_stack!(proto_stack);
 //     let mut function = build_function!(function_stack);
 
-//     let expected_data: Vec<(i32, i32, i32, f32)> =
+//     let expected_data: Vec<(i32, i32, i32, f64)> =
 //         read_data_from_file!("../../../../../assets/converted_cave_noodle_7_4.json");
 //     for (x, y, z, sample) in expected_data {
 //         let pos = Vector3 { x, y, z };
 //         assert_eq_delta!(
 //             function.sample(&pos),
 //             sample,
-//             f32::EPSILON
+//             f64::EPSILON
 //         );
 //     }
 // }
@@ -546,14 +546,14 @@ fn normal_surface_noisified() {
 //     let mut function_stack = build_function_stack!(proto_stack);
 //     let mut function = build_function!(function_stack);
 
-//     let expected_data: Vec<(i32, i32, i32, f32)> =
+//     let expected_data: Vec<(i32, i32, i32, f64)> =
 //         read_data_from_file!("../../../../../assets/converted_cave_pillar_7_4.json");
 //     for (x, y, z, sample) in expected_data {
 //         let pos = Vector3 { x, y, z };
 //         assert_eq_delta!(
 //             function.sample(&pos),
 //             sample,
-//             f32::EPSILON
+//             f64::EPSILON
 //         );
 //     }
 // }
@@ -567,14 +567,14 @@ fn normal_surface_noisified() {
 //     let mut function_stack = build_function_stack!(proto_stack);
 //     let mut function = build_function!(function_stack);
 
-//     let expected_data: Vec<(i32, i32, i32, f32)> =
+//     let expected_data: Vec<(i32, i32, i32, f64)> =
 //         read_data_from_file!("../../../../../assets/converted_cave_spaghetti_2d_thicc_7_4.json");
 //     for (x, y, z, sample) in expected_data {
 //         let pos = Vector3 { x, y, z };
 //         assert_eq_delta!(
 //             function.sample(&pos),
 //             sample,
-//             f32::EPSILON
+//             f64::EPSILON
 //         );
 //     }
 // }

@@ -1,4 +1,4 @@
-use pumpkin_util::math::vector3::Vector3;
+use pumpkin_util::math::{lerp, vector3::Vector3};
 
 use crate::generation::noise::router::{
     chunk_noise_router::{ChunkNoiseFunctionComponent, StaticChunkNoiseFunctionComponentImpl},
@@ -78,8 +78,8 @@ impl Spline {
         let mut max = f32::NEG_INFINITY;
 
         let input_function = &component_stack[self.input_index];
-        let input_max = input_function.max();
-        let input_min = input_function.min();
+        let input_max = input_function.max() as f32;
+        let input_min = input_function.min() as f32;
 
         let Some(first_point) = self.points.first() else {
             return (0.0, 0.0);
@@ -152,6 +152,7 @@ impl Spline {
     ) -> f32 {
         self.sample_with(&mut |index| {
             ChunkNoiseFunctionComponent::sample_from_stack(&mut component_stack[..=index], pos)
+                as f32
         })
     }
 
@@ -163,14 +164,12 @@ impl Spline {
 
         if index_greater_than_x == 0 {
             let point = &self.points[0];
-            let val = point.value.sample_with(location_of);
-            return val + point.derivative * (location - point.location);
+            return point.sample_outside_range(location, point.value.sample_with(location_of));
         }
 
         if index_greater_than_x == n {
             let point = &self.points[n - 1];
-            let val = point.value.sample_with(location_of);
-            return val + point.derivative * (location - point.location);
+            return point.sample_outside_range(location, point.value.sample_with(location_of));
         }
 
         let previous = &self.points[index_greater_than_x - 1];
@@ -182,30 +181,18 @@ impl Spline {
         let start_value = previous.value.sample_with(location_of);
         let end_value = current.value.sample_with(location_of);
 
-        let start_derivative = previous.derivative;
-        let end_derivative = current.derivative;
-
+        // `CubicSpline.Multipoint.apply`, in float.
         let t = (location - start_x) / (end_x - start_x);
-
-        let h00 = (1.0 + 2.0 * t) * (1.0 - t) * (1.0 - t);
-        let h10 = t * (1.0 - t) * (1.0 - t);
-        let h01 = t * t * (3.0 - 2.0 * t);
-        let h11 = t * t * (t - 1.0);
-
-        h00.mul_add(
-            start_value,
-            h10.mul_add(
-                start_derivative * (end_x - start_x),
-                h01.mul_add(end_value, h11 * (end_derivative * (end_x - start_x))),
-            ),
-        )
+        let r = previous.derivative * (end_x - start_x) - (end_value - start_value);
+        let s = -current.derivative * (end_x - start_x) + (end_value - start_value);
+        lerp(t, start_value, end_value) + t * (1.0 - t) * lerp(t, r, s)
     }
 }
 
 pub struct SplineFunction {
     spline: Spline,
-    min_value: f32,
-    max_value: f32,
+    min_value: f64,
+    max_value: f64,
 }
 
 impl SplineFunction {
@@ -213,8 +200,8 @@ impl SplineFunction {
         let (min_value, max_value) = spline.calculate_min_and_max(component_stack);
         Self {
             spline,
-            min_value,
-            max_value,
+            min_value: f64::from(min_value),
+            max_value: f64::from(max_value),
         }
     }
 
@@ -229,19 +216,19 @@ impl StaticChunkNoiseFunctionComponentImpl for SplineFunction {
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
         pos: &Vector3<i32>,
-    ) -> f32 {
-        self.spline.sample(pos, component_stack)
+    ) -> f64 {
+        f64::from(self.spline.sample(pos, component_stack))
     }
 
     fn sample_volume(
         &self,
         component_stack: &mut [ChunkNoiseFunctionComponent],
-        buffer: &mut [f32],
+        buffer: &mut [f64],
         volume: &DensityVolume,
     ) {
         let mut coordinates: Vec<(usize, DensityBuffer)> = Vec::new();
         for (index, value) in buffer.iter_mut().enumerate() {
-            *value = self.spline.sample_with(&mut |location_index| {
+            *value = f64::from(self.spline.sample_with(&mut |location_index| {
                 let position = coordinates
                     .iter()
                     .position(|(coordinate_index, _)| *coordinate_index == location_index)
@@ -255,20 +242,20 @@ impl StaticChunkNoiseFunctionComponentImpl for SplineFunction {
                         coordinates.push((location_index, coordinate));
                         coordinates.len() - 1
                     });
-                coordinates[position].1[index]
-            });
+                coordinates[position].1[index] as f32
+            }));
         }
     }
 }
 
 impl NoiseFunctionComponentRange for SplineFunction {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.min_value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.max_value
     }
 }

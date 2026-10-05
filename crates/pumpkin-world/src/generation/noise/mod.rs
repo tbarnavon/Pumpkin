@@ -34,8 +34,8 @@ pub const WATER_BLOCK: Block = Block::WATER;
 pub const CHUNK_DIM: u8 = 16;
 
 pub struct VeinSample {
-    pub toggle: f32,
-    pub ridged: f32,
+    pub toggle: f64,
+    pub ridged: f64,
 }
 
 pub struct ChunkDensities {
@@ -64,7 +64,7 @@ impl BlockStateSampler {
         router: &mut ChunkNoiseRouter,
         ore_random_deriver: &XoroshiroSplitter,
         pos: &Vector3<i32>,
-        density: f32,
+        density: f64,
         veins: Option<&VeinSample>,
         height_estimator: &mut SurfaceHeightEstimateSampler,
     ) -> Option<&'static BlockState> {
@@ -92,7 +92,7 @@ impl ChainedBlockStateSampler {
         router: &mut ChunkNoiseRouter,
         ore_random_deriver: &XoroshiroSplitter,
         pos: &Vector3<i32>,
-        density: f32,
+        density: f64,
         veins: Option<&VeinSample>,
         height_estimator: &mut SurfaceHeightEstimateSampler,
     ) -> Option<&'static BlockState> {
@@ -203,7 +203,7 @@ impl<'a> ChunkNoiseGenerator<'a> {
         &mut self,
         ore_random_deriver: &XoroshiroSplitter,
         pos: &Vector3<i32>,
-        density: f32,
+        density: f64,
         veins: Option<&VeinSample>,
         height_estimator: &mut SurfaceHeightEstimateSampler,
     ) -> Option<&'static BlockState> {

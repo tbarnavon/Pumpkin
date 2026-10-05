@@ -16,14 +16,14 @@ mod test;
 mod test_deserializer;
 
 pub trait NoiseFunctionComponentRange {
-    fn min(&self) -> f32;
-    fn max(&self) -> f32;
+    fn min(&self) -> f64;
+    fn max(&self) -> f64;
 }
 
 pub trait StaticIndependentChunkNoiseFunctionComponentImpl: NoiseFunctionComponentRange {
-    fn sample(&self, pos: &Vector3<i32>) -> f32;
+    fn sample(&self, pos: &Vector3<i32>) -> f64;
 
-    fn sample_volume(&self, buffer: &mut [f32], volume: &DensityVolume) {
+    fn sample_volume(&self, buffer: &mut [f64], volume: &DensityVolume) {
         volume.fill_with(buffer, |pos| self.sample(pos));
     }
 }
@@ -31,8 +31,8 @@ pub trait StaticIndependentChunkNoiseFunctionComponentImpl: NoiseFunctionCompone
 pub struct Wrapper {
     pub input_index: usize,
     pub wrapper_type: WrapperType,
-    min_value: f32,
-    max_value: f32,
+    min_value: f64,
+    max_value: f64,
 }
 
 impl Wrapper {
@@ -40,8 +40,8 @@ impl Wrapper {
     pub const fn new(
         input_index: usize,
         wrapper_type: WrapperType,
-        min_value: f32,
-        max_value: f32,
+        min_value: f64,
+        max_value: f64,
     ) -> Self {
         Self {
             input_index,
@@ -54,12 +54,12 @@ impl Wrapper {
 
 impl NoiseFunctionComponentRange for Wrapper {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.min_value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.max_value
     }
 }
@@ -67,13 +67,13 @@ impl NoiseFunctionComponentRange for Wrapper {
 #[derive(Clone)]
 pub struct PassThrough {
     input_index: usize,
-    min_value: f32,
-    max_value: f32,
+    min_value: f64,
+    max_value: f64,
 }
 
 impl PassThrough {
     #[must_use]
-    pub const fn new(input_index: usize, min_value: f32, max_value: f32) -> Self {
+    pub const fn new(input_index: usize, min_value: f64, max_value: f64) -> Self {
         Self {
             input_index,
             min_value,
@@ -89,12 +89,12 @@ impl PassThrough {
 
 impl NoiseFunctionComponentRange for PassThrough {
     #[inline]
-    fn min(&self) -> f32 {
+    fn min(&self) -> f64 {
         self.min_value
     }
 
     #[inline]
-    fn max(&self) -> f32 {
+    fn max(&self) -> f64 {
         self.max_value
     }
 }
